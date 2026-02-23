@@ -1,0 +1,223 @@
+unit frmSpreadSheetBook;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  frmMDIChild, ActnList, dxBar, cxControls, Menus, ShellApi, unCommonFunc,
+  dxPSBaseGridLnk, dxPScxSSLnk, dxPSCore, cxSSheet, dxPSGlbl, dxPSUtl,
+  dxPSEngn, dxPrnPg, dxBkgnd, dxWrap, dxPrnDev, dxPSCompsProvider,
+  dxPSFillPatterns, dxPSEdgePatterns;
+
+type
+  TSpreadSheetBookForm = class(TMDIChildForm)
+    SpreadSheetBook: TcxSpreadSheetBook;
+    aClose: TAction;
+    dxBarButtonClose: TdxBarButton;
+    aFormatCell: TAction;
+    pmSheet: TPopupMenu;
+    N1: TMenuItem;
+    aOpenInExcel: TAction;
+    dxBarButtonOpenInExcel: TdxBarButton;
+    aPrintPreview: TAction;
+    dxComponentPrinter: TdxComponentPrinter;
+    dxComponentPrinterLink: TdxSpreadSheetBookReportLink;
+    aPrint: TAction;
+    dxBarButtonPrintPreview: TdxBarButton;
+    dxBarButtonPrint: TdxBarButton;
+    aPageSetup: TAction;
+    dxBarButtonPageSetup: TdxBarButton;
+    procedure aCloseExecute(Sender: TObject);
+    procedure aFormatCellExecute(Sender: TObject);
+    procedure aOpenInExcelExecute(Sender: TObject);
+    procedure aPrintPreviewExecute(Sender: TObject);
+    procedure aPrintExecute(Sender: TObject);
+    procedure aPageSetupExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    FReportTempFileName  : String;
+  published
+    procedure WMPrintPreview(var Message: TMessage); message WM_PRINTPREVIEW;
+    procedure WMPrintData(var Message: TMessage); message WM_PRINTDATA;
+    procedure WMPageSetup(var Message: TMessage); message WM_PAGESETUP;
+    procedure WmOpenInExcel(var Message: TMessage); message WM_OPENINEXCEL;
+  public
+  end;
+
+implementation
+
+{$R *.DFM}
+
+{ TSpreadSheetBookForm }
+
+procedure TSpreadSheetBookForm.aCloseExecute(Sender: TObject);
+begin
+  inherited;
+  Close;
+end;
+
+procedure TSpreadSheetBookForm.aFormatCellExecute(Sender: TObject);
+begin
+  inherited;
+  with SpreadSheetBook.ActiveSheet do
+    FormatCells(SelectionRect);
+end;
+
+procedure TSpreadSheetBookForm.aOpenInExcelExecute(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Self.Handle, WM_OPENINEXCEL, 0, 0);
+end;
+
+procedure TSpreadSheetBookForm.WmOpenInExcel(var Message: TMessage);
+var
+  Res                 : HInst;
+  ResStr              : String;
+  TempFilePath        : String;
+begin
+  {Временный файл для отчёта}
+  SetLength(FReportTempFileName, MAX_PATH + 10);
+  {Путь к папке TEMP}
+  SetLength(TempFilePath, MAX_PATH + 10);
+
+  {Получить путь к папке TEMP}
+  GetTempPath(MAX_PATH + 10, @TempFilePath[1]);
+
+  {Получить временный файл для отчёта}
+  GetTempFileName(PChar(TempFilePath), 'OPS', 0, @FReportTempFileName[1]);
+  FReportTempFileName := PChar(FReportTempFileName);
+  if FileExists(FReportTempFileName) then
+    DeleteFile(FReportTempFileName);
+
+  FReportTempFileName := ChangeFileExt(FReportTempFileName, '.xls');
+
+  SpreadSheetBook.ActiveSheet.ReadOnly := False;
+  SpreadSheetBook.SaveToFile(FReportTempFileName);
+  SpreadSheetBook.ActiveSheet.ReadOnly := True;
+
+  Res := ShellExecute(Self.Handle, 'open', PChar(FReportTempFileName), nil, nil, SW_SHOWNORMAL);
+  if Res <= 32 then begin
+    case Res of
+      0: ResStr := 'The operating system is out of memory or resources';
+//      ERROR_FILE_NOT_FOUND: ResStr := 'The specified file was not found';
+//      ERROR_PATH_NOT_FOUND: ResStr := 'The specified path was not found';
+      ERROR_BAD_FORMAT: ResStr := 'The .EXE file is invalid (non-Win32 .EXE or error in .EXE image)';
+      SE_ERR_ACCESSDENIED: ResStr := 'The operating system denied access to the specified file';
+      SE_ERR_ASSOCINCOMPLETE: ResStr := 'The filename association is incomplete or invalid';
+      SE_ERR_DDEBUSY: ResStr := 'The DDE transaction could not be completed because other DDE transactions were being processed';
+      SE_ERR_DDEFAIL: ResStr := 'The DDE transaction failed';
+      SE_ERR_DDETIMEOUT: ResStr := 'The DDE transaction could not be completed because the request timed out';
+      SE_ERR_DLLNOTFOUND: ResStr := 'The specified dynamic-link library was not found';
+      SE_ERR_FNF: ResStr := 'The specified file was not found';
+      SE_ERR_NOASSOC: ResStr := 'There is no application associated with the given filename extension';
+      SE_ERR_OOM: ResStr := 'There was not enough memory to complete the operation';
+      SE_ERR_PNF: ResStr := 'The specified path was not found';
+      SE_ERR_SHARE: ResStr := 'A sharing violation occurred';
+    end;
+    MessageDlg('Ошибка открытия отчёта в Excele:'#13#10 + ResStr, mtInformation, [mbOk], 0);
+  end;
+end;
+
+procedure TSpreadSheetBookForm.aPrintPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Self.Handle, WM_PRINTPREVIEW, 0, 0);
+end;
+
+procedure TSpreadSheetBookForm.WMPrintPreview(var Message: TMessage);
+begin
+  dxComponentPrinter.PrintTitle := SpreadSheetBook.ActiveSheet.Caption;
+  dxComponentPrinter.CurrentLink.Preview;
+end;
+
+procedure TSpreadSheetBookForm.aPrintExecute(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Self.Handle, WM_PRINTDATA, 0, 0);
+end;
+
+procedure TSpreadSheetBookForm.WMPrintData(var Message: TMessage);
+begin
+  dxComponentPrinter.PrintTitle := SpreadSheetBook.ActiveSheet.Caption;
+  dxComponentPrinter.CurrentLink.Print(True, nil);
+end;
+
+procedure TSpreadSheetBookForm.aPageSetupExecute(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Self.Handle, WM_PAGESETUP, 0, 0);
+end;
+
+procedure TSpreadSheetBookForm.WMPageSetup(var Message: TMessage);
+begin
+  dxComponentPrinter.CurrentLink.PageSetup;
+end;
+
+
+{
+  ExcelDefaultFormats: array[0..$31] of string =
+   (
+00   'Default',
+01   '0',
+02   '0.00',
+03   '#,##0',
+04   '#,##0.00',
+05   '_($#,##0_);($#,##0)',
+06   '_($#,##0_);[Red]($#,##0)',
+07   '_($#,##0.00_);($#,##0.00)',
+08   '_($#,##0.00_);[Red]($#,##0.00)',
+09   '0%',
+10   '0.00%',
+11   '0.00E+00',
+12   '# ?/?',
+13   '# ??/??',
+14   'm/d/yy',
+15   'd-mmm-y',
+16   'd-mmm',
+17   'mmmm-yy',
+18   'h:mm AM/PM',
+19   'h:mm:ss AM/PM',
+20   'h:mm',
+21   'h:mm:SS',
+22   'm/d/yy h:mm',
+23   '',
+24   '',
+25   '',
+26   '',
+27   '',
+28   '',
+29   '',
+30   '',
+31   '',
+32   '',
+33   '',
+34   '', // Правильный Текст
+35   '',
+36   '',
+37   '(#,##0_);(#,##0)',
+38   '(#,##0_);[Red](#,##0)',
+39   '(#,##0.00_);(#,##0.00)',
+40   '(#,##0.00_);[Red](#,##0.00)',
+41   '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
+42   '_($* #,##0_);_($* (#,##0);_($* "-"_);_(@_)',
+43   '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
+44   '_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)',
+45   'mm:ss',
+46   '[h]:mm:ss',
+47   'mm:ss.0',
+48   '# #0.0E+0',
+49   '@' // Текст
+   );
+
+}
+
+procedure TSpreadSheetBookForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if FileExists(FReportTempFileName) then
+    DeleteFile(FReportTempFileName);
+
+  inherited;
+end;
+
+end.

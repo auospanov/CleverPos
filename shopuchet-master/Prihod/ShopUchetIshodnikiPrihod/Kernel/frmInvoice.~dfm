@@ -1,0 +1,1171 @@
+inherited InvoiceForm: TInvoiceForm
+  Left = 482
+  Top = 25
+  Caption = #1057#1095#1077#1090'-'#1092#1072#1082#1090#1091#1088#1072
+  ClientHeight = 635
+  ClientWidth = 595
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Top = 603
+    Width = 97
+    Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+    TabOrder = 3
+  end
+  inherited btnCancel: TBitBtn
+    Left = 508
+    Top = 603
+    TabOrder = 4
+  end
+  inherited Panel1: TPanel
+    Width = 575
+    Height = 588
+    object sh1: TShape
+      Left = 10
+      Top = 35
+      Width = 217
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape41: TShape
+      Left = 10
+      Top = 556
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape43: TShape
+      Left = 10
+      Top = 456
+      Width = 217
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape15: TShape
+      Left = 10
+      Top = 506
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape13: TShape
+      Left = 10
+      Top = 481
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape39: TShape
+      Left = 10
+      Top = 381
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape37: TShape
+      Left = 10
+      Top = 306
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape35: TShape
+      Left = 10
+      Top = 281
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape33: TShape
+      Left = 10
+      Top = 249
+      Width = 218
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape31: TShape
+      Left = 10
+      Top = 192
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape25: TShape
+      Left = 10
+      Top = 531
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape29: TShape
+      Left = 10
+      Top = 160
+      Width = 218
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape27: TShape
+      Left = 10
+      Top = 217
+      Width = 218
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape23: TShape
+      Left = 10
+      Top = 431
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape21: TShape
+      Left = 10
+      Top = 406
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape19: TShape
+      Left = 10
+      Top = 356
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape17: TShape
+      Left = 10
+      Top = 331
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape11: TShape
+      Left = 10
+      Top = 135
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape9: TShape
+      Left = 10
+      Top = 110
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape7: TShape
+      Left = 10
+      Top = 85
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape5: TShape
+      Left = 10
+      Top = 60
+      Width = 218
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape1: TShape
+      Left = 360
+      Top = 10
+      Width = 86
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 10
+      Top = 10
+      Width = 217
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 14
+      Top = 16
+      Width = 37
+      Height = 14
+      Caption = #1053#1086#1084#1077#1088
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 226
+      Top = 10
+      Width = 135
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 368
+      Top = 16
+      Width = 71
+      Height = 14
+      Caption = #1044#1072#1090#1072' '#1074#1099#1076#1072#1095#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape3: TShape
+      Left = 445
+      Top = 10
+      Width = 123
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label3: TLabel
+      Left = 14
+      Top = 66
+      Width = 61
+      Height = 14
+      Caption = #1055#1086#1089#1090#1072#1074#1097#1080#1082
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape6: TShape
+      Left = 226
+      Top = 60
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label4: TLabel
+      Left = 14
+      Top = 91
+      Width = 52
+      Height = 14
+      Caption = #1048#1048#1053'/'#1041#1048#1053
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape8: TShape
+      Left = 226
+      Top = 85
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label5: TLabel
+      Left = 14
+      Top = 116
+      Width = 190
+      Height = 14
+      Caption = #1040#1076#1088#1077#1089' '#1084#1077#1089#1090#1086#1085#1072#1093#1086#1078#1076'. '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape10: TShape
+      Left = 226
+      Top = 110
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label6: TLabel
+      Left = 14
+      Top = 141
+      Width = 91
+      Height = 14
+      Caption = #1056#1072#1089#1095#1077#1090#1085#1099#1081' '#1089#1095#1077#1090
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape12: TShape
+      Left = 226
+      Top = 135
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label9: TLabel
+      Left = 14
+      Top = 337
+      Width = 103
+      Height = 14
+      Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape18: TShape
+      Left = 226
+      Top = 331
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label10: TLabel
+      Left = 14
+      Top = 362
+      Width = 97
+      Height = 14
+      Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape20: TShape
+      Left = 226
+      Top = 356
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label11: TLabel
+      Left = 14
+      Top = 412
+      Width = 41
+      Height = 14
+      Caption = #1050#1083#1080#1077#1085#1090
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape22: TShape
+      Left = 226
+      Top = 406
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label12: TLabel
+      Left = 14
+      Top = 438
+      Width = 102
+      Height = 14
+      Caption = #1048#1048#1053'/'#1041#1048#1053' '#1082#1083#1080#1077#1085#1090#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape24: TShape
+      Left = 226
+      Top = 431
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label14: TLabel
+      Left = 14
+      Top = 219
+      Width = 192
+      Height = 28
+      Caption = #1055#1091#1085#1082#1090' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103' '#1087#1086#1089#1090#1072#1074#1083#1103#1077#1084#1099#1093' '#1090#1086#1074#1072#1088#1086#1074' ('#1088#1072#1073#1086#1090', '#1091#1089#1083#1091#1075')'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Shape28: TShape
+      Left = 226
+      Top = 217
+      Width = 342
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label15: TLabel
+      Left = 14
+      Top = 161
+      Width = 187
+      Height = 28
+      Caption = #1044#1086#1075#1086#1074#1086#1088' ('#1082#1086#1085#1090#1088#1072#1082#1090') '#1085#1072' '#1087#1086#1089#1090#1072#1074#1082#1091' '#1090#1086#1074#1072#1088#1086#1074' ('#1088#1072#1073#1086#1090', '#1091#1089#1083#1091#1075')'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Label13: TLabel
+      Left = 14
+      Top = 561
+      Width = 207
+      Height = 14
+      Caption = #1060#1048#1054' '#1083#1080#1094#1072', '#1074#1099#1076#1072#1074#1096#1077#1075#1086' '#1089#1095#1077#1090'-'#1092#1072#1082#1090#1091#1088#1091
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Label16: TLabel
+      Left = 14
+      Top = 198
+      Width = 166
+      Height = 14
+      Caption = #1059#1089#1083#1086#1074#1080#1103' '#1086#1087#1083#1072#1090#1099' '#1087#1086' '#1076#1086#1075#1086#1074#1086#1088#1091
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape32: TShape
+      Left = 226
+      Top = 192
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label17: TLabel
+      Left = 14
+      Top = 250
+      Width = 185
+      Height = 28
+      Caption = #1055#1086#1089#1090#1072#1074#1082#1072' '#1090#1086#1074#1072#1088#1086#1074' ('#1088#1072#1073#1086#1090','#1091#1089#1083#1091#1075') '#1086#1089#1091#1097#1077#1089#1090#1074#1083#1077#1085#1072' '#1087#1086' '#1076#1086#1074#1077#1088#1077#1085#1085#1086#1089#1090#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Shape34: TShape
+      Left = 226
+      Top = 249
+      Width = 342
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label18: TLabel
+      Left = 14
+      Top = 287
+      Width = 97
+      Height = 14
+      Caption = #1057#1087#1086#1089#1086#1073' '#1086#1090#1087#1088#1072#1074#1082#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Shape36: TShape
+      Left = 226
+      Top = 281
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label19: TLabel
+      Left = 14
+      Top = 312
+      Width = 194
+      Height = 14
+      Caption = #1058#1086#1074#1072#1088#1085#1086'-'#1090#1088#1072#1085#1089#1087#1086#1088#1090#1085#1072#1103' '#1085#1072#1082#1083#1072#1076#1085#1072#1103
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Shape38: TShape
+      Left = 226
+      Top = 306
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label20: TLabel
+      Left = 14
+      Top = 387
+      Width = 136
+      Height = 14
+      Caption = #1040#1076#1088#1077#1089' '#1075#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1103
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape40: TShape
+      Left = 226
+      Top = 381
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label7: TLabel
+      Left = 14
+      Top = 487
+      Width = 141
+      Height = 14
+      Caption = #1056#1072#1089#1095#1077#1090#1085#1099#1081' '#1089#1095#1077#1090' '#1082#1083#1080#1077#1085#1090#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape14: TShape
+      Left = 226
+      Top = 481
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label8: TLabel
+      Left = 14
+      Top = 512
+      Width = 79
+      Height = 14
+      Caption = #1056#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1100
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape16: TShape
+      Left = 226
+      Top = 506
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Shape42: TShape
+      Left = 226
+      Top = 556
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label21: TLabel
+      Left = 14
+      Top = 538
+      Width = 108
+      Height = 14
+      Caption = #1043#1083#1072#1074#1085#1099#1081' '#1073#1091#1093#1075#1072#1083#1090#1077#1088
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+      WordWrap = True
+    end
+    object Shape26: TShape
+      Left = 226
+      Top = 531
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label22: TLabel
+      Left = 14
+      Top = 462
+      Width = 200
+      Height = 14
+      Caption = #1040#1076#1088#1077#1089' '#1084#1077#1089#1090#1086#1085#1072#1093#1086#1078#1076#1077#1085#1080#1103' '#1087#1086#1083#1091#1095'-'#1083#1103
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape44: TShape
+      Left = 226
+      Top = 456
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Shape30: TShape
+      Left = 226
+      Top = 160
+      Width = 342
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object lbPostavshik: TLabel
+      Left = 14
+      Top = 41
+      Width = 114
+      Height = 14
+      Caption = #1055#1086#1089#1090#1072#1074#1097#1080#1082' ('#1089#1087#1080#1089#1086#1082')'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object sh2: TShape
+      Left = 226
+      Top = 35
+      Width = 342
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object edNum: TdxEdit
+      Left = 235
+      Top = 12
+      Width = 118
+      TabOrder = 0
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edDate: TcxDateEdit
+      Left = 451
+      Top = 12
+      Width = 113
+      Height = 22
+      Properties.Alignment.Horz = taRightJustify
+      Properties.InputKind = ikMask
+      Style.BorderStyle = ebsFlat
+      Style.ButtonStyle = bts3D
+      TabOrder = 1
+    end
+    object leAddress: TdxLookupEdit
+      Left = 235
+      Top = 113
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      Style.Shadow = False
+      TabOrder = 5
+      ListFieldName = 'ADDRESS'
+      KeyFieldName = 'G_ADDRESS'
+      ListSource = dsAddress
+      LookupKeyValue = Null
+    end
+    object edPostavshik: TdxEdit
+      Left = 235
+      Top = 62
+      Width = 329
+      TabOrder = 3
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edIDN: TdxEdit
+      Left = 235
+      Top = 87
+      Width = 329
+      TabOrder = 4
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object leAccount: TdxLookupEdit
+      Left = 235
+      Top = 138
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      TabOrder = 6
+      ListFieldName = 'ACC_BIK'
+      KeyFieldName = 'G_ACCOUNT'
+      ListSource = dsAccount
+      LookupKeyValue = Null
+    end
+    object edOtpravitel: TdxEdit
+      Left = 235
+      Top = 333
+      Width = 329
+      TabOrder = 13
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edPoluchatel: TdxEdit
+      Left = 235
+      Top = 358
+      Width = 329
+      TabOrder = 14
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edClient: TdxEdit
+      Left = 235
+      Top = 408
+      Width = 329
+      TabOrder = 16
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edIDNClient: TdxEdit
+      Left = 235
+      Top = 433
+      Width = 329
+      TabOrder = 17
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edOsnovanie: TdxEdit
+      Left = 235
+      Top = 166
+      Width = 329
+      TabOrder = 7
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object leIspolnitel: TdxLookupEdit
+      Left = 235
+      Top = 559
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      Style.Edges = [edgLeft, edgTop, edgRight, edgBottom]
+      TabOrder = 22
+      ListFieldName = 'FIO_DOC'
+      KeyFieldName = 'G_OFFICIAL'
+      ListSource = dsIspolnitel
+      LookupKeyValue = Null
+    end
+    object lePAYMENT_TYPE: TdxLookupEdit
+      Left = 235
+      Top = 195
+      Width = 328
+      Style.BorderStyle = xbsFlat
+      TabOrder = 8
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_PAYMENT_TYPE'
+      ListSource = dsPaymentType
+      LookupKeyValue = Null
+    end
+    object edDoverka: TdxEdit
+      Left = 235
+      Top = 255
+      Width = 329
+      TabOrder = 10
+      MaxLength = 250
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edSposobOtpravki: TdxEdit
+      Left = 235
+      Top = 283
+      Width = 329
+      TabOrder = 11
+      MaxLength = 250
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edNakladnaya: TdxEdit
+      Left = 235
+      Top = 308
+      Width = 329
+      TabOrder = 12
+      MaxLength = 200
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object leIikClient: TdxLookupEdit
+      Left = 235
+      Top = 483
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      TabOrder = 19
+      ListFieldName = 'ACC_BIK'
+      KeyFieldName = 'G_ACCOUNT'
+      ListSource = dsIikClient
+      LookupKeyValue = Null
+    end
+    object leRukovoditel: TdxLookupEdit
+      Left = 235
+      Top = 508
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      TabOrder = 20
+      ListFieldName = 'FIO_DOC'
+      KeyFieldName = 'G_OFFICIAL'
+      ListSource = dsRukovoditel
+      LookupKeyValue = Null
+    end
+    object leGlavBuh: TdxLookupEdit
+      Left = 235
+      Top = 534
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      TabOrder = 21
+      ListFieldName = 'FIO_DOC'
+      KeyFieldName = 'G_OFFICIAL'
+      ListSource = dsGlavBuh
+      LookupKeyValue = Null
+    end
+    object leMestoClienta: TdxLookupEdit
+      Left = 235
+      Top = 459
+      Width = 329
+      Style.BorderStyle = xbsFlat
+      TabOrder = 18
+      OnChange = leMestoClientaChange
+      ListFieldName = 'ADDRESS'
+      KeyFieldName = 'G_ADDRESS'
+      ListSource = dsMestoClienta
+      LookupKeyValue = Null
+    end
+    object edPunkt: TdxEdit
+      Left = 235
+      Top = 223
+      Width = 329
+      TabOrder = 9
+      MaxLength = 300
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object edAddressGruzopoluch: TdxEdit
+      Left = 235
+      Top = 383
+      Width = 329
+      TabOrder = 15
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object leFirm: TcxLookupComboBox
+      Left = 235
+      Top = 37
+      Width = 329
+      Height = 22
+      Properties.GridMode = True
+      Properties.KeyFieldNames = 'G_FIRM_REKVIZIT'
+      Properties.ListColumns = <
+        item
+          FieldName = 'NAME'
+        end>
+      Properties.ListOptions.ShowHeader = False
+      Properties.ListSource = dsFirm
+      Properties.OnChange = leFirmPropertiesChange
+      Style.BorderStyle = ebsFlat
+      TabOrder = 2
+    end
+  end
+  object BitBtn1: TBitBtn [3]
+    Left = 317
+    Top = 603
+    Width = 75
+    Height = 25
+    Action = aPrint
+    Anchors = [akRight, akBottom]
+    Caption = #1055#1077#1095#1072#1090#1100
+    TabOrder = 2
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      20000000000000040000120B0000120B00000000000000000000FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00C69F9300BD8A7800BE8A7800BD8A7800BD897800BD89
+      7800BE897800C39F9200FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00C08D7C00F6EEE900F5EDE900F5EDE900F5ECE800F4EC
+      E800F5ECE700BF8D7B00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00B58A
+      7C00A76E5B009F675500C2917F00F7F0EC00E2B47D00E2B37A00E1B07700E0AE
+      7200F6EEEA00C2907F00845545008958470099766A00FF00FF00FF00FF00BB7E
+      6B00ECD9CC00E3CEBE00C5948300F9F2F000E4B98400E3B78100E3B47C00E0B1
+      7600F7F0ED00C5948300E0CBBC00EBD8CB00B6776300FF00FF00FF00FF00BE85
+      7100F1E5DA00ECDBD0007A4835007A4835007A4835007A4835007A4835007A48
+      35007A4835007A483500EBDBCF00F1E2D800B97C6900FF00FF00FF00FF00C28B
+      7800F5EEE700F2E7DD00F2E7DE00F3E7DE00F2E5DE00F3E5DE00F2E7DD00F2E7
+      DD00F2E7DE00F2E7DD00F2E5DE00F5EDE600BC826E00FF00FF00FF00FF00C793
+      7F00FAF4F100CDBEB8006F54480061433700614035005F3F34005E3F33005D3D
+      32005D3D34006A4C4400CABCB600F9F5F100C1887500FF00FF00FF00FF00CC99
+      8600FDFAFA007D60540074504300744F4300744E4300734E4300734E4200724D
+      4200724C4100724C400073584D00FDFAFA00C58F7C00FF00FF00FF00FF00CF9F
+      8D00FFFFFF007A5A4C008E695A00F9F4F100F0E6E000F0E5DF00EFE5DE00EFE5
+      DE00F6EFEB0086625300704F4300FFFFFF00CA968300FF00FF00FF00FF00D4AB
+      9A00F5ECE8008666560097726200FAF6F400F2E8E300F1E8E100F1E7E200F1E7
+      E100F8F2EE008E6A5B007A5B4C00F5EAE600CFA39200FF00FF00FF00FF00EEE3
+      DF00DAB6A80094726200A07B6A00FCF9F800F3EBE600F4EAE500F2EAE500F3EA
+      E300F9F5F3009772630087665800D7B1A300EBDFDA00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00C89B8900FDFBFA00F5EDE800F4EDE800F5EDE700F5EC
+      E700FBF7F600C5968500FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00CA9E8D00FEFCFC00F7F0EC00F6EFEB00F7EFEB00F5EF
+      EA00FCFAF800C89A8900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00CDA29100FEFEFD00FEFDFD00FEFDFC00FEFCFC00FEFC
+      FB00FDFBFA00CB9F8D00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00DAB9AD00CFA49300CEA49300CEA49300CEA49200CDA3
+      9100CDA39100D6B6A900FF00FF00FF00FF00FF00FF00FF00FF00}
+  end
+  inherited btHelp: TBitBtn
+    Top = 603
+    TabOrder = 1
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Left = 24
+    Top = 704
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Left = 56
+    Top = 704
+  end
+  inherited ActionList: TActionList
+    Images = MainDM.imMain
+    Left = 88
+    Top = 704
+    object aPrint: TAction
+      Caption = #1055#1077#1095#1072#1090#1100
+      ImageIndex = 19
+      OnExecute = aPrintExecute
+    end
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE INV_GET_INVOICE (?INVOICE_, ?ZAKAZ_)')
+    StoredProcName = 'INV_GET_INVOICE'
+    Left = 96
+    Top = 632
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE INV_INS_INVOICE (?NUM_, ?INIT_DATE_, ?G_FIRM_,' +
+        ' ?POSTAVSHIK_, ?IDN_, ?ADDRESS_, ?IIK_, ?AGREEMENT_, ?G_PAYMENT_' +
+        'TYPE_, ?PUNKT_NAZNACHENIYA_, ?DOVERENNOST_, ?SPOSOB_OTPRAVKI_, ?' +
+        'NAKLADNAYA_, ?GRUZOOTPRAVITEL_, ?GRUZOPOLUCHATEL_, ?ADDRESS_POLU' +
+        'CHATELYA_, ?G_CLIENT_, ?CLIENT_NAME_, ?IDN_CLIENT_, ?ADDRESS_POK' +
+        'UPATEL_, ?IIK_CLIENT_, ?G_OFFICIAL_RUKOVOD_, ?G_OFFICIAL_GB_, ?G' +
+        '_OFFICIAL_, ?ZAKAZ_)')
+    StoredProcName = 'INV_INS_INVOICE'
+    Left = 128
+    Top = 632
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE INV_UPD_INVOICE (?INVOICE_, ?NUM_, ?INIT_DATE_' +
+        ', ?G_FIRM_, ?POSTAVSHIK_, ?IDN_, ?ADDRESS_, ?IIK_, ?AGREEMENT_, ' +
+        '?G_PAYMENT_TYPE_, ?PUNKT_NAZNACHENIYA_, ?DOVERENNOST_, ?SPOSOB_O' +
+        'TPRAVKI_, ?NAKLADNAYA_, ?GRUZOOTPRAVITEL_, ?GRUZOPOLUCHATEL_, ?A' +
+        'DDRESS_POLUCHATELYA_, ?G_CLIENT_, ?CLIENT_NAME_, ?IDN_CLIENT_, ?' +
+        'ADDRESS_POKUPATEL_, ?IIK_CLIENT_, ?G_OFFICIAL_RUKOVOD_, ?G_OFFIC' +
+        'IAL_GB_, ?G_OFFICIAL_, ?ZAKAZ_)')
+    StoredProcName = 'INV_UPD_INVOICE'
+    Left = 160
+    Top = 632
+  end
+  object dsAddress: TDataSource
+    DataSet = spAddress
+    Left = 448
+    Top = 112
+  end
+  object dsAccount: TDataSource
+    DataSet = spAccount
+    Left = 448
+    Top = 144
+  end
+  object dsIspolnitel: TDataSource
+    DataSet = spIspolnitel
+    Left = 312
+    Top = 567
+  end
+  object dsPaymentType: TDataSource
+    DataSet = spPaymentType
+    Left = 455
+    Top = 192
+  end
+  object dsIikClient: TDataSource
+    DataSet = spIikClient
+    Left = 456
+    Top = 487
+  end
+  object dsRukovoditel: TDataSource
+    DataSet = spRukovoditel
+    Left = 312
+    Top = 511
+  end
+  object dsGlavBuh: TDataSource
+    DataSet = spGlavBuh
+    Left = 496
+    Top = 535
+  end
+  object dsMestoClienta: TDataSource
+    DataSet = spMestoClienta
+    Left = 456
+    Top = 456
+  end
+  object spAddress: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM g_read_g_firm_address_list(?G_FIRM_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 416
+    Top = 112
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spAccount: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM g_read_g_firm_account_list(?G_FIRM_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 416
+    Top = 144
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spPaymentType: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM g_read_g_payment_type_list')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 416
+    Top = 192
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spMestoClienta: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_ADDRESS_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 424
+    Top = 456
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spIikClient: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_CLIENT_BANK(?G_CLIENT_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 424
+    Top = 488
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spRukovoditel: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_RUKOVODITEL_LIST(:GLAVBUH_OR_RUKOVODITEL_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 280
+    Top = 512
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spIspolnitel: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_OFFICIAL_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 280
+    Top = 568
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spGlavBuh: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_RUKOVODITEL_LIST(:GLAVBUH_OR_RUKOVODITEL_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 464
+    Top = 536
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spFirm: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_FIRM_REKVIZIT')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 320
+    Top = 56
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsFirm: TDataSource
+    DataSet = spFirm
+    Left = 352
+    Top = 56
+  end
+end

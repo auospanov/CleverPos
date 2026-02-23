@@ -1,0 +1,74 @@
+unit frmContrAgentType;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons,
+  dxEditor, dxEdLib, pFIBErrorHandler;
+
+type
+  TContrAgentTypeForm = class(TDBEditForm)
+    Label13: TLabel;
+    Shape25: TShape;
+    Shape4: TShape;
+    edName: TdxEdit;
+    Label1: TLabel;
+    Shape1: TShape;
+    edShortName: TdxEdit;
+    Shape2: TShape;
+    procedure FormCreate(Sender: TObject);
+    procedure edNameExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    //procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  ContrAgentTypeForm: TContrAgentTypeForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TContrAgentTypeForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_contragent_';
+end;
+
+function TContrAgentTypeForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Тип контрагента не заполнен', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;  
+end;
+
+procedure TContrAgentTypeForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    ParamByName('name_').AsString := edName.Text;
+    ParamByName('short_name_').AsString := edShortName.Text;
+  end;
+end;
+
+procedure TContrAgentTypeForm.edNameExit(Sender: TObject);
+begin
+  inherited;
+  edShortName.Text := edName.Text;
+end;
+
+end.

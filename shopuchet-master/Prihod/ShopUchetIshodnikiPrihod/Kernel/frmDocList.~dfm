@@ -1,0 +1,170 @@
+inherited DocListForm: TDocListForm
+  Caption = #1046#1091#1088#1085#1072#1083
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'DOCS'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\DocList'
+    object dxDBGridDOCS: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 150
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'DOCS'
+    end
+    object dxDBGridNUM: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1053#1086#1084#1077#1088
+      HeaderAlignment = taCenter
+      Width = 70
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NUM'
+    end
+    object dxDBGridDOCS_DATE: TdxDBGridDateColumn
+      Alignment = taCenter
+      Caption = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+      HeaderAlignment = taCenter
+      Width = 120
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'DOCS_DATE'
+    end
+    object dxDBGridG_FIRM: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1054#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103'-'#1087#1086#1089#1090#1072#1074#1097#1080#1082
+      HeaderAlignment = taCenter
+      Width = 150
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_FIRM'
+    end
+    object dxDBGridG_CLIENT: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1050#1083#1080#1077#1085#1090
+      HeaderAlignment = taCenter
+      Width = 150
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_CLIENT'
+    end
+    object dxDBGridG_OFFICIAL: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
+      HeaderAlignment = taCenter
+      Width = 150
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_OFFICIAL'
+    end
+    object dxDBGridNOTE: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      HeaderAlignment = taCenter
+      Width = 150
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NOTE'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Bars = <
+      item
+        AllowClose = False
+        AllowCustomizing = False
+        AllowQuickCustomizing = False
+        Caption = 'Main'
+        DockedDockingStyle = dsTop
+        DockedLeft = 0
+        DockedTop = 0
+        DockingStyle = dsTop
+        FloatLeft = 271
+        FloatTop = 138
+        FloatClientWidth = 23
+        FloatClientHeight = 22
+        ItemLinks = <
+          item
+            Item = dxBarStaticRecCnt
+            Visible = True
+          end
+          item
+            Item = dxBarButtonRefresh
+            Visible = True
+          end
+          item
+            Item = dxBarButtonEnableAutoRefresh
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            Item = dxBarSpinEditHeaderHeight
+            UserDefine = [udWidth]
+            UserWidth = 23
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonView
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonIns
+            Visible = True
+          end
+          item
+            Item = dxBarButtonUpd
+            Visible = True
+          end
+          item
+            Item = dxBarButtonDel
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonClose
+            Visible = True
+          end>
+        Name = 'Main'
+        OneOnRow = True
+        Row = 0
+        UseOwnFont = False
+        Visible = True
+        WholeRow = False
+      end>
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      
+        'SELECT * FROM DOCS_READ(?DOC_TYPE_, ?IS_ALL_, ?BEGIN_DATE_, ?END' +
+        '_DATE_)')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE DOCS_DEL (?DOCS_)')
+    StoredProcName = 'DOCS_DEL'
+  end
+end

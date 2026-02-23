@@ -1,0 +1,88 @@
+unit frmProductionList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  FIBDataSet, pFIBDataSet, ExtCtrls, Menus, FIBDatabase, pFIBDatabase,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms;
+
+type
+  TProductionListForm = class(TDBListForm)
+    dxDBGridSKLAD: TdxDBGridMaskColumn;
+    dxDBGridOP_DATE: TdxDBGridDateColumn;
+    clmnDBGridNOTE: TdxDBGridMemoColumn;
+    dcBegin: TdxBarDateCombo;
+    dcEnd: TdxBarDateCombo;
+    dxDBGridSTRING_DTLS: TdxDBGridColumn;
+    procedure dcBeginChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure InsData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  ProductionListForm: TProductionListForm;
+
+implementation
+
+uses
+  frmProductionTovaraN;
+
+{$R *.dfm}
+
+{ TProductionForm }
+
+procedure TProductionListForm.ReadList;
+begin
+  spRead.ParamByName('date_begin_').AsDate := dcBegin.Date;
+  spRead.ParamByName('date_end_').AsDate := dcEnd.Date;
+  inherited;
+  aUpd.Enabled := False;
+end;
+
+procedure TProductionListForm.InsData;
+begin
+  ProductionTovaraNForm := TProductionTovaraNForm.Create(Self);
+  try
+    if ProductionTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('SKLAD', ProductionTovaraNForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then
+      begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    ProductionTovaraNForm.Free;
+  end;
+end;
+
+procedure TProductionListForm.dcBeginChange(Sender: TObject);
+begin
+  ReadList;
+end;
+
+procedure TProductionListForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'SKLAD';
+  KeyFieldClass := 'SKLAD_';
+
+  inherited;
+end;
+
+procedure TProductionListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 71;
+  inherited;
+end;
+
+end.

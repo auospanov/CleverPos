@@ -1,0 +1,25 @@
+unit frmContrAgentType;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons;
+
+type
+  TContrAgentTypeForm = class(TDBEditForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ContrAgentTypeForm: TContrAgentTypeForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

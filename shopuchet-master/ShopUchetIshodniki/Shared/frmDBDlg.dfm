@@ -1,0 +1,83 @@
+inherited DBDlgForm: TDBDlgForm
+  Left = 337
+  Top = 71
+  Caption = 'DBDlgForm'
+  ClientHeight = 441
+  ClientWidth = 567
+  ExplicitWidth = 573
+  ExplicitHeight = 467
+  DesignSize = (
+    567
+    441)
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited Panel1: TPanel
+    Width = 554
+    Height = 399
+    ExplicitWidth = 554
+    ExplicitHeight = 399
+  end
+  inherited btnOk: TcxButton
+    Left = 397
+    Top = 408
+    ExplicitLeft = 397
+    ExplicitTop = 408
+  end
+  inherited btnCancel: TcxButton
+    Left = 484
+    Top = 408
+    ExplicitLeft = 484
+    ExplicitTop = 408
+  end
+  object btHelp: TcxButton [3]
+    Left = 8
+    Top = 408
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = '&'#1055#1086#1084#1086#1097#1100
+    LookAndFeel.Kind = lfFlat
+    LookAndFeel.NativeStyle = True
+    OptionsImage.Glyph.Data = {
+      DE010000424DDE01000000000000760000002800000024000000120000000100
+      0400000000006801000000000000000000001000000000000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333336633
+      3333333333333FF3333333330000333333364463333333333333388F33333333
+      00003333333E66433333333333338F38F3333333000033333333E66333333333
+      33338FF8F3333333000033333333333333333333333338833333333300003333
+      3333446333333333333333FF3333333300003333333666433333333333333888
+      F333333300003333333E66433333333333338F38F333333300003333333E6664
+      3333333333338F38F3333333000033333333E6664333333333338F338F333333
+      0000333333333E6664333333333338F338F3333300003333344333E666433333
+      333F338F338F3333000033336664333E664333333388F338F338F33300003333
+      E66644466643333338F38FFF8338F333000033333E6666666663333338F33888
+      3338F3330000333333EE666666333333338FF33333383333000033333333EEEE
+      E333333333388FFFFF8333330000333333333333333333333333388888333333
+      0000}
+    OptionsImage.NumGlyphs = 2
+    TabOrder = 3
+    OnClick = btHelpClick
+  end
+  inherited dxEditStyleController: TcxEditStyleController
+    PixelsPerInch = 96
+  end
+  inherited cxEditRepository: TcxEditRepository
+    inherited riEditRepositoryCurrencyItem: TcxEditRepositoryCurrencyItem
+      Properties.Alignment.Horz = taRightJustify
+    end
+  end
+  object ActionList: TActionList
+    Left = 120
+    Top = 408
+    object aShowDBCompState: TAction
+      Category = #1057#1082#1088#1099#1090#1099#1077' '#1074#1086#1079#1084#1086#1078#1085#1086#1089#1090#1080
+      Caption = #1055#1088#1086#1089#1084#1086#1090#1088' '#1074#1089#1077#1093' '#1086#1073#1098#1077#1082#1090#1086#1074' '#1076#1086#1089#1090#1091#1087#1072' '#1082' '#1041#1044' '#1072#1082#1080#1074#1085#1086#1081' '#1092#1086#1088#1084#1099
+      OnExecute = aShowDBCompStateExecute
+    end
+    object aRefreshOfficialRights: TAction
+      ShortCut = 16466
+      Visible = False
+    end
+  end
+end

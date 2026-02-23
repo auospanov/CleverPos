@@ -1,0 +1,116 @@
+unit frmWayBillList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TWayBillListForm = class(TDBListForm)
+    dxDBGridWAYBILL: TdxDBGridMaskColumn;
+    dxDBGridNUM: TdxDBGridMaskColumn;
+    dxDBGridINIT_DATE: TdxDBGridDateColumn;
+    dxDBGridPOSTAVSHIK: TdxDBGridMaskColumn;
+    dxDBGridIDN: TdxDBGridMaskColumn;
+    dxDBGridGRUZOPOLUCHATEL: TdxDBGridMaskColumn;
+    dxDBGridTRANSP_NAKLAD: TdxDBGridMaskColumn;
+    dxDBGridZAKAZ: TdxDBGridMaskColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    {procedure InsData; override;
+    procedure InsLikeData; override;}
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  WayBillListForm: TWayBillListForm;
+
+implementation
+
+uses frmWayBill;
+
+{$R *.dfm}
+
+procedure TWayBillListForm.ReadList;
+begin
+  inherited;
+  aIns.Visible := False;
+  aInsLike.Visible := False;
+end;
+
+procedure TWayBillListForm.ViewData;
+begin
+  ClassForm := TWayBillForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+{procedure TWayBillListForm.InsData;
+begin
+  ClassForm := TWayBillPayForm.Create(Self);
+  try
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TWayBillListForm.InsLikeData;
+begin
+  ClassForm := TWayBillPayForm.Create(Self);
+  try
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;}
+
+procedure TWayBillListForm.UpdData;
+begin
+  ClassForm := TWayBillForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TWayBillListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить накладную за "%s" ?',
+    [spRead.FieldByName('init_date').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+end;
+
+procedure TWayBillListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'WayBill';
+  KeyFieldClass := 'WayBill_';
+end;
+
+procedure TWayBillListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 39;
+  inherited;
+end;
+
+end.

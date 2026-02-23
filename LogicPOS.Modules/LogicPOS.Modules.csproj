@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicPOS.Data\LogicPOS.Data.csproj" />
+    <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj" />
+  </ItemGroup>
+
+</Project>

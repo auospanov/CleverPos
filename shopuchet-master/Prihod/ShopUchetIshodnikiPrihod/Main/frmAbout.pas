@@ -1,0 +1,78 @@
+unit frmAbout;
+
+interface
+
+{$I ShopUchet.inc}
+
+uses Windows, Classes, Graphics, Forms, Controls, StdCtrls,
+  Buttons, ExtCtrls, SysUtils, Shellapi, unCommonFunc, Dialogs, cxGraphics,
+  cxLookAndFeels, cxLookAndFeelPainters, Vcl.Menus, cxButtons;
+
+type
+  TAboutForm = class(TForm)
+    Panel1: TPanel;
+    ProgramIcon: TImage;
+    ProductName: TLabel;
+    Version: TLabel;
+    Copyright: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    btnOk: TcxButton;
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Label2MouseLeave(Sender: TObject);
+    procedure Label2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Label2Click(Sender: TObject);
+  private
+  public
+  end;
+
+var
+  AboutForm: TAboutForm;
+
+implementation
+
+uses unFileInfo;
+
+{$R *.DFM}
+
+procedure TAboutForm.FormShow(Sender: TObject);
+var
+  LocalInfo : unFileInfo.TFixedFileInfo;
+begin
+  LocalInfo  := unFileInfo.FileInfo(Application.ExeName);
+
+  Version.Caption := Format('Version %d.%d.%d.%d',
+    [LocalInfo.wFileVersionLS, LocalInfo.wFileVersionMS,
+     LocalInfo.wProductVersionLS, LocalInfo.wProductVersionMS]);
+
+  Copyright.Width := ScaleDimension(300);
+  Copyright.height := ScaleDimension(65);
+  Copyright.Left := ScaleDimension(40);
+end;
+
+procedure TAboutForm.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #27 then {Esc}
+    Close;
+end;
+
+procedure TAboutForm.Label2MouseLeave(Sender: TObject);
+begin
+  Screen.Cursor := crDefault;
+end;
+
+procedure TAboutForm.Label2MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  Screen.Cursor := crHandPoint;
+end;
+
+procedure TAboutForm.Label2Click(Sender: TObject);
+begin
+  ShellExecute(handle,'open','http://shopuchet.kz/', nil, nil, SW_SHOW);
+end;
+
+end.
+

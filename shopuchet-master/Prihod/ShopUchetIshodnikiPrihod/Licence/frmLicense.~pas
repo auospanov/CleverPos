@@ -1,0 +1,244 @@
+unit frmLicense;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons, unCommonFunc,
+  dxEditor, dxEdLib, AppEvnts, UnSupport, IdBaseComponent, IdCoder,
+  IdCoder3to4, IdCoderMIME, cxPC, cxControls, Registry,
+  cxLookAndFeelPainters, cxButtons, TurboActivateUnit;
+
+type
+  TLicenseForm = class(TDBEditForm)
+    odlg: TOpenDialog;
+    SaveDialog: TSaveDialog;
+    lbLicenseStatus: TLabel;
+    btnExtendTrial: TcxButton;
+    btnActivate: TcxButton;
+    procedure btHelpClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnExtendTrialClick(Sender: TObject);
+    procedure btnActivateClick(Sender: TObject);
+  public
+  protected
+    Exp_date : WideString;
+  end;
+
+var
+  LicenseForm: TLicenseForm;
+
+implementation
+
+uses
+  unInitApp, TrialExtension;
+
+{$R *.dfm}
+
+procedure TLicenseForm.btHelpClick(Sender: TObject);
+begin
+  Helpc := 64;
+  inherited;
+end;
+
+procedure TLicenseForm.FormShow(Sender: TObject);
+begin
+  IF NOT GotLicenceInfo THEN BEGIN
+    lbLicenseStatus.Caption := 'Информация о лицензии еще не получена. Откройте окно попозже.';
+    btnActivate.Enabled := False;
+    btnExtendTrial.Enabled := False;
+    btnActivate.Caption := 'Активировать';
+    btnActivate.Hint := 'Выполнить активацию программы';
+  END ELSE BEGIN
+    Exp_date := ta.GetFeatureValue('licence_expired', '');
+
+    if (IsActivated = 1) and (trialDaysRemaining > 0) then begin
+      lbLicenseStatus.Caption := 'Ваша демо-версия закончится через ' + IntToStr(trialDaysRemaining) + ' дней.';
+      btnActivate.Caption := 'Активировать';
+      btnActivate.Hint := 'Выполнить активацию программы';
+    end else if (IsActivated = 1) and (trialDaysRemaining = 0) then begin
+      lbLicenseStatus.Caption := 'Программма успешно активирована. Срок лицензии до ' + Exp_date;
+      btnActivate.Caption := 'Деактивировать';
+      btnActivate.Hint := 'Выполнить деактивацию программы, чтобы перенести лицензию на другой компьютер.';
+      btnExtendTrial.Visible := False;
+      btnExtendTrial.Enabled := False;
+    end else if (IsActivated = 0) and (isGenuine) and  (trialDaysRemaining = 0) then begin
+      lbLicenseStatus.Caption := 'Срок лицензионного ключа (' + Exp_date + ') истек. Обновите ключ.';
+      btnActivate.Caption := 'Обновить';
+      btnActivate.Hint := 'Обновить лицензионный ключ';
+      btnExtendTrial.Visible := True;
+      btnExtendTrial.Enabled := True;
+    end else begin
+      lbLicenseStatus.Caption := 'Требуется активация программы.';
+      btnActivate.Caption := 'Активировать';
+      btnActivate.Hint := 'Выполнить активацию программы';
+    end;
+  END;
+
+  lbLicenseStatus.Width := ScaleDimension(670);  
+end;
+
+procedure TLicenseForm.btnExtendTrialClick(Sender: TObject);
+var
+  trialExt : TfrmTrialExtension;
+  trialDaysRemaining : LongWord;
+begin
+  trialExt := TfrmTrialExtension.Create(nil, ta, trialFlags);
+  trialDaysRemaining := 0;
+
+  if trialExt.ShowModal = mrOk then begin
+    Try
+      // get the number of remaining trial days
+      trialDaysRemaining := ta.TrialDaysRemaining(trialFlags);
+    except
+     on E : ETurboActivateException do begin
+       ShowMessage('Не удалось получить количество оставшихся дней демо-версии: ' + E.Message);
+     end;
+    end;
+
+    // if more trial days then re-enable all app features
+    if trialDaysRemaining > 0 then begin
+       IsActivated := 1;
+       lbLicenseStatus.Caption := 'Ваша демо-версия закончится через ' + IntToStr(trialDaysRemaining) + ' дней.';
+    end;
+  end;
+
+  trialExt.Release;
+end;
+
+procedure TLicenseForm.btnActivateClick(Sender: TObject);
+var
+  StartInfo : TStartupInfo;
+  ProcInfo : TProcessInformation;
+  CreateOK : Boolean;
+  TurboActivateExe: string;
+  S : AnsiString;
+begin
+  inherited;
+
+  TRY
+    Screen.Cursor := crHourGlass;
+
+    if (isGenuine) and (IsActivated = 0) and (trialDaysRemaining = 0) then begin
+      Try
+        case ta.IsGenuine() of
+          Genuine, GenuineFeaturesChanged:
+          begin
+              Exp_date := ta.GetFeatureValue('licence_expired', '');
+              if (Exp_date = '') or (not ta.IsDateValid(Exp_date, TA_HAS_NOT_EXPIRED)) then begin
+                IsActivated := 0;
+                lbLicenseStatus.Caption := 'Новый срок лицензионного ключа (' + Exp_date + ') истек. Обновите снова.';
+                btnActivate.Caption := 'Обновить';
+                btnActivate.Hint := 'Обновить лицензионный ключ';
+              end else begin
+                IsActivated := 1;
+                lbLicenseStatus.Caption := 'Программма успешно активирована. Срок лицензии до ' + Exp_date;
+                btnActivate.Caption := 'Деактивировать';
+                btnActivate.Hint := 'Выполнить деактивацию программы, чтобы перенести лицензию на другой компьютер.';
+              end;
+              exit;
+          end;
+
+          NotGenuine, NotGenuineInVM:
+          begin
+              IsActivated := 0;
+              lbLicenseStatus.Caption := 'Требуется активация программы.';
+              btnActivate.Caption := 'Активировать';
+              btnActivate.Hint := 'Выполнить активацию программы';
+          end;
+
+          InternetError:
+          begin
+              ShowMessage('Не удалось установить соединение с сервером активации.');
+              exit;
+          end;
+        end;
+      except
+        on E : Exception do begin
+          ShowMessage('Не удалось обновить лицензию. Ошибка: ' + E.Message);
+        end;
+      end;
+    end else if (isGenuine) and (IsActivated = 1) then begin
+      // deactivate product without deleting the product key
+      // allows the user to easily reactivate
+      ta.Deactivate(false);
+      isGenuine := false;
+      IsActivated := 0;
+      btnActivate.Caption := 'Активировать';
+      btnActivate.Hint := 'Выполнить активацию программы';
+
+      // сначала попытаюсь зарегистрировать программу, если не получится, то запускаю UNVERIFIED_VERS
+      trialFlags := TA_SYSTEM or TA_VERIFIED_TRIAL;
+      trialDaysRemaining := 0;
+      Try
+        ta.UseTrial(trialFlags);
+        trialDaysRemaining := ta.TrialDaysRemaining(trialFlags);
+      except
+        on E : ETurboActivateException do begin
+          try
+            trialFlags := TA_SYSTEM or TA_UNVERIFIED_TRIAL;
+            ta.UseTrial(trialFlags);
+            trialDaysRemaining := ta.TrialDaysRemaining(trialFlags);
+          except
+            on E : ETurboActivateException do begin
+              MessageBox(GetDesktopWindow, PChar('Невозможно запустить тестовый период. Свяжитесь, пожалуйста, с разработчиком (info@shopuchet.kz): ' + E.Message), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+              IsActivated := 0;
+            end;
+          end;
+        end;
+      end;
+
+      // if no more trial days then disable all app features
+      if trialDaysRemaining = 0 then
+         IsActivated := 0
+      else
+         lbLicenseStatus.Caption := 'Ваша демо-версия закончится через ' + IntToStr(trialDaysRemaining) + ' дней.';
+    end
+    else // this app isn't activated - launch TurboActivate and wait for it to exit
+    begin
+      //Note: you can launch the TurboActivate wizard or you can create you own interface
+
+      ZeroMemory(@StartInfo, sizeOf(TStartUpInfo));
+      ZeroMemory(@ProcInfo, sizeOf(TProcessInformation));
+
+      StartInfo.cb := SizeOf(TStartupInfo);
+
+      S := '"' + ExtractFilePath(Application.exename) + 'Russian.xml"';
+      ShowMessage(S);
+      TurboActivateExe := 'TurboActivate.exe ' + S;
+
+      // make the reference count of the string at least 1 necessary for Delphi 2009 +
+      UniqueString(TurboActivateExe);
+
+      // launch TurboActivate
+      CreateOK := CreateProcess(nil, PChar(TurboActivateExe), nil, nil,False,
+                  NORMAL_PRIORITY_CLASS,
+                  nil, nil, StartInfo, ProcInfo);
+
+      if CreateOK then
+        begin
+          // if you don't want your main window to lockup, then wait on a separate thread
+          WaitForSingleObject(ProcInfo.hProcess, INFINITE);
+          if ta.IsActivated() then
+          begin
+              lbLicenseStatus.Caption := 'Программма успешно активирована.';
+              btnActivate.Caption := 'Деактивировать';
+              btnActivate.Hint := 'Выполнить деактивацию программы, чтобы перенести лицензию на другой компьютер.';
+              isGenuine := true;
+              IsActivated := 1;
+              btnExtendTrial.Visible := False;
+              btnExtendTrial.Enabled := False;
+          end;
+        end
+      else ShowMessage('Невозможно запустить приложение TurboActivate.exe');
+
+      CloseHandle(ProcInfo.hProcess);
+      CloseHandle(ProcInfo.hThread);
+    end;
+  FINALLY
+    Screen.Cursor := crDefault;
+  END;
+end;
+
+end.

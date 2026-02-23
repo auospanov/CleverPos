@@ -1,0 +1,129 @@
+unit frmRashodPrihodList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet, pFIBDataSet,
+  FIBDatabase, pFIBDatabase;
+
+type
+  TRashodPrihodListForm = class(TDBListForm)
+    dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn;
+    dxDBGridACTION: TdxDBGridMaskColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxBarCombo: TdxBarCombo;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure dxBarComboChange(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  RashodPrihodListForm: TRashodPrihodListForm;
+
+implementation
+
+uses frmRashodPrihod;
+
+{$R *.dfm}
+
+procedure TRashodPrihodListForm.ReadList;
+begin
+  spRead.ParamByName('action_').AsInteger := dxBarCombo.ItemIndex;
+
+  inherited;
+end;
+
+procedure TRashodPrihodListForm.ViewData;
+begin
+  ClassForm := TRashodPrihodForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TRashodPrihodListForm.InsData;
+begin
+  ClassForm := TRashodPrihodForm.Create(Self);
+  try
+    // если значение не ВСЕ, то ставлю значение выбранной статьи, если "Все", то по умолчанию "Расход"
+    if dxBarCombo.ItemIndex <> 2 then
+      (ClassForm as TRashodPrihodForm).PrihodRashod := dxBarCombo.ItemIndex
+    else
+      (ClassForm as TRashodPrihodForm).PrihodRashod := 1;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TRashodPrihodListForm.InsLikeData;
+begin
+  ClassForm := TRashodPrihodForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TRashodPrihodListForm.UpdData;
+begin
+  ClassForm := TRashodPrihodForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TRashodPrihodListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить статью "%s" ?',
+    [spRead.FieldByName('Name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+
+  {spDel.SetVariable('G_PRIHOD_RASHOD_', spRead.FieldByName('G_PRIHOD_RASHOD').AsInteger);
+  if ExecSP(spDel) then
+    Readlist;}
+end;
+
+procedure TRashodPrihodListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'G_PRIHOD_RASHOD';
+  KeyFieldClass := 'G_PRIHOD_RASHOD_';
+end;
+
+procedure TRashodPrihodListForm.dxBarComboChange(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+end;
+
+procedure TRashodPrihodListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 8;
+  inherited;
+end;
+
+end.

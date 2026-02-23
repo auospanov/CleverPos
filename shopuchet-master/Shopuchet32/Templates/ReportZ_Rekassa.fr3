@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="44533,6681792593" ReportOptions.Description.Text="" ReportOptions.LastChange="44553,9028404398" ScriptLanguage="PascalScript" ScriptText.Text="&#13;&#10;begin&#13;&#10;&#13;&#10;end.">
+  <Datasets>
+    <item DataSet="frxDBDataset2" DataSetName="frxDBReportX"/>
+  </Datasets>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="58" PaperHeight="279,4" PaperSize="256" LeftMargin="10" RightMargin="10" TopMargin="10" BottomMargin="10" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxReportTitle Name="ReportTitle1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="158,74026" Left="0" Top="18,89765" Width="143,62214" Stretched="True">
+      <TfrxMemoView Name="Memo1" Align="baWidth" Left="0" Top="49,13389" Width="143,62214" Height="34,01577" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" HAlign="haCenter" ParentFont="False" Text="Z-отчет&#13;&#10;Смена №[Shift]&#13;&#10;[DateShift] [TimeShift] - [Date] [Time]">
+        <Formats>
+          <item/>
+          <item FormatStr="dd.mm.yyyy" Kind="fkDateTime"/>
+          <item FormatStr="hh:mm" Kind="fkDateTime"/>
+          <item FormatStr="dd.mm.yyyy" Kind="fkDateTime"/>
+          <item FormatStr="hh:mm" Kind="fkDateTime"/>
+        </Formats>
+      </TfrxMemoView>
+      <TfrxMemoView Name="Memo2" Align="baWidth" Left="0" Top="84,14966" Width="143,62214" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="ОТЧЕТ С ГАШЕНИЕМ"/>
+      <TfrxMemoView Name="Memo4" Align="baWidth" Left="0" Top="98,26778" Width="143,62214" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-7" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="НЕОБНУЛ.СУММЫ НА НАЧАЛО СМЕНЫ"/>
+      <TfrxMemoView Name="Memo3" Align="baLeft" Left="0" Top="110,60637" Width="79,37013" Height="41,57483" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" ParentFont="False" Text="Продажа&#13;&#10;Возврат&#13;&#10;Покупка&#13;&#10;Возврат покупки"/>
+      <TfrxMemoView Name="Memo5" Align="baRight" Left="79,37013" Top="110,60637" Width="64,25201" Height="41,57483" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" HAlign="haRight" ParentFont="False" Text="[A_SELL]&#13;&#10;[A_SELL_RETURN]&#13;&#10;[A_BUY]&#13;&#10;[A_BUY_RETURN]">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+      <TfrxMemoView Name="Memo6" Align="baWidth" Left="0" Top="15,11812" Width="143,62214" Height="34,01577" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="ИИН/БИН [BIN]&#13;&#10;ЗНМ [NUM]&#13;&#10;Код ККМ КГД (РНМ) [RHM]">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+      <TfrxMemoView Name="Memo15" Align="baWidth" Left="0" Top="0" Width="143,62214" Height="11,33859" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" HAlign="haCenter" ParentFont="False" Text="[NAMEORG]"/>
+    </TfrxReportTitle>
+    <TfrxMasterData Name="MasterData2" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="15,11812" Left="0" Top="238,11039" Width="143,62214" ColumnWidth="0" ColumnGap="0" DataSet="frxDBDataset2" DataSetName="frxDBReportX" RowCount="0" Stretched="True">
+      <TfrxMemoView Name="Memo7" Align="baLeft" Left="0" Top="0" Width="83,14966" Height="11,33859" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="[frxDBReportX.&#34;Names&#34;]"/>
+      <TfrxMemoView Name="Memo8" Align="baRight" Left="83,14966" Top="0" Width="60,47248" Height="11,33859" StretchMode="smMaxHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" HAlign="haRight" ParentFont="False" VAlign="vaBottom" Text="[frxDBReportX.&#34;Values&#34;]"/>
+    </TfrxMasterData>
+    <TfrxReportSummary Name="ReportSummary1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="83,14966" Left="0" Top="313,70099" Width="143,62214">
+      <TfrxMemoView Name="Memo9" Align="baWidth" Left="0" Top="0" Width="143,62214" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-7" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="4" ParentFont="False" Text="НЕОБНУЛ. СУММЫ НА КОНЕЦ СМЕНЫ"/>
+      <TfrxMemoView Name="Memo10" Align="baLeft" Left="0" Top="12,33859" Width="75,5906" Height="41,57483" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" ParentFont="False" Text="Продажа&#13;&#10;Возврат&#13;&#10;Покупка&#13;&#10;Возврат покупки"/>
+      <TfrxMemoView Name="Memo11" Align="baRight" Left="75,5906" Top="12,33859" Width="68,03154" Height="41,57483" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" Frame.Style="fsDash" Frame.Typ="8" HAlign="haRight" ParentFont="False" Text="[N_SELL]&#13;&#10;[N_SELL_RETURN]&#13;&#10;[N_BUY]&#13;&#10;[N_BUY_RETURN]"/>
+      <TfrxMemoView Name="Memo12" Align="baWidth" Left="0" Top="56,69295" Width="143,62214" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="НАЛИЧНЫХ В КАССЕ"/>
+      <TfrxMemoView Name="Memo13" Align="baLeft" Left="0" Top="69,03154" Width="41,57483" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="Сумма"/>
+      <TfrxMemoView Name="Memo14" Align="baRight" Left="41,57483" Top="69,03154" Width="102,04731" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Times New Roman" Font.Style="0" HAlign="haRight" ParentFont="False" Text="[SUM_KASSA]"/>
+    </TfrxReportSummary>
+  </TfrxReportPage>
+</TfrxReport>

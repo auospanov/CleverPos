@@ -1,0 +1,307 @@
+unit frmUpdProdazhaTovara;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, dxEditor, dxExEdtr, dxDBEdtr,
+  dxDBELib, dxCntner, dxEdLib, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, dxDBGrid, dxTL, dxDBCtrl,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase, unCommonFunc, Math,
+  AppEvnts, frmMyCurrencyFrame;
+
+type
+  TUpdProdazhaTovaraForm = class(TDBEditForm)
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    Label1: TLabel;
+    Shape1: TShape;
+    lbPrice: TLabel;
+    shPrice: TShape;
+    Label4: TLabel;
+    
+    Shape7: TShape;
+    GroupBox1: TGroupBox;
+    Shape10: TShape;
+    Shape9: TShape;
+    Label5: TLabel;
+    Shape15: TShape;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape8: TShape;
+    shPrice1: TShape;
+    Shape3: TShape;
+    Label2: TLabel;
+    Shape2: TShape;
+    edTovar: TdxEdit;
+    Shape4: TShape;
+    lbSkidka: TLabel;
+    shSkidka: TShape;
+    shSkidka1: TShape;
+    lbSummSkidka: TLabel;
+    shSummSkidka: TShape;
+    shSummSkidka1: TShape;
+    rbOpt: TRadioButton;
+    rbRoznica: TRadioButton;
+    edPrice: TdxCurrencyEdit;
+    edNDSSumm: TdxCurrencyEdit;
+    pnSkidka: TPanel;
+    rbSkidkaInProcent: TRadioButton;
+    rbSkidkaInTenge: TRadioButton;
+    seSkidka: TdxCurrencyEdit;
+    spIsHaveDiscount: TpFIBStoredProc;
+    edSumm: TdxCurrencyEdit;
+    seSkidkaSumm: TdxCurrencyEdit;
+    MyCurrencyFrameForm: TMyCurrencyFrameForm;
+    edNDS: TdxCurrencyEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure edNDSChange(Sender: TObject);
+    procedure edPriceChange(Sender: TObject);
+    procedure rbRoznicaClick(Sender: TObject);
+    procedure rbOptClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure rbSkidkaInTengeClick(Sender: TObject);
+    procedure rbSkidkaInProcentClick(Sender: TObject);
+    procedure seSkidkaChange(Sender: TObject);
+    procedure MyCurrencyFrameForm1edAmountChange(Sender: TObject);
+  private
+    FG_product: Integer;
+    FPName: String;
+    FPrice : Real;
+    FVolumePrice : Real;
+    FOSTATOK : INTEGER;
+    FIs_spisanie : Integer; // 0 - обычный заказ, 1 - списание товара
+  public
+    property G_product: Integer read FG_product write FG_product;
+    property PName: String read FPName write FPName;
+    property Is_spisanie: Integer read FIs_spisanie write FIs_spisanie default 0;
+    property Price: Real read FPrice write FPrice;
+    property VolumePrice: Real read FVolumePrice write FVolumePrice;
+    property OSTATOK: Integer read FOSTATOK write FOSTATOK;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+    procedure ItogRecalc;
+  end;
+
+var
+  UpdProdazhaTovaraForm: TUpdProdazhaTovaraForm;
+
+implementation
+
+{$R *.dfm}
+
+function TUpdProdazhaTovaraForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if MyCurrencyFrameForm.Value = 0 then begin
+    MyCurrencyFrameForm.edAmount.SetFocus;
+    MessageDlg('Количество не указано', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  {ХЗ зачем изначально ограничение поставил
+  if FIs_spisanie = 0 then
+    if edPrice.Value = 0 then begin
+      ErrControl := edPrice;
+      MessageDlg('Цена не указана', mtInformation, [mbOK], 0);
+      Exit;
+    end;}
+
+  Result := True;
+end;
+
+procedure TUpdProdazhaTovaraForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'ZAKAZ_DETAILS_';
+end;
+
+procedure TUpdProdazhaTovaraForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    if OpenMode = omInsert then
+      ParamByName('G_PRODUCT_').AsInteger := FG_product;
+
+    ParamByName('PRICE_').AsFloat := edPrice.Value;
+    ParamByName('AMOUNT_').AsFloat := MyCurrencyFrameForm.Value;
+    ParamByName('SUMM_').AsFloat := edSumm.Value;
+    ParamByName('NDS_').AsFloat := edNDS.Value;
+    ParamByName('NDS_SUMM_').AsFloat := edNDSSumm.Value;
+    if (seSkidka.Value <> 0) and (edPrice.Value > 0) then begin
+      if rbSkidkaInProcent.Checked then begin
+        ParamByName('DISCOUNT_PERC_').AsFloat := seSkidka.Value;
+        ParamByName('DISCOUNT_TENGE_').AsFloat := edPrice.Value * seSkidka.Value/100;
+      end else begin
+        ParamByName('DISCOUNT_PERC_').AsFloat := RoundTo((seSkidka.Value * 100 / edPrice.Value), -2);
+        ParamByName('DISCOUNT_TENGE_').AsFloat :=seSkidka.Value;
+      end;
+    end else begin
+      ParamByName('DISCOUNT_PERC_').AsFloat := 0;
+      ParamByName('DISCOUNT_TENGE_').AsFloat := 0;
+    end;
+    ParamByName('DISCOUNT_SUMM_').AsFloat := seSkidkaSumm.Value;
+    ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+  end;
+end;
+
+procedure TUpdProdazhaTovaraForm.GetData;
+begin
+  inherited;
+
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      edTovar.Text := ParamByName('TOVAR_NAME_').AsString;
+      edPrice.Value := ParamByName('PRICE_').AsFloat;
+      MyCurrencyFrameForm.edAmount.Text := ParamByName('AMOUNT_').AsString;
+      if ParamByName('DISCOUNT_PERC_').AsFloat > 0 then begin
+        rbSkidkaInProcent.Checked := True;
+        seSkidka.Value := ParamByName('DISCOUNT_PERC_').AsFloat;
+      end else if ParamByName('DISCOUNT_TENGE_').AsFloat > 0 then begin
+        rbSkidkaInTenge.Checked := True;
+        seSkidka.Value := ParamByName('DISCOUNT_TENGE_').AsFloat;
+      end;
+      edSumm.Value := ParamByName('SUMM_').AsFloat;
+      seSkidkaSumm.Value := ParamByName('DISCOUNT_SUMM_').AsFloat;
+      edNDS.Value := ParamByName('NDS_').AsFloat;
+      edNDSSumm.Value := ParamByName('NDS_SUMM_').AsFloat;
+      FPrice := ParamByName('PRICE_').AsFloat;
+      FVolumePrice := ParamByName('VOLUME_PRICE_').AsFloat;
+      FOSTATOK     := ParamByName('OSTATOK_').AsInteger;
+    end;
+  end;
+
+  if OpenMode in [omInsert] then begin
+    IF (NUM = 0) THEN BEGIN
+      if not spGetData.Transaction.InTransaction then
+        spGetData.Transaction.StartTransaction;
+
+      ExecSP(spGetData);
+
+      if spGetData.Transaction.InTransaction then
+        spGetData.Transaction.CommitRetaining;
+      IF spGetData.ParamByName('CNT_Z_').AsInteger >= 100 THEN BEGIN
+        MessageDlg('Программа не зарегистрирована.' + #10#13 + 'Включены ограничения на количество продаж!', mtWarning, [mbOk], 0);
+        aIns.Enabled := False;
+        aUpd.Enabled := False;
+        btnOk.Enabled := FALSE;
+        EXIT;
+      END;
+    END;
+
+    if not spIsHaveDiscount.Transaction.InTransaction then
+        spIsHaveDiscount.Transaction.StartTransaction;
+
+    spIsHaveDiscount.ParamByName('g_product_').AsInteger := FG_product;
+    ExecSP(spIsHaveDiscount);
+    with spIsHaveDiscount do begin
+      IF ParamByName('IS_HAVE_SKIDKA_').AsString = 'ЕСТЬ' THEN BEGIN
+        if ParamByName('SKIDKA_PROC_').AsFloat > 0 then begin
+          rbSkidkaInProcent.Checked := True;
+          seSkidka.Value := ParamByName('SKIDKA_PROC_').AsFloat
+        end else begin
+          rbSkidkaInTenge.Checked := True;
+          seSkidka.Value := ParamByName('SKIDKA_SUM_').AsFloat;
+        end;
+      END;
+    end;
+
+    edPrice.Value := FPrice;
+  end;
+end;
+
+procedure TUpdProdazhaTovaraForm.edNDSChange(Sender: TObject);
+begin
+  edNDSSumm.Value := edSumm.Value * edNDS.Value / (100 + edNDS.Value);  //так считается по бухгалтерской формуле
+end;
+
+procedure TUpdProdazhaTovaraForm.edPriceChange(Sender: TObject);
+begin
+  ItogRecalc;
+end;
+
+procedure TUpdProdazhaTovaraForm.rbRoznicaClick(Sender: TObject);
+begin
+  edPrice.Value := FPrice;
+end;
+
+procedure TUpdProdazhaTovaraForm.rbOptClick(Sender: TObject);
+begin
+  edPrice.Value := FVolumePrice;
+end;
+
+procedure TUpdProdazhaTovaraForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if FIs_spisanie <> 0 then begin
+    lbSkidka.Visible := False;
+    shSkidka.Visible := False;
+    shSkidka1.Visible := False;
+    seSkidka.Visible := False;
+    pnSkidka.Visible := False;
+    lbSummSkidka.Visible := False;
+    shSummSkidka.Visible := False;
+    shSummSkidka1.Visible := False;
+    seSkidkaSumm.Visible := False;
+    GroupBox1.Visible := False;
+    rbRoznica.Visible := False;
+    rbOpt.Visible     := False;
+    //edPrice.Enabled   := False;
+    seSkidka.Enabled  := False;
+    edNDS.Enabled     := False;
+    edPrice.Width := 373;
+    Height := ScaleDimension(220);
+  end;
+end;
+
+procedure TUpdProdazhaTovaraForm.ItogRecalc;
+begin
+  if (edPrice.Value > 0) then begin
+    if rbSkidkaInProcent.Checked then begin
+      edSumm.Value := MyCurrencyFrameForm.Value * (edPrice.Value * (1 - seSkidka.Value/100));
+      seSkidkaSumm.Value := (MyCurrencyFrameForm.Value * edPrice.Value) - (MyCurrencyFrameForm.Value * edPrice.Value * (1 - seSkidka.Value/100));
+    end else begin
+      edSumm.Value := MyCurrencyFrameForm.Value * (edPrice.Value - seSkidka.Value);
+      seSkidkaSumm.Value := (MyCurrencyFrameForm.Value * edPrice.Value) - (MyCurrencyFrameForm.Value * (edPrice.Value - seSkidka.Value));
+    end;
+  end else begin
+    edSumm.Value := 0;
+    seSkidkaSumm.Value := 0;
+  end;
+  edNDSChange(Self);
+end;
+
+procedure TUpdProdazhaTovaraForm.rbSkidkaInTengeClick(Sender: TObject);
+begin
+  inherited;
+  seSkidka.DisplayFormat := ',0.00;-,0.00';
+  ItogRecalc;
+end;
+
+procedure TUpdProdazhaTovaraForm.rbSkidkaInProcentClick(Sender: TObject);
+begin
+  inherited;
+  seSkidka.DisplayFormat := '0.00%';
+  ItogRecalc;
+end;
+
+procedure TUpdProdazhaTovaraForm.seSkidkaChange(Sender: TObject);
+begin
+  ItogRecalc;
+end;
+
+procedure TUpdProdazhaTovaraForm.MyCurrencyFrameForm1edAmountChange(
+  Sender: TObject);
+begin
+  inherited;
+  MyCurrencyFrameForm.edAmountChange(Sender);
+  ItogRecalc;
+  edPrice.Modified := True;  
+end;
+
+end.

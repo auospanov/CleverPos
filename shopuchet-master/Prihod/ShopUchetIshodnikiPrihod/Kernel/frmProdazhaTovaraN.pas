@@ -1,0 +1,1168 @@
+unit frmProdazhaTovaraN;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel,
+  dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
+  dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky, dxSkinLondonLiquidSky,
+  dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black, dxSkinOffice2007Blue,
+  dxSkinOffice2007Green, dxSkinOffice2007Pink, dxSkinOffice2007Silver,
+  dxSkinOffice2010Black, dxSkinOffice2010Blue, dxSkinOffice2010Silver,
+  dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver, dxSkinSpringTime,
+  dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinXmas2008Blue, dxSkinscxPCPainter, cxGraphics, cxControls,
+  cxLookAndFeels, cxLookAndFeelPainters, cxContainer, cxEdit, cxStyles,
+  cxCustomData, cxFilter, cxData, cxDataStorage, DB, cxDBData, cxMemo,
+  cxDropDownEdit, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox, cxTextEdit,
+  cxCurrencyEdit, cxGridLevel, cxGridCustomTableView, cxGridTableView,
+  cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, cxSpinEdit,
+  cxTimeEdit, cxMaskEdit, cxCalendar, cxCheckBox, Buttons, StdCtrls, ExtCtrls,
+  cxPC, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase,
+  ActnList, AppEvnts, FIBDataSet, pFIBDataSet, FIB, unCommonFunc, IniFiles, Math,
+  Menus, cxButtons, System.UITypes, dxBarBuiltInMenu, cxNavigator, Vcl.ComCtrls,
+  dxCore, cxDateUtils, System.Actions, cxGridExportLink;
+
+type
+
+  TRecOplata = record
+    Id: Integer;
+    Date: TDate;
+    Summ  : Double;
+    Payment: Integer;
+  end;
+
+  TArrOplata = Array of TRecOplata;
+
+  TProdazhaTovaraNForm = class(TDBEditForm)
+    Panel2: TPanel;
+    pcMain: TcxPageControl;
+    tsCommon: TcxTabSheet;
+    Panel4: TPanel;
+    BitBtn10: TBitBtn;
+    BitBtn12: TBitBtn;
+    BitBtn9: TBitBtn;
+    pnRowCnt: TPanel;
+    Panel5: TPanel;
+    pnlOplata: TPanel;
+    Shape5: TShape;
+    Shape3: TShape;
+    Label3: TLabel;
+    Label5: TLabel;
+    Shape6: TShape;
+    Shape4: TShape;
+    sbEqualSumm: TSpeedButton;
+    cbByRecipe: TcxCheckBox;
+    btnOplata: TBitBtn;
+    pnlBonus: TPanel;
+    Label11: TLabel;
+    Label12: TLabel;
+    lb1: TLabel;
+    cbPayBonus: TcxCheckBox;
+    Panel3: TPanel;
+    Shape7: TShape;
+    Label4: TLabel;
+    Shape8: TShape;
+    tsPrihod: TcxTabSheet;
+    lbStatya: TLabel;
+    sbClear: TSpeedButton;
+    tsReserv: TcxTabSheet;
+    lbReserv: TLabel;
+    cbReserv: TcxCheckBox;
+    tsRecalc: TcxTabSheet;
+    lbRecalc: TLabel;
+    btnIns: TBitBtn;
+    pn1: TPanel;
+    shTime: TShape;
+    ShapeNote: TShape;
+    ShapePayment: TShape;
+    ShapeClient: TShape;
+    Shape12: TShape;
+    Shape14: TShape;
+    Label7: TLabel;
+    LabelDoc: TLabel;
+    lbClient: TLabel;
+    lbPayment: TLabel;
+    lbNote: TLabel;
+    Shape13: TShape;
+    Shape15: TShape;
+    Shape16: TShape;
+    ShapeClient1: TShape;
+    ShapePayment1: TShape;
+    ShapeNote1: TShape;
+    lbTime: TLabel;
+    edDate: TcxDateEdit;
+    edTime: TcxTimeEdit;
+    btDiscCard: TBitBtn;
+    gr1: TcxGrid;
+    tvMain: TcxGridDBTableView;
+    clmMainPRODUCT_NAME: TcxGridDBColumn;
+    clmMainAMOUNT: TcxGridDBColumn;
+    clmMainPRICE: TcxGridDBColumn;
+    clmMainSUMM: TcxGridDBColumn;
+    lvMain: TcxGridLevel;
+    edSumm: TcxCurrencyEdit;
+    edSummFact: TcxCurrencyEdit;
+    edSummDolg: TcxCurrencyEdit;
+    edOsnovanie: TcxTextEdit;
+    lePostavshik: TcxLookupComboBox;
+    lePAYMENT_TYPE: TcxLookupComboBox;
+    mNote: TcxMemo;
+    edBonus: TcxCurrencyEdit;
+    edBonusAll: TcxCurrencyEdit;
+    edBonusPayed: TcxCurrencyEdit;
+    leStatya: TcxLookupComboBox;
+    edSummPrihod: TcxCurrencyEdit;
+    spZakazTemp: TpFIBDataSet;
+    dsZakazTemp: TDataSource;
+    spDel: TpFIBStoredProc;
+    spReadStatya: TpFIBDataSet;
+    dsReadStatya: TDataSource;
+    spRecalcPrices: TpFIBStoredProc;
+    dsPaymentType: TDataSource;
+    spPaymentType: TpFIBDataSet;
+    spPostavshik: TpFIBDataSet;
+    dsPostavshik: TDataSource;
+    spUpdLock: TpFIBStoredProc;
+    clmMainDISCOUNT_PERC: TcxGridDBColumn;
+    clmMainDISCOUNT_SUMM: TcxGridDBColumn;
+    clmMainNDS: TcxGridDBColumn;
+    clmMainNDS_SUMM: TcxGridDBColumn;
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    aGetDCard: TAction;
+    aOplata: TAction;
+    aRecalcPrices: TAction;
+    aPrintInvoicePay: TAction;
+    btnPrintInvoicePay: TcxButton;
+    pmGrid: TPopupMenu;
+    pmCustomizeColumns: TMenuItem;
+    aCustomizeColumns: TAction;
+    aSaveAllToXLS: TAction;
+    aSaveSelectedToXLS: TAction;
+    dlgSave: TSaveDialog;
+    clmMainBARCODE: TcxGridDBColumn;
+    clmMainARTICUL: TcxGridDBColumn;
+    procedure FormShow(Sender: TObject);
+    procedure aInsExecute(Sender: TObject);
+    procedure aUpdExecute(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure grProductDblClick(Sender: TObject);
+    procedure sbEqualSummClick(Sender: TObject);
+    procedure aGetDCardExecute(Sender: TObject);
+    procedure sbClearClick(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+    procedure ceReservChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure cb1PropertiesChange(Sender: TObject);
+    procedure aRecalcPricesExecute(Sender: TObject);
+    procedure aOplataExecute(Sender: TObject);
+    procedure edDatePropertiesChange(Sender: TObject);
+    procedure cbPayBonusPropertiesChange(Sender: TObject);
+    procedure edSummFactPropertiesChange(Sender: TObject);
+    procedure lePostavshikPropertiesChange(Sender: TObject);
+    procedure lePAYMENT_TYPEPropertiesChange(Sender: TObject);
+    procedure tvMainCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
+    procedure aPrintInvoicePayExecute(Sender: TObject);
+    procedure aCustomizeColumnsExecute(Sender: TObject);
+    procedure aSaveAllToXLSExecute(Sender: TObject);
+    procedure aSaveSelectedToXLSExecute(Sender: TObject);
+  private
+    FArrOplata  : TArrOplata;
+    FSuccess    : Boolean;
+    FClient     : Integer;   // при добавлении товара на реал в TZakazNaRealListForm, если стоят на каком-то клиенте, он подставляется автоматом
+    FIs_spisanie : Integer; // 0 - обычный заказ, 1 - списание товара, 2 - выдача под реализацию
+    FSkidka  : Double;       // скидка клиента при покупке
+    FSummZakaz : Double;       // сумма заказа
+    FBonusPercent : Double;    // процент бонуса от суммы заказа
+    FSummBonus : Double;       // сумма накопленного бонуса за все время
+    FSummBonusPay : Double;       // сумма бонуса, оплачеваемого за данный заказ
+    FSummBonusPayed : Double;     // сумма оплаченная бонусом, в уже сохраненном заказе
+    FSummBonusGot : Double;       // сумма полученных бонусов, в уже сохраненном заказе
+    FInvoicePay : Integer;
+    procedure SetArrOplataSumm;
+    procedure EnableSummFact;
+    procedure SetPaymentType;
+  protected
+    function InsData: Boolean;
+    function UpdData: Boolean;
+    procedure ClearTempTable;
+    procedure DisableControls;
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  public
+    property Success: Boolean read FSuccess write FSuccess default False;
+    property Client: Integer read FClient write FClient default 0;
+    property Is_spisanie: Integer read FIs_spisanie write FIs_spisanie default 0;  // 0 - ОБЫЧНАЯ ПРОДАЖА, 1 - СПИСАНИЕ, 2 - ВЫДАЧА ТОВАРА ПОД РЕАЛИЗАЦИЮ
+    property InvoicePay : Integer read FInvoicePay write FInvoicePay;
+    procedure Readlist;
+  end;
+
+var
+  ProdazhaTovaraNForm: TProdazhaTovaraNForm;
+
+implementation
+
+uses unErrorHandlers, frmZakupkaTovara, frmUpdZakupkaTovara,
+  frmProdazhaTovara, frmUpdProdazhaTovara, frmGetDCard, frmOplata, dmReports, frmInvoicePay;
+
+{$R *.dfm}
+
+procedure TProdazhaTovaraNForm.DisableControls;
+begin
+  aIns.Enabled := False;
+  aUpd.Enabled := False;
+  aDel.Enabled := False;
+  aOplata.Enabled := False;
+  aGetDCard.Enabled := False;
+  edDate.ENABLED := FALSE;
+  edTime.ENABLED := FALSE;
+  edOsnovanie.ENABLED := FALSE;
+  edSummFact.ENABLED := FALSE;
+  mNote.Enabled := FALSE;
+  lePostavshik.ENABLED := FALSE;
+  lePAYMENT_TYPE.ENABLED := FALSE;
+  btnOk.Enabled := FALSE;
+end;
+
+procedure TProdazhaTovaraNForm.GetData;
+var OnChange, OnClick : TNotifyEvent;
+    p, i : integer;
+    str, str1 : string;
+begin
+  //if FOpenMode in [omView, omUpdate, omInsertLike] then    теперь Getdata вызывается всегда
+  begin
+    try
+      spGetData.ParamByName('zakaz_').AsInteger := RecID;
+      spGetData.ParamByName('IS_SPISANIE_').AsInteger := FIs_spisanie;
+      if not spGetData.Transaction.InTransaction then
+        spGetData.Transaction.StartTransaction;
+
+      ExecSP(spGetData);
+
+      if spGetData.Transaction.InTransaction then
+        spGetData.Transaction.CommitRetaining;
+    except
+      on E: EFIBError do begin
+        if spGetData.Transaction.InTransaction then
+          spGetData.Transaction.RollbackRetaining;
+        DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TProdazhaTovaraNForm.GetData)');
+      end;
+      on E: Exception do begin
+        if spGetData.Transaction.InTransaction then
+          spGetData.Transaction.RollbackRetaining;
+        MessageDlg(E.Message + #13#10'(occured in TProdazhaTovaraNForm.GetData)', mtError, [mbOk], 0);
+      end;
+    end;
+  end;
+
+  if OpenMode <> omInsert then BEGIN
+    with spGetData do begin
+      edDate.Date := ParamByName('Z_DATE_').AsDate;
+      edTime.Time := ParamByName('Z_time_').AsTime;
+      lePostavshik.EditValue := ParamByName('G_CLIENT_').AsInteger;
+      //lePostavshikChange(Self);
+      lePAYMENT_TYPE.EditValue := ParamByName('G_PAYMENT_TYPE_').AsInteger;
+      edOsnovanie.Text := ParamByName('OSNOVANIE_').AsString;
+      mNote.Text := ParamByName('note_').AsString;
+      edSumm.Value := ParamByName('summ_').AsFloat;
+      leStatya.EditValue := ParamByName('G_PRIHOD_').AsInteger;
+      edSummPrihod.Value := ParamByName('SUMM_PRIHOD_').AsFloat;
+      OnChange := edSummFact.Properties.OnChange;
+      edSummFact.Properties.OnChange := nil;
+      Readlist;
+      FSummBonusPayed := ParamByName('SUMM_PAY_BONUS_').AsFloat;
+      FSummBonusGot := ParamByName('SUMM_GOT_BONUS_').AsFloat;
+
+      if FSummBonusPayed > 0 then begin
+        OnClick := cbPayBonus.OnClick;
+        cbPayBonus.OnClick := nil;
+        cbPayBonus.Checked := True;
+        cbPayBonus.OnClick := OnClick;
+        FSummBonusPay := FSummBonusPayed;
+        edBonusPayed.Value := FSummBonusPay;
+      end;
+      edSummFact.Value := ParamByName('summ_fact_').AsFloat;
+      edSummDolg.Value := (edSummFact.Value + FSummBonusPayed) - edSumm.Value;
+      edSummFact.Properties.OnChange := OnChange;
+
+      cbByRecipe.checked := ParamByName('by_recipe_').AsInteger = 1;
+      cbReserv.checked   := ParamByName('IS_RESERVE_').AsInteger = 1;
+
+      // ЗАПОЛНЯЮ МАССИВ ПЛАТЕЖЕЙ
+      i := 0;
+      Str := ParamByName('PAYMENTS_').AsString;
+      while Length(Str) > 1 do begin
+        SetLength(FArrOplata, High(FArrOplata) + 2);
+        p := pos('-', Str);
+        str1 := Copy(Str, 1, p-1);
+        if str1 <> '' then
+          FArrOplata[i].Id := StrToInt(str1);
+
+        // дата
+        Delete(str, 1, p);
+        p := pos('-', Str);
+        str1 := Copy(Str, 1, p-1);
+        if str1 <> '' then
+          FArrOplata[i].Date := StrToDate(str1);
+
+        // сумма
+        Delete(str, 1, p);
+        p := pos('-', Str);
+        str1 := Copy(Str, 1, p-1);
+        if str1 <> '' then
+          FArrOplata[i].Summ := StrToFloat(str1);
+
+        // способ расчета
+        Delete(str, 1, p);
+        p := pos('~', Str);
+        str1 := Copy(Str, 1, p-1);
+        if str1 <> '' then
+          FArrOplata[i].Payment := StrToInt(str1);
+
+        Delete(str, 1, p);
+        i := i + 1;
+      end;
+    end;
+  END;
+
+  if High(FArrOplata) = -1 then begin
+    SetLength(FArrOplata, 1);
+    FArrOplata[0].Date := edDate.Date;
+    FArrOplata[0].Payment := 1;
+  end;
+  EnableSummFact;  // выключаю edSummFact, если есть больше одного платежа
+
+  if (HaveRightUpdSale = False) and (FIs_spisanie = 0) AND (OpenMode = omUpdate) then begin
+    MessageDlg('У Вас нет прав на редактирование накладных"!', mtInformation, [mbOk], 0);
+    DisableControls;
+    Exit;
+  end;
+
+  //ПРОВЕРЯЮ ЕСТЬ ЛИ ПРАВО НА РЕДАКТИРОВАНИЕ НАКЛАДНОЙ ЗА ПРОШЛЫЕ ДАТЫ
+  //НЕВАЖНО КАКАЯ ДАТА У НАКЛАДНОЙ, МНЕ ПРОЦЕДУРА УЖЕ ВОЗВРАЩАЕТ 1, ЕСЛИ НАКЛАДНАЯ ЗА ТЕКУЩУЮ ДАТУ
+  IF (spGetData.ParamByName('HaveRight_').AsInteger = 0) AND (OpenMode = omUpdate) THEN BEGIN
+    MessageDlg('Вы не обладаете правом для редактирования накладных за прошлые даты!', mtWarning, [mbOk], 0);
+    DisableControls;
+    EXIT;
+  END;
+
+  //ПРОВЕРЯЮ ЛИЦЕНЗИЮ
+  IF (IsActivated = 0) THEN BEGIN
+    MessageDlg('Лицензия истекла либо не зарегистрирована.' + #10#13 + 'Включены ограничения на количество продаж!', mtWarning, [mbOk], 0);
+    DisableControls;
+    EXIT;
+  END;
+
+  if OpenMode = omView then
+    PostMessage(Self.Handle, WM_READONLYCONTROLS, 0, 0)
+
+  // блокирую запись
+  else if OpenMode = omUpdate then begin
+    spUpdLock.ParamByName('id_').AsInteger := RecId;
+    spUpdLock.ParamByName('TABLE_NAME_').AsString := 'zakaz';
+
+    if not spUpdLock.Transaction.InTransaction then   //ТРАНЗАКЦИЯ ЗАКОММИТИТЬСЯ, ЕСЛИ КЛИЕНТ НАЖМЕТ КНОПКУ ОК, ИЛИ ОТРОЛЛБАЧИТЬСЯ, ЕСЛИ БУДЕТ ОШИБКА ИЛИ НАЖМУТ КНОПКУ ОТМЕНА
+      spUpdLock.Transaction.StartTransaction;
+    if not ExecSP(spUpdLock) then begin
+      DisableControls;
+      EXIT;
+    end;
+  end;
+end;
+
+function TProdazhaTovaraNForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := False;
+
+  if NOT CheckDate(edDate.Date, '01.01.2000', '01.01.2099') then begin
+    ErrControl := edDate;
+    MessageDlg('Введена некорректная дата', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if NOT CheckTime(edTime.Time) then begin
+    ErrControl := edTime;
+    MessageDlg('Введено некорректное время', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if (edSummFact.Value > edSumm.Value) and (High(FArrOplata) > 0) then begin
+    MessageDlg('Оплачиваемая сумма не может быть больше суммы продажи. Измените ее' + #13#10 +
+               'либо в поле "Оплачено", либо нажав на кнопку "Список платежей".', mtInformation, [mbOK], 0);
+    if edSummFact.Enabled then
+      ErrControl := edSummFact
+    else
+      ErrControl := btnOplata;
+    Exit;
+  end;
+
+  if OpenMode = omInsert then begin
+    if (edSummPrihod.Value > 0) and (leStatya.Text = '') then begin
+      pcMain.ActivePage := tsPrihod;
+      ErrControl := leStatya;
+      MessageDlg('Статья прихода не указана.', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+
+    if (edSummPrihod.Value = 0) and (leStatya.Text <> '') then begin
+      pcMain.ActivePage := tsPrihod;
+      ErrControl := edSummPrihod;
+      MessageDlg('Сумма прихода не указана.', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+  end;
+
+  IF (FIs_spisanie = 2) AND (lePostavshik.EditValue = 0) then begin
+    ErrControl := lePostavshik;
+    MessageDlg('Клиент не выбран!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  IF (FIs_spisanie = 2) AND (lePostavshik.EditValue = 0) then begin
+    ErrControl := lePostavshik;
+    MessageDlg('Клиент не выбран!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TProdazhaTovaraNForm.SetParams(SP: TpFIBStoredProc);
+var
+  i : integer;
+  StrArr : string;
+  Summcash, summnoncash : double;
+begin
+  with SP do begin
+    ParamByName('Z_DATE_').AsDate := edDate.Date;
+    ParamByName('Z_TIME_').AsTime := edTime.Time;
+    if lePostavshik.EditValue > 0 then
+      ParamByName('G_CLIENT_').AsInteger := lePostavshik.EditValue
+    else
+      ParamByName('G_CLIENT_').AsInteger := 10;
+    if lePAYMENT_TYPE.EditValue > 0 then
+      ParamByName('G_PAYMENT_TYPE_').AsInteger := lePAYMENT_TYPE.EditValue
+    else
+      ParamByName('G_PAYMENT_TYPE_').AsInteger := 1;  // по умолчанию поставлю наличный расчет, если клиент вдруг ничего не выбрал
+    ParamByName('OSNOVANIE_').AsString := edOsnovanie.Text;
+    ParamByName('NOTE_').AsString := mNote.Text;
+    ParamByName('summ_').AsFloat := edSumm.Value;
+    ParamByName('summ_fact_').AsFloat := edSummFact.Value;
+    ParamByName('by_recipe_').AsInteger := Integer(cbByRecipe.checked);
+    ParamByName('IS_RESERVE_').AsInteger := Integer(cbReserv.checked);
+    IF (leStatya.EditValue <> 0) and (leStatya.EditValue <> null) THEN
+      ParamByName('g_prihod_').AsInteger := leStatya.EditValue;
+    ParamByName('summ_prihod_').AsFloat := edSummPrihod.Value;
+    IF cbPayBonus.Checked THEN
+      ParamByName('summ_bonus_').AsFloat := FSummBonusPay  //ЕСЛИ БОНУСОВ БОЛЬШЕ ЧЕМ СУММА ЗАКАЗА, ТО ПОДСТАВЛЯЮ СУММУ ЗАКАЗА, ИНАЧЕ - ПОДСТАВЛЯЮ СУММУ БОНУСОВ
+    else
+      ParamByName('summ_bonus_').AsFloat := 0;
+    ParamByName('summ_bonus_got_').AsFloat := edBonus.Value;            //ПЕРЕДАЮ СУММУ НАЧИСЛЕННЫХ БОНУСОВ ЗА ЗАКАЗ
+
+    ParamByName('IS_SPISANIE_').AsInteger := FIs_spisanie;
+
+    if FIs_spisanie in [0,4] then begin  // только если обычная продажа или возврат товара поставщику
+      for i := 0 to High(FArrOplata) do begin
+        if FArrOplata[i].Payment = 1 then
+          Summcash := Summcash + FArrOplata[i].Summ
+        else
+          summnoncash := summnoncash + FArrOplata[i].Summ;
+
+        StrArr := StrArr + IntToStr(FArrOplata[i].Id) + '-' + DateToStr(FArrOplata[i].Date) + '-' + FloatToStr(FArrOplata[i].Summ) + '-' + IntToStr(FArrOplata[i].Payment)+ '~';
+      end;
+    end;
+    if Summcash > edSumm.Value then
+      Summcash := edSumm.Value;
+    if summnoncash > edSumm.Value then
+      summnoncash := edSumm.Value;
+
+    StrArr := StringReplace(StrArr, ',', '.', [rfReplaceAll, rfIgnoreCase]);   //заменяю на всякий случай запятые на точки
+    ParamByName('PAYMENTS_').AsString := StrArr;
+    ParamByName('SUMM_CASH_').AsFloat := Summcash;
+    ParamByName('SUMM_NONCASH_').AsFloat := summnoncash;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.Readlist;
+var
+  AIndex : integer;
+begin
+  OpenSP(spZakazTemp, True);
+  pnRowCnt.Caption := IntToStr(spZakazTemp.RecordCount);
+  aUpd.Enabled := spZakazTemp.RecordCount > 0;
+  aDel.Enabled := spZakazTemp.RecordCount > 0;
+  aOplata.Enabled := (spZakazTemp.RecordCount > 0) or (High(FArrOplata) > 0);
+  btnOk.Enabled := spZakazTemp.RecordCount > 0;
+  aPrintInvoicePay.Enabled := spZakazTemp.RecordCount > 0;
+
+  with tvMain.DataController.Summary do begin
+    AIndex := FooterSummaryItems.IndexOfItemLink(clmMainSUMM);
+    if not VarIsNull(FooterSummaryValues[AIndex]) then
+      FSummZakaz := FooterSummaryValues[AIndex]
+    else
+      FSummZakaz     := 0;
+  end;
+
+  edSumm.Value := FSummZakaz;
+  cbPayBonus.checked := False;
+  edBonus.Value := FSummZakaz * FBonusPercent;
+
+  if High(FArrOplata) = 0 then
+    edSummFact.Value := edSumm.Value
+  else begin
+    edSummDolg.Value := edSummFact.Value - edSumm.Value;
+  end;
+end;
+
+
+procedure TProdazhaTovaraNForm.FormShow(Sender: TObject);
+begin
+  {if FIs_spisanie in [1,3] then
+    grProduct.RegistryPath := '\Software\ShopUchet\ProdazhaTovaraSpis'
+  else
+    grProduct.RegistryPath := '\Software\ShopUchet\ProdazhaTovaraNakl';}
+  tvMain.RestoreFromIniFile('Settings.ini', False, False, [], Self.Name + '-' + tvMain.Name);
+
+  // ОЧИЩАЮ И ВРЕМЕННУЮ ТАБЛИЧКУ
+  ClearTempTable;
+
+  if FIs_spisanie = 3 then
+    spPostavshik.ParamByName('G_CLIENT_PARENT_').AsInteger := -1000
+  else if FIs_spisanie = 4 then begin
+    lbClient.Caption := 'Поставщик';
+    spPostavshik.Filtered := False;
+    spPostavshik.Filter := 'is_supplier = 1';
+    spPostavshik.Filtered := True;
+  end;
+  OpenSp(spPaymentType, False);
+  OpenSp(spPostavshik, False);
+  spPostavshik.Locate('by_default', 1, []);
+  lePostavshik.EditValue := spPostavshik.FieldByName('g_client').AsInteger;
+  //lePostavshikChange(Self);
+
+  // кнопка "Платежи" доступна только при оформлении обычного заказа и возврата товара поставщику
+  aOplata.Enabled := False;
+  aOplata.Visible := False;
+  aPrintInvoicePay.Enabled := False;
+  aPrintInvoicePay.Visible := False;
+
+  if Screen.PixelsPerInch = 120 then begin
+    lbStatya.Font.Size := 9;
+    lbRecalc.Font.Size := 9;
+    lbReserv.Font.Size := 9;
+  end;
+
+  lbReserv.Width := ScaleDimension(398);
+  lbRecalc.Width := ScaleDimension(453);
+  lbStatya.Width := ScaleDimension(411);
+
+  IF FIs_spisanie = 4 THEN BEGIN
+    clmMainDISCOUNT_PERC.Visible := False;
+    clmMainDISCOUNT_SUMM.Visible := False;
+    pnlBonus.Visible := False;
+    tsPrihod.TabVisible := False;
+    tsReserv.TabVisible := False;
+    btDiscCard.Visible := False;
+    Caption := 'Возврат товара поставщику';
+    cbByRecipe.Visible := False;
+    aOplata.Enabled := True;
+    aOplata.Visible := True;
+
+  END else IF FIs_spisanie in [1,3] THEN BEGIN
+    lbPayment.Visible := False;
+    ShapePayment.Visible := False;
+    ShapePayment1.Visible := False;
+    lePAYMENT_TYPE.Visible := False;
+    lePAYMENT_TYPE.EditValue := 1;
+    clmMainDISCOUNT_PERC.Visible := False;
+    clmMainNDS.Visible := False;
+    clmMainNDS_SUMM.Visible := False;
+    clmMainDISCOUNT_SUMM.Visible := False;
+    pnlOplata.Visible := False;
+    pnlBonus.Visible := False;
+    tsPrihod.TabVisible := False;
+    tsReserv.TabVisible := False;
+    btDiscCard.Visible := False;
+    Panel5.Height := ScaleDimension(50);
+
+    if FIs_spisanie = 1 then begin
+      lePostavshik.EditValue := 10;
+      CAPTION := 'Списание товара';
+      lbClient.Visible := False;
+      ShapeClient.Visible := False;
+      ShapeClient1.Visible := False;
+      lePostavshik.Visible := False;
+      Height := ScaleDimension(600);
+    end else begin
+      lbClient.Caption := 'Склад-получатель';
+      Height := ScaleDimension(650);
+    end;
+  end
+  else begin
+    CAPTION := 'Оформление заказа';
+    // при добавлении товара на реал, подставляю клиента на котором стояли в TZakazNaRealListForm
+    if FClient <> 0 then begin
+      lePostavshik.EditValue := FClient;
+      //lePostavshikChange(Self);
+    end;
+
+    FSkidka := spPostavshik.FieldByName('skidka').AsFloat;
+    spReadStatya.ParamByName('action_').AsInteger := 0;
+    OpenSp(spReadStatya, False);
+
+    // если конфигурация аптека, то отражаю специфичную кнопку
+    if Config = 1 then
+      cbByRecipe.Visible := True
+    else
+      cbByRecipe.Visible := False;
+
+    aOplata.Enabled := True;
+    aOplata.Visible := True;
+    aPrintInvoicePay.Enabled := True;
+    aPrintInvoicePay.Visible := True;
+  end;
+
+  if FIs_spisanie = 0 then
+    tsReserv.TabVisible := True;
+
+  // при реализации нет смысла в этих полях, они нужны для выдачи товара в долг
+  if FIs_spisanie = 2 THEN begin
+    LabelDoc.Caption := 'Номер накладной';
+    Panel5.Height := 0;
+  end;
+
+  IF OpenMode = omInsert then begin
+    edDate.Date := Date;
+    edTime.Time := Time;
+    tsRecalc.TabVisible := False;
+    btnOk.Enabled := spZakazTemp.RecordCount > 0;
+  end {else
+    cbPayBonus.Enabled := False};
+
+  GetData;
+end;
+
+procedure TProdazhaTovaraNForm.aInsExecute(Sender: TObject);
+begin
+  ProdazhaTovaraForm := TProdazhaTovaraForm.Create(Self);
+  try
+    ProdazhaTovaraForm.OpenMode := omInsert;
+    ProdazhaTovaraForm.Is_spisanie := FIs_spisanie;
+    ProdazhaTovaraForm.Skidka := FSkidka;
+    IF ProdazhaTovaraForm.ShowModal = mrOK THEN begin
+      Readlist;
+    END;
+  finally
+    ProdazhaTovaraForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.aUpdExecute(Sender: TObject);
+begin
+  if tvMain.Controller.SelectedRecordCount = 0 then begin
+    MessageDlg('Выберите запись для изменения!', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  UpdProdazhaTovaraForm := TUpdProdazhaTovaraForm.Create(Self);
+  with UpdProdazhaTovaraForm do begin
+    OpenMode := omUpdate;
+    RecID := spZakazTemp.FieldByName('ZAKAZ_DETAILS').AsInteger;
+    Is_spisanie := FIs_spisanie;
+    try
+      if UpdProdazhaTovaraForm.ShowModal = mrOK then begin
+        Readlist;
+        edOsnovanie.ModifiedAfterEnter := True;
+      end;
+    finally
+      UpdProdazhaTovaraForm.Free;
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.aCustomizeColumnsExecute(Sender: TObject);
+begin
+  tvMain.Controller.Customization := True;
+end;
+
+procedure TProdazhaTovaraNForm.aDelExecute(Sender: TObject);
+begin
+  if tvMain.Controller.SelectedRecordCount = 0 then begin
+    MessageDlg('Выберите запись для удаления!', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  if MessageDlg(Format('Удалить продажу товара "%s" ?',
+    [spZakazTemp.FieldByName('PRODUCT_NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  if not spDel.Transaction.InTransaction then
+    spDel.Transaction.StartTransaction;
+
+  spDel.ParamByName('ZAKAZ_DETAILS_').AsInteger := spZakazTemp.FieldByName('ZAKAZ_DETAILS').AsInteger;
+  if ExecSP(spDel) then BEGIN
+    if spDel.Transaction.InTransaction then
+      spDel.Transaction.Commit;
+    Readlist;
+    edOsnovanie.ModifiedAfterEnter := TRUE;
+  END;
+end;
+
+procedure TProdazhaTovaraNForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+
+  if ModalResult <> mrOk then BEGIN
+    if spZakazTemp.RecordCount > 0 then begin
+      if MessageDlg('Вы хотите закрыть окно, не сохранив изменения.'#13#10'Вы уверены, что хотите продолжить?',
+      mtWarning, [mbYes, mbNo], 0) = mrNo then begin
+        CanClose := False;
+        Exit;
+      end;
+    end;
+
+    ClearTempTable;      // ПО НАЖАТИЮ НА КНОПКУ ОТМЕНА ТОЖЕ ОЧИЩАЮ ВРЕМЯНКУ
+    if spUpdLock.Transaction.InTransaction then spUpdLock.Transaction.Commit;  //а также снимаю блокировку с записи
+    Exit;
+  END;
+
+  CanClose := False;
+
+  if (OpenMode = omUpdate) and (not CheckRequizChanged(Self)) then
+  begin
+    {Возможно, OK просто нажата после утверждения или для закрытия окна. Изменений не было}
+    FSuccess := True;
+    CanClose := True;
+    Exit;
+  end;
+
+  if OpenMode in [omInsert, omInsertLike, omInsertChild] then
+    FSuccess := InsData
+  else if OpenMode = omUpdate then
+    FSuccess := UpdData;
+
+  IF FSuccess THEN    // ОЧИЩАЮИ ВРЕМЕННУЮ ТАБЛИЧКУ ТОЛЬКО ЕСЛИ БЫЛО УСПЕШНОЕ СОХРАНЕНИЕ
+    ClearTempTable;
+
+  CanClose := FSuccess;
+end;
+
+function TProdazhaTovaraNForm.InsData: Boolean;
+begin
+  Result := False;
+  spIns.ParamByName('is_spisanie_').AsInteger := FIs_spisanie;
+  try
+    if CallSP(spIns) then
+    begin
+      RecId := spIns.ParamByName('ZAKAZ_').AsInteger;
+      Result := True;
+    end
+    else
+      Exit;
+  except
+    on E: EFIBError do begin
+      if spIns.Transaction.InTransaction then
+        spIns.Transaction.RollbackRetaining;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TProdazhaTovaraNForm.InsData)');
+    end;
+    on E: Exception do begin
+      if spIns.Transaction.InTransaction then
+        spIns.Transaction.RollbackRetaining;
+      MessageDlg(E.Message + #13#10'(occured in TProdazhaTovaraNForm.InsData)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+function TProdazhaTovaraNForm.UpdData: Boolean;
+begin
+  Result := False;
+  try
+    spUpd.ParamByName('ZAKAZ_').AsInteger := RecId;
+
+    if CallSP(spUpd) then
+    begin
+      Result := True;
+    end
+    else
+      Exit;
+  except
+    on E: EFIBError do begin
+      if spUpd.Transaction.InTransaction then
+        spUpd.Transaction.RollbackRetaining;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TProdazhaTovaraNForm.UpdData)');
+    end;
+    on E: Exception do begin
+      if spUpd.Transaction.InTransaction then
+        spUpd.Transaction.RollbackRetaining;
+      MessageDlg(E.Message + #13#10'(occured in TProdazhaTovaraNForm.UpdData)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.lePostavshikPropertiesChange(Sender: TObject);
+begin
+  FSkidka := spPostavshik.FieldByName('skidka').AsFloat;
+  // ставлю автоматом наличный или безналичный расчет
+  if spPostavshik.FieldByName('is_beznal').AsInteger = 1 then
+    lePAYMENT_TYPE.EditValue := 2
+  else
+    lePAYMENT_TYPE.EditValue := 1;
+
+  //ЗАПОЛНЯЮ СВЕДЕНИЯ ПО БОНУСАМ
+  cbPayBonus.Checked := False;
+  IF FIs_spisanie = 0 THEN begin    //при списании бонусы нафиг не нужны
+    FSummBonus := spPostavshik.FieldByName('SUMM').AsFloat;
+    FBonusPercent := spPostavshik.FieldByName('N_PERCENT').AsFloat/100;
+    edBonus.Value := FSummZakaz * FBonusPercent;
+    edBonusAll.Value := FSummBonus;
+    cbPayBonus.Enabled := edBonusAll.Value > 0;
+  end;
+
+  //Readlist;
+end;
+
+procedure TProdazhaTovaraNForm.grProductDblClick(Sender: TObject);
+begin
+  aUpd.Execute;
+end;
+
+procedure TProdazhaTovaraNForm.ClearTempTable;
+begin
+  spDel.Params[0].Clear;
+  if not spDel.Transaction.InTransaction then
+    spDel.Transaction.StartTransaction;
+
+  ExecSP(spDel);
+
+  if spDel.Transaction.InTransaction then
+    spDel.Transaction.Commit;
+end;
+
+procedure TProdazhaTovaraNForm.edSummFactPropertiesChange(Sender: TObject);
+begin
+  edSummFact.Text := StringReplace(edSummFact.Text, ',', '.', [rfReplaceAll]);
+
+  edSummDolg.Value := edSummFact.Value - edSumm.Value;
+
+  if High(FArrOplata) = 0 then
+    FArrOplata[0].Summ := Min(edSummFact.Value, edSumm.Value);
+
+  if cbPayBonus.Checked then
+    edSummDolg.Value := edSummDolg.Value + MIN(FSummZakaz, FSummBonus + FSummBonusPayed - FSummBonusGot);
+end;
+
+procedure TProdazhaTovaraNForm.sbEqualSummClick(Sender: TObject);
+begin
+  edSummFact.Value := edSumm.Value - FSummBonusPayed;
+  edSummFact.ModifiedAfterEnter := True;
+end;
+
+procedure TProdazhaTovaraNForm.aGetDCardExecute(Sender: TObject);
+var GetDCardForm: TGetDCardForm;
+begin
+  GetDCardForm := TGetDCardForm.Create(Self);
+  with GetDCardForm do begin
+    try
+      GetDCardForm.Discont_card := spPostavshik.FieldByName('g_discont_card').AsInteger;
+      if Showmodal = mrOK then begin
+        if Client <> 0 then begin
+          lePostavshik.EditValue := Client;
+          //lePostavshikChange(Self);
+        end;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.cbPayBonusPropertiesChange(Sender: TObject);
+begin
+  mNote.ModifiedAfterEnter := True;
+  IF cbPayBonus.Checked THEN BEGIN
+    FSummBonusPay    := MIN(FSummBonus + FSummBonusPayed - FSummBonusGot, FSummZakaz); //сумма оплачиваемая бонусами
+    edBonusPayed.Value := FSummBonusPay;
+    edBonusAll.Value := MAX(FSummBonus + FSummBonusPayed - FSummZakaz, 0);  //бонусы уже полученные в сохр. заказе я не могу использовать при редактировании этого же заказа
+    edSummFact.Value := Max(FSummZakaz - (FSummBonus + FSummBonusPayed - FSummBonusGot), 0);
+  END ELSE BEGIN
+    FSummBonusPay := 0;
+    edBonusPayed.Value := 0;
+    edSummFact.Value := FSummZakaz;
+    edBonusAll.Value := FSummBonus + FSummBonusPayed;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.sbClearClick(Sender: TObject);
+begin
+  leStatya.EditValue := null;
+end;
+
+procedure TProdazhaTovaraNForm.btHelpClick(Sender: TObject);
+var Helpc : integer;
+begin
+  if FIs_spisanie = 0 then
+    HELPC := 18
+  else if FIs_spisanie = 1 then
+    HELPC := 19
+  else if FIs_spisanie = 2 then
+    HELPC := 58
+  else
+    HELPC := 52;
+
+  Application.HelpContext(HELPC);
+end;
+
+procedure TProdazhaTovaraNForm.ceReservChange(Sender: TObject);
+begin
+  if (cbReserv.Checked = False) then begin
+    edSummFact.Value := edSumm.Value - FSummBonusPayed;
+    edSummFact.ModifiedAfterEnter := True;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if WindowState = wsMaximized then
+    SaveSettingsIni('ProdazhaTovaraNaklad', 'WindowState', 1, '')
+  else
+    SaveSettingsIni('ProdazhaTovaraNaklad', 'WindowState', 0, '');
+
+  tvMain.StoreToIniFile('Settings.ini', False, [], Self.Name + '-' + tvMain.name);
+end;
+
+procedure TProdazhaTovaraNForm.FormCreate(Sender: TObject);
+//var hSysMenu : HMENU;
+begin
+  //добавлю свои пункты меню в окно
+  {hSysMenu := GetSystemMenu(Handle, False);
+  AppendMenu(hSysMenu, MF_SEPARATOR, 0, '');
+  AppendMenu(hSysMenu, MF_STRING, 10001, 'Увеличить окно на 20%');
+  AppendMenu(hSysMenu, MF_STRING, 10002, 'Уменьшить окно на 20%');}
+
+  //ищу масштаб формы
+  if ReadIntSettingsIni('ProdazhaTovaraNaklad', 'WindowState', 0) = 1 then
+    WindowState := wsMaximized;//ShowWindowAsync(Handle, SW_MAXIMIZE);
+  {
+  if FScale = 120 then
+    ScaleBigger;}
+end;
+
+{
+если вместе работают wsMaximized и ScaleBigger, то почему-то wsMaximized не работает, уже устал выяснять почему, поэтому пока оставил толко wsMaximized
+procedure TProdazhaTovaraNForm.WmSysCommand(var Message: TWMSysCommand);
+begin
+  if Message.CmdType = 10001 then begin
+    // даю масштабировать только на 120 процентов и обратно ибо дальше съезжает все нафиг
+    if FScale < 120 then begin
+      FScale := FScale + 20;
+      ScaleBigger;
+    end;
+  end else if Message.CmdType = 10002 then begin
+    if FScale > 100 then begin
+      FScale := FScale - 20;          //чтобы вернуться обратно надо от текуших 100 отнять 20, а текущие 100 это по идее 120 после увеличения
+      ScaleSmaller;
+    end;
+  end else  //обработчик по умолчанию
+    DefWindowProc(Handle, Message.Msg, Message.CmdType, 65536 * Message.YPos + Message.XPos);
+end;
+
+procedure TProdazhaTovaraNForm.ScaleBigger;
+begin
+  ChangeScale(FScale, 100);
+  edSummFact.Width := edSummDolg.Width; //поле edSummFact становится размером с юпитер, хотя остальные не ведут себя так, поэтому ставлю ей длину соседних полей
+  lbTime.Left := shTime.Left + 10;  // а Label8 куда-то улетает, поэтому ставлю ему координату опять же от соседних контролов
+end;
+
+procedure TProdazhaTovaraNForm.ScaleSmaller;
+begin
+  ChangeScale(FScale - 20, 100);
+  // а Label8 куда-то улетает, поэтому ставлю ему координату опять же от соседних контролов
+  lbTime.Caption := 'Время    ';
+  lbTime.Left := edTime.Left-60;
+end;
+}
+
+procedure TProdazhaTovaraNForm.cb1PropertiesChange(Sender: TObject);
+begin
+  if (cbReserv.Checked = False) then begin
+    edSummFact.Value := edSumm.Value - FSummBonusPayed;
+    edSummFact.ModifiedAfterEnter := True;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.aRecalcPricesExecute(Sender: TObject);
+begin
+  spRecalcPrices.ParamByName('date_').AsDate := edDate.Date;
+  if ExecSP(spRecalcPrices) then begin
+    ShowMessage('Пересчет цен выполнен успешно!' + #13#10 + 'Не забудьте нажать кнопку "Сохранить".');
+    mNote.ModifiedAfterEnter := true;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.aSaveAllToXLSExecute(Sender: TObject);
+begin
+  if dlgSave.Execute then
+    ExportGridToExcel(dlgSave.FileName, gr1, True, True, True, 'xls');
+end;
+
+procedure TProdazhaTovaraNForm.aSaveSelectedToXLSExecute(Sender: TObject);
+begin
+  if dlgSave.Execute then
+    ExportGridToExcel(dlgSave.FileName, gr1, True, False, True, 'xls');
+end;
+
+procedure TProdazhaTovaraNForm.aOplataExecute(Sender: TObject);
+var OplataForm : TOplataForm;
+    i: integer;
+begin
+  OplataForm := TOplataForm.Create(Self);
+
+  with OplataForm do begin
+    SummZakaz := edSumm.Value;
+    SummBonusPayed := edBonusPayed.Value;
+    PaymentType := lePAYMENT_TYPE.EditValue;
+    Helpcc := 82;    // раздел справки
+    mdRead.Open;
+    for i := 0 to High(FArrOplata) do begin
+      mdRead.Insert;
+      mdRead.FieldByName('id').asInteger := FArrOplata[i].Id;
+      mdRead.FieldByName('Date_Pay').AsDateTime := FArrOplata[i].Date;
+      mdRead.FieldByName('Summ_Pay').asFloat := FArrOplata[i].Summ;
+      mdRead.FieldByName('Payment_Type').asFloat := FArrOplata[i].Payment;
+      if FArrOplata[i].Payment = 1 then
+        mdRead.FieldByName('Payment_type_str').AsString := 'Наличный'
+      else
+        mdRead.FieldByName('Payment_type_str').AsString := 'Безналичный'
+    end;
+
+    if ShowModal = mrOk then begin
+      SetLength(FArrOplata, 0);
+      SetLength(FArrOplata, mdRead.RecordCount);
+      i := 0;
+      mdRead.First;
+      while not mdRead.Eof do begin
+        FArrOplata[i].Id := mdRead.FieldByName('id').asInteger;
+        FArrOplata[i].Date := mdRead.FieldByName('Date_Pay').AsDateTime;
+        FArrOplata[i].Payment := mdRead.FieldByName('payment_type').asInteger;
+        FArrOplata[i].Summ := mdRead.FieldByName('summ_pay').AsFloat;
+
+        i := i + 1;
+        mdRead.Next;
+      end;
+
+      edSummFact.Value := Summ;
+      EnableSummFact;
+
+      // если платеж один, то ставлю накладной его способ оплаты, также если платежей несколько, и все они одного способа платежа, то тоже ставлю их способ
+      SetPaymentType;
+
+      mNote.ModifiedAfterEnter := true;
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.aPrintInvoicePayExecute(Sender: TObject);
+var
+  AIndex : integer;
+begin
+  if OpenMode = omInsert then begin
+    ReportsDM.PrepareReport(50);
+    ReportsDM.spReport.ParamByName('CURRENCY_').AsInteger := CurrencyVal;
+    ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := lePostavshik.EditValue;
+    ReportsDM.spReport.ParamByName('AGREEMENT_IN_').AsString := edOsnovanie.Text;
+    ReportsDM.spReport.ParamByName('summ_in_').AsFloat := edSumm.Value;
+    ReportsDM.spReport.ParamByName('DATE_').AsDate := edDate.Date;
+    ReportsDM.spReport.ParamByName('AMOUNT_IN_').AsInteger := tvMain.ViewData.RowCount;
+
+    with tvMain.DataController.Summary do begin
+      AIndex := FooterSummaryItems.IndexOfItemLink(clmMainNDS_SUMM);
+      if not VarIsNull(FooterSummaryValues[AIndex]) then
+        ReportsDM.spReport.ParamByName('NDS_SUMM_IN_').AsFloat := FooterSummaryValues[AIndex]
+      else
+        ReportsDM.spReport.ParamByName('NDS_SUMM_IN_').AsFloat := 0;
+    end;
+
+    ReportsDM.ShowReport(1, '');
+  end else begin
+    InvoicePayForm := TInvoicePayForm.Create(Self);
+    try
+      if FInvoicePay <> 0 then
+        InvoicePayForm.RecID := FInvoicePay
+      else
+        InvoicePayForm.NotSaved := 1;
+
+      InvoicePayForm.Zakaz := RecId;
+      InvoicePayForm.OpenMode := omUpdate;
+      InvoicePayForm.ShowModal;
+      ReadList;
+    finally
+      InvoicePayForm.Free;
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.EnableSummFact;
+begin
+  edSummFact.Enabled := High(FArrOplata) = 0;
+  sbEqualSumm.Enabled := High(FArrOplata) = 0;
+end;
+
+procedure TProdazhaTovaraNForm.SetArrOplataSumm;
+begin
+  if High(FArrOplata) = 0 then begin
+    FArrOplata[0].Date := edDate.Date;
+    FArrOplata[0].Payment := lePAYMENT_TYPE.EditValue;
+    FArrOplata[0].Summ := edSummFact.Value;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.edDatePropertiesChange(Sender: TObject);
+begin
+  if High(FArrOplata) = 0 then
+    FArrOplata[0].Date := edDate.Date;
+end;
+
+procedure TProdazhaTovaraNForm.lePAYMENT_TYPEPropertiesChange(Sender: TObject);
+begin
+  if High(FArrOplata) = 0 then
+    FArrOplata[0].Payment := lePAYMENT_TYPE.EditValue;
+end;
+
+procedure TProdazhaTovaraNForm.SetPaymentType;
+var NalPyament, BeznalPayment, i : integer;
+begin
+  // если платеж один, то ставлю накладной его способ оплаты, также если платежей несколько, и все они одного способа платежа, то тоже ставлю их способ
+  if High(FArrOplata) = 0 then
+    lePAYMENT_TYPE.EditValue := FArrOplata[0].Payment
+  else begin
+    for i := 0 to High(FArrOplata) do begin
+      if FArrOplata[i].Payment = 1 then
+        NalPyament := 1
+      else if FArrOplata[i].Payment = 2 then
+        BeznalPayment := 1
+    end;
+
+    if (NalPyament = 1) and (BeznalPayment = 0) then
+      lePAYMENT_TYPE.EditValue := 1
+    else if (NalPyament = 0) and (BeznalPayment = 1) then
+      lePAYMENT_TYPE.EditValue := 2;
+  end;
+end;
+
+procedure TProdazhaTovaraNForm.tvMainCellDblClick(
+  Sender: TcxCustomGridTableView; ACellViewInfo: TcxGridTableDataCellViewInfo;
+  AButton: TMouseButton; AShift: TShiftState; var AHandled: Boolean);
+begin
+  aUpd.Execute;
+end;
+
+end.

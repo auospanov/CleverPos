@@ -1,0 +1,198 @@
+object ReportsThreadDM: TReportsThreadDM
+  OldCreateOrder = False
+  Height = 369
+  Width = 333
+  object ReportParams: TFlxMemTable
+    Columns = <>
+    Left = 104
+    Top = 88
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMainThread
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 32
+    Top = 88
+  end
+  object spReport: TpFIBDataSet
+    SelectSQL.Strings = (
+      '')
+    Transaction = tranRead
+    Database = MainDM.dbMainThread
+    Left = 32
+    Top = 160
+    poSQLINT64ToBCD = True
+  end
+  object qLoadReport: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM REPORT WHERE REPORT = ?REPORT')
+    AllowedUpdateKinds = []
+    Transaction = tranRead
+    Database = MainDM.dbMainThread
+    Left = 104
+    Top = 160
+    poUseBooleanField = False
+    object qLoadReportREPORT: TFIBIntegerField
+      FieldName = 'REPORT'
+    end
+    object qLoadReportBODY: TFIBBlobField
+      FieldName = 'BODY'
+      Size = 8
+    end
+    object qLoadReportDESCRIPTION: TFIBStringField
+      FieldName = 'DESCRIPTION'
+      Size = 50
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object qLoadReportSQL: TFIBStringField
+      FieldName = 'SQL'
+      Size = 200
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object fbstrngfldLoadReportFILENAME: TFIBStringField
+      FieldName = 'FILENAME'
+      Size = 250
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+  end
+  object FlexCelReport: TFlexCelReport
+    AutoClose = False
+    Adapter = XLSAdapter
+    DateTimeFormat = 'mm/dd/yyyy hh:mm'
+    KeepEmptyPictures = False
+    DataModule = Owner
+    Left = 32
+    Top = 32
+  end
+  object XLSAdapter: TXLSAdapter
+    AllowOverwritingFiles = False
+    Left = 104
+    Top = 32
+  end
+  object spGetProductList: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT  T.ARTICUL,'
+      '        T.NOMENCLATUR_NUM,'
+      '        T.BARCODE,'
+      '        T.NAME,'
+      '        T.PRICE,'
+      '        COALESCE(P.AMOUNT, 0) AMOUNT,'
+      '        T1.NAME CAT_NAME'
+      
+        '    FROM G_PRODUCT T LEFT OUTER JOIN (SELECT * FROM LT_SKLAD_PRO' +
+        'DUCT WHERE G_TOCHKA = :G_TOCHKA_) P ON T.G_PRODUCT = P.G_PRODUCT' +
+        ','
+      '         G_PRODUCT T1'
+      '    WHERE T.G_PRODUCT_PAR = T1.G_PRODUCT'
+      '    ORDER BY T.NAME, T.G_PRODUCT'
+      '/*SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               0 ROW,'
+      '               '#39'    <PRODUCT>'#39' STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               1 ROW,'
+      '               '#39'      <BARCODE>'#39'||G.BARCODE||'#39'</BARCODE>'#39' STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               2 ROW,'
+      '               '#39'      <ARTICUL>'#39'||G.ARTICUL||'#39'</ARTICUL>'#39' STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               3 ROW,'
+      '               '#39'      <NAME>'#39'||G.NAME||'#39'</NAME>'#39'  STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               4 ROW,'
+      '               '#39'      <AMOUNT>'#39'||L.AMOUNT||'#39'</AMOUNT>'#39'  STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               5 ROW,'
+      '               '#39'      <PRICE>'#39'||G.PRICE||'#39'</PRICE>'#39'  STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               6 ROW,'
+      '               '#39'      <CATEGORY>'#39'||G1.NAME||'#39'</CATEGORY>'#39'  STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        UNION ALL'
+      '        SELECT G.G_PRODUCT_PAR,'
+      '               G.NAME,'
+      '               G.G_PRODUCT,'
+      '               6 ROW,'
+      '               '#39'    </PRODUCT>'#39'  STR'
+      '        FROM G_PRODUCT G,'
+      '             LT_SKLAD_PRODUCT L,'
+      '             G_PRODUCT G1'
+      '        WHERE G.G_PRODUCT = L.G_PRODUCT'
+      '         AND G.IS_CATEGORY = 0'
+      '         AND G.G_PRODUCT_PAR = G1.G_PRODUCT'
+      '        ORDER BY 1, 2, 3, 4*/')
+    Transaction = tranRead
+    Database = MainDM.dbMainThread
+    Left = 160
+    Top = 160
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+end

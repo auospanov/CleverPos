@@ -1,0 +1,1323 @@
+unit unExportOperDataThread;
+
+interface
+
+uses
+  Classes, unCommonFunc, unDBSupport, dmMain, dmReportsThread, SyncObjs, pFIBDatabase,
+  DateUtils, SysUtils, Dialogs, Windows, dmReports, FIB, IdFTP, Xml.VerySimple,
+  System.JSON, REST.Client, REST.Types;
+
+type
+  TExportDataThread = class(TThread)
+  private
+    FSleepEvent: TSimpleEvent;
+    FilesArr : array of String;
+    procedure DoUploadToFtp;
+  protected
+    procedure Execute; override;
+    procedure PushToArr(filename : string);
+    procedure DoUploadToMobile;
+  public
+    TerminateImmediate : boolean;   // это значит поток был запущен перед закрытием программы
+    DoNotProcessFirst : boolean;    // не отрабатывать поток сразу после запуска программы
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+uses
+  unMobileUploadRoutine;
+
+
+constructor TExportDataThread.Create;
+begin
+  FSleepEvent := TSimpleEvent.Create;
+  inherited Create( False );
+  ExportThreadExists := True;
+  Priority := tpLower;
+end;
+
+destructor TExportDataThread.Destroy;
+begin
+  Terminate;
+  FSleepEvent.SetEvent;
+  inherited;
+  FSleepEvent.Free;
+  ExportThreadExists := False;
+end;
+
+procedure TExportDataThread.Execute;
+var
+  Connected, NeedToEditSyncExtApp : Boolean;
+  db: TpFIBDatabase;
+  fs: TFileStream;
+  SL: TStringList;
+  zakaz_old, sklad_old : Int64;
+  head_filled : Boolean;
+  tovarId, tovarIdOld, priceOld, catNameOld, totalOld, filename, PNT : string;
+  Xml: TXmlVerySimple;
+  SalesNode, SaleNode, ItemNode, EntityNode: TXmlNode;
+  ProductsNode, ProductNode, AmountNode : TXmlNode;
+  YmlCatalogNode, OffersNode, ShopNode : TXmlNode;
+begin
+  NeedToEditSyncExtApp := False;
+
+  while not Terminated do begin
+    if DoNotProcessFirst = False then begin
+      if not (DirectoryExists(ExportPath)) and (UploadToMobile = false) then begin
+        MessageBox(GetDesktopWindow, PChar('Включен сервис "Выгрузка оперативных данных", но ресурса "' + ExportPath + '" для сохранения '+
+        'данных не существует!' + #10#13 + 'Переопределите папку для сохранения '+
+        'в меню "Сервис - Выгрузка опер. данных"!' + #10#13 + 'Сервис будет временно ОТКЛЮЧЕН!'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+        Terminate;
+        Exit;
+      end;
+
+      if (Copy(ExportDataType, 5, 1) = '1') or (Copy(ExportDataTypeFtp, 5, 1) = '1') or
+      (Copy(ExportDataType, 6, 1) = '1') or (Copy(ExportDataTypeFtp, 5, 1) = '1') or UploadToMobile then
+        NeedToEditSyncExtApp := True;
+
+      with MainDM.MainLogFile do
+        if Active then begin
+          WriteLog('Начало выгрузки данных.', True);
+        end;
+
+      try
+        db := MainDM.dbMainThread;
+        Connected := unDBSupport.ConnectToFB(db, '');
+
+        if not Connected then
+          Exit;
+
+        if NeedToEditSyncExtApp then begin
+          try
+            ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP SET IS_LOADING = 1';
+            OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+
+            // в общем при изменении/удалении данных бывают коллизии и возникают дубли записей с одинаковым ID.
+            // буду тут зачищать перед отправкой
+            // а возникает потому что на момент вставки новой записи с новой операцией, например редактирование, запись с таким  ID
+            // есть, но с признаком IS_LOADING = 1, потом в момент выгрузки происходит ошибка и запись опять становится с IS_LOADING = 0
+            // и получаются две записи с одинаковым ID, но разным типом операции, потом на сервере из-за этого ошибка
+            ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP '+
+                                                                'WHERE SYNC_EXT_APP IN (SELECT AP.SYNC_EXT_APP '+
+                                                                                         'FROM SYNC_EXT_APP AP '+
+                                                                                        'WHERE AP.IS_LOADING = 1 '+
+                                                                                          'AND AP.OPER = 1 '+
+                                                                                          'AND EXISTS (SELECT 1 FROM SYNC_EXT_APP APP WHERE APP.IS_LOADING = 1 AND APP.OPER IN (2,3) AND APP.ID = AP.ID) '+
+                                                                                       'UNION ALL '+
+                                                                                       'SELECT AP.SYNC_EXT_APP '+
+                                                                                         'FROM SYNC_EXT_APP AP '+
+                                                                                        'WHERE AP.IS_LOADING = 1 '+
+                                                                                          'AND AP.OPER = 2 '+
+                                                                                          'AND EXISTS (SELECT 1 FROM SYNC_EXT_APP APP WHERE APP.IS_LOADING = 1 AND APP.OPER = 3 AND APP.ID = AP.ID) '+
+                                                                                      ')';
+
+            OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+            if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+              ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+          except
+            on E: Exception do begin
+              with MainDM.MainLogFile do
+                if Active then begin
+                  WriteLog('Ошибка подготовки данных. PNT: 01.', True);
+                end;
+
+              Exit;
+            end;
+          end;
+        end;
+
+        if (Copy(ExportDataType, 1, 1) = '1') or (Copy(ExportDataTypeFtp, 1, 1) = '1') then begin
+          ReportsThreadDM.PrepareReport(7);
+          ReportsThreadDM.spReport.ParamByName('date_begin_').AsDate := Now;
+          ReportsThreadDM.spReport.ParamByName('date_end_').AsDate := Now;
+          ReportsThreadDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+          ReportsThreadDM.ShowReport(ExportPath + 'Продажи '+ CurSkladName + ' за ' + DateToStr(Date) + '.xls');
+
+          if Copy(ExportDataTypeFtp, 1, 1) = '1' then
+            PushToArr(ExportPath + 'Продажи '+ CurSkladName + ' за ' + DateToStr(Date) + '.xls');
+        end;
+
+        if (Copy(ExportDataType, 2, 1) = '1') or (Copy(ExportDataTypeFtp, 2, 1) = '1') then begin
+          ReportsThreadDM.PrepareReport(12);
+          ReportsThreadDM.spReport.ParamByName('INCLUDE_NOL_').AsInteger := 0;
+          ReportsThreadDM.spReport.ParamByName('INCLUDE_FEW_').AsInteger := 0;
+          ReportsThreadDM.spReport.ParamByName('SORT_BY_NAME_').AsInteger := 0;
+          ReportsThreadDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+          ReportsThreadDM.ShowReport(ExportPath + 'Остатки товаров '+ CurSkladName +' на ' + DateToStr(Date) + '.xls');
+
+          if Copy(ExportDataTypeFtp, 2, 1) = '1' then
+            PushToArr(ExportPath + 'Остатки товаров '+ CurSkladName +' на ' + DateToStr(Date) + '.xls');
+        end;
+
+        // Остатки в файле XML
+        if (Copy(ExportDataType, 3, 1) = '1') or (Copy(ExportDataTypeFtp, 3, 1) = '1') then begin
+          try
+            tovarIdOld := '';
+            priceOld   := '';
+            catNameOld := '';
+            totalOld   := '';
+
+            Xml := TXmlVerySimple.Create;
+            ProductsNode := Xml.AddChild('PRODUCTS');
+            ReportsThreadDM.spGetProductList.ParamByName('ITEKA_').AsInteger := 0;
+            OpenSP(ReportsThreadDM.spGetProductList, False);
+            with ReportsThreadDM.spGetProductList do begin
+              First;
+              while not Eof do begin
+                if (ReportsThreadDM.spGetProductList.FieldByName('g_product').AsString <> tovarIdOld) or (tovarIdOld = '') then begin
+                  if tovarIdOld <> '' then begin
+                    EntityNode := AmountNode.AddChild('TOTAL');
+                    EntityNode.Text := totalOld;
+
+                    EntityNode := ProductNode.AddChild('PRICE');
+                    EntityNode.Text := priceOld;
+                    EntityNode := ProductNode.AddChild('CATEGORY');
+                    EntityNode.Text := catNameOld;
+                  end;
+
+                  ProductNode := ProductsNode.AddChild('PRODUCT');
+                  EntityNode := ProductNode.AddChild('BARCODE');
+                  EntityNode.Text := FieldByName('barcode').AsString;
+                  EntityNode := ProductNode.AddChild('ARTICUL');
+                  EntityNode.Text := FieldByName('ARTICUL').AsString;
+                  EntityNode := ProductNode.AddChild('NAME');
+                  EntityNode.Text := FieldByName('NAME').AsString;
+
+                  AmountNode := ProductNode.AddChild('AMOUNT');
+                  EntityNode := AmountNode.AddChild('SKLAD');
+                  EntityNode.Text := FieldByName('TOCHKA_NAME').AsString;
+                  EntityNode := AmountNode.AddChild('AMOUNT_CUR');
+                  EntityNode.Text := FieldByName('AMOUNT').AsString;
+                end else begin
+                  EntityNode := AmountNode.AddChild('SKLAD');
+                  EntityNode.Text := FieldByName('TOCHKA_NAME').AsString;
+                  EntityNode := AmountNode.AddChild('AMOUNT_CUR');
+                  EntityNode.Text := FieldByName('AMOUNT').AsString;
+                end;
+
+                tovarIdOld := FieldByName('G_PRODUCT').AsString;
+                totalOld   := FieldByName('TOTAL').AsString;
+                priceOld   := FieldByName('PRICE').AsString;
+                catNameOld := FieldByName('CAT_NAME').AsString;
+                Next;
+              end;
+              {SL.Add('        <TOTAL>' + totalOld + '</TOTAL>');
+              SL.Add('    </AMOUNT>');
+              SL.Add('    <PRICE>' + priceOld + '</PRICE>');
+              SL.Add('    <CATEGORY>' + catNameOld + '</CATEGORY>');
+              SL.Add('  </PRODUCT>');
+              SL.Add('</PRODUCTS>');}
+            end;
+
+            //fs:=TFileStream.Create(ExportPath + GetDateTime2 + '.xml', fmCreate);
+            //SL.SaveToStream(fs);
+            filename := ExportPath + GetDateTime2 + '.xml';
+            Xml.SaveToFile(filename);
+
+            if Copy(ExportDataTypeFtp, 3, 1) = '1' then
+              PushToArr(filename);
+          finally
+            //fs.Free;
+            //SL.Free;
+            Xml.Free;
+            ReportsThreadDM.spGetProductList.Close;
+          end;
+        end;
+
+        if (Copy(ExportDataType, 4, 1) = '1') or (Copy(ExportDataTypeFtp, 4, 1) = '1') then begin
+          ReportsThreadDM.PrepareReport(46);
+          ReportsThreadDM.spReport.ParamByName('date_begin_').AsDate := Now;
+          ReportsThreadDM.spReport.ParamByName('date_end_').AsDate := Now;
+          ReportsThreadDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+          ReportsThreadDM.ShowReport(ExportPath + 'Прибыль '+ CurSkladName + ' за ' + DateToStr(Date) + '.xls');
+          if Copy(ExportDataTypeFtp, 4, 1) = '1' then
+            PushToArr(ExportPath + 'Прибыль '+ CurSkladName + ' за ' + DateToStr(Date) + '.xls');
+        end;
+
+        // продажи в формате XML
+        if (Copy(ExportDataType, 5, 1) = '1') or (Copy(ExportDataTypeFtp, 5, 1) = '1') then begin
+          try
+            ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP_UPLOAD(:OBJECT_TYPE_)';
+            ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 1;
+            OpenSP(ReportsThreadDM.spUniversalRead, False);
+            if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+              // 04.11.2020 теперь удаление будет в самом конце, после выгрузки в мобильное приложение
+              //ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP WHERE SYNC_EXT_APP = :SYNC_EXT_APP_';
+              Xml := TXmlVerySimple.Create;
+              try
+                try
+                  PNT := '01';
+
+                  SalesNode := Xml.AddChild('Sales');
+                  with ReportsThreadDM.spUniversalRead do begin
+                    First;
+                    zakaz_old := FieldByName('ZAKAZ').AsLargeInt;
+                    head_filled := false;
+
+                    while not Eof do begin
+                      if zakaz_old <> FieldByName('ZAKAZ').AsLargeInt then
+                        head_filled := false;
+
+                      if not head_filled then begin
+                        PNT := '02';
+                        head_filled := True;
+                        SaleNode := SalesNode.AddChild('Sale');
+                        EntityNode := SaleNode.AddChild('Oper');
+                        EntityNode.Text := FieldByName('OPER').AsString;
+                        EntityNode := SaleNode.AddChild('Code');
+                        EntityNode.Text := FieldByName('ZAKAZ').AsString;
+                        EntityNode := SaleNode.AddChild('Date');
+                        EntityNode.Text := FieldByName('Z_DATE').AsString;
+                        EntityNode := SaleNode.AddChild('ClientId');
+                        EntityNode.Text := FieldByName('CLIENT_ID').AsString;
+                        EntityNode := SaleNode.AddChild('Client');
+                        EntityNode.Text := FieldByName('CLIENT_NAME').AsString;
+                        EntityNode := SaleNode.AddChild('ClientIDN');
+                        EntityNode.Text := FieldByName('IDN').AsString;
+                        EntityNode := SaleNode.AddChild('Sklad');
+                        EntityNode.Text := FieldByName('SKLAD_NAME').AsString;
+                        EntityNode := SaleNode.AddChild('SummCash');
+                        EntityNode.Text := FieldByName('SUMM_CASH').AsString;
+                        EntityNode := SaleNode.AddChild('SummNonCash');
+                        EntityNode.Text := FieldByName('SUMM_NONCASH').AsString;
+                        EntityNode := SaleNode.AddChild('SummSert');
+                        EntityNode.Text := FieldByName('SUMM_SERT').AsString;
+                      end;
+
+                      PNT := '03';
+                      EntityNode := SaleNode.AddChild('Items');
+                      ItemNode := EntityNode.AddChild('Item');
+                      EntityNode := ItemNode.AddChild('Articul');
+                      EntityNode.Text := FieldByName('ARTICUL').AsString;
+                      EntityNode := ItemNode.AddChild('Barcode');
+                      EntityNode.Text := FieldByName('BARCODE').AsString;
+                      EntityNode := ItemNode.AddChild('Nomenclatur');
+                      EntityNode.Text := FieldByName('NOMENCLATUR_NUM').AsString;
+                      EntityNode := ItemNode.AddChild('Name');
+                      EntityNode.Text := FieldByName('TOVAR_NAME').AsString;
+                      EntityNode := ItemNode.AddChild('Quantity');
+                      EntityNode.Text := FieldByName('AMOUNT').AsString;
+                      EntityNode := ItemNode.AddChild('Price');
+                      EntityNode.Text := FieldByName('PRICE').AsString;
+                      EntityNode := ItemNode.AddChild('Summ');
+                      EntityNode.Text := FieldByName('SUMM').AsString;
+
+                      zakaz_old := FieldByName('ZAKAZ').AsLargeInt;
+
+                      // удаляю строку из очереди
+                      //ReportsThreadDM.spUniversalWrite.ParamByName('SYNC_EXT_APP_').AsInt64 := FieldByName('SYNC_EXT_APP').AsLargeInt;
+                      //OpenSP(ReportsThreadDM.spUniversalWrite, False);
+
+                      Next;
+                    end;
+                  end;
+
+                  //if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+                  //  ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+                  PNT := '04';
+                  filename := ExportPath + 'sales' + GetDateTime2 + '.xml';
+                  Xml.SaveToFile(filename);
+
+                  if Copy(ExportDataTypeFtp, 5, 1) = '1' then
+                    PushToArr(filename);
+
+                  PNT := '05';
+                  ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP SET IS_LOADED = 1 WHERE IS_LOADING = 1 AND IS_LOADED = 0';
+                  OpenSP(ReportsThreadDM.spUniversalWrite, False);
+
+                except
+                  on E: Exception do begin
+                    with MainDM.MainLogFile do
+                      if Active then begin
+                        WriteLog('Ошибка выгрузки продаж в XML. PNT: ' + PNT + '. Детали: ' + E.message, True);
+                      end;
+                  end;
+                end;
+              finally
+                Xml.Free;
+              end;
+            end;
+          finally
+            ReportsThreadDM.spUniversalRead.Close;
+          end;
+        end;
+
+        // приходы в формате XML
+        if (Copy(ExportDataType, 6, 1) = '1') or (Copy(ExportDataTypeFtp, 5, 1) = '1') then begin
+          try
+            ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP_UPLOAD(:OBJECT_TYPE_)';
+            ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 2;
+            OpenSP(ReportsThreadDM.spUniversalRead, False);
+            if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+              //ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP WHERE SYNC_EXT_APP = :SYNC_EXT_APP_';
+              Xml := TXmlVerySimple.Create;
+              try
+                try
+                  PNT := '01';
+
+                  SalesNode := Xml.AddChild('Arrivals');
+                  with ReportsThreadDM.spUniversalRead do begin
+                    First;
+                    zakaz_old := FieldByName('ZAKAZ').AsLargeInt;
+                    head_filled := false;
+
+                    while not Eof do begin
+                      if zakaz_old <> FieldByName('ZAKAZ').AsLargeInt then
+                        head_filled := false;
+
+                      if not head_filled then begin
+                        PNT := '02';
+                        head_filled := True;
+                        SaleNode := SalesNode.AddChild('Arrival');
+                        EntityNode := SaleNode.AddChild('Oper');
+                        EntityNode.Text := FieldByName('OPER').AsString;
+                        EntityNode := SaleNode.AddChild('Code');
+                        EntityNode.Text := FieldByName('ZAKAZ').AsString;
+                        EntityNode := SaleNode.AddChild('Date');
+                        EntityNode.Text := FieldByName('Z_DATE').AsString;
+                        EntityNode := SaleNode.AddChild('ProviderId');
+                        EntityNode.Text := FieldByName('CLIENT_ID').AsString;
+                        EntityNode := SaleNode.AddChild('Provider');
+                        EntityNode.Text := FieldByName('CLIENT_NAME').AsString;
+                        EntityNode := SaleNode.AddChild('ProviderIDN');
+                        EntityNode.Text := FieldByName('IDN').AsString;
+                        EntityNode := SaleNode.AddChild('Sklad');
+                        EntityNode.Text := FieldByName('SKLAD_NAME').AsString;
+                        EntityNode := SaleNode.AddChild('SummCash');
+                        EntityNode.Text := FieldByName('SUMM_CASH').AsString;
+                        EntityNode := SaleNode.AddChild('SummNonCash');
+                        EntityNode.Text := FieldByName('SUMM_NONCASH').AsString;
+                        EntityNode := SaleNode.AddChild('SummSert');
+                        EntityNode.Text := FieldByName('SUMM_SERT').AsString;
+                        EntityNode := SaleNode.AddChild('Type');
+                        EntityNode.Text := FieldByName('RTYPE').AsString;
+                      end;
+
+                      PNT := '03';
+                      EntityNode := SaleNode.AddChild('Items');
+                      ItemNode := EntityNode.AddChild('Item');
+                      EntityNode := ItemNode.AddChild('Articul');
+                      EntityNode.Text := FieldByName('ARTICUL').AsString;
+                      EntityNode := ItemNode.AddChild('Barcode');
+                      EntityNode.Text := FieldByName('BARCODE').AsString;
+                      EntityNode := ItemNode.AddChild('Nomenclatur');
+                      EntityNode.Text := FieldByName('NOMENCLATUR_NUM').AsString;
+                      EntityNode := ItemNode.AddChild('Name');
+                      EntityNode.Text := FieldByName('TOVAR_NAME').AsString;
+                      EntityNode := ItemNode.AddChild('Quantity');
+                      EntityNode.Text := FieldByName('AMOUNT').AsString;
+                      EntityNode := ItemNode.AddChild('Price');
+                      EntityNode.Text := FieldByName('PRICE').AsString;
+                      EntityNode := ItemNode.AddChild('Summ');
+                      EntityNode.Text := FieldByName('SUMM').AsString;
+
+                      zakaz_old := FieldByName('ZAKAZ').AsLargeInt;
+
+                      // удаляю строку из очереди
+                      //ReportsThreadDM.spUniversalWrite.ParamByName('SYNC_EXT_APP_').AsInt64 := FieldByName('SYNC_EXT_APP').AsLargeInt;
+                      //OpenSP(ReportsThreadDM.spUniversalWrite, False);
+
+                      Next;
+                    end;
+                  end;
+
+                  //if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+                  //  ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+                  PNT := '04';
+                  filename := ExportPath + 'arrival' + GetDateTime2 + '.xml';
+                  Xml.SaveToFile(filename);
+
+                  if Copy(ExportDataTypeFtp, 5, 1) = '1' then
+                    PushToArr(filename);
+
+                  PNT := '05';
+                  ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP SET IS_LOADED = 1 WHERE IS_LOADING = 1 AND IS_LOADED = 0';
+                  OpenSP(ReportsThreadDM.spUniversalWrite, False);
+                except
+                  on E: Exception do begin
+                    with MainDM.MainLogFile do
+                      if Active then begin
+                        WriteLog('Ошибка выгрузки приходов в XML. PNT: ' + PNT + '. Детали: ' + E.message, True);
+                      end;
+                  end;
+                end;
+              finally
+                Xml.Free;
+              end;
+            end;
+          finally
+            ReportsThreadDM.spUniversalRead.Close;
+          end;
+        end;
+
+        // ФАЙЛ ДЛЯ I-TEKA
+        if (Copy(ExportDataTypeFtp, 7, 1) = '1') then begin
+          try
+            Xml := TXmlVerySimple.Create;
+            YmlCatalogNode := Xml.AddChild('yml_catalog');
+            YmlCatalogNode.Attributes['date'] := GetDateTime3;
+            YmlCatalogNode.Attributes['price_list_type'] := '1';
+            ShopNode := YmlCatalogNode.AddChild('shop');
+            ItemNode := ShopNode.AddChild('company');
+            ItemNode.Text := 'Test';
+            EntityNode := ItemNode.AddChild('currencies');
+            ItemNode := EntityNode.AddChild('currency');
+            ItemNode.Attributes['id'] := 'KZT';
+            ItemNode.Attributes['rate'] := '1';
+            OffersNode := YmlCatalogNode.AddChild('offers');
+
+            ReportsThreadDM.spGetProductList.ParamByName('ITEKA_').AsInteger := 1;
+            ReportsThreadDM.spGetProductList.ParamByName('G_TOCHKA_').AsInt64 := ItekaTochka;
+            OpenSP(ReportsThreadDM.spGetProductList, False);
+            with ReportsThreadDM.spGetProductList do begin
+              First;
+              while not Eof do begin
+                ProductNode := OffersNode.AddChild('offer');
+                ProductNode.Attributes['id'] := FieldByName('g_product').AsString;
+                ProductNode.Attributes['type'] := 'medicine';
+                EntityNode := ProductNode.AddChild('name');
+                EntityNode.Text := FieldByName('NAME').AsString;
+                EntityNode := ProductNode.AddChild('price');
+                EntityNode.Text := FieldByName('PRICE').AsString;
+                EntityNode := ProductNode.AddChild('country_of_origin');
+                EntityNode.Text := FieldByName('MF_COUNTRY').AsString;
+                EntityNode := ProductNode.AddChild('vendor');
+                EntityNode := ProductNode.AddChild('count');
+                EntityNode.Text := FieldByName('AMOUNT').AsString;
+                EntityNode := ProductNode.AddChild('offer_id');
+                EntityNode.Text := FieldByName('ARTICUL').AsString;
+                Next;
+              end;
+            end;
+
+            // перед сохранением надо удалить файлы которые там есть, чтобы просто так
+            // не скапливалась лишняя куча файлов, ведь нужны только остатки последние
+            DeleteFilesFromFolder(ExportPath, ExportFtpLogin + '_0_');
+
+            filename := ExportPath + ExportFtpLogin + '_0_' + GetDateTime2 + '.xml';
+            Xml.SaveToFile(filename);
+
+            PushToArr(filename);
+          finally
+            //fs.Free;
+            //SL.Free;
+            Xml.Free;
+            ReportsThreadDM.spGetProductList.Close;
+          end;
+        end;
+
+        with MainDM.MainLogFile do begin
+          //делаю выгрузку на сервер FTP
+          try
+            if (UploadToFtp = True) and (High(FilesArr) > -1) then begin
+              if Active then
+                WriteLog('Начало выгрузки файлов по FTP.', True);
+
+              DoUploadToFtp;
+            end;
+          except
+            on E: Exception do
+            begin
+                if Active then begin
+                  WriteLog('Ошибка выгрузки файлов по FTP. Детали: ' + E.Message, True);
+                end;
+            end;
+          end;
+
+          if NeedToEditSyncExtApp then begin
+            ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP SET IS_LOADED = 1 WHERE IS_LOADED = 0 AND IS_LOADING = 1';
+            OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+            if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+              ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+
+            //выгрузка в мобильное приложение
+            if UploadToMobile then begin
+              if Active then
+                WriteLog('Начало выгрузки в мобильное приложение.', True);
+
+              try
+
+                DoUploadToMobile;
+
+              except
+                on E: Exception do
+                begin
+                  if Active then begin
+                    WriteLog('Ошибка выгрузки в мобильное приложение. Детали: ' + E.Message, True);
+                  end;
+                end;
+              end;
+
+              if Active then
+                WriteLog('Конец выгрузки в мобильное приложение.', True);
+            end;
+          end;
+        end;
+
+        // в самом конце удаляю все строки из SYNC_EXT_APP
+        if NeedToEditSyncExtApp then begin
+          try
+            if UploadToMobile = False then
+              ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP '+
+                                                                 'WHERE IS_LOADED = 1 AND IS_LOADING = 1'
+            else
+              ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP '+
+                                                                 'WHERE IS_LOADED = 1 AND IS_LOADED_MOB = 1 AND IS_LOADING = 1';
+
+            OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+            if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+              ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+
+            ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP '+
+                                                               '   SET IS_LOADING = 0 '+
+                                                               'WHERE IS_LOADING = 1';
+            OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+
+            if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+              ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+          except
+            on E: Exception do begin
+              with MainDM.MainLogFile do
+                if Active then begin
+                  WriteLog('Ошибка удаления выгруженных данных. PNT: DELETE. Детали: ' + E.Message, True);
+                end;
+
+              Exit;
+            end;
+          end;
+        end;
+
+      finally
+        DisconnectFromFB(db);
+
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Конец выгрузки данных.', True);
+          end;
+      end;
+    end;
+
+    DoNotProcessFirst := False;
+
+    if TerminateImmediate = true then
+      Break;
+
+    // перенес в начало потока, чтобы не запускать его сразу после запуска программы
+    FSleepEvent.WaitFor(ExportInterval); // Ждем N минут
+  end;
+end;
+
+procedure TExportDataThread.PushToArr(filename: string);
+begin
+  SetLength(FilesArr, High(FilesArr) + 2);
+  FilesArr[High(FilesArr)] := filename;
+end;
+
+procedure TExportDataThread.DoUploadToFtp;
+var idFTP1 : TIdFTP;
+  i : Integer;
+begin
+  if (ExportFtpServer <> '') and (ExportFtpPort <> '') and (ExportFtpLogin <> '') then begin
+    try
+      idFTP1 := TIdFTP.Create;
+
+      idFTP1.Host := ExportFtpServer;   //FTP-сервер
+      idFTP1.Port := StrToInt(ExportFtpPort);                  //порт ФТП сервера
+      idFTP1.Username := ExportFtpLogin;
+      idFTP1.Password := ExportFtpPassword;
+      IdFTP1.Passive := True;
+      idFTP1.Connect;
+      //idFTP1.ChangeDir('/testftp');
+
+      for i := 0 to High(FilesArr) do
+        IdFTP1.Put(FilesArr[i], extractfilename(FilesArr[i]), false);
+    finally
+      idFTP1.Disconnect;
+      idFTP1.Free;
+    end;
+  end;
+end;
+
+procedure TExportDataThread.DoUploadToMobile;
+var
+  o, data, delete: TJSONObject;
+  json_array, json_array_child: TJSONArray;
+  json_item, json_item_child: TJSONObject;
+  i : integer;
+  data_is_added, delete_is_added, head_filled : boolean;
+  parent_id_old, rec_id : Int64;
+  str, errStr, token, S : string;
+begin
+
+  // ПРОВЕРЮ ВНАЧАЛЕ ЕСТЬ ЛИ ВООБЩЕ ЗАПИСИ ДЛЯ ВЫГРУЗКИ
+  try
+    try
+      ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP WHERE IS_LOADING = 1 AND IS_LOADED_MOB = 0';
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount = 0 then begin
+        ReportsThreadDM.spUniversalRead.Close;
+        ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM LT_SKLAD_PRODUCT WHERE NEED_TO_EXPORT = 1';
+        OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+        if ReportsThreadDM.spUniversalRead.RecordCount = 0 then
+          Exit
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка поиска записей для выгрузки. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+  finally
+    ReportsThreadDM.spUniversalRead.Close;
+  end;
+
+  data_is_added := false;
+
+  // ПОЛУЧАЮ ТОКЕН
+  //MessageBox(GetDesktopWindow, PChar('Получение токена'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+  o := TJSONObject.Create;
+  try
+    token := LogonToMobile(MainDm.RESTClient, MainDm.RESTRequest, MainDm.RESTResponse,
+      ExportMobileServer, ExportMobileLogin, ExportMobilePassword, o);
+  finally
+    o.free;
+  end;
+
+  if Pos('Ошибка при логине', token) > 0 then begin
+    with MainDM.MainLogFile do
+      if Active then
+        WriteLog(token, True);
+
+    Exit;
+  end;
+
+  o := TJSONObject.Create;
+
+  try
+    data := TJSONObject.Create;
+    ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP_UPLOAD(:OBJECT_TYPE_, 1, :OPER_)';
+
+    //========================================================================
+    // ОБЪЕКТ G_PRODUCT
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 4;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 1;
+
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        data_is_added := true;
+        o.AddPair('data', data);
+        //MessageBox(GetDesktopWindow, PChar('Загрузка товаров'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+        json_array := BuildGprodJson(ReportsThreadDM.spUniversalRead, errStr);
+        if json_array = nil then begin
+          with MainDM.MainLogFile do
+            if Active then begin
+              WriteLog(errStr, True);
+            end;
+
+          Exit;
+        end;
+
+        data.AddPair('g_product', json_array);
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки товаров в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ G_PRODUCT КОНЕЦ
+    //========================================================================
+
+    //========================================================================
+    // ОБЪЕКТ G_TOCHKA
+    //========================================================================
+    //spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP_UPLOAD(3)';
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 3;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 1;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        //spUniversalWrite.SelectSQL.Text := 'DELETE FROM SYNC_EXT_APP WHERE SYNC_EXT_APP = :SYNC_EXT_APP_';
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('g_tochka', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            //MessageBox(GetDesktopWindow, PChar('Загрузка точек'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+            while not Eof do begin
+              try
+                json_item := TJSONObject.Create;
+                json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('ZAKAZ').AsString));
+                json_item.AddPair( TJSONPair.Create('name', FieldByName('TOVAR_NAME').AsString));
+                json_array.AddElement(json_item);
+
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки складов в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ G_TOCHKA КОНЕЦ
+    //========================================================================
+    //========================================================================
+    // ОБЪЕКТ SKLAD
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 2;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 1;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('sklad', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            parent_id_old := FieldByName('ZAKAZ').AsLargeInt;
+            head_filled := false;
+            //MessageBox(GetDesktopWindow, PChar('Загрузка складов'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+            while not Eof do begin
+              if parent_id_old <> FieldByName('ZAKAZ').AsLargeInt then begin
+                head_filled := false;
+                json_item.AddPair('sklad_details', json_array_child);
+                json_array.AddElement(json_item);
+              end;
+
+              try
+                if not head_filled then begin
+                  head_filled := True;
+
+                  json_item := TJSONObject.Create;
+                  json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('ZAKAZ').AsString));
+                  json_item.AddPair( TJSONPair.Create('g_tochka_id', FieldByName('G_TOCHKA').AsString));
+                  json_item.AddPair( TJSONPair.Create('date', FieldByName('Z_DATE').AsString));
+                  json_item.AddPair( TJSONPair.Create('summ', floattostrf(FieldByName('SUMM_ALL').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('summ_cash', floattostrf(FieldByName('SUMM_CASH').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('summ_noncash', floattostrf(FieldByName('SUMM_NONCASH').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('type', FieldByName('RTYPE').AsString));
+                  json_array_child := TJSONArray.Create();
+                end;
+
+                json_item_child := TJSONObject.Create;
+                json_item_child.AddPair( TJSONPair.Create('rec_id', FieldByName('item_id').AsString));
+                json_item_child.AddPair( TJSONPair.Create('sklad_id', FieldByName('ZAKAZ').AsString)); // IntTostr(parent_id_old)));
+                json_item_child.AddPair( TJSONPair.Create('g_product_id', FieldByName('g_product').AsString));
+                json_item_child.AddPair( TJSONPair.Create('amount', floattostrf(FieldByName('AMOUNT').AsFloat, ffFixed, 15, 2)));
+                json_item_child.AddPair( TJSONPair.Create('price', floattostrf(FieldByName('PRICE').AsFloat, ffFixed, 15, 2)));
+                json_array_child.AddElement(json_item_child);
+
+                parent_id_old := FieldByName('ZAKAZ').AsLargeInt;
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+
+            head_filled := false;
+            json_item.AddPair('sklad_details', json_array_child);
+            json_array.AddElement(json_item);
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки приходов в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ SKLAD КОНЕЦ
+    //========================================================================
+    //========================================================================
+    // ОБЪЕКТ ZAKAZ
+    //========================================================================
+    try
+      if ReportsThreadDM.spUniversalRead.Active then
+        ReportsThreadDM.spUniversalRead.Close;
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 1;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 1;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('zakaz', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            parent_id_old := FieldByName('ZAKAZ').AsLargeInt;
+            head_filled := false;
+            //MessageBox(GetDesktopWindow, PChar('Загрузка продаж'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+            while not Eof do begin
+              if parent_id_old <> FieldByName('ZAKAZ').AsLargeInt then begin
+                head_filled := false;
+                json_item.AddPair('zakaz_details', json_array_child);
+                json_array.AddElement(json_item);
+              end;
+
+              try
+                if not head_filled then begin
+                  head_filled := True;
+
+                  json_item := TJSONObject.Create;
+                  json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('ZAKAZ').AsString));
+                  json_item.AddPair( TJSONPair.Create('g_tochka_id', FieldByName('G_TOCHKA').AsString));
+                  json_item.AddPair( TJSONPair.Create('date', FieldByName('Z_DATE').AsString));
+                  json_item.AddPair( TJSONPair.Create('summ', floattostrf(FieldByName('SUMM_ALL').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('summ_cash', floattostrf(FieldByName('SUMM_CASH').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('summ_noncash', floattostrf(FieldByName('SUMM_NONCASH').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('summ_bonus', floattostrf(FieldByName('SUMM_BONUS').AsFloat, ffFixed, 15, 2)));
+                  json_array_child := TJSONArray.Create();
+                end;
+
+                json_item_child := TJSONObject.Create;
+                json_item_child.AddPair( TJSONPair.Create('rec_id', FieldByName('item_id').AsString));
+                json_item_child.AddPair( TJSONPair.Create('zakaz_id', FieldByName('ZAKAZ').AsString)); //IntTostr(parent_id_old)));
+                json_item_child.AddPair( TJSONPair.Create('g_product_id', FieldByName('g_product').AsString));
+                json_item_child.AddPair( TJSONPair.Create('amount', floattostrf(FieldByName('AMOUNT').AsFloat, ffFixed, 15, 2)));
+                json_item_child.AddPair( TJSONPair.Create('price', floattostrf(FieldByName('PRICE').AsFloat, ffFixed, 15, 2)));
+                json_item_child.AddPair( TJSONPair.Create('cost_price', floattostrf(FieldByName('COST_PRICE').AsFloat, ffFixed, 15, 2)));
+                json_array_child.AddElement(json_item_child);
+
+                parent_id_old := FieldByName('ZAKAZ').AsLargeInt;
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+
+            head_filled := false;
+            json_item.AddPair('zakaz_details', json_array_child);
+            json_array.AddElement(json_item);
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки продаж в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ ZAKAZ КОНЕЦ
+    //========================================================================
+
+    // ДАЛЕЕ БЛОК ПО КАССЕ БУДУ ВЫСЫЛАТЬ, ТОЛЬКО ЕСЛИ БЫЛИ ОБНОВЫ ПО ДРУГИМ ДАННЫМ
+    //========================================================================
+    // ОБЪЕКТ KASSA_STATE
+    //========================================================================
+    IF data_is_added THEN BEGIN
+      try
+        if ReportsThreadDM.spUniversalRead.Active then
+          ReportsThreadDM.spUniversalRead.Close;
+        //ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM KASSA_STATE WHERE K_DATE = :DATE_';
+        ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT ST.KASSA_STATE, ' +
+                                                          '       ST.G_TOCHKA, ' +
+                                                          '       ST."INPUT", ' +
+                                                          '       ST."OUTPUT", ' +
+                                                          '       ST.K_DATE, ' +
+                                                          '       COALESCE((SELECT SUM(SUMM) FROM KASSA K WHERE K.ACTION_DATE = :DATE_ AND K."ACTION" = 1 ' +
+                                                          '           AND K.G_TOCHKA = ST.G_TOCHKA AND K.G_PRIHOD_RASHOD NOT IN (-1, 2, 3)), 0) DEBET, ' +
+                                                          '       COALESCE((SELECT SUM(SUMM) FROM KASSA K WHERE K.ACTION_DATE = :DATE_ AND K."ACTION" = 0 ' +
+                                                          '           AND K.G_TOCHKA = ST.G_TOCHKA AND K.G_PRIHOD_RASHOD NOT IN (1)), 0) CREDIT ' +
+                                                          'FROM KASSA_STATE ST ' +
+                                                          'WHERE ST.K_DATE = :DATE_';
+        ReportsThreadDM.spUniversalRead.ParamByName('DATE_').AsDate := DATE;
+        OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+        if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+          if data_is_added = false then begin
+            data_is_added := true;
+            o.AddPair('data', data);
+          end;
+
+          try
+            json_array := TJSONArray.Create();
+            data.AddPair('kassa_state', json_array);
+
+            with ReportsThreadDM.spUniversalRead do begin
+              First;
+              //MessageBox(GetDesktopWindow, PChar('Загрузка касса'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+              while not Eof do begin
+                try
+                  json_item := TJSONObject.Create;
+                  json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('kassa_state').AsString));
+                  json_item.AddPair( TJSONPair.Create('g_tochka_id', FieldByName('G_TOCHKA').AsString));
+                  json_item.AddPair( TJSONPair.Create('date', FieldByName('k_date').AsString));
+                  json_item.AddPair( TJSONPair.Create('in_summ', floattostrf(FieldByName('input').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('debet', floattostrf(FieldByName('debet').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('credit', floattostrf(FieldByName('credit').AsFloat, ffFixed, 15, 2)));
+                  json_item.AddPair( TJSONPair.Create('out_summ', floattostrf(FieldByName('output').AsFloat, ffFixed, 15, 2)));
+                  json_array.AddElement(json_item);
+
+                  Next;
+                finally
+                  //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+                end;
+              end;
+            end;
+          finally
+            //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+          end;
+        end;
+      except
+        on E: Exception do begin
+          with MainDM.MainLogFile do
+            if Active then begin
+              WriteLog('Ошибка выгрузки кассы в моб. приложение. Детали: ' + E.Message, True);
+            end;
+
+          Exit;
+        end;
+      end;
+      //========================================================================
+      // ОБЪЕКТ KASSA_STATE КОНЕЦ
+      //========================================================================
+    END;
+
+    //========================================================================
+    // ОБЪЕКТ REMAINDERS, ВЫГРУЖАЮТСЯ ОСТАТКИ ПО ТОВАРАМ
+    //========================================================================
+    try
+      if ReportsThreadDM.spUniversalWrite.Active then
+        ReportsThreadDM.spUniversalWrite.Close;
+      ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE LT_SKLAD_PRODUCT ' +
+                                                               'SET NEED_TO_EXPORT = 2 '+
+                                                        'WHERE NEED_TO_EXPORT = 1';
+      OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+      if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+        ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+      ReportsThreadDM.spUniversalWrite.Close;
+
+      if ReportsThreadDM.spUniversalRead.Active then
+        ReportsThreadDM.spUniversalRead.Close;
+      ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT LT.LT_SKLAD_PRODUCT, ' +
+                                                               'LT.G_PRODUCT, '+
+                                                               '(LT.AMOUNT - LT.AMOUNT_RESERVE) AMOUNT, '+
+                                                               'LT.G_TOCHKA '+
+                                                        'FROM LT_SKLAD_PRODUCT LT, G_PRODUCT GP '+
+                                                        'WHERE LT.G_PRODUCT = GP.G_PRODUCT '+
+                                                        'AND LT.NEED_TO_EXPORT = 2';
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('remainders', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            //MessageBox(GetDesktopWindow, PChar('Загрузка остатков'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+            while not Eof do begin
+              try
+                json_item := TJSONObject.Create;
+                json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('lt_sklad_product').AsString));
+                json_item.AddPair( TJSONPair.Create('g_tochka_id', FieldByName('G_TOCHKA').AsString));
+                json_item.AddPair( TJSONPair.Create('g_product_id', FieldByName('g_product').AsString));
+                json_item.AddPair( TJSONPair.Create('amount', floattostrf(FieldByName('amount').AsFloat, ffFixed, 15, 2)));
+                json_array.AddElement(json_item);
+
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+
+      ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE LT_SKLAD_PRODUCT ' +
+                                                               'SET NEED_TO_EXPORT = 0 '+
+                                                        'WHERE NEED_TO_EXPORT = 2';
+      OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+      ReportsThreadDM.spUniversalWrite.Close;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки остатков в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ REMAINDERS КОНЕЦ
+    //========================================================================
+
+    //========================================================================
+    //========================================================================
+    // ТЕПЕРЬ УДАЛЕНИЕ
+    //MessageBox(GetDesktopWindow, PChar('Удаление'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+    delete := TJSONObject.Create;
+    if ReportsThreadDM.spUniversalRead.Active then
+      ReportsThreadDM.spUniversalRead.Close;
+    ReportsThreadDM.spUniversalRead.SelectSQL.Text := 'SELECT * FROM SYNC_EXT_APP_UPLOAD(:OBJECT_TYPE_, 1, :OPER_)';
+
+    //========================================================================
+    // ОБЪЕКТ G_PRODUCT
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 4;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 3;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        delete_is_added := true;
+        o.AddPair('delete', delete);
+
+        try
+          json_array := TJSONArray.Create();
+          delete.AddPair('g_product', json_array);
+
+         with ReportsThreadDM.spUniversalRead do begin
+            First;
+            while not eof do begin
+              json_array.Add(FieldByName('G_PRODUCT').AsString);
+              Next;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки удаленных складов в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+
+    //========================================================================
+    // ОБЪЕКТ G_TOCHKA
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 3;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 3;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if delete_is_added = false then begin
+          delete_is_added := true;
+          o.AddPair('delete', delete);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          delete.AddPair('g_tochka', json_array);
+
+         with ReportsThreadDM.spUniversalRead do begin
+            First;
+            while not eof do begin
+              json_array.Add(FieldByName('ZAKAZ').AsString);
+              Next;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки удаленных складов в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ G_TOCHKA КОНЕЦ
+    //========================================================================
+    //========================================================================
+    // ОБЪЕКТ SKLAD
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 2;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 3;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if delete_is_added = false then begin
+          delete_is_added := true;
+          o.AddPair('delete', delete);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          delete.AddPair('sklad', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            while not eof do begin
+              json_array.Add(FieldByName('ZAKAZ').AsString);
+              Next;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки удаленных приходов в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ SKLAD КОНЕЦ
+    //========================================================================
+    //========================================================================
+    // ОБЪЕКТ ZAKAZ
+    //========================================================================
+    try
+      ReportsThreadDM.spUniversalRead.ParamByName('OBJECT_TYPE_').AsInteger := 1;
+      ReportsThreadDM.spUniversalRead.ParamByName('OPER_').AsInteger := 3;
+      OpenSPClean(ReportsThreadDM.spUniversalRead, False);
+      if ReportsThreadDM.spUniversalRead.RecordCount > 0 then begin
+        if delete_is_added = false then begin
+          delete_is_added := true;
+          o.AddPair('delete', delete);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          delete.AddPair('zakaz', json_array);
+
+          with ReportsThreadDM.spUniversalRead do begin
+            First;
+            while not eof do begin
+              json_array.Add(FieldByName('ZAKAZ').AsString);
+              Next;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки удаленных продаж в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ ZAKAZ КОНЕЦ
+    //========================================================================
+
+    //========================================================================
+    // НЕПОСРЕДСТВЕННО ОТПРАВКА ДАННЫХ
+    //========================================================================
+    if data_is_added or delete_is_added then begin
+      with MainDM.MainLogFile do
+        if Active then begin
+          WriteLog(o.ToString, True);
+        end;
+
+      errStr := SendToMobile(MainDm.RESTClient, MainDm.RESTRequest, MainDm.RESTResponse,
+        ExportMobileServer, Token, o);
+      //MessageBox(GetDesktopWindow, PChar(errStr), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+      if errStr <> '' then begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog(errStr, True);
+          end;
+        Exit;
+      end;
+
+      try
+        ReportsThreadDM.spUniversalWrite.SelectSQL.Text := 'UPDATE SYNC_EXT_APP SET IS_LOADED_MOB = 1 WHERE IS_LOADED_MOB = 0 AND IS_LOADING = 1';
+        OpenSPClean(ReportsThreadDM.spUniversalWrite, False);
+        if ReportsThreadDM.spUniversalWrite.Transaction.InTransaction then
+            ReportsThreadDM.spUniversalWrite.Transaction.CommitRetaining;
+      except
+        on E: Exception do begin
+          with MainDM.MainLogFile do
+            if Active then begin
+              WriteLog('Ошибка обновления данных. PNT: UPDATE. Детали: ' + E.Message, True);
+            end;
+
+          Exit;
+        end;
+      end;
+    end;
+    //========================================================================
+    // НЕПОСРЕДСТВЕННО ОТПРАВКА ДАННЫХ КОНЕЦ
+    //========================================================================
+  finally
+    ReportsThreadDM.spUniversalRead.Close;
+    o.Free;
+  end;
+end;
+
+end.

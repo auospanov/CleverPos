@@ -1,0 +1,679 @@
+unit frmFirmRekvizit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, Menus, ActnList, dxExEdtr, dxCntner,
+  ExtCtrls, StdCtrls, Buttons, dxEditor, dxEdLib, cxControls, cxContainer,
+  cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, dxDBTLCl,
+  dxGrClms, dxTL, dxDBCtrl, dxDBGrid, cxPC, DB, FIBDataSet,
+  pFIBDataSet, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, AppEvnts, unCommonFunc, cxListBox;
+
+type
+  TFirmRekvizitForm = class(TDBEditForm)
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    spReadContact: TpFIBDataSet;
+    dsReadContact: TDataSource;
+    spReadBankRekv: TpFIBDataSet;
+    dsReadBankRekv: TDataSource;
+    spDelContact: TpFIBStoredProc;
+    spDelBankRekv: TpFIBStoredProc;
+    spTochka: TpFIBDataSet;
+    dsTochka: TDataSource;
+    spDelTochka: TpFIBStoredProc;
+    pc1: TcxPageControl;
+    tsCommon: TcxTabSheet;
+    pn1: TPanel;
+    pcClientRekv: TcxPageControl;
+    tsContact: TcxTabSheet;
+    gr1: TdxDBGrid;
+    gr1ADDRESS_TYPE: TdxDBGridMaskColumn;
+    gr1ADDRESS_TYPE_STR: TdxDBGridMaskColumn;
+    gr1ADDRESS: TdxDBGridMaskColumn;
+    gr1PHONE: TdxDBGridMaskColumn;
+    gr1FAX: TdxDBGridMaskColumn;
+    gr1IS_DEFAULT: TdxDBGridCheckColumn;
+    tsBankRekv: TcxTabSheet;
+    gr2: TdxDBGrid;
+    gr2G_ACCOUNT: TdxDBGridMaskColumn;
+    gr2ACCOUNT: TdxDBGridMaskColumn;
+    gr2G_BANK: TdxDBGridMaskColumn;
+    gr2BIK: TdxDBGridMaskColumn;
+    gr2NAME: TdxDBGridMaskColumn;
+    gr2IS_DEFAULT: TdxDBGridCheckColumn;
+    pn2: TPanel;
+    btnUpd: TBitBtn;
+    btnDel: TBitBtn;
+    btnIns: TBitBtn;
+    ceBezNDS: TdxCheckEdit;
+    shp12: TShape;
+    lb7: TLabel;
+    shp14: TShape;
+    lb10: TLabel;
+    shp17: TShape;
+    lb11: TLabel;
+    shp18: TShape;
+    lb12: TLabel;
+    shp19: TShape;
+    lbKPP: TLabel;
+    shKpp: TShape;
+    lb13: TLabel;
+    shp20: TShape;
+    lbIDN: TLabel;
+    shp21: TShape;
+    lb14: TLabel;
+    shp22: TShape;
+    lb15: TLabel;
+    shp23: TShape;
+    lb16: TLabel;
+    shp24: TShape;
+    edWebsite: TdxEdit;
+    shp25: TShape;
+    shp26: TShape;
+    lb17: TLabel;
+    shp27: TShape;
+    edEmail: TdxEdit;
+    edMainChief: TdxEdit;
+    shp28: TShape;
+    edHead: TdxEdit;
+    shp29: TShape;
+    lbOgrn: TLabel;
+    shpOgrn: TShape;
+    lb18: TLabel;
+    shp30: TShape;
+    edKBE: TdxEdit;
+    edKPP: TdxEdit;
+    shpKpp1: TShape;
+    shp31: TShape;
+    shp32: TShape;
+    shpOgrn1: TShape;
+    edOgrn: TdxEdit;
+    edOKPO: TdxEdit;
+    edIDN: TdxEdit;
+    shp33: TShape;
+    edShortName: TdxEdit;
+    shp34: TShape;
+    edName: TdxEdit;
+    shp35: TShape;
+    cbForm: TComboBox;
+    shp36: TShape;
+    tsFirms: TcxTabSheet;
+    lb9: TLabel;
+    shp16: TShape;
+    shp15: TShape;
+    cbByDefault: TCheckBox;
+    grFirms: TdxDBGrid;
+    spReadFirms: TpFIBDataSet;
+    dsReadFirms: TDataSource;
+    grFirmsG_FIRM_REKVIZIT: TdxDBGridMaskColumn;
+    grFirmsNAME: TdxDBGridMaskColumn;
+    aInsFirm: TAction;
+    pn3: TPanel;
+    btnIns1: TBitBtn;
+    btnDel1: TBitBtn;
+    aDelFirm: TAction;
+    spDelFirm: TpFIBStoredProc;
+    dxdbgrdchckclmnFirmsColumn3: TdxDBGridCheckColumn;
+    tsSklad: TcxTabSheet;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    btnInsSklad: TBitBtn;
+    grTochka: TdxDBGrid;
+    dxDBGridMaskColumn11: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn12: TdxDBGridMaskColumn;
+    tsNds: TcxTabSheet;
+    lb8: TLabel;
+    shp13: TShape;
+    shp11: TShape;
+    ceISPayNDS: TdxCheckEdit;
+    lb2: TLabel;
+    shp5: TShape;
+    lb3: TLabel;
+    shp4: TShape;
+    lb4: TLabel;
+    shp3: TShape;
+    shp8: TShape;
+    edSerial: TdxEdit;
+    shp7: TShape;
+    edNum: TdxEdit;
+    shp6: TShape;
+    edIssuer: TdxEdit;
+    shp2: TShape;
+    lb5: TLabel;
+    shp1: TShape;
+    lb6: TLabel;
+    shp10: TShape;
+    edNDS: TdxCurrencyEdit;
+    shp9: TShape;
+    deDate: TcxDateEdit;
+    procedure ceISPayNDSChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure aInsExecute(Sender: TObject);
+    procedure aUpdExecute(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure pcClientRekvChange(Sender: TObject);
+    procedure cbFormChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure btHelpClick(Sender: TObject);
+    procedure edShortNameEnter(Sender: TObject);
+    procedure aInsFirmExecute(Sender: TObject);
+    procedure aDelFirmExecute(Sender: TObject);
+    procedure grFirmsChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure pc1Change(Sender: TObject);
+  private
+  public
+    { Public declarations }
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+    procedure ReadContact;
+    procedure RefreshFirms;
+    procedure GetRekv;
+  end;
+
+var
+  FirmRekvizitForm: TFirmRekvizitForm;
+
+implementation
+
+uses frmMyAddressBankRek, frmMyFirmAddress, frmTochka;
+
+{$R *.dfm}
+
+procedure TFirmRekvizitForm.ceISPayNDSChange(Sender: TObject);
+begin
+  inherited;
+  if ceISPayNDS.Checked = False then begin
+    edSerial.Clear;
+    edNum.Clear;
+    deDate.Text := '';
+    edIssuer.Clear;
+    edNDS.Clear;
+
+    edSerial.Enabled := False;
+    edNum.Enabled := False;
+    deDate.Enabled := False;
+    edIssuer.Enabled := False;
+    edNDS.Enabled := False;
+  end else begin
+    edSerial.Enabled := True;
+    edNum.Enabled := True;
+    deDate.Enabled := True;
+    edIssuer.Enabled := True;
+    edNDS.Enabled := True;
+  end;
+end;
+
+function TFirmRekvizitForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(cbForm.Text) = EmptyStr then begin
+    ErrControl := cbForm;
+    MessageDlg('Организацоннная форма не выбрана!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if ceISPayNDS.Checked then begin
+    if Trim(edSerial.Text) = EmptyStr then begin
+      ErrControl := edSerial;
+      MessageDlg('Серия свидетельства НДС не указана!', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+    if Trim(edNum.Text) = EmptyStr then begin
+      ErrControl := edNum;
+      MessageDlg('Номер свидетельства НДС не указана!', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+    if Trim(edNum.Text) = EmptyStr then begin
+      ErrControl := edNum;
+      MessageDlg('Номер свидетельства НДС не указана!', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+    if Trim(deDate.Text) = EmptyStr then begin
+      ErrControl := deDate;
+      MessageDlg('Дата свидетельства НДС не указана!', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+    if Trim(edIssuer.Text) = EmptyStr then begin
+      ErrControl := edIssuer;
+      MessageDlg('Орган выдачи не указан!', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+  end;
+
+  Result := True;
+end;
+
+procedure TFirmRekvizitForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      RecID := spGetData.ParamByName('g_firm_rekvizit__').AsInteger;
+      edName.Text := ParamByName('NAME_').AsString;
+      edShortName.Text := ParamByName('SHORT_NAME_').AsString;
+      edIDN.Text := ParamByName('IDN_').AsString;
+      edKPP.Text := ParamByName('KPP_').AsString;
+      edOgrn.Text := ParamByName('OGRN_').AsString;
+      edKBE.Text := ParamByName('KBE_').AsString;
+      edOKPO.Text := ParamByName('OKPO_').AsString;
+      ceISPayNDS.Checked := ParamByName('IS_NDS_').AsInteger = 1;
+      ceBezNDS.Checked := ParamByName('NOL_VMESTO_BEZ_').AsInteger = 1;
+      edSerial.Text := ParamByName('NDS_SERIAL_').AsString;
+      edNum.Text := ParamByName('NDS_NUM_').AsString;
+      if DateToStr(ParamByName('NDS_DATE_').AsDate) <> '30.12.1899' then
+        deDate.Date := ParamByName('NDS_DATE_').AsDate;
+      edIssuer.Text := ParamByName('NDS_ORGAN_').AsString;
+      edNDS.Value := ParamByName('NDS_value_').AsFloat;
+      edHead.Text := ParamByName('HEAD_').AsString;
+      edMainChief.Text := ParamByName('MAIN_CHIEF_').AsString;
+      edEmail.Text := ParamByName('EMAIL_').AsString;
+      edWebsite.Text := ParamByName('WEBSITE_').AsString;
+      cbForm.ItemIndex := ParamByName('ip_or_jur_').AsInteger;
+      cbByDefault.Checked := ParamByName('is_default_').AsInteger = 1;
+    end;
+  end;
+  ReadContact;
+end;
+
+procedure TFirmRekvizitForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    ParamByName('NAME_').AsString := edName.Text;
+    ParamByName('SHORT_NAME_').AsString := edShortName.Text;
+    ParamByName('IDN_').AsString := edIDN.Text;
+    ParamByName('KPP_').AsString := edKPP.Text;
+    ParamByName('OGRN_').AsString := edOgrn.Text;
+    ParamByName('KBE_').AsString := edKBE.Text;
+    ParamByName('OKPO_').AsString := edOKPO.Text;
+    ParamByName('IS_NDS_').AsInteger := Integer(ceISPayNDS.Checked);
+    ParamByName('NOL_VMESTO_BEZ_').AsInteger := Integer(ceBezNDS.Checked);
+    ParamByName('NDS_SERIAL_').AsString := edSerial.Text;
+    ParamByName('NDS_NUM_').AsString := edNum.Text;
+    if (deDate.Text <> '  .  .    ') and (deDate.Text <> '00.00.0000') then
+      ParamByName('NDS_DATE_').AsDate := deDate.Date;
+
+    ParamByName('NDS_ORGAN_').AsString := edIssuer.Text;
+    ParamByName('NDS_value_').AsFloat := edNDS.Value;
+    ParamByName('HEAD_').AsString := edHead.Text;
+    ParamByName('MAIN_CHIEF_').AsString := edMainChief.Text;
+    ParamByName('EMAIL_').AsString := edEmail.Text;
+    ParamByName('WEBSITE_').AsString := edWebsite.Text;
+    ParamByName('ip_or_jur_').AsInteger := cbForm.ItemIndex;
+    ParamByName('is_default_').AsInteger := Integer(cbByDefault.Checked);
+  end;
+end;
+
+procedure TFirmRekvizitForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_firm_rekvizit_';
+end;
+
+procedure TFirmRekvizitForm.aInsExecute(Sender: TObject);
+begin
+  inherited;
+  if pc1.ActivePage <> tsSklad then begin
+    if RecID = 0 then begin
+      MessageDlg('Сначала сохраните реквизиты.', mtWarning, [mbOk], 0);
+      Exit;
+    end;
+
+    if pcClientRekv.ActivePage = tsContact then begin
+      MyFirmAddressForm := TMyFirmAddressForm.Create(Self);
+      try
+        MyFirmAddressForm.OpenMode := omInsert;
+        MyFirmAddressForm.GFirmRekvizit := RecID;
+        if MyFirmAddressForm.ShowModal = mrOk then
+          ReadContact;
+      finally
+        MyFirmAddressForm.Free;
+      end;
+
+    end else if pcClientRekv.ActivePage = tsBankRekv then begin
+      MyAddressBankRekForm := TMyAddressBankRekForm.Create(Self);
+      try
+        MyAddressBankRekForm.OpenMode := omInsert;
+        MyAddressBankRekForm.GFirmRekvizit := RecID;
+        if MyAddressBankRekForm.ShowModal = mrOk then
+          ReadContact;
+      finally
+        MyAddressBankRekForm.Free;
+      end;
+    end;
+  end else begin
+    TochkaForm := TTochkaForm.Create(Self);
+    try
+      TochkaForm.OpenMode := omInsert;
+      if TochkaForm.ShowModal = mrOk then begin
+        ReadContact;
+
+        //если массив складов не был заполнен, то надо заполнить его и основным складом тоже
+        if High(SkladArr) = -1 then begin
+          SetLength(SkladArr, 1);
+          SkladArr[0].ID := 1;
+          spTochka.Locate('g_tochka', 1, []);
+          SkladArr[0].Name := spTochka.fieldbyname('name').AsString;
+        end;
+        spTochka.Locate('g_tochka', TochkaForm.RecID, []);
+        SetLength(SkladArr, High(SkladArr) + 2);
+        SkladArr[High(SkladArr)].ID := spTochka.fieldbyname('g_tochka').AsInteger;
+        SkladArr[High(SkladArr)].Name := spTochka.fieldbyname('name').AsString;
+      end;
+    finally
+      TochkaForm.Free;
+    end;
+  end;
+end;
+
+procedure TFirmRekvizitForm.aUpdExecute(Sender: TObject);
+begin
+  inherited;
+  if pc1.ActivePage <> tsSklad then begin
+    if pcClientRekv.ActivePage = tsContact then begin
+      MyFirmAddressForm := TMyFirmAddressForm.Create(Self);
+      try
+        MyFirmAddressForm.OpenMode := omUpdate;
+        MyFirmAddressForm.RecID := spReadContact.FieldByName('g_address').AsInteger;
+        MyFirmAddressForm.GFirmRekvizit := RecID;
+        if MyFirmAddressForm.ShowModal = mrOk then
+        begin
+          ReadContact;
+        end;
+      finally
+        MyFirmAddressForm.Free;
+      end;
+
+    end else if pcClientRekv.ActivePage = tsBankRekv then begin
+      MyAddressBankRekForm := TMyAddressBankRekForm.Create(Self);
+      try
+        MyAddressBankRekForm.OpenMode := omUpdate;
+        MyAddressBankRekForm.RecID := spReadBankRekv.FieldByName('g_account').AsInteger;
+        MyAddressBankRekForm.GFirmRekvizit := RecID;
+        if MyAddressBankRekForm.ShowModal = mrOk then
+        begin
+          ReadContact;
+        end;
+      finally
+        MyAddressBankRekForm.Free;
+      end;
+    end;
+  end else begin
+    TochkaForm := TTochkaForm.Create(Self);
+    try
+      TochkaForm.OpenMode := omUpdate;
+      TochkaForm.RecID := spTochka.FieldByName('g_tochka').AsInteger;
+      if TochkaForm.ShowModal = mrOk then
+        ReadContact;
+    finally
+      TochkaForm.Free;
+    end;
+  end;
+end;
+
+procedure TFirmRekvizitForm.aDelExecute(Sender: TObject);
+var SP : TpFIBStoredProc;
+  i : integer;
+begin
+  if pc1.ActivePage <> tsSklad then begin
+    if pcClientRekv.ActivePage = tsContact then begin
+      if MessageDlg(Format('Удалить адрес "%s" ?',
+        [spReadContact.FieldByName('Address').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+        Exit;
+
+      SP := spDelContact;
+      SP.ParamByName('G_ADDRESS_').AsInteger := spReadContact.FieldByName('G_ADDRESS').AsInteger;
+
+      if ExecSPTR(SP) then
+        ReadContact;
+
+    end else if pcClientRekv.ActivePage = tsBankRekv then begin
+      if MessageDlg(Format('Удалить счет "%s" ?',
+        [spReadBankRekv.FieldByName('Account').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+        Exit;
+
+      SP := spDelBankRekv;
+      SP.ParamByName('G_account_').AsInteger := spReadBankRekv.FieldByName('G_account').AsInteger;
+    
+      if ExecSPTR(SP) then
+        ReadContact;
+
+    end;
+  end else begin
+    if spTochka.FieldByName('g_tochka').AsInteger = 1 then begin
+      MessageDlg('Данный склад является основным и не может быть удален.', mtConfirmation, [mbOk], 0);
+      Exit;
+    end;
+
+    if spTochka.FieldByName('g_tochka').AsInteger = CurSklad then begin
+      MessageDlg('Вы не можете удалить текущий склад, в котором вы находитесь!' + #10#13 + 'Закройте окно, через меню "Сервис - Склады" пройдите на другой склад и попробуйте снова.', mtConfirmation, [mbOk], 0);
+      Exit;
+    end;
+
+    if MessageDlg(Format('Вы совершенно уверены, что хотите удалить склад "%s" ?' + #10#13 + 'Все данные склада будут удалены, с невозможностью восстановления!',
+      [spTochka.FieldByName('name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+
+    SP := spDelTochka;
+    SP.ParamByName('G_tochka_').AsInteger := spTochka.FieldByName('G_tochka').AsInteger;
+
+    if ExecSPTR(SP) then begin
+      ReadContact;
+      //переформировываю весь массив, причем если в списке складов остался лишь один Основной склад, то массив не заполняю
+      SetLength(SkladArr, 0);
+      SetLength(SkladArr, spTochka.AllRecordCount);
+      spTochka.First;
+      i := 0;
+      while not spTochka.Eof do begin
+        SkladArr[i].ID := spTochka.FieldByName('g_tochka').AsInteger;
+        SkladArr[i].Name := spTochka.FieldByName('name').Asstring;
+        spTochka.Next;
+        inc(i);
+      end;
+    end;
+  end;
+end;
+
+procedure TFirmRekvizitForm.ReadContact;
+begin
+  if pc1.ActivePage <> tsSklad then begin
+    if pcClientRekv.ActivePage = tsContact then begin
+      spReadContact.ParamByName('g_firm_').AsInteger := RecID;
+      OpenSP(spReadContact, True);
+      aUpd.Enabled := spReadContact.RecordCount > 0;
+      aDel.Enabled := spReadContact.RecordCount > 0;
+
+    end else if pcClientRekv.ActivePage = tsBankRekv then begin
+      spReadBankRekv.ParamByName('g_firm_').AsInteger := RecID;
+      OpenSP(spReadBankRekv, True);
+      aUpd.Enabled := spReadBankRekv.RecordCount > 0;
+      aDel.Enabled := spReadBankRekv.RecordCount > 0;
+
+    end;
+  end else begin
+    OpenSP(spTochka, True);
+    aUpd.Enabled := spTochka.RecordCount > 0;
+    aDel.Enabled := spTochka.RecordCount > 0;  //основной склад удалить нельзя
+  end;
+end;
+
+procedure TFirmRekvizitForm.pcClientRekvChange(Sender: TObject);
+begin
+  inherited;
+  ReadContact;
+end;
+
+procedure TFirmRekvizitForm.cbFormChange(Sender: TObject);
+begin
+  edName.Modified := True;  // иначе не цепляется изменения
+end;
+
+procedure TFirmRekvizitForm.FormShow(Sender: TObject);
+var onChange : TTLChangeNodeEvent;
+begin
+  pc1.ActivePage := tsCommon;
+  //для России видны поля КПП и ОГРН
+  if CurrencyVal in [1,2] then begin
+    lbKPP.Visible := True;
+    shKPP.Visible := True;
+    shpKPP1.Visible := True;
+    edKPP.Visible := True;
+    edKPP.Enabled := True;
+    lbOgrn.Visible := True;
+    shpOgrn.Visible := True;
+    shpOgrn1.Visible := True;
+    edOgrn.Visible := True;
+    edOgrn.Enabled := True;
+    lbIDN.Caption  := 'ИНН';
+  end else begin
+    lbKPP.Visible := false;
+    shKPP.Visible := false;
+    shpKPP1.Visible := false;
+    edKPP.Visible := false;
+    edKPP.Enabled := false;
+    lbOgrn.Visible := false;
+    shpOgrn.Visible := false;
+    shpOgrn1.Visible := false;
+    edOgrn.Visible := false;
+    edOgrn.Enabled := false;
+    lbIDN.Caption  := 'ИИН/БИН';
+  end;
+
+  inherited;
+  if ManyFirm = 1 then begin
+    RefreshFirms;
+    tsFirms.TabVisible := True;
+    onChange := grFirms.OnChangeNode;
+    grFirms.OnChangeNode := nil;
+    spReadFirms.Locate('is_default', 1, []);
+    if grFirms.FocusedNode <> Nil then begin
+      if grFirms.SelectedCount > 0 then
+        grFirms.SelectedNodes[0].Selected := False;
+      grFirms.FocusedNode.Selected := True;
+    end;
+    grFirms.OnChangeNode := onChange;
+  end else
+    tsFirms.TabVisible := False;
+end;
+
+procedure TFirmRekvizitForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  edName.Modified := True;
+  inherited;
+
+  if (ModalResult = mrOk) and (Success = True) then begin
+    NdsValue := edNDS.Value;
+    if RecID = 0 then
+      RecID := spUpd.FieldByName('G_FIRM_REKVIZIT__').AsInteger;
+
+    Showmessage('Сохранено успешно!');
+    RefreshFirms;
+    if grFirms.FocusedNode <> Nil then begin
+      if grFirms.SelectedCount > 0 then
+        grFirms.SelectedNodes[0].Selected := False;
+      grFirms.FocusedNode.Selected := True;
+    end;
+
+    CanClose := False;
+  end;
+end;
+
+procedure TFirmRekvizitForm.btHelpClick(Sender: TObject);
+begin
+  Helpc := 3;
+  inherited;
+end;
+
+procedure TFirmRekvizitForm.edShortNameEnter(Sender: TObject);
+begin
+  if edShortName.Text = '' then
+    edShortName.Text := edName.Text;
+end;
+
+procedure TFirmRekvizitForm.RefreshFirms;
+begin
+  OpenSP(spReadFirms, True);
+  cbByDefault.Checked := spReadFirms.FieldByName('is_default').AsInteger = 1;
+  aDelFirm.Enabled := spReadFirms.RecordCount > 1;  //нельзя удалять если компания осталась одна
+end;
+
+procedure TFirmRekvizitForm.aInsFirmExecute(Sender: TObject);
+VAR I : INTEGER;
+begin
+  //создам новую фирму с названием "Новая фирма"
+  for i := 0 to spUpd.ParamCount - 1 do
+    spUpd.ParamByName(spUpd.ParamName(I)).Clear;
+  spUpd.ParamByName('name_').AsString := 'Новая фирма';
+  spUpd.ParamByName('IS_NDS_').AsInteger := 0;
+  spUpd.ParamByName('NOL_VMESTO_BEZ_').AsInteger := 0;
+  spUpd.ParamByName('NDS_value_').AsFloat := 0;
+  spUpd.ParamByName('ip_or_jur_').AsInteger := 0;
+  if ExecSPTR(spUpd) then begin
+    Showmessage('Компания создана успешно!');
+    RefreshFirms;
+    RecID := spUpd.ParamByName('G_FIRM_REKVIZIT__').AsInteger;
+    spReadFirms.Locate('g_firm_rekvizit', RecID, []);
+    if grFirms.FocusedNode <> Nil then begin
+      if grFirms.SelectedCount > 0 then
+        grFirms.SelectedNodes[0].Selected := False;
+      grFirms.FocusedNode.Selected := True;
+    end;
+  end;
+end;
+
+procedure TFirmRekvizitForm.aDelFirmExecute(Sender: TObject);
+begin
+  if MessageDlg('Вы уверены, что хотите удалить компанию "' + spReadFirms.FieldByName('name').AsString + '"?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then begin
+    spDelFirm.ParamByName('G_FIRM_REKVIZIT_').AsInteger := spReadFirms.FieldByName('g_firm_rekvizit').AsInteger;
+    if ExecSPTR(spDelFirm) then begin
+      Showmessage('Компания удалена успешно!');
+      RefreshFirms;
+      if grFirms.FocusedNode <> Nil then begin
+        if grFirms.SelectedCount > 0 then
+          grFirms.SelectedNodes[0].Selected := False;
+        grFirms.FocusedNode.Selected := True;
+      end;
+      GetRekv;
+    end;
+  end;
+end;
+
+procedure TFirmRekvizitForm.GetRekv;
+begin
+  RecId := spReadFirms.FieldByName('g_firm_rekvizit').AsInteger;
+  GetData;
+end;
+
+procedure TFirmRekvizitForm.grFirmsChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  GetRekv;
+end;
+
+procedure TFirmRekvizitForm.pc1Change(Sender: TObject);
+begin
+  if pc1.ActivePage = tsSklad then
+    if spTochka.Active = False then
+      ReadContact;
+end;
+
+end.

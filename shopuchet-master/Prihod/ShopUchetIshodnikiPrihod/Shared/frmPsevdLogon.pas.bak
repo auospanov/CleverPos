@@ -1,0 +1,73 @@
+unit frmPsevdLogon;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls,
+  StdCtrls, Buttons, FIBDatabase, pFIBDatabase, DB, FIBDataSet,
+  pFIBDataSet, dxEditor, dxDBEdtr, dxDBELib, FIBQuery, pFIBQuery,
+  pFIBStoredProc;
+
+type
+  TPsevdLogonForm = class(TDBDlgForm)
+    Label1: TLabel;
+    leIspolnitel: TdxLookupEdit;
+    edPassword: TEdit;
+    spIspolnitel: TpFIBDataSet;
+    dsIspolnitel: TDataSource;
+    tranRead: TpFIBTransaction;
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    Label3: TLabel;
+    Shape1: TShape;
+    Shape3: TShape;
+    spGetData: TpFIBStoredProc;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edPasswordChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    FPassword : String;
+  public
+    { Public declarations }
+  end;
+
+var
+  PsevdLogonForm: TPsevdLogonForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TPsevdLogonForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  if ModalResult = mrOk then begin
+    if (leIspolnitel.LookupKeyValue = 0) or (leIspolnitel.LookupKeyValue = null) then begin
+      ShowMessage('Выберите сотрудника!');
+      Canclose := False;
+    end;
+
+    if Trim(FPassword) <> spIspolnitel.FieldByName('password').AsString then begin
+      ShowMessage('Пароль неверный!');
+      Canclose := False;
+    end;
+  end;
+end;
+
+procedure TPsevdLogonForm.edPasswordChange(Sender: TObject);
+begin
+  FPassword := edPassword.Text;
+end;
+
+procedure TPsevdLogonForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  OpenSp(spIspolnitel, False);
+  spIspolnitel.First;
+  leIspolnitel.LookupKeyValue := spIspolnitel.FieldByName('g_official').AsInteger;
+end;
+
+end.

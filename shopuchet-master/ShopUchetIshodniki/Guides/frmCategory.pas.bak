@@ -1,0 +1,34 @@
+unit frmCategory;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons;
+
+type
+  TCategoryForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edName: TdxEdit;
+    Shape4: TShape;
+    Label13: TLabel;
+    Shape25: TShape;
+    leCategory: TdxLookupEdit;
+    Shape26: TShape;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  CategoryForm: TCategoryForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

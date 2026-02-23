@@ -1,0 +1,151 @@
+unit frmDocList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TDocListForm = class(TDBListForm)
+    dxDBGridDOCS: TdxDBGridMaskColumn;
+    dxDBGridNUM: TdxDBGridMaskColumn;
+    dxDBGridDOCS_DATE: TdxDBGridDateColumn;
+    dxDBGridG_FIRM: TdxDBGridMaskColumn;
+    dxDBGridG_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridG_OFFICIAL: TdxDBGridMaskColumn;
+    dxDBGridNOTE: TdxDBGridMaskColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    FDocType : Integer; //0 - ПКО, 1 - акт выполненных работ, 2 - доверенность на получение товаров
+  public
+    constructor CreateIt(AOwner: TComponent; DocType: Integer; ActionName : String = '');
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  DocListForm: TDocListForm;
+
+implementation
+
+uses frmDoc;
+
+{$R *.dfm}
+
+constructor TDocListForm.CreateIt(AOwner: TComponent; DocType: Integer; ActionName : String);
+var Caption_ : String;
+begin
+  FDocType := DocType;
+
+  IF FDocType = 0 THEN BEGIN
+    Caption_ := 'Журнал приходных кассовых ордеров';
+    HELPC := 72;
+  END ELSE if FDocType = 1 THEN BEGIN
+    Caption_ := 'Журнал актов выполненных работ';
+    HELPC := 73;
+  END ELSE BEGIN
+    Caption_ := 'Журнал доверенностей на получение товаров';
+    HELPC := 74;
+  END;
+
+  inherited Create(AOwner, Caption_, ActionName);
+
+  Self.Caption := Caption_;
+end;
+
+procedure TDocListForm.ReadList;
+begin
+  spRead.ParamByName('doc_type_').AsInteger := FDocType;
+  spRead.ParamByName('IS_ALL_').AsInteger := 1;    // ВСЕ ДОКУМЕНТЫ, В ДАЛЬНЕЙШЕМ МОЖНО БУДЕТ ДОБАВИТЬ ФИЛЬТР ПО ДАТАМ
+  inherited;
+  if FDocType = 2 then begin
+    aIns.Visible := True;
+    aIns.Enabled := True;   //доверенности можно тут создавать, и можно создавать ТОЛЬКО ТУТ
+  end else begin
+    aIns.Visible := False;
+    aIns.Enabled := False;
+  end;
+end;
+
+procedure TDocListForm.ViewData;
+begin
+  ClassForm := TDocForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TDocForm).DocType := FDocType;
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDocListForm.UpdData;
+begin
+  ClassForm := TDocForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TDocForm).DocType := FDocType;
+    inherited;
+    if (ClassForm as TDocForm).IsSaved = 1 then
+      ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDocListForm.InsData;
+begin
+  ClassForm := TDocForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TDocForm).DocType := FDocType;
+    inherited;
+    if (ClassForm as TDocForm).IsSaved = 1 then
+      ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDocListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить документ за "%s" ?',
+    [spRead.FieldByName('DOCS_DATE').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+end;
+
+procedure TDocListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'Docs';
+  KeyFieldClass := 'Docs_';
+end;
+
+procedure TDocListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 38;
+  inherited;
+end;
+
+procedure TDocListForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if FDocType = 2 then begin
+    dxDBGridG_FIRM.Caption := 'Организация-получатель';
+    dxDBGridG_CLIENT.Caption := 'Организация-поставщик';
+  end;  
+end;
+
+end.

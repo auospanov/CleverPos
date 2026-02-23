@@ -1,0 +1,132 @@
+unit frmKassa;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, VLSummdxEdit, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
+  AppEvnts, cxGraphics, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore,
+  dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom,
+  dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
+  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
+  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
+  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
+  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
+  dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue, cxMemo,
+  cxCurrencyEdit, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox;
+
+type
+  TKassaForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    Label13: TLabel;
+    Shape25: TShape;
+    Shape26: TShape;
+    edDate: TcxDateEdit;
+    Label1: TLabel;
+    Shape1: TShape;
+    Shape3: TShape;
+    dsReadStatya: TDataSource;
+    Label3: TLabel;
+    Shape5: TShape;
+    Shape6: TShape;
+    spReadStatya: TpFIBDataSet;
+    leStatya: TcxLookupComboBox;
+    edSumm: TcxCurrencyEdit;
+    Memo: TcxMemo;
+    procedure FormShow(Sender: TObject);
+  private
+    FActionStat : Integer;
+    FGPaymentType : Integer;
+  public
+    property ActionStat : Integer read FActionStat write FActionStat;
+    property GPaymentType : Integer read FGPaymentType write FGPaymentType; //1 - наличный, 2 - безналичный
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  KassaForm: TKassaForm;
+
+implementation
+
+{$R *.dfm}
+
+function TKassaForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if (leStatya.EditValue = 0) OR (VarisNull(leStatya.EditValue)) then begin
+    ErrControl := leStatya;
+    MessageDlg('Статья не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if edDate.Text = '  .  .    ' then begin
+    ErrControl := edDate;
+    MessageDlg('Дата не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if edSumm.Value = 0 then begin
+    ErrControl := edSumm;
+    MessageDlg('Сумма не указана!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TKassaForm.GetData;
+begin
+  spGetData.ParamByName('G_Payment_Type_').AsInteger := FGPaymentType;
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leStatya.EditValue := ParamByName('g_prihod_rashod_').AsInteger;
+      edDate.Date := ParamByName('action_date_').AsDate;
+      edSumm.Value := ParamByName('summ_').AsFloat;
+      Memo.Text := ParamByName('note_').AsString;
+    end;
+  end;
+end;
+
+procedure TKassaForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    ParamByName('G_Payment_Type_').AsInteger := FGPaymentType;
+    ParamByName('g_prihod_rashod_').AsInteger := leStatya.EditValue;
+    ParamByName('action_date_').AsDate := edDate.Date;
+    ParamByName('action_').AsInteger := FActionStat;
+    ParamByName('summ_').AsFloat := edSumm.Value;
+    ParamByName('note_').AsString := Memo.Text;
+  end;
+end;
+
+procedure TKassaForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  spReadStatya.ParamByName('action_').AsInteger := FActionStat;
+  OpenSp(spReadStatya, False);
+  edDate.Date := Date;
+
+  if FActionStat = 0 then BEGIN
+    Self.Caption := 'Приход';
+    Label13.Caption := 'Статья прихода';
+    HelpC := 12;
+  END else begin
+    Self.Caption := 'Расход';
+    HelpC := 13;
+  end;
+end;
+
+end.

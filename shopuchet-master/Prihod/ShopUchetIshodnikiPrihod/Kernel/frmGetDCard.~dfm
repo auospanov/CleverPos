@@ -1,0 +1,252 @@
+inherited GetDCardForm: TGetDCardForm
+  Left = 439
+  Top = 181
+  Caption = #1044#1080#1089#1082#1086#1085#1090#1085#1072#1103' '#1082#1072#1088#1090#1072
+  ClientHeight = 229
+  ClientWidth = 506
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 343
+    Top = 194
+  end
+  inherited btnCancel: TBitBtn
+    Left = 425
+    Top = 194
+  end
+  inherited Panel1: TPanel
+    Width = 493
+    Height = 179
+    object Shape1: TShape
+      Left = 8
+      Top = 34
+      Width = 172
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape11: TShape
+      Left = 8
+      Top = 59
+      Width = 172
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape7: TShape
+      Left = 8
+      Top = 9
+      Width = 172
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label4: TLabel
+      Left = 15
+      Top = 15
+      Width = 157
+      Height = 14
+      Caption = #1053#1086#1084#1077#1088' '#1080#1083#1080' '#1096#1090#1088#1080#1093#1082#1086#1076' '#1082#1072#1088#1090#1099
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape8: TShape
+      Left = 179
+      Top = 9
+      Width = 222
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label6: TLabel
+      Left = 15
+      Top = 65
+      Width = 92
+      Height = 14
+      Caption = #1055#1088#1086#1094#1077#1085#1090' '#1073#1086#1085#1091#1089#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape16: TShape
+      Left = 179
+      Top = 59
+      Width = 306
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 15
+      Top = 40
+      Width = 41
+      Height = 14
+      Caption = #1050#1083#1080#1077#1085#1090
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape2: TShape
+      Left = 179
+      Top = 34
+      Width = 306
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object lbBonusSumm: TLabel
+      Left = 8
+      Top = 96
+      Width = 199
+      Height = 28
+      Caption = #1057#1091#1084#1084#1072' '#1085#1072#1082#1086#1087#1083#1077#1085#1080#1081
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBackground
+      Font.Height = -23
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lbAllSumm: TLabel
+      Left = 8
+      Top = 136
+      Width = 232
+      Height = 28
+      Caption = #1054#1073#1097#1072#1103' '#1089#1091#1084#1084#1072' '#1087#1086#1082#1091#1087#1086#1082
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBackground
+      Font.Height = -23
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object edBarcode: TdxEdit
+      Left = 184
+      Top = 11
+      Width = 212
+      TabOrder = 0
+      MaxLength = 30
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object BitBtn1: TBitBtn
+      Left = 408
+      Top = 7
+      Width = 75
+      Height = 25
+      Action = aSearch
+      Caption = #1053#1072#1081#1090#1080
+      TabOrder = 1
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00B3A3
+        9D007F5B4B00693D2A0073524500A79B9500FF00FF00FF00FF00FF00FF00C1B3
+        AE00816053006139270074574A00B6ABA600FF00FF00FF00FF00BBACA500A380
+        7000D4C5BD00EDE5E100CFBEB70090716300A79A9400FF00FF00C8B8B200A181
+        7200D4C6BE00EEE8E400CDC0B800866A5D00B8ADA800FF00FF00946A5800E3D7
+        D100CEAE9E00AF795700D0B39E00D7C9C30074524300FF00FF009E776600E2D7
+        D200D0AD9B00B3775300D2B29A00D6CBC50070514400FF00FF00925E4B00F8F6
+        F400AE725B00E7AF6600B27F5E00F0EBE80074483500FF00FF009A6B5500F8F6
+        F300B2705600E8AF6400B67E5900EAE3DF0066402E00FF00FF0097675400F1E8
+        E400D2B0A500AA6C5300D4B6A700CDC0BA0071422F004C29200080513D00F1E8
+        E300D3ADA100AE684F00D4B2A100C5B6AF00724A3900FF00FF00B5998E00CAAF
+        A300F7F2EE00FDFCFB00EAE0DA009E847A0077483500663E360085594400E8D9
+        CF00F7F0ED00FCFAF900DFD4CE008A665700AA928700FF00FF00FF00FF00A679
+        6400E8DBD400E6D7CE00CDB7AA008B6B5E007D4C3A00865F56008B5F4B00E9D8
+        CE00EADCD400CFB9AC00997B6D009E725C00FF00FF00FF00FF00FF00FF00BBA2
+        9600D0B7AD00EEE3DF00D5C1B70093766C0082533F007346350092655000ECE0
+        D900EBDED800C4B0A5009B786800C1A79A00FF00FF00FF00FF00FF00FF00E0D7
+        D300B8938300F3EBE800D9C9C200A9938900A6796600FF00FF00B48B7600F0E7
+        E300EADED900BDA79F00A67D6C00E7DFDB00FF00FF00FF00FF00FF00FF00FF00
+        FF00BD9E8D00DDCCC400E6DCD800C2A99E00AC846F00FF00FF00BA958000E0D1
+        C900E9DFDA00BCA49700C1A29200FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00EFEBE900C5A99A00B48B7800C1A69600FF00FF00FF00FF00FF00FF00CFB1
+        A400BC957F00CCB0A100F4F0EE00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+    end
+    object sePercent: TdxCurrencyEdit
+      Left = 184
+      Top = 61
+      Width = 296
+      TabOrder = 2
+      Alignment = taRightJustify
+      DisplayFormat = '0.0%'
+      StoredValues = 1
+    end
+    object edClient: TdxEdit
+      Left = 184
+      Top = 36
+      Width = 296
+      TabOrder = 3
+      MaxLength = 30
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 194
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Top = 416
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Top = 416
+  end
+  inherited ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 104
+    Top = 416
+  end
+  inherited ActionList: TActionList
+    Images = MainDM.imMain
+    Top = 416
+    object aSearch: TAction
+      Caption = #1053#1072#1081#1090#1080
+      ImageIndex = 153
+      ShortCut = 13
+      OnExecute = aSearchExecute
+    end
+  end
+  object spGetCard: TpFIBStoredProc
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_GET_DCARD_BY_CODE (?G_DISCONT_CARD_, ?CARD_C' +
+        'ODE_)')
+    StoredProcName = 'G_GET_DCARD_BY_CODE'
+    Left = 376
+    Top = 8
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 344
+    Top = 8
+  end
+end

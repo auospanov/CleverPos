@@ -1,0 +1,130 @@
+unit unBackup;
+
+interface
+
+uses
+  Classes, ZipForge, SysUtils, Forms, Registry, unInitApp, Dialogs, Windows, Messages;
+
+type
+  TBackup = class(TThread)
+  FParam1 : String;
+  FException: Exception;
+  procedure DoHandleException;
+  private
+    { Private declarations }
+  protected
+    procedure Execute; override;
+    procedure HandleException; virtual;
+  public
+    constructor Create(Param1: String);
+  end;
+
+implementation
+
+{ unBackup }
+
+constructor TBackup.Create(Param1: String);
+begin
+  inherited Create(False);
+  FParam1 := Param1;
+end;
+
+procedure TBackup.DoHandleException;
+begin
+  // Cancel the mouse capture
+  if GetCapture <> 0 then SendMessage(GetCapture, WM_CANCELMODE, 0, 0);
+  // Now actually show the exception
+  if FException is Exception then
+    Application.ShowException(FException)
+  else
+    SysUtils.ShowException(FException, nil);
+end;
+
+procedure TBackup.HandleException;
+begin
+  // This function is virtual so you can override it
+  // and add your own functionality.
+  FException := Exception(ExceptObject);
+  try
+    // Don't show EAbort messages
+    if not (FException is EAbort) then
+      Synchronize(DoHandleException);
+  finally
+    FException := nil;
+  end;
+end;
+
+procedure TBackup.Execute;
+var
+  FZip: TZipForge;
+  FFileName,FFileZipName : string;
+  Reg: TRegistry;
+begin
+  FException := nil;
+  try
+      try
+        //проверяю есть ли такая папка для сохранения БД, и главное если это не стандартная папка, ее проверять не надо, она потом будет автоматом создаваться
+        if UPPERCASE(FParam1) <> UPPERCASE(ExtractFilePath(Application.exename) + 'Backup') then
+          if DirectoryExists(FParam1) = False then
+            raise Exception.Create('Папка для сохранения копии БД не существует! "' + FParam1 + '"' + #13#10 +
+                                   'Перенастройте папку для сохранения резервной копии БД.');
+
+        FFileZipName := FParam1;//ExtractFilePath(Application.exename) + 'Backup';
+        if not DirectoryExists(FFileZipName) then
+          CreateDir(FFileZipName);
+
+        FFileName := ExtractFilePath(Application.exename) + DataBaseName;
+
+        // проверяю есть ли уже архивы за сегодня, если есть - удаляю
+        FFileZipName := FFileZipName + '\' + FormatDateTime('YYYYMMDD', Date) + '.zip';
+        if FileExists(FFileZipName) then
+          DeleteFile(pChar(FFileZipName));
+
+        FZip := TZipForge.Create(nil);
+        FZip.FileName := FFileZipName;
+        FZip.OpenArchive(fmCreate);
+
+        if (Length(FFileName) > 0) then
+          FZip.AddFiles(FFileName);
+        FZip.CloseArchive;
+
+        if not (FileExists(FFileZipName)) then begin
+          raise Exception.Create('Невозможно создать резервную копию!' + #13#10 +
+                     'Запустите приложение от имени Администратора или проверьте права'+ #13#10+
+                     'пользователя под которым Вы вошли в систему.');
+        end;
+
+        //ставлю запись о дате последнего копирования
+        try
+          Reg := TRegistry.Create;
+          try
+            with Reg do begin
+              RootKey := RegSetupRoot;
+              LazyWrite := False;  {Сохраняем ключи до закрытия}
+              if OpenKey(RegSetupKey, True) then
+                try
+                  WriteString('LastBackpDate', DateToStr(Date));
+                finally
+                  CloseKey;
+                end;
+            end;
+          finally
+            Reg.Free;
+          end;
+        except
+          on E: Exception do
+            //MessageDlg(E.Message + #13#10'(occured in unBackup.Execute)', mtError, [mbOk], 0);
+            raise Exception.Create(E.Message + #13#10'(occured in unBackup.Execute)');
+        end;
+      finally
+        FZip.Free;
+      end;
+  except
+    HandleException;
+  end;
+
+  Self.Terminate;
+end;
+
+end.
+ 

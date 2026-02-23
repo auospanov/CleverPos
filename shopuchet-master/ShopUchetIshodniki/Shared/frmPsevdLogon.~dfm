@@ -1,0 +1,140 @@
+inherited PsevdLogonForm: TPsevdLogonForm
+  Left = 323
+  Top = 326
+  Caption = #1042#1099#1073#1086#1088' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1072
+  ClientHeight = 186
+  ClientWidth = 438
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited btnOk: TBitBtn
+    Left = 229
+    Top = 141
+  end
+  inherited btnCancel: TBitBtn
+    Left = 334
+    Top = 141
+  end
+  inherited Panel1: TPanel
+    Width = 422
+    Height = 125
+    object Shape3: TShape
+      Left = 10
+      Top = 76
+      Width = 84
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 10
+      Top = 44
+      Width = 84
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 21
+      Top = 10
+      Width = 389
+      Height = 26
+      Caption = #1042#1099#1073#1077#1088#1080#1090#1077' '#1089#1077#1073#1103' '#1074' '#1089#1087#1080#1089#1082#1077' '#1080' '#1074#1074#1077#1076#1080#1090#1077' '#1087#1072#1088#1086#1083#1100
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Trebuchet MS'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 23
+      Top = 51
+      Width = 31
+      Height = 18
+      Caption = #1060#1048#1054
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 93
+      Top = 44
+      Width = 315
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label3: TLabel
+      Left = 23
+      Top = 84
+      Width = 50
+      Height = 18
+      Caption = #1055#1072#1088#1086#1083#1100
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape1: TShape
+      Left = 93
+      Top = 76
+      Width = 315
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object leIspolnitel: TdxLookupEdit
+      Left = 100
+      Top = 46
+      Width = 302
+      Style.BorderStyle = xbsFlat
+      TabOrder = 0
+      ListFieldName = 'FIO_DOC'
+      KeyFieldName = 'G_OFFICIAL'
+      ListSource = dsIspolnitel
+      LookupKeyValue = Null
+    end
+    object edPassword: TEdit
+      Left = 99
+      Top = 80
+      Width = 303
+      Height = 26
+      PasswordChar = '*'
+      TabOrder = 1
+      OnChange = edPasswordChange
+    end
+  end
+  object spIspolnitel: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_OFFICIAL_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 152
+    Top = 32
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsIspolnitel: TDataSource
+    DataSet = spIspolnitel
+    Left = 184
+    Top = 31
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 112
+    Top = 104
+  end
+end

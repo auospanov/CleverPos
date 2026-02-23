@@ -1,0 +1,1268 @@
+unit frmSaleMode;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  FIBDataSet, pFIBDataSet, ExtCtrls, Menus, FIBDatabase, pFIBDatabase,
+  ActnList, dxBar, dxBarExtItems, StdCtrls,
+  Buttons, unCommonFunc, Math, Clipbrd, AppEvnts, DateUtils, StrUtils,
+  IniFiles, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxSpinEdit,
+  cxSpinButton, Mask, cxCurrencyEdit, frmMyCurrencyFrame, ComCtrls,
+  frmDBEdit, cxLookAndFeelPainters, cxButtons, ToolWin,
+  cxGraphics, cxLookAndFeels, cxStyles, dxSkinsCore, dxSkinBlack, dxSkinBlue,
+  dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy,
+  dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky,
+  dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black,
+  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
+  dxSkinOffice2007Silver, dxSkinOffice2010Black, dxSkinOffice2010Blue,
+  dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver,
+  dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters,
+  dxSkinValentine, dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData,
+  cxFilter, cxData, cxDataStorage, cxDBData, dxSkinsdxBarPainter, cxTL,
+  cxTLdxBarBuiltInMenu, cxDropDownEdit, cxLookupEdit, cxDBLookupEdit,
+  cxDBLookupComboBox, cxGridCustomTableView, cxGridTableView, cxGridDBTableView,
+  cxInplaceContainer, cxDBTL, cxTLData, cxClasses, cxGridLevel,
+  cxGridCustomView, cxGrid, cxCheckBox, cxControls, cxSplitter, System.UITypes,
+  cxNavigator, System.Actions;
+
+type
+  TTovar = record
+    Product : Integer;
+    Product_Par : Integer;
+    Price : Double;
+    Amount : Double;
+    Summ : Double;
+    SkidkaProc : Double;
+    SkidkaVal  : Double;
+    SkidkaSumm : Double;
+    cbPrice : Integer;
+    cbSkidka : Integer;
+  end;
+
+  TSaleModeForm = class(TDBListForm)
+    spReadTmp: TpFIBDataSet;
+    dsReadTmp: TDataSource;
+    dsReadTovar: TDataSource;
+    Panel3: TPanel;
+    pnRight: TPanel;
+    pnTovar: TPanel;
+    splTov: TcxSplitter;
+    splMenu: TcxSplitter;
+    aRefreshChild: TAction;
+    aDoSale: TAction;
+    spInsZakaz: TpFIBStoredProc;
+    spPostavshik: TpFIBDataSet;
+    dsPostavshik: TDataSource;
+    aFindAndIns: TAction;
+    spFindProduct: TpFIBStoredProc;
+    spInsProduct: TpFIBStoredProc;
+    spGetData: TpFIBStoredProc;
+    ApplicationEvents: TApplicationEvents;
+    TimerSearch: TTimer;
+    aGetDCard: TAction;
+    aDelAll: TAction;
+    dxBarButton2: TdxBarButton;
+    spReadTovar: TpFIBDataSet;
+    GetLastPrice: TpFIBStoredProc;
+    aFindAnalog: TAction;
+    dxBarStaticCnt: TdxBarStatic;
+    pn2: TPanel;
+    lb1: TLabel;
+    pn3: TPanel;
+    lb2: TLabel;
+    edSearch: TEdit;
+    aInsTov: TAction;
+    pn4: TPanel;
+    pn7: TPanel;
+    pn5: TPanel;
+    btnDoSale: TBitBtn;
+    pn8: TPanel;
+    pn9: TPanel;
+    lbPrice: TLabel;
+    aShowPanelTovar: TAction;
+    pn11: TPanel;
+    lbSumm: TLabel;
+    pn1: TPanel;
+    pnButtonsLeft: TPanel;
+    btnInsLike: TBitBtn;
+    btnUpdChd: TBitBtn;
+    btnDelChd: TBitBtn;
+    btnDelAll: TBitBtn;
+    pnButtonsRight: TPanel;
+    aFindDlg: TAction;
+    aReturn: TAction;
+    splButton: TcxSplitter;
+    spGetSkidka: TpFIBStoredProc;
+    pn10: TPanel;
+    btnRefreshChd: TBitBtn;
+    pnStaticText: TPanel;
+    btnFindDlg: TcxButton;
+    btnShowPanel: TcxButton;
+    btnReturn: TcxButton;
+    btnFindAnalog: TcxButton;
+    tlCategory: TcxDBTreeList;
+    clmnCategoryNAME: TcxDBTreeListColumn;
+    grProduct: TcxGrid;
+    tvProduct: TcxGridDBTableView;
+    clmtv1NAME: TcxGridDBColumn;
+    clmtv1ARTICUL: TcxGridDBColumn;
+    clmtv1BARCODE: TcxGridDBColumn;
+    clmtv1NOMENCLATUR_NUM: TcxGridDBColumn;
+    clmtv1VOLUME_PRICE: TcxGridDBColumn;
+    clmtv1NOTE: TcxGridDBColumn;
+    clmtv1PLACE: TcxGridDBColumn;
+    lv1: TcxGridLevel;
+    grSale: TcxGrid;
+    tvSale: TcxGridDBTableView;
+    cxGridLevel1: TcxGridLevel;
+    clmGridDBTableView1AMOUNT: TcxGridDBColumn;
+    clmGridDBTableView1PRICE: TcxGridDBColumn;
+    clmGridDBSUMM: TcxGridDBColumn;
+    clmGridDBTableView1DISCOUNT_PERC: TcxGridDBColumn;
+    clmGridDBTableView1DISCOUNT_SUMM: TcxGridDBColumn;
+    clmGridDBTableView1NDS: TcxGridDBColumn;
+    clmGridDBTableView1NDS_SUMM: TcxGridDBColumn;
+    clmGridDBTableView1PRODUCT_NAME: TcxGridDBColumn;
+    lePostavshik: TcxLookupComboBox;
+    cbPrintBill: TcxCheckBox;
+    cbByRecipe: TcxCheckBox;
+    cbRozn: TcxCheckBox;
+    cbOpt: TcxCheckBox;
+    clmProductAMOUNT: TcxGridDBColumn;
+    aInsFirst: TAction;
+    btnClearSearch: TcxButton;
+    aClearSearch: TAction;
+    pn6: TPanel;
+    cxButton1: TcxButton;
+    btnGetDCard: TcxButton;
+    procedure FormCreate(Sender: TObject);
+    procedure aRefreshChildExecute(Sender: TObject);
+    procedure aDoSaleExecute(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure aFindAndInsExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure edSearchChange(Sender: TObject);
+    procedure ApplicationEventsMessage(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure TimerSearchTimer(Sender: TObject);
+    procedure aGetDCardExecute(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+    procedure aRefreshExecute(Sender: TObject);
+    procedure aDelAllExecute(Sender: TObject);
+    procedure aFindAnalogExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure aShowPanelTovarExecute(Sender: TObject);
+    procedure aFindDlgExecute(Sender: TObject);
+    procedure aReturnExecute(Sender: TObject);
+    procedure aInsExecute(Sender: TObject);
+    procedure aInsTovExecute(Sender: TObject);
+    procedure tAutoRefreshTimer(Sender: TObject);
+    procedure cbRoznClick(Sender: TObject);
+    procedure cbOptClick(Sender: TObject);
+    procedure tlCategoryFocusedNodeChanged(Sender: TcxCustomTreeList;
+      APrevFocusedNode, AFocusedNode: TcxTreeListNode);
+    procedure tvProductFocusedRecordChanged(Sender: TcxCustomGridTableView;
+      APrevFocusedRecord, AFocusedRecord: TcxCustomGridRecord;
+      ANewItemRecordFocusingChanged: Boolean);
+    procedure tvSaleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure lePostavshikPropertiesCloseUp(Sender: TObject);
+    procedure tvProductCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
+    procedure aInsFirstExecute(Sender: TObject);
+    procedure peClientKeyPress(Sender: TObject; var Key: Char);
+    procedure tvSaleDblClick(Sender: TObject);
+    procedure aClearSearchExecute(Sender: TObject);
+    procedure edSearchKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    { Private declarations }
+    KeysBuffer: String;
+    LastDateForAddedKey: TDateTime;
+    FSkidka    : Double;       // скидка клиента при покупке
+    FSummZakaz : Double;       // сумма заказа
+    FBonusPercent : Double;    // процент бонуса от суммы заказа
+    FSummBonus : Double;       // сумма накопленного бонуса за все время
+    FNotFirst : Boolean;
+    FrefreshProdBook : boolean; //рефрешить товары с букмарком или нет, с букмарком надо только при нажатии на кнопку "Обновить"
+    FShowTovarPanel : Boolean;  //показывать панель товаров
+    FTovar : TTovar;
+    Is_closing : Boolean;       // форма закрывается в данный момент
+    FCOST_PRICE : Double;       // себестоимость товара
+    procedure RefreshTovarRekv;
+    procedure RefreshTmp;
+    procedure ClearTempTable;
+    procedure WMClearZakaz(var Message: TMessage); message WM_CLEARZAKAZ;
+    procedure WMDelTmp(var Message: TMessage); message WM_DEL_TMP;
+    procedure LocateFindedTovar;
+    procedure RefreshClient;
+  public
+    constructor CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+    procedure InsData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  SaleModeForm: TSaleModeForm;
+
+implementation
+
+uses frmUpdProdazhaTovara, dmReports, frmGetDCard, frmMain, dmMain, frmSaleDlg, frmSalePayment, frmSearchTovarDlg, frmPrihodTovaraN;
+
+{$R *.dfm}
+
+//данная форма испльзуется в двух проектах - Shopuchet и SalonUchet, Prizn = 100 - это SalonUchet, тут надо другие селекты юзать
+constructor TSaleModeForm.CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+var Caption_ : String;
+begin
+  Caption_ := 'Рабочее место кассира';
+  inherited Create(AOwner, Caption_, ActionName);
+
+  if Prizn = 100 then begin
+    spRead.SQLs.SelectSQL.Text := 'SELECT * FROM G_READ_G_PRODCAT_LIST(?TYPE_)';
+    spReadTovar.SQLs.SelectSQL.Text := 'SELECT T.G_PRODUCT,' +
+                                          'T.G_PRODUCT_PAR,' +
+                                          'T.ARTICUL,' +
+                                          'T.NOMENCLATUR_NUM,' +
+                                          'T.BARCODE,' +
+                                          'T.NAME,' +
+                                          'T.PRICE,' +
+                                          'T.VOLUME_PRICE,' +
+                                          'COALESCE(P.AMOUNT, 0) AMOUNT,' +
+                                          'PP.SKIDKA_PROC,' +
+                                          'PP.SKIDKA_SUM,' +
+                                          'T.GTYPE,' +
+                                          'T.DURATION,' +
+                                          'T.VES,' +
+                                          'T.PRICE_VES ' +
+                                      'FROM G_PRODUCT T LEFT OUTER JOIN LT_SKLAD_PRODUCT P ON T.G_PRODUCT = P.G_PRODUCT ' +
+                                           'LEFT OUTER JOIN (SELECT G_PRODUCT, D.SKIDKA_PROC, D.SKIDKA_SUM ' +
+                                                              'FROM G_DISCOUNT D ' +
+                                                              'WHERE (D.DATE_BEGIN <= CURRENT_TIMESTAMP ' +       // -- ТОЛЬКО АКТИВНЫЕ
+                                                                      'AND D.DATE_END >= CURRENT_TIMESTAMP ' +
+                                                                      'AND D.DATE_BEGIN IS NOT NULL AND D.DATE_END IS NOT NULL ' +
+                                                                    ') ' +
+                                                                    'OR ' +
+                                                                    '(D.DATE_BEGIN IS NULL AND D.DATE_END IS NULL) ' +
+                                                           ') PP ON T.G_PRODUCT = PP.G_PRODUCT ' +
+                                      'WHERE T.G_PRODUCT_PAR = DECODE(:G_PRODUCT_PAR_, -5, T.G_PRODUCT, :G_PRODUCT_PAR_) ' +
+                                        'AND T.IS_CATEGORY = 0 ' +
+                                        'AND T.IS_ACTIVE = 1 ' +
+                                        'AND ( ' +
+                                            '(T.GTYPE = :TYPE_ AND :TYPE_ > 0) ' +
+                                            'OR ' +
+                                            '(T.GTYPE IN (1,2) AND :TYPE_ = -1) ' +   // ВЫБИРАЮТСЯ РАСХОДНИКИ И ТОВАРЫ, ДЛЯ РЕЖИМА ПРИХОД ТОВАРА И СПИСАНИЕ ТОВАРА
+                                            'OR ' +
+                                            '(T.GTYPE IN (1,3) AND :TYPE_ = -2) ' +   // ВЫБИРАЮТСЯ ТОВАРЫ И УСЛУГИ, ДЛЯ РЕЖИМА ПРОДАЖИ ТОВАРА И УСЛУГ
+                                            ') ' +
+                                        'AND :G_TOCHKA_ = :G_TOCHKA_ ' +  // ПРОСТО ДЛЯ СОВМЕСТИМОСТИ ШОПУЧЕТ И САЛОНУЧЕТ
+                                     'ORDER BY 6';
+    ShowMessage(spReadTovar.SQLs.SelectSQL.Text);                                 
+  end;
+end;
+
+procedure TSaleModeForm.ReadList;
+var
+  onChangeCat : TcxTreeListFocusedNodeChangedEvent;
+begin
+  IF (IsActivated = 0) THEN BEGIN
+    MessageDlg('Лицензия истекла либо не зарегистрирована.' + #10#13 + 'Включены ограничения на количество продаж!', mtWarning, [mbOk], 0);
+    aIns.Enabled := False;
+    aUpd.Enabled := False;
+    aDel.Enabled := False;
+    aGetDCard.Enabled := False;
+    aDoSale.Enabled := False;
+    aFindAndIns.Enabled := False;
+    lePostavshik.ENABLED := FALSE;
+    EXIT;
+  END;
+
+  onChangeCat := tlCategory.OnFocusedNodeChanged;
+  tlCategory.OnFocusedNodeChanged := nil;
+
+  inherited;
+
+  aRefreshChild.Execute;
+
+  RefreshTmp;
+
+  tlCategory.OnFocusedNodeChanged := onChangeCat;
+end;
+
+procedure TSaleModeForm.InsData;
+var SaleDlg : TSaleDlgForm;
+  UserCancel : Boolean;
+begin
+
+  UserCancel := false;
+
+  if (tvProduct.Controller.SelectedRowCount = 0) and (FShowTovarPanel) then begin
+    MessageDlg('Вы не выбрали ни одного товара! Выберите товар!', mtWarning, [mbOk], 0);
+    edSearch.Clear;
+    Exit;
+  end;
+
+  if FShowTovarPanel then
+    if AllowSellAbsGoods = 0 then
+      if spReadTovar.FieldByName('amount').AsFloat <= 0 then begin
+        MessageDlg('Остаток товара на складе 0 и после операции он станет отрицательным. Продолжение невозможно!', mtWarning, [mbYes], 0);
+        Exit;
+      end;
+
+  if (NotifyNol = 1) and (FShowTovarPanel) then
+    if spReadTovar.FieldByName('price').AsFloat = 0 then begin
+      if MessageDlg('Цена товара указана 0, Вы уверены, что хотите продолжить?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
+        Exit;
+    end;
+
+  if ShowSaleDlg = 1 then begin
+    SaleDlg := TSaleDlgForm.Create(Self);
+    with SaleDlg do begin
+      try
+        OpenMode := omInsert;
+        NotShowAmountWarning := FShowTovarPanel;
+        Product := FTovar.Product;
+        Skidka := FSkidka;
+        VolumePrice := cbOpt.Checked;
+        Amount      := FTovar.Amount;
+        if ShowModal = mrOk then begin
+          FTovar.Price := edPrice.Value;
+          FTovar.Amount := MyCurrencyFrameForm.Value;
+          FTovar.Summ   := edSumm.Value;
+          FTovar.SkidkaVal  := edSkidka.Value;
+          FTovar.SkidkaSumm := edSkidkaSumm.Value;
+          FTovar.cbPrice  := cbPrice.ItemIndex;
+          FTovar.cbSkidka := cbSkidka.ItemIndex;
+        end else
+          UserCancel := True;
+      finally
+        Free;
+      end;
+    end;
+  end else begin
+    spGetSkidka.ParamByName('g_product_').asInteger := FTovar.Product;
+    if not spGetSkidka.Transaction.InTransaction then
+      spGetSkidka.Transaction.StartTransaction;
+    ExecSp(spGetSkidka);
+
+    if spGetSkidka.Transaction.InTransaction then
+      spGetSkidka.Transaction.CommitRetaining;
+
+    // могут юзаться весы, а там количество передается уже при сканировании штрихкода
+    if (UseScales = 0) or (FTovar.Amount = 0) then
+      FTovar.Amount := 1;
+
+    FTovar.cbSkidka := 1;
+    // если скидка клиента больше скидки товара, то ставлю ее
+    if FSkidka > spGetSkidka.ParamByName('SKIDKA_PROC_').AsFloat then begin
+      FTovar.SkidkaProc := FSkidka;
+      FTovar.SkidkaVal  := FTovar.Price * FSkidka / 100;
+      FTovar.SkidkaSumm := FTovar.SkidkaVal;
+    end else begin
+      FTovar.SkidkaProc := spGetSkidka.ParamByName('SKIDKA_PROC_').AsFloat;
+      FTovar.SkidkaVal  := spGetSkidka.ParamByName('SKIDKA_SUM_').AsFloat;
+      FTovar.SkidkaSumm := spGetSkidka.ParamByName('SKIDKA_SUM_').AsFloat;
+    end;
+
+    FTovar.Summ   := FTovar.Price - FTovar.SkidkaSumm;
+  end;
+
+  if UserCancel = false then begin
+    with spInsProduct do begin
+      ParamByName('G_PRODUCT_').AsInteger := FTovar.Product;
+      ParamByName('PRICE_').AsFloat := FTovar.Price;
+      ParamByName('AMOUNT_').AsFloat := FTovar.Amount;
+      ParamByName('SUMM_').AsFloat := FTovar.Summ;
+      ParamByName('NDS_').AsFloat := NdsValue;   //edNDS.Value;  -- теперь берется из настроек справочника "Моя фирма"
+      ParamByName('NDS_SUMM_').AsFloat := FTovar.Summ * NdsValue / (100 + NdsValue);  //так считается по бухгалтерской формуле
+      if (FTovar.SkidkaVal <> 0) and (FTovar.Price > 0) then begin
+        if FTovar.cbSkidka = 0 then begin
+          ParamByName('DISCOUNT_PERC_').AsFloat := FTovar.SkidkaVal;
+          ParamByName('DISCOUNT_TENGE_').AsFloat := FTovar.Price * FTovar.SkidkaVal/100;
+        end else begin
+          ParamByName('DISCOUNT_PERC_').AsFloat := RoundTo((FTovar.SkidkaVal * 100 / FTovar.Price), -5);
+          ParamByName('DISCOUNT_TENGE_').AsFloat := FTovar.SkidkaVal;
+        end;
+      end else begin
+        ParamByName('DISCOUNT_PERC_').AsFloat := 0;
+        ParamByName('DISCOUNT_TENGE_').AsFloat := 0;
+      end;
+      ParamByName('DISCOUNT_SUMM_').AsFloat := FTovar.SkidkaSumm;
+      ParamByName('IS_SPISANIE_').AsInteger := 0;
+      ParamByName('NEW_LINE_SALE_').AsInteger := NewLineSale;
+      ParamByName('COST_PRICE_').AsFloat := FCOST_PRICE;
+      IF FTovar.cbPrice = 0 THEN
+        ParamByName('MODE_').AsFloat := 1
+      else
+        ParamByName('MODE_').AsFloat := 2;
+
+      {IF FTovar.cbSkidka = 0 THEN
+        ParamByName('MODE1_').AsFloat := 0
+      else
+        ParamByName('MODE1_').AsFloat := 1;}
+
+      ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+
+      if not Transaction.InTransaction then
+        Transaction.StartTransaction;
+
+      IF ExecSP(spInsProduct) THEN begin
+        if Transaction.InTransaction then
+          Transaction.Commit;
+
+        RefreshTmp;
+
+        spReadTmp.Locate('zakaz_details', spInsProduct.ParambyName('ZAKAZ_DETAILS_').AsInteger, []);
+        if tvSale.Controller.FocusedRow <> Nil then begin
+          if tvSale.Controller.SelectedRowCount > 0 then
+            tvSale.Controller.SelectedRows[0].Selected := False;
+          tvSale.Controller.FocusedRow.Selected := True;
+        end;
+
+        // обнуляю переменную
+        FTovar.Product := 0;
+        FTovar.Product_Par := 0;
+        FTovar.Price := 0;
+        FTovar.Amount := 0;
+        FTovar.Summ := 0;
+        FTovar.SkidkaProc := 0;
+        FTovar.SkidkaVal := 0;
+        FTovar.SkidkaSumm := 0;
+        FTovar.cbPrice := 0;
+        FTovar.cbSkidka := 0;
+      end;
+    end;
+  end;
+end;
+
+procedure TSaleModeForm.UpdData;
+begin
+  ClassForm := TSaleDlgForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    try
+      (ClassForm as TSaleDlgForm).NotShowAmountWarning := FShowTovarPanel;
+      ClassForm.KeyField := 'ZAKAZ_DETAILS_';
+      ClassForm.RecID := spReadTmp.FieldByName(KeyFieldList).AsInteger;
+      ClassForm.OpenMode := omUpdate;
+      if ClassForm.ShowModal = mrOk then
+      begin
+        RefreshTmp;
+        if tvSale.Controller.FocusedRow <> Nil then begin
+          if tvSale.Controller.SelectedRowCount > 0 then
+            tvSale.Controller.SelectedRows[0].Selected := False;
+          tvSale.Controller.FocusedRow.Selected := True;
+        end;
+      end;
+    except
+      on E: Exception do
+        MessageDlg(E.Message + #13#10'(occured in TSaleModeForm.UpdData)', mtInformation, [mbOk], 0);
+    end;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TSaleModeForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'ZAKAZ_DETAILS';
+  KeyFieldClass := 'ZAKAZ_DETAILS_';
+  inherited;
+  if not HaveRightToSeeAmount then
+    clmProductAMOUNT.Destroy;
+
+  if not HaveRightToSeeOpt then
+    clmtv1VOLUME_PRICE.Destroy;
+end;
+
+procedure TSaleModeForm.aRefreshChildExecute(Sender: TObject);
+//var onChangeTov : TcxGridFocusedRecordChangedEvent;
+begin
+  if FShowTovarPanel then begin
+    try
+      Screen.Cursor := crHourGlass;
+      spReadTovar.ParamByName('g_product_par_').AsInteger := spRead.FieldByName('g_product').AsInteger;
+      spReadTovar.ParamByName('g_tochka_').AsInteger := CurSklad;
+
+      //onChangeTov := tvProduct.OnFocusedRecordChanged;
+      //tvProduct.OnFocusedRecordChanged := nil;
+      OpenSp(spReadTovar, FrefreshProdBook);
+      FrefreshProdBook := False;  // TRUE выставляется только при нажатии на кнопку ОБНОВИТЬ
+
+      aFindDlg.Enabled := spReadTovar.RecordCount > 0;
+
+      if Assigned(tvProduct.Controller.FocusedRow) then
+        tvProduct.Controller.FocusedRow.Selected := True;
+
+      RefreshTovarRekv;
+    finally
+      //tvProduct.OnFocusedRecordChanged := onChangeTov;
+      Screen.Cursor := crDefault;
+    end;
+  end;
+
+  aIns.Enabled := spReadTovar.RecordCount > 0;
+end;
+
+procedure TSaleModeForm.tvProductCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+begin
+  aIns.Execute;
+end;
+
+procedure TSaleModeForm.tvProductFocusedRecordChanged(Sender: TcxCustomGridTableView;
+  APrevFocusedRecord, AFocusedRecord: TcxCustomGridRecord;
+  ANewItemRecordFocusingChanged: Boolean);
+begin
+  if (spReadTovar.Active) and (APrevFocusedRecord <> nil) then
+    RefreshTovarRekv;
+end;
+
+procedure TSaleModeForm.tvSaleDblClick(Sender: TObject);
+begin
+  if spReadTmp.RecordCount > 0 then
+    UpdData;
+end;
+
+procedure TSaleModeForm.tvSaleMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  ActiveTVControl := ((Sender as TcxGridSite).GridView as TcxGridDBTableView);
+end;
+
+procedure TSaleModeForm.RefreshTovarRekv;
+var price_str : string;
+  ostatok_str : string;
+begin
+  WITH spReadTovar DO BEGIN
+    FormatSettings.CurrencyString := '';
+    price_str := StringReplace(CurrToStrF(spReadTovar.FieldByName('price').AsFloat, ffCurrency, 2), '.', ',', [rfReplaceAll]);
+    ostatok_str := StringReplace(CurrToStrF(spReadTovar.FieldByName('amount').AsFloat, ffCurrency, 2), '.', ',', [rfReplaceAll]);
+    lbPrice.Caption := 'Цена ' + price_str;
+    // если нет права, то не отражаю остатки
+    if HaveRightToSeeAmount then
+      lbPrice.Caption := lbPrice.Caption + '. Остаток ' + ostatok_str;
+
+    GetLastPrice.ParamByName('MODE_').AsIntEGER := 1;
+    GetLastPrice.ParamByName('G_PRODUCT_').AsIntEGER := FieldByName('G_PRODUCT').AsInteger;
+    GetLastPrice.ParamByName('G_TOCHKA_').AsIntEGER := CurSklad;
+    IF ExecSPWT(GetLastPrice) THEN
+      FCOST_PRICE := GetLastPrice.ParamByName('price_').AsFloat
+    ELSE BEGIN
+      ShowMessage('Произошла ошибка при расчете стоимости товара!');
+      EXIT;
+    END;
+
+    // если нет права, то не отражаю остатки
+    if (HaveRightToSeeCostPrice) and (ShowCostPrice) then
+      lbPrice.Caption := lbPrice.Caption + '. Цена закупки ' +
+        StringReplace(CurrToStrF(FCOST_PRICE, ffCurrency, 2), '.', ',', [rfReplaceAll]);
+  end;
+end;
+
+procedure TSaleModeForm.RefreshTmp;
+var AIndex: integer;
+begin
+  OpenSp(spReadTmp, True);
+  pnStaticText.Caption := Format('%.*d',[4, spReadTmp.RecordCount]);
+  aUpd.Enabled := spReadTmp.RecordCount > 0;
+  aDel.Enabled := spReadTmp.RecordCount > 0;
+  aDelAll.Enabled := spReadTmp.RecordCount > 0;
+  aDoSale.Enabled := spReadTmp.RecordCount > 0;
+  aInsTov.Enabled := spReadTmp.RecordCount > 0;
+  
+  // убираю галочку "По рецепту" ЕСЛИ ЗАПИСЕЙ ВО ВРЕМЕННОЙ ТАБЛИЦЕ БОЛЬШЕ НЕТ
+  if spReadTmp.RecordCount = 0 then
+    cbByRecipe.checked := false;
+
+  FormatSettings.ThousandSeparator := ' ';
+  FormatSettings.CurrencyString := '';
+  with tvSale.DataController.Summary do begin
+    AIndex :=  FooterSummaryItems.IndexOfItemLink(clmGridDBSUMM);
+    if not VarIsNull(FooterSummaryValues[AIndex]) then begin
+      lbSumm.Caption := StringReplace(FloatToStrF(FooterSummaryValues[AIndex], ffCurrency, 10, 2), '.', ',', [rfReplaceAll]);
+      FSummZakaz     := FooterSummaryValues[AIndex];
+    end else begin
+      lbSumm.Caption := '0,00';
+      FSummZakaz     := 0;
+    end;
+  end
+end;
+
+procedure TSaleModeForm.aDoSaleExecute(Sender: TObject);
+var pnt : string;
+    summfact : double;
+    onEditChng : TNotifyEvent;
+    SalePaymentForm: TSalePaymentForm;
+    StrArr : string;
+begin
+  pnt := '01';
+  SalePaymentForm := TSalePaymentForm.Create(Self);
+  with SalePaymentForm do begin
+    try
+      lbSummSelf.Caption := lbSumm.Caption;
+      SummZakaz  := FSummZakaz;
+      SummBonus  := FSummBonus;
+      BonusPercent := FBonusPercent;
+      PaymentType := spPostavshik.FieldByName('is_beznal').AsInteger;
+      if ShowModal = mrOk then begin
+        with spInsZakaz do begin
+          ParamByName('Z_DATE_').AsDate := Date;
+          ParamByName('Z_TIME_').AsTime := Time;
+          ParamByName('IS_SPISANIE_').AsInteger := 0;
+          if lePostavshik.EditValue > 0 then
+            ParamByName('G_CLIENT_').AsInteger := lePostavshik.EditValue;
+
+          //----------------------------------------
+          ParamByName('summ_').AsFloat := FSummZakaz;
+          ParamByName('summ_fact_').AsFloat := edSummCash.Value + edSummNonCash.Value;
+          ParamByName('SUMM_CASH_').AsFloat := edSummCash.Value;
+          ParamByName('SUMM_NONCASH_').AsFloat := edSummNonCash.Value;
+
+          if (edSummCash.Value = 0) and (edSummNonCash.Value > 0) then begin  //пока сделаю так, что безнал только в этом случае, в остальных - нал
+            ParamByName('G_PAYMENT_TYPE_').AsInteger := 2;
+            ParamByName('PAYMENTS_').Clear;
+          end else begin
+            ParamByName('G_PAYMENT_TYPE_').AsInteger := 1;
+
+            if (edSummCash.Value > 0) and (edSummNonCash.Value > 0) then begin
+              StrArr := '0-' + DateToStr(Date) + '-' + FloatToStr(edSummCash.Value) + '-' + '1' +
+                '~0-' + DateToStr(Date) + '-' + FloatToStr(edSummNonCash.Value) + '-' + '2~';
+
+              StringReplace(StrArr, ',', '.', [rfReplaceAll, rfIgnoreCase]);   //заменяю на всякий случай запятые на точки
+              ParamByName('PAYMENTS_').AsString := StrArr;
+            end else
+              ParamByName('PAYMENTS_').Clear;
+          end;
+          //----------------------------------------
+
+          ParamByName('by_recipe_').AsInteger := Integer(cbByRecipe.checked);
+          ParamByName('IS_RESERVE_').AsInteger := 0;
+          IF cbPayBonus.Checked THEN
+            ParamByName('summ_bonus_').AsFloat := MIN(FSummZakaz, FSummBonus)  //ЕСЛИ БОНУСОВ БОЛЬШЕ ЧЕМ СУММА ЗАКАЗА, ТО ПОДСТАВЛЯЮ СУММУ ЗАКАЗА, ИНАЧЕ - ПОДСТАВЛЯЮ СУММУ БОНУСОВ
+          else
+            ParamByName('summ_bonus_').AsFloat := 0;
+          ParamByName('summ_bonus_got_').AsFloat := edBonus.Value;            //ПЕРЕДАЮ СУММУ НАЧИСЛЕННЫХ БОНУСОВ ЗА ЗАКАЗ
+          ParamByName('note_').AsString := mNote.Text;
+        end;
+
+        pnt := '02';
+        if not spInsZakaz.Transaction.InTransaction then
+          spInsZakaz.Transaction.StartTransaction;
+
+        pnt := '03';
+        IF ExecSP(spInsZakaz) THEN BEGIN
+          pnt := '04';
+          if spInsZakaz.Transaction.InTransaction then
+            spInsZakaz.Transaction.Commit;
+
+          // прибавлю к накопленным бонусам текущего клиента бонусы от покупок
+          // или отниму, если оплата бонусами идет, но бонусы прибавляю в любом случае
+          //pnt := '05';
+          //if cbPayBonus.Checked then
+          //  FSummBonus := FSummBonus - MIN(FSummZakaz, FSummBonus);
+
+          //FSummBonus := FSummBonus + edBonus.Value;
+          //РАНЬШЕ БЫЛО ТАК, ЧТО КЛИЕНТ ПОСЛЕ ПРОДАЖИ ОСТАВАЛСЯ ПРЕЖНИМ, ТЕПЕРЬ ЖЕ КЛИЕНТ МЕНЯЕТСЯ НА ЧАСТНОЕ ЛИЦО, ПОЭТОМУ FSummBonus НАДО ЗАНУЛЯТЬ
+          FSummBonus := 0;
+
+          pnt := '06';
+          summfact := edSummCash.Value + edSummNonCash.Value;  //иначе после readlist обнулться
+          sdacha   := Sdacha;
+
+          // автоматически печатаю чек, если стоит галочка
+          pnt := '07';
+          if CbPrintbill.checked then begin
+            if BillPrinter <> '' then
+              ReportsDM.PrintBill(spInsZakaz.ParamByName('zakaz_').AsInteger, summfact, sdacha, 0)
+            else
+              MessageDlg('Чековый принтер не настроен! Укажите его в настройках программы! Печать чеков невоможна!', mtWarning, [mbOk], 0);
+          end;
+
+          //ShowMessage('Заказ успешно сохранен!');
+
+          //переставлю обратно на клиента, который указан как по умолчанию, в данном режиме это частное лицо
+          if lePostavshik.EditValue <> 10 then begin
+            with lePostavshik do begin
+              onEditChng := Properties.OnChange;         //чтобы лишний раз на lePostavshik.OnChange не срабатывал ReadList
+              Properties.OnChange := nil;
+              EditValue := 10;
+              Properties.OnChange := onEditChng;
+            end;
+          end;
+        END;
+        ReadList;
+
+        if FShowTovarPanel then
+          edSearch.SetFocus;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TSaleModeForm.aDelExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_DEL_TMP, 0, 0);
+end;
+
+procedure TSaleModeForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  lePostavshik.Properties.OnChange := nil;
+
+  inherited;
+  //ОЧИЩАЮ ВРЕМЕННУЮ ТАБЛИЦУ
+  ClearTempTable;
+end;
+
+procedure TSaleModeForm.aFindAndInsExecute(Sender: TObject);
+begin
+  spFindProduct.ParamByName('BARCODE_').AsString := KeysBuffer;
+  if UseScales = 1 then
+    spFindProduct.ParamByName('PREFIX_').AsString := ScalesPrefix
+  else
+    spFindProduct.ParamByName('PREFIX_').AsString := '';
+
+  try
+    if not spFindProduct.Transaction.InTransaction then
+      spFindProduct.Transaction.StartTransaction;
+
+    IF ExecSPTR(spFindProduct) THEN begin
+      FTovar.Product := spFindProduct.ParamByName('G_PRODUCT_').AsInteger;
+      FTovar.Product_Par := spFindProduct.ParamByName('g_product_category_').AsInteger;
+      if cbRozn.Checked then
+        FTovar.Price := spFindProduct.ParamByName('price_').AsInteger
+      else
+        FTovar.Price := spFindProduct.ParamByName('volume_price_').AsInteger;
+
+      if UseScales = 1 then
+        FTovar.Amount := spFindProduct.ParamByName('amount_').AsFloat;
+
+      FTovar.cbPrice  := 0;
+      FTovar.cbSkidka := 0;
+      LocateFindedTovar;
+      Insdata;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message + #13#10'(occured in TSaleModeForm.aFindAndInsExecute)', mtInformation, [mbOk], 0);
+  end;
+
+  spFindProduct.ParamByName('BARCODE_').AsString := '';
+end;
+
+procedure TSaleModeForm.FormShow(Sender: TObject);
+var
+  Ini: TMemIniFile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  // ДЕЛАЮ ЧЕКБОКСЫ КНОПКАМИ
+  {SetWindowLong(cbPrintBill.Handle, GWL_STYLE, GetWindowLong(cbPrintBill.Handle, GWL_STYLE) or BS_PUSHLIKE);
+  SetWindowLong(cbByRecipe.Handle, GWL_STYLE, GetWindowLong(cbByRecipe.Handle, GWL_STYLE) or BS_PUSHLIKE);
+  SetWindowLong(cbRozn.Handle, GWL_STYLE, GetWindowLong(cbRozn.Handle, GWL_STYLE) or BS_PUSHLIKE);
+  SetWindowLong(cbOpt.Handle, GWL_STYLE, GetWindowLong(cbOpt.Handle, GWL_STYLE) or BS_PUSHLIKE);}
+
+  // кнопки не переносят на другую строку по умолчанию, придется тут вручную делать
+  btnFindDlg.Caption := 'Поиск'#13#10'товара (F8)';
+  btnReturn.Caption := 'Возврат'#13#10'товара (F10)';
+  btnFindAnalog.Caption := 'Найти'#13#10'аналоги (F11)';
+
+  //ОЧИЩАЮ ВРЕМЕННУЮ ТАБЛИЦУ
+  ClearTempTable;
+  FNotFirst := False;
+
+  //открыли файл в директории программы
+  Ini:=TMemIniFile.Create(extractfilepath(Application.ExeName)+'Settings.ini', TEncoding.UTF8);
+  try
+    cbPrintBill.Checked := Ini.ReadInteger('PrintBill', 'PrintOnSale', 0) = 1;
+    tlCategory.Height := Ini.ReadInteger('SaleMode', 'tlCategory', 130);
+    if Ini.ValueExists('SaleMode', 'ShowTovarPanel') then
+      FShowTovarPanel := Ini.ReadInteger('SaleMode', 'ShowTovarPanel', 0) = 1
+    else
+      FShowTovarPanel := True;
+    if FShowTovarPanel then
+      pnRight.Width := Ini.ReadInteger('SaleMode', 'pnRight', Round(SelfWidth/2))
+    else
+      pnRight.Align := alClient;//pnRight.Width := SelfWidth; //Ini.ReadInteger('SaleMode', 'pnRight', Width);
+    pnButtonsLeft.Width := Ini.ReadInteger('SaleMode', 'pnButtonsLeft', Round(SelfWidth/2));
+  finally
+    Ini.Free;
+  end;
+
+  //отражать панель товаров или нет
+  if FShowTovarPanel = false then begin
+    pnTovar.Visible := False;
+    splMenu.Visible := False;
+    btnShowPanel.Caption := 'Показать'#13#10'товары (F9)';
+    aFindDlg.Visible := True;
+  end else begin
+    aFindDlg.Visible := False;
+    btnShowPanel.Caption := 'Скрыть'#13#10'товары (F9)';
+  end;
+
+  inherited;
+
+  OpenSp(spPostavshik, False);
+  lePostavshik.EditValue := 10; //ПОСТАВЛЮ ЧАСТНОЕ ЛИЦО АВТОМАТОМ
+  FSkidka := spPostavshik.FieldByName('skidka').AsFloat;
+
+  //aIns.ShortCut := TextToShortCut('Enter');
+  aUpd.ShortCut := TextToShortCut('F6');
+  aInsTov.ShortCut  :=  TextToShortCut('F5');
+  aUpd.Caption := '';  // иначе откуда-то упорно появляется надпись изменить
+  aDel.Caption := '';  // иначе откуда-то упорно появляется надпись изменить
+  aRefresh.Caption := '';  // иначе откуда-то упорно появляется надпись изменить
+  aClose.Caption := '';  // иначе откуда-то упорно появляется надпись изменить
+
+  //ставлю крупные шрифты в гридах
+  tvSale.Styles.Header.Font.Size := 11;
+  grSale.Font.Size := 11;
+  tvProduct.Styles.Header.Font.Size := 11;
+  grProduct.Font.Size := 11;
+  if Screen.PixelsPerInch = 120 then
+    btnGetDCard.Font.Size := 11;       //иначе почему-то становиться слишком большой
+
+  // если конфигурация аптека, то отражаю специфичную кнопку
+  if Config = 1 then
+    cbByRecipe.Visible := True
+  else
+    cbByRecipe.Visible := False;
+
+  // если конфигурация магазин автозапчастей, то отражаю специфичную кнопку
+  if Config = 2 then begin
+    aFindAnalog.Visible := True;
+    if FShowTovarPanel = true then
+      aFindAnalog.Enabled := True            // кнопку отражаю только если панель товаров есть
+    else
+      aFindAnalog.Enabled := False;
+  end else begin
+    aFindAnalog.Visible := False;
+    aFindAnalog.Enabled := False;
+  end;
+
+  if pnTovar.Visible then
+    edSearch.SetFocus;
+end;
+
+procedure TSaleModeForm.ClearTempTable;
+begin
+  spDel.Params[0].Clear;
+  ExecSPTR(spDel);
+end;
+
+procedure TSaleModeForm.ApplicationEventsMessage(var Msg: tagMSG;
+  var Handled: Boolean);
+  procedure ClearBuffer;
+  begin
+    if MilliSecondsBetween(Now, LastDateForAddedKey) > 200 then
+    begin
+      // при медленном вводе буфер очищяется, т.к. скан идет "мгновенно"
+      KeysBuffer := '';
+    end;
+  end;
+begin
+  // обработка штрих-кодов
+  // автор: jaydi85@gmail.com
+
+  // данные считываем на WM_CHAR
+  // НО КЛАВИШУ ЭНТЕР на WM_KEYDOWN
+  // заканчиваем ввод
+  IF Screen.ActiveForm <> Nil THEN BEGIN
+    IF Screen.ActiveForm.Name = Self.Name THEN BEGIN
+      if Msg.message = WM_KEYDOWN then
+      begin
+        if (Msg.wParam = 13) or (Msg.wParam = 10) then
+        begin
+          ClearBuffer;
+          if KeysBuffer <> '' then begin
+            // при сканировании нажатие энтера передавать никуда не надо
+            Handled := True;
+            TimerSearch.Enabled := False;
+            aFindAndIns.Execute;
+            KeysBuffer := '';
+          end;
+        end
+      end;
+
+      // сохраняем ввод
+      if Msg.message = WM_CHAR then
+      begin
+        ClearBuffer;
+        if Msg.wParam <> 13 then
+        begin
+          // нажали что-то другое (надо отбросить всякие шифты и контролы)
+          KeysBuffer := KeysBuffer + Chr(Msg.wParam);
+          LastDateForAddedKey := Now;
+        end;
+      end;
+    END;
+  END;
+end;
+
+procedure TSaleModeForm.edSearchChange(Sender: TObject);
+begin
+  TimerSearch.Enabled := False;
+  // здесь буду перезапускать таймер, а на его событие - уже включать фильтр
+  if edSearch.Text <> '' then
+    TimerSearch.Enabled := True
+  else BEGIN
+    with spReadTovar do begin
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Open;
+    end;
+  END;
+end;
+
+procedure TSaleModeForm.edSearchKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  {if Key = VK_UP then
+    tvProduct.Controller.FocusNextRecord(tvProduct.Controller.FocusedRecordIndex, false, False, false, false)
+  else if Key = VK_DOWN then
+    tvProduct.Controller.FocusNextRecord(tvProduct.Controller.FocusedRecordIndex, true, False, false, false);
+  }
+  if Key = VK_UP then
+    spReadTovar.Prior
+  else if Key = VK_DOWN then
+    spReadTovar.Next;
+end;
+
+procedure TSaleModeForm.TimerSearchTimer(Sender: TObject);
+var s : string;
+begin
+  TimerSearch.Enabled := False;
+  if (edSearch.text <> '') then BEGIN
+    with spReadTovar do begin
+      s := '(NAME CONTAINING ''' + edSearch.text + ''') OR (ARTICUL CONTAINING ''' + edSearch.text + ''') OR (BARCODE CONTAINING '''+ edSearch.text + ''') OR (CROSSCODE CONTAINING '''+ edSearch.text + ''')';
+
+      if UseTovarPlace = 1 then
+        s := s + ' OR (PLACE CONTAINING ''' + edSearch.text + ''')';
+
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Conditions.AddCondition('by_customer', S, True);
+      ApplyConditions;
+      Open;
+    end;
+    if tvProduct.Controller.FocusedRow <> Nil then begin
+      if tvProduct.Controller.SelectedRowCount > 0 then
+        tvProduct.Controller.SelectedRows[0].Selected := False;
+      tvProduct.Controller.FocusedRow.Selected := True;
+    end;
+    RefreshTovarRekv;
+  END;
+end;
+
+procedure TSaleModeForm.aGetDCardExecute(Sender: TObject);
+var GetDCardForm: TGetDCardForm;
+begin
+  GetDCardForm := TGetDCardForm.Create(Self);
+  with GetDCardForm do begin
+    try
+      GetDCardForm.Discont_card := spPostavshik.FieldByName('g_discont_card').AsInteger;
+      if Showmodal = mrOK then begin
+        if Client <> 0 then begin
+          lePostavshik.EditValue := Client;
+          RefreshClient;
+        end;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TSaleModeForm.lePostavshikPropertiesCloseUp(Sender: TObject);
+begin
+  RefreshClient;
+end;
+
+procedure TSaleModeForm.RefreshClient;
+begin
+  FSkidka := spPostavshik.FieldByName('skidka').AsFloat;
+
+  ClearTempTable;
+
+  //ЗАПОЛНЯЮ СВЕДЕНИЯ ПО БОНУСАМ
+  FBonusPercent := spPostavshik.FieldByName('N_PERCENT').AsFloat/100;
+  FSummBonus := spPostavshik.FieldByName('SUMM').AsFloat;
+  //ReadList;
+  RefreshTmp;
+end;
+
+procedure TSaleModeForm.FormActivate(Sender: TObject);
+begin
+  inherited;
+
+  //каким-то образом, при выходе из базы, попадало сюда, а на тот момент база уже отключена, соответственно выходила ошибка при spPostavshik.ReopenLocate,
+  //поэтому поставил дополнительно проверку, делать это только если коннект к БД есть
+  if (FNotFirst) and (MainDM.dbMain.Connected) then
+    spPostavshik.ReopenLocate('g_client')
+  else
+    FNotFirst := True;
+end;
+
+procedure TSaleModeForm.aHelpExecute(Sender: TObject);
+begin
+  HelpC := 16;
+  inherited;
+end;
+
+procedure TSaleModeForm.aRefreshExecute(Sender: TObject);
+begin
+  FrefreshProdBook := True;
+  dxBarButtonEnableAutoRefresh.Down := False;   //чтоб не работало автообновление
+  inherited;
+end;
+
+procedure TSaleModeForm.aInsFirstExecute(Sender: TObject);
+begin
+  // в общем непонятно почему, но перестал отлавливаться нажатие клавиши Ентер
+  // в ApplicationEvents, если у aIns стоит shortcut клавиша Ентер, не понял
+  // с чем связано, почему-то такое поведение именно у aIns. Как всегда времени
+  // и желания не было выяснять и потому сделал этот акшн и ему присвоил в
+  // шорткат клавишу Ентер
+  aIns.Execute;
+end;
+
+procedure TSaleModeForm.aClearSearchExecute(Sender: TObject);
+begin
+  edSearch.Clear;
+  edSearch.SetFocus;
+end;
+
+procedure TSaleModeForm.aDelAllExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_CLEARZAKAZ, 0, 0);
+end;
+
+procedure TSaleModeForm.WMClearzakaz(var Message: TMessage);
+begin
+  Cleartemptable;
+  RefreshTmp;
+end;
+
+procedure TSaleModeForm.WMDelTmp(var Message: TMessage);
+begin
+  if MessageDlg(Format('Удалить товар "%s" ?',
+      [spReadTmp.FieldByName('PRODUCT_NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+  spDel.ParamByName('zakaz_details_').AsInteger := spReadTmp.FieldByName('zakaz_details').AsInteger;
+  if ExecSPTR(spDel) then
+    RefreshTmp;
+end;
+
+procedure TSaleModeForm.aFindAnalogExecute(Sender: TObject);
+var s : string;
+begin
+  IF CONFIG = 2 THEN BEGIN
+    s := spReadTovar.FieldByName('articul').AsString;
+    edSearch.Clear;
+    spRead.First;
+    edSearch.Text := s;
+  END;
+end;
+
+procedure TSaleModeForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+var
+  Ini: TMemIniFile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  Is_closing := True;
+  inherited;
+
+  Ini:=TMemIniFile.Create(extractfilepath(Application.ExeName)+'Settings.ini', TEncoding.UTF8);
+  try
+    Ini.WriteInteger('PrintBill', 'PrintOnSale', Integer(cbPrintBill.Checked));
+    Ini.WriteInteger('SaleMode', 'tlCategory', tlCategory.Height);
+    Ini.WriteInteger('SaleMode', 'ShowTovarPanel', Integer(FShowTovarPanel));
+    Ini.WriteInteger('SaleMode', 'pnButtonsLeft', pnButtonsLeft.Width);
+    if FShowTovarPanel then
+      Ini.WriteInteger('SaleMode', 'pnRight', pnRight.Width);   // если панель товаров скрыта, то не надо сохранять ширину правой панели - она и так будет на весь экран
+  finally
+    Ini.UpdateFile;
+    Ini.Free;
+  end;
+
+  tvSale.StoreToIniFile('Settings.ini', False, [], Self.Name + '-' + tvSale.name);
+  tvProduct.StoreToIniFile('Settings.ini', False, [], Self.Name + '-' + tvProduct.name);
+end;
+
+procedure TSaleModeForm.aShowPanelTovarExecute(Sender: TObject);
+var
+  onChangeCat : TcxTreeListFocusedNodeChangedEvent;
+begin
+  if FShowTovarPanel then begin
+    SaveSettingsIni('SaleMode', 'pnRight', pnRight.Width, '');  // предварительно запомню ширину панели
+    pnTovar.Visible := False;
+    pnRight.Align := alClient;// .Width := SelfWidth;
+    splMenu.Visible := False;
+    FShowTovarPanel := False;
+    btnShowPanel.Caption := 'Показать'#13#10'товары (F9)';
+    aFindDlg.Visible := True;
+    aFindAnalog.Enabled := False;
+    spRead.Close;
+  end else begin
+    pnRight.Align := alLeft;     // ставлю снова выравнивание по левой стороне
+    pnTovar.Visible := True;
+    pnRight.Width := ReadIntSettingsIni('SaleMode', 'pnRight', Round(Width/2));
+    splMenu.Visible := True;
+    pnRight.Left := 0;           //ставлю панель первой слева
+    FShowTovarPanel := True;
+    btnShowPanel.Caption := 'Скрыть'#13#10'товары (F9)';
+    aFindDlg.Visible := False;
+    aFindAnalog.Enabled := True;
+    onChangeCat := tlCategory.OnFocusedNodeChanged;
+    tlCategory.OnFocusedNodeChanged := nil;
+    OpenSP(spRead, True);
+    aRefreshChild.Execute;
+    tlCategory.OnFocusedNodeChanged := onChangeCat;
+  end;
+end;
+
+procedure TSaleModeForm.aFindDlgExecute(Sender: TObject);
+var SearchTovarDlgForm : TSearchTovarDlgForm;
+begin
+  if FShowTovarPanel = True then
+    edSearch.SetFocus
+  else begin
+    SearchTovarDlgForm := TSearchTovarDlgForm.Create(Self);
+    with SearchTovarDlgForm do begin
+      try
+        if ShowModal = mrOk then begin
+          FTovar.Product := spSearchTov.FieldByName('G_PRODUCT').AsInteger;
+          FTovar.Product_Par := spSearchTov.FieldByName('g_product_par').AsInteger;
+          if cbRozn.Checked then
+            FTovar.Price := spSearchTov.FieldByName('price').AsFloat
+          else
+            FTovar.Price := spSearchTov.FieldByName('volume_price').AsFloat;
+          FTovar.cbPrice  := 0;
+          FTovar.cbSkidka := 0;
+          LocateFindedTovar;
+          Insdata;
+        end;
+      finally
+        Free;
+      end;
+    end;
+  end;  
+end;
+
+procedure TSaleModeForm.LocateFindedTovar;
+var onChange : TNotifyEvent;
+    onChangeCat : TcxTreeListFocusedNodeChangedEvent;
+    onChangeTov : TcxGridFocusedRecordChangedEvent;
+begin
+  if FShowTovarPanel then begin
+    onChange := edSearch.OnChange;
+    edSearch.OnChange := nil;
+    edSearch.Clear;
+    spReadTovar.CancelConditions;   //очищаю фильтрацию если было
+    spReadTovar.Conditions.Clear;
+    edSearch.OnChange := onChange;
+    onChangeCat := tlCategory.OnFocusedNodeChanged;
+    onChangeTov := tvProduct.OnFocusedRecordChanged;
+
+    Screen.Cursor := crHourGlass;
+    tlCategory.OnFocusedNodeChanged := nil;
+    tvProduct.OnFocusedRecordChanged  := nil;
+    spRead.Locate('g_product', FTovar.Product_Par, []);
+    spReadTovar.ParamByName('g_product_par_').AsInteger := spRead.FieldByName('g_product').AsInteger;
+    spReadTovar.ParamByName('g_tochka_').AsInteger := CurSklad;
+    OpenSp(spReadTovar, False);
+    aIns.Enabled := spReadTovar.RecordCount > 0;
+    spReadTovar.Locate('g_product', FTovar.Product, []);
+    if tvProduct.Controller.FocusedRow <> Nil then begin
+      if tvProduct.Controller.SelectedRowCount > 0 then
+        tvProduct.Controller.SelectedRows[0].Selected := False;
+      tvProduct.Controller.FocusedRow.Selected := True;
+    end;
+    RefreshTovarRekv;
+    tvProduct.OnFocusedRecordChanged := onChangeTov;
+    tlCategory.OnFocusedNodeChanged := onChangeCat;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TSaleModeForm.peClientKeyPress(Sender: TObject; var Key: Char);
+begin
+  Key := #0;
+end;
+
+procedure TSaleModeForm.tlCategoryFocusedNodeChanged(Sender: TcxCustomTreeList;
+  APrevFocusedNode, AFocusedNode: TcxTreeListNode);
+begin
+  if not Is_closing then
+    aRefreshChild.Execute;
+end;
+
+procedure TSaleModeForm.aReturnExecute(Sender: TObject);
+begin
+  PrihodTovaraNForm := TPrihodTovaraNForm.Create(Self);
+  try
+    PrihodTovaraNForm.OpenMode := omInsert;
+    PrihodTovaraNForm.Is_vozvrat := 1;
+    if PrihodTovaraNForm.ShowModal = mrOK then
+      ShowMessage('Возврат оформлен успешно!');
+  finally
+    PrihodTovaraNForm.Free;
+  end;
+end;
+
+procedure TSaleModeForm.aInsExecute(Sender: TObject);
+begin
+  FTovar.Product := spReadTovar.fieldByName('g_product').AsInteger;
+  if cbRozn.Checked then
+    FTovar.Price := spReadTovar.fieldByName('price').AsFloat
+  else
+    FTovar.Price := spReadTovar.fieldByName('volume_price').AsFloat;
+
+  inherited;
+end;
+
+procedure TSaleModeForm.aInsTovExecute(Sender: TObject);
+begin
+  // данный функционал будет добавлять товар по 1 шт, и именно тот, на котором счс стоит курсор во временной таблице
+  FTovar.Product := spReadTmp.FieldByName('g_product').AsInteger;
+  FTovar.Price   := spReadTmp.FieldByName('price').AsFloat;
+  InsData;
+end;
+
+procedure TSaleModeForm.tAutoRefreshTimer(Sender: TObject);
+begin
+  tAutoRefresh.Enabled := False;    // на всякий тут оставлю, вдруг каким-то боком включится автообновление
+end;
+
+procedure TSaleModeForm.cbRoznClick(Sender: TObject);
+var onChange : TNotifyEvent;
+begin
+  // только одна из галочек может быть чекнутой в этот момент
+  onChange := cbOpt.OnClick;
+  cbOpt.OnClick := nil;
+  cbOpt.Checked := not cbRozn.Checked;
+  cbOpt.OnClick := onChange;
+end;
+
+procedure TSaleModeForm.cbOptClick(Sender: TObject);
+var onChange : TNotifyEvent;
+begin
+  // только одна из галочек может быть чекнутой в этот момент
+  onChange := cbRozn.OnClick;
+  cbRozn.OnClick := nil;
+  cbRozn.Checked := not cbOpt.Checked;
+  cbRozn.OnClick := onChange;
+end;
+
+end.

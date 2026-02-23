@@ -1,0 +1,125 @@
+inherited SetupCurForm: TSetupCurForm
+  ClientHeight = 450
+  ClientWidth = 723
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 539
+    Top = 418
+  end
+  inherited btnCancel: TBitBtn
+    Left = 641
+    Top = 418
+  end
+  inherited Panel1: TPanel
+    Width = 709
+    Height = 401
+    inherited pcCommon: TcxPageControl
+      Width = 705
+      Height = 397
+      ClientRectBottom = 397
+      ClientRectLeft = 166
+      ClientRectRight = 705
+      ClientRectTop = 0
+      inherited tsCommon: TcxTabSheet
+        inherited sh29: TShape
+          Visible = False
+        end
+        inherited sh27: TShape
+          Visible = False
+        end
+        inherited sh25: TShape
+          Visible = False
+        end
+        inherited shp19: TShape
+          Left = 593
+          Top = 423
+          Visible = False
+        end
+        inherited lb3: TLabel
+          Top = 64
+        end
+        inherited lb10: TLabel
+          Top = 366
+          Visible = False
+        end
+        inherited shp20: TShape
+          Left = 891
+          Top = 423
+          Visible = False
+        end
+        inherited lb32: TLabel
+          Visible = False
+        end
+        inherited sh26: TShape
+          Visible = False
+        end
+        inherited lb33: TLabel
+          Visible = False
+        end
+        inherited sh28: TShape
+          Visible = False
+        end
+        inherited lb34: TLabel
+          Visible = False
+        end
+        inherited sh30: TShape
+          Visible = False
+        end
+        inherited ceManyFirm: TdxCheckEdit
+          Top = 362
+          Visible = False
+        end
+        inherited ceNotifyNol: TdxCheckEdit
+          Visible = False
+        end
+        inherited ceShowSaleDlg: TdxCheckEdit
+          Visible = False
+        end
+        inherited ceNewLineSale: TdxCheckEdit
+          Visible = False
+        end
+      end
+      inherited tsPechat: TcxTabSheet
+        inherited edSlogan: TdxEdit
+          StoredValues = 2
+        end
+      end
+      inherited tsBackup: TcxTabSheet
+        inherited bedtFileName: TdxButtonEdit
+          ExistButtons = True
+        end
+      end
+      inherited tsNetwork: TcxTabSheet
+        inherited pn1: TPanel
+          Width = 539
+        end
+        inherited pn2: TPanel
+          Width = 539
+          Height = 268
+        end
+      end
+      inherited ts1: TcxTabSheet
+        inherited seGridFontSize: TdxSpinEdit
+          StoredValues = 49
+        end
+        inherited mTestGridFont: TdxMemo
+          Height = 45
+        end
+        inherited mTestMenuFont: TdxMemo
+          Height = 45
+        end
+        inherited seMenuFontSize: TdxSpinEdit
+          StoredValues = 49
+        end
+      end
+    end
+  end
+  inherited btnDefaults: TBitBtn
+    Left = 163
+    Top = 418
+  end
+  inherited btHelp: TBitBtn
+    Top = 418
+  end
+end

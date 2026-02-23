@@ -1,0 +1,113 @@
+inherited CategoryForm: TCategoryForm
+  Left = 558
+  Top = 219
+  Caption = #1056#1077#1082#1080#1079#1080#1090#1099' '#1082#1072#1090#1077#1075#1086#1088#1080#1080
+  ClientHeight = 117
+  ClientWidth = 589
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 421
+    Top = 85
+    Anchors = [akRight, akBottom]
+  end
+  inherited btnCancel: TBitBtn
+    Left = 502
+    Top = 85
+    Anchors = [akRight, akBottom]
+  end
+  inherited Panel1: TPanel
+    Width = 569
+    Height = 70
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    object Shape25: TShape
+      Left = 8
+      Top = 9
+      Width = 177
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 8
+      Top = 34
+      Width = 176
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 40
+      Width = 83
+      Height = 14
+      Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 183
+      Top = 34
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label13: TLabel
+      Left = 18
+      Top = 15
+      Width = 59
+      Height = 14
+      Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape26: TShape
+      Left = 183
+      Top = 9
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object edName: TdxEdit
+      Left = 192
+      Top = 36
+      Width = 369
+      TabOrder = 1
+      MaxLength = 20
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object leCategory: TdxLookupEdit
+      Left = 192
+      Top = 11
+      Width = 369
+      TabOrder = 0
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_PRODUCT'
+      ListSource = dsProductCategory
+      LookupKeyValue = Null
+    end
+  end
+  inherited alDlg: TActionList
+    Left = 264
+    Top = 408
+  end
+  inherited pmCurrentDBTreeListControl: TPopupMenu
+    Left = 203
+    Top = 406
+  end
+  inherited dlgSaveCurrentDBTreeListControl: TSaveDialog
+    Left = 232
+    Top = 406
+  end
+end

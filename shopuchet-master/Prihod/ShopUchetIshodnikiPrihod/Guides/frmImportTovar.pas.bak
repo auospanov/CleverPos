@@ -1,0 +1,333 @@
+unit frmImportTovar;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDbDlg, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons,
+  dxEditor, dxEdLib, Oracle,ComOBJ, DB, OracleData, Menus, ActnList,
+  dxDBEdtr, dxDBELib, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, FIBDataSet, pFIBDataSet, FIB, frmDlg, OleServer, ExcelXP,
+  AppEvnts, ComCtrls, unCommonFunc;
+
+type
+  TImpRec = record
+    Articul: array of string;
+    Nomenclatur: array of string;
+    Barcode: array of string;
+    Name: array of string;
+    GUnit: array of string;
+    Vol_Price: array of string;
+    Price: array of string;
+    Prihod_Price: array of string;
+    Amount: array of string;
+  end;
+
+  TImportTovarForm = class(TDBDlgForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    odlg: TOpenDialog;
+    Memo1: TMemo;
+    Label13: TLabel;
+    Shape25: TShape;
+    leCategory: TdxLookupEdit;
+    Shape26: TShape;
+    dsProductCategory: TDataSource;
+    Label1: TLabel;
+    Shape1: TShape;
+    lePostavshik: TdxLookupEdit;
+    Shape3: TShape;
+    rbPriceListOnly: TRadioButton;
+    rbWithPrihod: TRadioButton;
+    dsPostavshik: TDataSource;
+    spLoad: TpFIBStoredProc;
+    spProductCategory: TpFIBDataSet;
+    tranRead: TpFIBTransaction;
+    spPostavshik: TpFIBDataSet;
+    tranWrite: TpFIBTransaction;
+    ProgressBar: TProgressBar;
+    bedtFileName: TdxButtonEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    procedure bedtFileNameButtonClick(Sender: TObject;
+      AbsoluteIndex: Integer);
+    procedure FormShow(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
+    procedure cbUppRowNoKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure btnCancelClick(Sender: TObject);
+    procedure Memo1KeyPress(Sender: TObject; var Key: Char);
+    procedure rbWithPrihodClick(Sender: TObject);
+    procedure rbPriceListOnlyClick(Sender: TObject);
+  private
+    { Private declarations }
+    FColumnNo : Integer;
+    FUpp_Row : Integer; //номер верхней строки
+    FLow_Row : Integer; //номер нижней строки
+    FCanClose : Boolean;
+    FImpRec: TImpRec;
+  private
+    function GetFloat(const Value: string): Double;
+  public
+    { Public declarations }
+  end;
+
+var
+  ImportTovarForm: TImportTovarForm;
+
+implementation
+
+uses unErrorHandlers, unDBSupport;
+
+{$R *.dfm}
+procedure TImportTovarForm.bedtFileNameButtonClick(Sender: TObject;
+  AbsoluteIndex: Integer);
+begin
+  inherited;
+  if odlg.Execute then
+    bedtFileName.Text := odlg.FileName;
+end;
+
+procedure TImportTovarForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  FCanClose := False;
+  OpenSp(spProductCategory, False);
+end;
+
+procedure TImportTovarForm.btnOkClick(Sender: TObject);
+type
+  TLog = array of string;
+var
+  AFileName, Name_ : String;
+  Body      : WideString;
+  FData    : OLEVariant;
+  WorkSheet: OLEVariant;
+  I, J, X: Integer;
+  Row_begin : Integer;  // начальная строка с которой будет импорт идти, в дальнейшем будет как входной параметр
+  Log : TLog;
+  sl: TStrings; // blob IS NOT string!
+  ms: TMemoryStream;
+  ErrCode: Integer;
+  ErrMsg : String;
+begin
+  if leCategory.LookupKeyValue = 0 then begin
+    leCategory.SetFocus;
+    MessageDlg('Категория товара не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if rbWithPrihod.Checked and (lePostavshik.Text = '') then begin
+    lePostavshik.SetFocus;
+    MessageDlg('Выберите поставщика!', mtWarning, [mbOk], 0);
+    Exit;
+  end;
+
+  AFileName := bedtFileName.TEXT;
+  Excel := CreateOleObject('Excel.Application');
+  if not spLoad.Transaction.InTransaction then
+     spLoad.Transaction.StartTransaction;
+
+  try
+    Row_begin := 2;   // начальная строка с которой будет импорт идти, в дальнейшем будет как входной параметр
+    Screen.Cursor := crHourGlass;
+    Memo1.Lines.Add('-------- ПАРСИНГ ФАЙЛА EXCEL ---------');
+    Excel.Workbooks.Open(AFileName);
+    WorkSheet := Excel.ActiveWorkbook.ActiveSheet;
+    FData := WorkSheet.UsedRange.Value;
+
+    //НАЙДУ ПОСЛЕДНЮЮ ЯЧЕЙКУ И ЗАКРОЮ EXCEL ОТ ГРЕХА ПОДАЛЬШЕ
+    Excel.Cells.SpecialCells(xlCellTypeLastCell).Activate;
+    X := Excel.ActiveCell.Row;
+    ProgressBar.Max := X - Row_begin;
+    Screen.Cursor := crDefault;
+
+    Memo1.Lines.Add('-------- ЗАГРУЗКА ЗАПИСЕЙ В БАЗУ ---------');
+    I := 0;
+    for I := 0 to X-Row_begin do begin
+      try
+        spLoad.ParamByName('g_product_par_').AsInteger := leCategory.LookupKeyValue;
+
+        //находим значение ячейки "Артикул"
+        spLoad.ParamByName('ARTICUL_').AsString := FData[I+Row_begin, 1];//Excel.ActiveCell.Value;
+        //находим значение ячейки "Номенклатурный номер
+        spLoad.ParamByName('NOMENCLATUR_NUM_').AsString := FData[I+Row_begin, 2];//Excel.ActiveCell.Value;
+        //находим значение ячейки "штрихкод"
+        spLoad.ParamByName('BARCODE_').AsString := FData[I+Row_begin, 3]; //Excel.ActiveCell.Value;
+        //находим значение ячейки "Наименование"
+        spLoad.ParamByName('NAME_').AsString := FData[I+Row_begin, 4];
+        //находим значение ячейки "Ед. измерения"
+        spLoad.ParamByName('NAME_G_UNIT_').AsString := FData[I+Row_begin, 5];
+
+        //находим значение ячейки "Оптовая цена"
+        IF not (VarIsEmpty(FData[I+Row_begin, 6])) THEN BEGIN
+          try
+            spLoad.ParamByName('VOLUME_PRICE_').AsDouble := StrToFloat(FData[I+Row_begin, 6]);
+          except
+            on E: Exception do begin
+              Memo1.Lines.Add('ОШИБКА. Некорректное число "' + FData[I+Row_begin, 6] + '. Строка  ' + INTTOSTR(I+Row_begin) +'. ');
+              Excel.Quit;
+              Excel := NULL;
+              Exit;
+            end;
+          end
+        END ELSE
+          spLoad.ParamByName('VOLUME_PRICE_').AsDouble := 0;
+
+        //находим значение ячейки "Розничная цена"
+        IF not (VarIsEmpty(FData[I+Row_begin, 7])) THEN BEGIN
+        try
+            spLoad.ParamByName('PRICE_').AsDouble := StrToFloat(FData[I+Row_begin, 7]);
+          except
+            on E: Exception do begin
+              Memo1.Lines.Add('ОШИБКА. Некорректное число "' + FData[I+Row_begin, 7] + '. Строка  ' + INTTOSTR(I+Row_begin) +'. ');
+              Excel.Quit;
+              Excel := NULL;
+              Exit;
+            end;
+          end
+        END ELSE
+          spLoad.ParamByName('PRICE_').AsDouble := 0;
+
+        //находим значение ячейки "Цена прихода"
+        IF not (VarIsEmpty(FData[I+Row_begin, 8])) THEN BEGIN
+          try
+            spLoad.ParamByName('SELF_PRICE_').AsDouble := StrToFloat(FData[I+Row_begin, 8]);
+          except
+            on E: Exception do begin
+              Memo1.Lines.Add('ОШИБКА. Некорректное число "' + FData[I+Row_begin, 8] + '. Строка  ' + INTTOSTR(I+Row_begin) +'. ');
+              Excel.Quit;
+              Excel := NULL;
+              Exit;
+            end;
+          end
+        END ELSE
+          spLoad.ParamByName('SELF_PRICE_').AsDouble := 0;
+
+        //находим значение ячейки "Количество для прихода"
+        IF not (VarIsEmpty(FData[I+Row_begin, 9])) THEN BEGIN
+        try
+            spLoad.ParamByName('Amount_').AsDouble := StrToFloat(FData[I+Row_begin, 9]);
+          except
+            on E: Exception do begin
+              Memo1.Lines.Add('ОШИБКА. Некорректное число "' + FData[I+Row_begin, 9] + '. Строка  ' + INTTOSTR(I+Row_begin) +'. ');
+              Excel.Quit;
+              Excel := NULL;
+              Exit;
+            end;
+          end
+        END ELSE
+          spLoad.ParamByName('Amount_').AsDouble := 0;
+
+        IF rbWithPrihod.Checked THEN
+          spLoad.ParamByName('G_client_').AsInteger := lePostavshik.LookupKeyValue;
+
+        IF I = (X-Row_begin) THEN
+          spLoad.ParamByName('IS_THIS_LAST_').AsInteger := 1;  // СТАВЛЮ ПРИЗНАК ЧТО ЭТО ПОСЛЕДНЯЯ ЗАПИСЬ В ЦИКЛЕ
+
+        try
+          spLoad.ExecQuery;
+          if spLoad.ParamByname('ERR_CODE').AsInteger <> 0 then begin
+            Memo1.Lines.Add(spLoad.ParamByname('Err_msg').AsString + ' Строка в файле Excel ' + INTTOSTR(I+Row_begin));
+            if spLoad.Transaction.InTransaction then
+              spLoad.Transaction.Rollback;
+            Excel.Quit;
+            Excel := NULL;
+            Exit;
+          end;
+          if spLoad.ParamByname('Err_msg').AsString <> '' then
+            Memo1.Lines.Add(spLoad.ParamByname('Err_msg').AsString);
+        except
+          Memo1.Lines.Add('ПРОИЗОШЛА ОШИБКА В ХОДЕ ЗАГРУЗКИ.');
+        end;
+
+        ProgressBar.Position := ProgressBar.Position + 1;
+      except
+        on E: Exception do begin
+          Memo1.Lines.Add('ОШИБКА. СТРОКА ' + INTTOSTR(I+Row_begin) +'. ' + E.Message);
+          Excel.Quit;
+          Excel := NULL;
+          Exit;
+        end;
+      end;
+    end;  // for .. do
+  except
+    on E: Exception do BEGIN
+      Excel.Quit;
+      Excel := NULL;
+      Memo1.Lines.Add('ОШИБКА. СТРОКА ' + INTTOSTR(I+Row_begin) +'. ' + E.Message);
+    END
+  end;  // try
+
+  Excel.Quit;
+  Excel := NULL;
+
+  Memo1.Lines.Add('----------------------------------');
+  Memo1.Lines.Add(INTTOSTR(I) + ' ТОВАРОВ ОБРАБОТАНО.');
+
+  if spLoad.Transaction.InTransaction then
+    spLoad.Transaction.Commit;
+
+  FCanClose := False;
+  btnOk.Enabled := False;
+end;
+
+function TImportTovarForm.GetFloat(
+  const Value: string): Double;
+var
+  Str: string;
+begin
+  Str := StringReplace(Value, ' ', EmptyStr, [rfReplaceAll]);
+  Str := StringReplace(Str, #160, EmptyStr, [rfReplaceAll]);
+  Str := StringReplace(Str, ',', DecimalSeparator, [rfReplaceAll]);
+  Str := StringReplace(Str, '.', DecimalSeparator, [rfReplaceAll]);
+  if Trim(Str) = EmptyStr then
+    Result := 0
+  else
+    Result := StrToFloat(Str);
+end;
+
+procedure TImportTovarForm.cbUppRowNoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  Key := #0;
+end;
+
+procedure TImportTovarForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  CanClose := FCanClose;
+end;
+
+procedure TImportTovarForm.btnCancelClick(Sender: TObject);
+begin
+  inherited;
+  FCanClose := True;
+end;
+
+procedure TImportTovarForm.Memo1KeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  Key := #0;
+end;
+
+procedure TImportTovarForm.rbWithPrihodClick(Sender: TObject);
+begin
+  inherited;
+  OpenSp(spPostavshik, False);
+  lePostavshik.Enabled := True;
+end;
+
+procedure TImportTovarForm.rbPriceListOnlyClick(Sender: TObject);
+begin
+  inherited;
+  lePostavshik.Clear;
+  lePostavshik.Enabled := False;
+end;
+
+end.

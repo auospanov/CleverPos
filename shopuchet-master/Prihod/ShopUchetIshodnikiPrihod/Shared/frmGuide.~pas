@@ -1,0 +1,41 @@
+unit frmGuide;
+
+{$I ShopUchet.inc}
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, ExtCtrls, StdCtrls,
+  Buttons, dxCntner, dxExEdtr, FIBDatabase, pFIBDatabase, ActnList;
+
+type
+  TGuideForm = class(TDBEditForm)
+    procedure FormShow(Sender: TObject);
+  private
+    function IsCanEditGuides: Boolean;
+  public
+  end;
+
+implementation
+
+uses unDBSupport;
+
+{$R *.DFM}
+
+procedure TGuideForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  {ѕровер€ем, можно ли редактировать справочники}
+  if not IsCanEditGuides then begin
+    btnOk.Enabled := False;
+//    btnOk.Visible := False;
+  end;
+end;
+
+function TGuideForm.IsCanEditGuides: Boolean;
+begin
+  Result := unDBSupport.GetSystemSetup(10) = '1';
+end;
+
+end.

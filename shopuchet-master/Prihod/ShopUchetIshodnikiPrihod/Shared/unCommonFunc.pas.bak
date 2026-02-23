@@ -1,0 +1,1572 @@
+unit unCommonFunc;
+
+interface
+
+uses
+  Windows, Classes, Forms, SysUtils, Messages, Controls, StdCtrls, ComCtrls,
+  Dialogs, dxCntner, cxPC, cxEdit, dxEdLib, Graphics, WinSock, Registry, dmMain, frmCopyProgress, FIB, unErrorHandlers,
+  pFIBStoredProc, dmReports;
+
+const
+  WM_SHOWCREDITS        = WM_USER + 100;     {About - для начала показа Credits}
+
+  WM_CONNECT            = WM_USER + 201;     {Main - для выполнения ConnectAction}
+  WM_DISCONNECT         = WM_USER + 202;     {Main - для выполнения DisconnectAction}
+  WM_CLOSEALLDIALOGS    = WM_USER + 203;     {Main - для закрытия всех диалоговых окон}
+
+  WM_REGCOMP            = WM_USER + 300;     {RegCompDialogFrm - для выполнения подключения к}
+                                             {БД с правами администратора для регистрации комп.}
+
+  WM_SETUPCHANGED       = WM_USER + 301;
+  WM_AUTOSIZEFORM       = WM_USER + 302;
+
+  WM_REFRESH            = WM_USER + 400;  {Обновить}
+  WM_VIEWREC            = WM_USER + 401;  {Просмотреть запись}
+  WM_INSREC             = WM_USER + 402;  {Вставить запись}
+  WM_INSLIKEREC         = WM_USER + 403;  {Вставить копию записи}
+  WM_UPDREC             = WM_USER + 404;  {Изменить запись}
+  WM_DELREC             = WM_USER + 405;  {Удалить запись}
+  WM_DELALLREC          = WM_USER + 406;  {Удалить все записи}
+ // WM_CONFIRMREC       = WM_USER + 406;  {Утвердить запись}
+  WM_UNCONFIRMREC       = WM_USER + 407;  {Отменить утверждение записи}
+  WM_GETDATA            = WM_USER + 408;  {Прочитать данные в окне диалога}
+  WM_VIEWHIS            = WM_USER + 409;  {Просмотреть историю}
+  WM_APPLYCHANGES       = WM_USER + 410;  {Применить изменения перед утверждением объекта}
+  WM_HELP               = WM_USER + 411;  {Вызов справки}
+
+  WM_ALIGNCONTROLS      = WM_USER + 412; {Выровнять контролы после OnShow (до Refresh)}
+
+//  WM_VIEWREC2       = WM_USER + 412;  {Просмотреть запись 2}
+
+  WM_INSCHILD           = WM_USER + 415;  {Вставить дочернюю запись}
+
+  WM_STOPIB                   = WM_USER + 422;  {Остановить FireBird}
+  WM_STARTIB                  = WM_USER + 423;  {Запустить FireBird}
+  WM_ARCHIVEDB                = WM_USER + 424;  {Заархивировать БД}
+  WM_RESTOREDB                = WM_USER + 425;  {Разархивировать БД}
+  WM_GBAKMESSAGESCLOSED       = WM_USER + 430;  {Форма с логом GBAK.exe закрыта}
+  WM_JOURNALCLOSED            = WM_USER + 435;  {Журнал закрыт}
+
+  WM_FILLLIST                 = WM_USER + 442;  {Заполнить список для ревизии}
+  WM_PAYFORREAL               = WM_USER + 443;  {ОПЛАТИТЬ ЗА ТОВАР, ВЫДАННЫЙ ПОД РЕАЛИЗАЦИЮ, РЕЖИМ "ВЫДАЧА ПОД РЕАЛИЗАЦИЮ"}
+  WM_RETURNFORREAL            = WM_USER + 444;  {ВОЗВРАТ ТОВАРА, ВЫДАННОГО ПОД РЕАЛИЗАЦИЮ, РЕЖИМ "ВЫДАЧА ПОД РЕАЛИЗАЦИЮ"}
+  WM_CLEARZAKAZ               = WM_USER + 445;  {ОЧИСТИТЬ ЗАКАЗ, РЕЖИМ "ПРОДАВЦА"}
+  WM_DEL_TMP                  = WM_USER + 446;  //Удалить товар из накладной, РЕЖИМ "ПРОДАВЦА"
+
+  WM_SETCONTROLSNOTMODIFIED = WM_USER + 451;  {Сбросить Modified у всех контролов формы диалога}
+  WM_READONLYCONTROLS       = WM_USER + 452;  {Установить ReadOnly у всех контролов формы диалога}
+  WM_BESTALIGN              = WM_USER + 453;  {Расположить оптимально Popup-control}
+
+
+  WM_CORRECTALLOFFICGRANTS  = WM_USER + 475;  {Скорректировать привилегии всех пользователей}
+
+//  WM_UPLOADDONE   = WM_USER + 500;  {Отправка сообщений завершена}
+
+//  WM_SHOWPARENT   = WM_USER + 601;
+
+  WM_PRINTDATA          = WM_USER + 701;  {Распечатать}
+  WM_PRINTALLDATA       = WM_USER + 702;  {Распечатать все}
+  WM_PRINTPREVIEW       = WM_USER + 703;  {Предварительный просмотр}
+  WM_PAGESETUP          = WM_USER + 704;  {Настройка страницы}
+  WM_SAVEREPORT         = WM_USER + 705;  {Сохранение отчёта}
+  WM_OPENINEXCEL        = WM_USER + 706;  {Открыть отчёт в Excel'е}
+  WM_INVERTCELL         = WM_USER + 707;  {Инвертировать ячейку в SpreadSheet'е}
+
+  WM_REPORTWORKBOOKCLOSED = WM_USER + 710;  {Окно с отчётами закрылось}
+
+  WM_CONFIRM              = WM_USER + 720;  {Утвердить докумет}
+  WM_ATTACHEDDOC          = WM_USER + 730;  {Прикреплённые документы}
+
+  WM_POPUPCLOSED          = WM_USER + 805;  {Всплывающее окно закрылось}
+
+  C_Mask_36_18            = 'fm999G999G999G999G999G990D009999999999999999';
+  C_Mask_18_9             = 'fm999G999G990D009999999';
+  C_Mask_20_4             = 'fm9G999G999G999G999G990D0099';
+  C_Mask_18_2             = 'fm9G999G999G999G999G990D00';
+  C_Mask_Int              = 'fm9G999G999G999G999G990';
+
+type
+  TArr = record
+    ID: Integer;
+    Name: String;
+  end;
+
+var
+  SelfHeight: Integer;
+  SelfWidth: Integer;
+  ZNUM  : STRING;
+  NUM   : INTEGER;
+  AllowSellAbsGoods : INTEGER;
+  BackupDir : String;
+  CopyProgressForm : TCopyProgressForm;
+  NdsValue : Double;
+  Excel: Variant;
+  FNeedBackup : Integer;  // нужно бэкап делать или нет. Может прогу просто открыли и все, ничего не делали, даже пароль не ввели, а прога делает бэкап. Поэтому сделал пока так, если пароль не ввоидил, а тут же программу закрыли, то бэкап не нужен
+  BillPrinter : String;  // наименование принтера чеков
+  BillWidth : Integer;   // ширина чеков, 80мм - 0, 58мм - 1, лист А4 - 2
+  BillSdvig : Integer;
+  Currency : Integer;   // 0 - тенге, 1 - рубли, 2 - гривны
+  YesNetwork : Integer; // сетевой режим, 0 - нет, 1- да
+  ServerName : String;  // имя компьютера-сервера
+  SkladArr : array of TArr;
+  CurSklad : integer;  //ID текущего склада
+  CurSkladName : String;  //имя текущего склада
+  Config   : Integer;  // конфигурация 0 - магазин, 1 - аптека
+  ExportDataType : Integer;  //выгрузка данных на облако: 0 - Продажи, 1 - остатки, 2 - продажи и остатки
+  ExportInterval : Integer;  //выгрузка данных на облако: 0 Никогда, 1 При закрытии программы, 2 Каждые 15 минут, 3 Каждые 30 минут, 4 Каждые 45 минут, 5 Каждый час, 6 Каждые 2 часа, 7 Каждые 3 часа, 8 Каждые 4 часа
+  ExportPath : String;  //выгрузка данных на облако: путь к папке
+  ExportThreadExists : Boolean;  // поток создается на MainForm и виден только там, поэтому создал переменную, которую видят все
+
+type
+  TCustomStyle = (csShadow, csWebStyle, csRealBlank, csFlat, csStandard);
+
+  TtbButtonsStyle = (bsText, bsGlyphText, bsGlyph);
+
+  EMyException = class(Exception);
+
+
+procedure Delay(msecs : DWORD);
+
+function CheckTransparencyAllowed: Boolean;
+{Если Windows 2K и выше, прозрачность возможна}
+
+procedure SetTransparent(FrmHWND: HWND; Transparency: Integer);
+{Если Windows 2K и выше, устанавливает заданную прозрачность от 0 до 100}
+
+function GetUserName: String;
+
+function GetConnectionsCount: Integer;
+
+function GetComputerName: String;
+
+function GetIPAddressList: TStringList;
+
+function GetIPAddressListStr: String;
+
+function GetDiskSerNum(Disk: String): DWORD;
+
+function GetDiskSerNumStr(SN: Longword): String;
+
+procedure GetPCData(var ComputerName: String; var OSPlatformId, OSMajorVer,
+                    OSMinorVer, OSBuildNumber, CPUAmount, CPUType, FixedDrives,
+                    DiskCSerNum: DWORD);
+
+procedure GetPCDataStr(OSPlatformId, CPUType, FixedDrives, DiskCSerNum: DWORD;
+                       var OSPlatformIdStr, CPUTypeStr, FixedDrivesStr, DiskCSerNumStr: String);
+
+function IsHaveRight(RightItem: Integer; RightsArr: array of Integer): Boolean;
+
+function IsHaveAnyRight(RightItemsArr, RightsArr: array of Integer): Boolean;
+
+function CheckSumm(SIn: String; var SOut: String): Boolean; overload;
+function CheckSumm(SIn: String; var SOut: String; Decimals: Integer): Boolean; overload;
+
+procedure DivSumm(S: Extended; var Left, Right: Int64); overload;
+procedure DivSumm(S: String; var Left, Right: Int64); overload;
+
+function CheckAllIDDifferent(IDArr: array of Integer): Boolean;
+
+function CheckDate(D: TDate; const BeginDateStr, EndDateStr: String): Boolean;
+{Проверяет, входит ли D в диапазон BeginDate..EndDate}
+{BeginDate, EndDate в формате 'dd.mm.yyyy'}
+
+function CheckTime(D: TTime): Boolean;
+
+function SummByWords(S: Extended): String;
+
+function CheckRequizChanged(Owner: TComponent): Boolean;
+
+function LPad(const S: String; const Len: Integer; const Pad: Char): String;
+function RPad(const S: String; const Len: Integer; const Pad: Char): String;
+function RCopy(const S: String; const Index, Count: Integer): String;
+function PosFrom(const SubStr, Str: String; const FromPos: Integer): Integer;
+
+function UnixToWindowsCRLF(UnixCRLFStr: String): String;
+{Преобразует переносы строк в стиле Unix ($D (а также и $A))
+ в переносы строк в стиле Windows}
+
+{Меняет местами значения}
+procedure SwapValues(var Value1, Value2: Integer); overload;
+procedure SwapValues(var Value1, Value2: String);  overload;
+
+function windows1251_2_WideString(const S: String): WideString;
+function WideString_2_windows1251(const WS: WideString): String;
+function rk1048_2_WideString(const S: String): WideString;
+function WideString_2_rk1048(const WS: WideString): String;
+
+function GetDateTime : String;
+function CurDate : String;
+function CreateDirEx(const Dir: string): Boolean;
+
+{Получить имя временного файла (уникального)}
+function GetUniqTempFile(const Extension : String = 'tmp'): String;
+
+{Возвращает значения настроек БД, которые спрятаны в таблице G_Firm_Rekvizit, пока только значение НДС}
+procedure GetBDSettings;
+
+{Делает Execute датакуери}
+function ExecSP(SP: TpFIBStoredProc): Boolean;
+
+{Делает Execute датакуери}
+function ExecSPTR(SP: TpFIBStoredProc): Boolean;
+
+{Делает Экспорт оперативных данных - продажи и остатки товаров}
+procedure ExportOperData;
+
+{==================================================================}
+implementation
+{==================================================================}
+
+uses
+  unDigConversions, unToWord, unInitApp;
+
+procedure Delay(msecs : DWORD);
+var
+   FirstTick : DWORD;
+begin
+     FirstTick:=GetTickCount;
+     repeat
+       Application.ProcessMessages; {Чтобы мастдай не сдох}
+     until GetTickCount-FirstTick >= msecs;
+end;
+
+function CheckTransparencyAllowed: Boolean;
+{Если Windows 2K и выше, прозрачность возможна}
+var
+  Major: Integer;
+  Minor: Integer;
+procedure GetWindowsVersion(var Major: Integer; var Minor: Integer);
+var
+  L : Longint;
+begin
+  L := GetVersion;
+  Major := LoByte(LoWord(L));
+  Minor := HiByte(LoWord(L));
+end;
+begin
+  Result := False;
+  GetWindowsVersion(Major, Minor);
+  if (Major = 5) {а не >= ?)} and (Minor >= 0) then //Windows 2000(NT5) - 5.0, XP 5.1 
+    Result := True;
+end;
+
+procedure SetTransparent(FrmHWND: HWND; Transparency: Integer);
+{Если Windows 2K и выше, устанавливает заданную прозрачность от 0 до 100}
+const
+  LWA_ALPHA = $2;
+  GWL_EXSTYLE = (-20);
+  WS_EX_LAYERED = $80000;
+  WS_EX_TRANSPARENT = $20;
+var
+  WindowLongOld: Longint;
+  User32: Cardinal;
+  SetLayeredWindowAttributes: function (FrmHWND: HWND; crKey: Byte; bAlpha: Byte;
+    dwFlags: LongInt): LongInt; stdcall;
+begin
+  if CheckTransparencyAllowed then begin
+    User32 := LoadLibrary('USER32');
+    if User32 <> 0 then
+    try
+      SetLayeredWindowAttributes := GetProcAddress(User32, 'SetLayeredWindowAttributes');
+      if @SetLayeredWindowAttributes <> nil then
+      begin
+        WindowLongOld := GetWindowLongA(FrmHWND, GWL_EXSTYLE);
+        SetWindowLongA(FrmHWND, GWL_EXSTYLE, WindowLongOld or WS_EX_LAYERED);
+        SetLayeredWindowAttributes(FrmHWND, 0, (255 * (100 - Transparency)) DIV 100,
+          LWA_ALPHA);
+      end;
+    finally
+      FreeLibrary(User32);
+    end;
+  end;
+end;
+
+function GetUserName: String;
+var
+  S       : String;
+  lpBuffer: PChar;
+  nSize   : DWORD;
+  Ret     : Bool;
+begin
+  Result := 'UnknownName';
+//  nSize := MAX_COMPUTERNAME_LENGTH + 1;
+  nSize := 1024;
+  SetLength(S, nSize);
+  lpBuffer := PChar(S);
+  Ret := Windows.GetUserName(lpBuffer, nSize);
+  if Ret then
+    Result := lpBuffer;
+end;
+
+function GetConnectionsCount: Integer;
+begin
+  with MainDm.spGetConnectCount do begin
+    if not Transaction.InTransaction then
+      Transaction.StartTransaction;
+    Open;
+    Result := RecordCount;
+    if Transaction.InTransaction then
+      Transaction.Rollback;
+    Close;
+  end;
+end;
+
+function GetComputerName: String;
+var
+  S       : String;
+  lpBuffer: PChar;
+  nSize   : DWORD;
+  Ret     : Bool;
+begin
+  Result := 'UnknownName';
+  nSize := MAX_COMPUTERNAME_LENGTH + 1;
+  SetLength(S, nSize);
+  lpBuffer := PChar(S);
+  Ret := Windows.GetComputerName(lpBuffer, nSize);
+  if Ret then
+    Result := lpBuffer;
+end;
+
+function GetIPAddressList: TStringList;
+const
+  WSVer = $101;
+type
+  TInAddrArr = array[Byte] of PInAddr;
+  PInAddrArr = ^TInAddrArr;
+var
+  wsaData    : TWSAData;
+  P          : PHostEnt;
+  Buf        : array [0..127] of Char;
+  P_InAddrArr: PInAddrArr;
+  i          : Integer;
+begin
+    Result := TStringList.Create;
+    Result.Text := '';
+
+  if WSAStartup(WSVer, wsaData) = 0 then begin
+    if GetHostName(@Buf, 128) = 0 then begin
+      P := GetHostByName(@Buf);
+      if Assigned(P) then begin
+        P_InAddrArr := PInAddrArr(P^.h_addr_list);
+        i := 0;
+        while Assigned(P_InAddrArr^[i]) do begin
+          Result.Add(StrPas(Inet_NtoA(P_InAddrArr^[i]^)));
+          inc(i);
+        end;
+      end; {if Assigned(P)}
+    end; {if GetHostName(@Buf, 128) = 0}
+    WSACleanup;
+  end; {if WSAStartup(WSVer, wsaData) = 0}
+end;
+
+function GetIPAddressListStr: String;
+const
+  WSVer = $101;
+type
+  TInAddrArr = array[Byte] of PInAddr;
+  PInAddrArr = ^TInAddrArr;
+var
+  wsaData    : TWSAData;
+  P          : PHostEnt;
+  Buf        : array [0..127] of Char;
+  P_InAddrArr: PInAddrArr;
+  i          : Integer;
+begin
+    Result := '';
+
+  if WSAStartup(WSVer, wsaData) = 0 then begin
+    if GetHostName(@Buf, 128) = 0 then begin
+      P := GetHostByName(@Buf);
+      if Assigned(P) then begin
+        P_InAddrArr := PInAddrArr(P^.h_addr_list);
+        i := 0;
+        while Assigned(P_InAddrArr^[i]) do begin
+          Result := Result + StrPas(Inet_NtoA(P_InAddrArr^[i]^)) + '; ';
+          inc(i);
+        end;
+
+        if Length(Result) >= 2 then
+          Delete(Result, Length(Result) - 1, 2);
+      end; {if Assigned(P)}
+    end; {if GetHostName(@Buf, 128) = 0}
+    WSACleanup;
+  end; {if WSAStartup(WSVer, wsaData) = 0}
+end;
+
+function GetDiskSerNum(Disk: String): DWORD;
+var
+  S1, S2                    : String;
+  lpRootPathName,
+  lpVolumeNameBuffer        : PChar;
+  nVolumeNameSize,
+  nVolumeSerialNumber,
+  lpMaximumComponentLength,
+  lpFileSystemFlags         : DWORD;
+  lpFileSystemNameBuffer    : PChar;
+  nFileSystemNameSize       : DWORD;
+  Ret: Bool;
+begin
+  Result := 0;
+  lpRootPathName := PChar(Disk + ':\');
+  nVolumeNameSize := 255;
+  SetLength(S1, nVolumeNameSize);
+  lpVolumeNameBuffer := PChar(S1);
+  nFileSystemNameSize := 255;
+  SetLength(S2, nFileSystemNameSize);
+  lpFileSystemNameBuffer := PChar(S2);
+
+  Ret := Windows.GetVolumeInformation(lpRootPathName, lpVolumeNameBuffer,
+           nVolumeNameSize, @nVolumeSerialNumber,
+           lpMaximumComponentLength, lpFileSystemFlags,
+           lpFileSystemNameBuffer, nFileSystemNameSize);
+
+  if Ret then
+    {All OK}
+    Result := nVolumeSerialNumber;
+end;
+
+function GetDiskSerNumStr(SN: Longword): String;
+var
+  SNHi,
+  SNLo  : Word;
+begin
+  SNHi := HiWord(SN);
+  SNLo := LoWord(SN);
+  Result := Word2Hex(SNLo) + Word2Hex(SNHi);
+end;
+
+procedure GetPCData(var ComputerName: String; var OSPlatformId, OSMajorVer,
+                    OSMinorVer, OSBuildNumber, CPUAmount, CPUType, FixedDrives,
+                    DiskCSerNum: DWORD);
+var
+  lpOSVersionInfo   : TOSVersionInfo;
+  lpSystem_Info     : TSystemInfo;
+  DrvLetter         : String;
+  LogDrives         : DWORD;
+  LogDrivesStr,
+  FixedDrivesStr    : String;
+  i,
+  LogDrivesStrLen,
+  DrvType           : UINT;
+begin
+  {Определяем имя компьютера}
+  ComputerName := GetComputerName;
+
+  {Определяем тип и версию ОС}
+  lpOSVersionInfo.dwOSVersionInfoSize := SizeOf(lpOSVersionInfo);
+  if Windows.GetVersionEx(lpOSVersionInfo) then
+    with lpOSVersionInfo do begin
+      OSPlatformId := dwPlatformId;  {VER_PLATFORM_WIN32s        (0) - Win32s on Windows 3.1}
+                                     {VER_PLATFORM_WIN32_WINDOWS (1) - Win32 on Windows 95}
+                                     {VER_PLATFORM_WIN32_NT      (2) - Win32 on Windows NT}
+      OSMajorVer   := dwMajorVersion;
+      OSMinorVer   := dwMinorVersion;
+      OSBuildNumber:= dwBuildNumber;
+    end
+  else begin
+    OSPlatformId := 0;
+    OSMajorVer   := 0;
+    OSMinorVer   := 0;
+    OSBuildNumber:= 0;
+  end;
+
+  {Определяем тип CPU}
+  Windows.GetSystemInfo(lpSystem_Info);
+  CPUAmount := lpSystem_Info.dwNumberOfProcessors;
+  if lpOSVersionInfo.dwPlatformId = VER_PLATFORM_WIN32_NT then  {Windows NT}
+    CPUType := lpSystem_Info.wProcessorLevel  {3 - Intel 386}
+                                              {4 - Intel 486}
+                                              {5 - Intel Pentium}
+                                              {6 - Intel Pentium II}
+  else {Windows 95}
+    CPUType := lpSystem_Info.dwProcessorType;
+
+  {Определяем жесткие диски}
+  {Получаем список логических дисков (битовое представление)}
+  LogDrives := Windows.GetLogicalDrives;
+
+  {Заполняем строку логических дисков (правый, младший разряд - диск A)}
+  LogDrivesStr := DWord2Bin(LogDrives);
+
+  {Определяем типы дисков для ранее найденных дисков
+   и заполняем строку жестких дисков}
+  LogDrivesStrLen := Length(LogDrivesStr);
+  FixedDrivesStr := '';
+  for i := 1 to LogDrivesStrLen do begin
+	  if LogDrivesStr[i] = '0' then begin
+  		FixedDrivesStr := FixedDrivesStr + '0';
+	  	Continue;
+  	end;
+  	DrvLetter := Char(65 + (LogDrivesStrLen - i));
+	  DrvType := Windows.GetDriveType(PChar(DrvLetter + ':\'));
+  	if DrvType = 3 then	// Hard Drive
+		  FixedDrivesStr := FixedDrivesStr + '1'
+    else
+  		FixedDrivesStr := FixedDrivesStr + '0';
+  end;
+
+  {Строим битовое представление имеющихся жестких дисков (правый, младший разряд - диск A)}
+  FixedDrives := Bin2DWord(FixedDrivesStr);
+
+  {Определяем серийный номер диска C}
+	DiskCSerNum := GetDiskSerNum('C')
+end;
+
+function GetFixedDrivesStr(FixedDrives: DWORD): String;
+var
+  FixedDrivesStr    : String;
+  FixedDrivesStrLen : Byte;
+  DrvLetter,
+  TmpStr            : String;
+  i                 : Byte;
+begin
+  if FixedDrives = 0 then begin
+    Result := 'Жестких дисков нет';
+    Exit;
+  end;
+  {Получаем битовое представление списка жестких дисков}
+  FixedDrivesStr := DWord2Bin(FixedDrives);
+  {Формируем строку имен жестких дисков}
+  FixedDrivesStrLen := Length(FixedDrivesStr);
+  TmpStr := '';
+  for i := FixedDrivesStrLen downto 1 do begin
+    if FixedDrivesStr[i] = '1' then begin
+    	DrvLetter := Char(65 + (FixedDrivesStrLen - i));
+      TmpStr := TmpStr + DrvLetter + ': ';
+    end;
+  end;
+  Result := TmpStr;
+end;
+
+procedure GetPCDataStr(OSPlatformId, CPUType, FixedDrives, DiskCSerNum: DWORD;
+                       var OSPlatformIdStr, CPUTypeStr, FixedDrivesStr, DiskCSerNumStr: String);
+begin
+  case OSPlatformId of
+    VER_PLATFORM_WIN32s       : OSPlatformIdStr := 'Win32s на Windows 3.1';  {не может быть}
+    VER_PLATFORM_WIN32_WINDOWS: OSPlatformIdStr := 'Windows 95';
+    VER_PLATFORM_WIN32_NT     : OSPlatformIdStr := 'Windows NT';
+  else
+    OSPlatformIdStr := 'Unknown';
+  end;
+
+  case CPUType of
+    3, 386: CPUTypeStr := 'Intel 386';
+    4, 486: CPUTypeStr := 'Intel 486';
+    5, 586: CPUTypeStr := 'Intel Pentium';
+    6     : CPUTypeStr := 'Intel Pentium II';
+  else
+    CPUTypeStr := 'Unknown';
+  end;
+
+  FixedDrivesStr := GetFixedDrivesStr(FixedDrives);
+
+  DiskCSerNumStr := Word2Hex(HiWord(DiskCSerNum)) + '-' + Word2Hex(LoWord(DiskCSerNum));
+end;
+
+function IsHaveRight(RightItem: Integer; RightsArr: array of Integer): Boolean;
+var
+  i                 : Integer;
+  Found             : Boolean;
+  RightsArrHighBound: Integer;
+begin
+  Found := False;
+  RightsArrHighBound := High(RightsArr);
+  for i := 0 to RightsArrHighBound do
+    if RightItem = RightsArr[i] then begin
+      Found := True;
+      Break;
+    end;
+  Result := Found;
+end;
+
+function IsHaveAnyRight(RightItemsArr, RightsArr: array of Integer): Boolean;
+var
+  i,j                    : Integer;
+  Found                  : Boolean;
+  RightItemsArrHighBound,
+  RightsArrHighBound     : Integer;
+begin
+  Found := False;
+  RightItemsArrHighBound := High(RightItemsArr);
+  RightsArrHighBound := High(RightsArr);
+  for i := 0 to RightItemsArrHighBound do begin
+    for j := 0 to RightsArrHighBound do
+      if RightItemsArr[i] = RightsArr[j] then begin
+        Found := True;
+        Break;
+      end;
+    if Found then
+      Break;
+  end;
+  Result := Found;
+end;
+
+function CheckSumm(SIn: String; var SOut: String): Boolean;
+{Проверяет допустимость суммы и формирует строку для записи в MT-сообщение.
+ Убирает все разделители ('.', ',' и пробелы) из исходной строки.
+ В выходной строке в качестве разделителя целой и дробной частей ставит ','}
+const
+  CharBeforeSeparator = 15;
+  CharAfterSeparator = 2;
+  Separator = ',';
+var
+  Len           : Integer;
+  SpacePos,
+  CommaPos,
+  PointPos,
+  SeparatorPos  : Integer;
+  LeftVal,
+  RightVal      : String;
+  LastSeparator : Char;
+  OldDecimalSeparator: Char;
+  TestSumm      : Extended;
+function CheckIsNumStr(S: String): Boolean;
+var
+  i   : Integer;
+  Len : Integer;
+begin
+  Result := False;
+  Len := Length(S);
+  for i := 1 to Len do
+    if not (S[i] in [' ', '.', ',', '0'..'9']) then
+      Exit;
+  Result := True;
+end;
+function MinMoreZero(A, B, C: Integer): Integer;
+{Возвращает минимальное из трех чисел, большее 0. Если все числа <= 0,
+ возвращается 0}
+var
+  MinAB: Integer;  {Минимальное из A, B, большее 0}
+begin
+  Result := 0;
+  if (A <= 0) and (B <= 0) and (C <= 0) then
+    Exit;
+
+  {Находим минимальное из A, B, большее 0 (или 0, если оба <= 0}
+  if A <= B then
+    if A > 0 then
+      MinAB := A
+    else
+      MinAB := B
+  else  {A > B}
+    if B > 0 then
+      MinAB := B
+    else
+      MinAB := A;
+  {Находим минимальное из MinAB, C, большее 0}
+  if MinAB <= C then
+    if MinAB > 0 then
+      Result := MinAB
+    else
+      Result := C
+  else  {MinAB > C}
+    if C > 0 then
+      Result := C
+    else
+      Result := MinAB;
+end;
+
+begin
+  SOut := '';
+  Result := False;
+  Len := Length(SIn);
+//  if Len < 4 then
+//    Exit;
+
+  if Len < 1 then
+    Exit;
+
+  {Строка состоит из допустимых символов?}
+  if not CheckIsNumStr(SIn) then
+    Exit;
+  {Есть ли в строке точка или запятая?}
+  if (Pos('.', SIn) =  0) and (Pos(',', SIn) = 0) then {Нет ни одного разделителя}
+//    Exit;
+    SIn := SIn + Separator + '00';
+
+  {Ищем первый разделитель}
+  SpacePos := Pos(' ', SIn);
+  CommaPos := Pos(',', SIn);
+  PointPos := Pos('.', SIn);
+  SeparatorPos := MinMoreZero(SpacePos, CommaPos, PointPos);
+  {Запоминаем последний разделитель}
+  if SeparatorPos = SpacePos then
+    LastSeparator := ' '
+  else if SeparatorPos = CommaPos then
+    LastSeparator := ','
+  else
+    LastSeparator := '.';
+
+  {Выделяем левую и правую части}
+  LeftVal := Copy(SIn, 1, SeparatorPos - 1);
+  RightVal := Copy(SIn, SeparatorPos + 1, Len - SeparatorPos);
+
+  {Есть еще разделители?}
+  repeat
+    SpacePos := Pos(' ', RightVal);
+    CommaPos := Pos(',', RightVal);
+    PointPos := Pos('.', RightVal);
+    SeparatorPos := MinMoreZero(SpacePos, CommaPos, PointPos);
+    if SeparatorPos > 0 then begin
+      {Запоминаем последний разделитель}
+      if SeparatorPos = SpacePos then
+        LastSeparator := ' '
+      else if SeparatorPos = CommaPos then
+        LastSeparator := ','
+      else
+        LastSeparator := '.';
+      LeftVal := LeftVal + Copy(RightVal, 1, SeparatorPos - 1);
+      RightVal := Copy(RightVal, SeparatorPos + 1, Len - SeparatorPos);
+    end;
+  until SeparatorPos = 0;
+
+  {Последний разделитель - точка или запятая?}
+  if not (LastSeparator in [',', '.']) then
+    Exit;
+
+  {До разделителя не меньше 1 знака?}
+  if Length(LeftVal) < 1 then
+    Exit;
+  {До разделителя не больше CharBeforeSeparator знаков?}
+  if Length(LeftVal) > CharBeforeSeparator then
+    Exit;
+  {После разделителя - CharAfterSeparator знаков?}
+  if Length(RightVal) <> CharAfterSeparator then
+//    Exit;
+    begin
+      if Length(RightVal) > CharAfterSeparator then
+        exit
+      else if Length(RightVal) = 1 then
+        RightVal := RightVal + '0'
+      else
+        RightVal := RightVal + '00';
+    end;
+  {Формируем итоговое число}
+  SOut := LeftVal + Separator + RightVal;
+
+  OldDecimalSeparator := DecimalSeparator;
+  try
+    DecimalSeparator := ',';  {Т.к. SummaOut, возвращаемая ф-ей CheckSumm, содержит ','}
+    TestSumm := 0;
+    try
+      TestSumm := StrToFloat(SOut);
+    except
+      Exit;
+    end;
+  finally
+    DecimalSeparator := OldDecimalSeparator;
+  end;
+
+  if TestSumm > 0 then
+    Result := True;
+end;  {CheckSumm}
+
+function CheckSumm(SIn: String; var SOut: String; Decimals: Integer): Boolean;
+{Проверяет допустимость суммы, чтобы после десятичной точки было не больше Decimals цифр
+ и формирует строку для вставки в FireBird.
+ Убирает все разделители ('.', ',' и пробелы) из исходной строки.
+ В выходной строке в качестве разделителя целой и дробной частей ставит '.'}
+const
+  CharBeforeSeparator = 15;
+  Separator = '.';
+var
+  CharAfterSeparator: Integer;
+  Len           : Integer;
+  SpacePos,
+  CommaPos,
+  PointPos,
+  SeparatorPos  : Integer;
+  LeftVal,
+  RightVal      : String;
+  LastSeparator : Char;
+  OldDecimalSeparator: Char;
+  TestSumm      : Extended;
+function CheckIsNumStr(S: String): Boolean;
+var
+  i   : Integer;
+  Len : Integer;
+begin
+  Result := False;
+  Len := Length(S);
+  for i := 1 to Len do
+    if not (S[i] in [' ', '.', ',', '0'..'9']) then
+      Exit;
+  Result := True;
+end;
+function MinMoreZero(A, B, C: Integer): Integer;
+{Возвращает минимальное из трех чисел, большее 0. Если все числа <= 0,
+ возвращается 0}
+var
+  MinAB: Integer;  {Минимальное из A, B, большее 0}
+begin
+  Result := 0;
+  if (A <= 0) and (B <= 0) and (C <= 0) then
+    Exit;
+
+  {Находим минимальное из A, B, большее 0 (или 0, если оба <= 0}
+  if A <= B then
+    if A > 0 then
+      MinAB := A
+    else
+      MinAB := B
+  else  {A > B}
+    if B > 0 then
+      MinAB := B
+    else
+      MinAB := A;
+  {Находим минимальное из MinAB, C, большее 0}
+  if MinAB <= C then
+    if MinAB > 0 then
+      Result := MinAB
+    else
+      Result := C
+  else  {MinAB > C}
+    if C > 0 then
+      Result := C
+    else
+      Result := MinAB;
+end;
+
+begin
+  SOut := '';
+  Result := False;
+
+  CharAfterSeparator := Decimals;
+
+  Len := Length(SIn);
+//  if Len < 4 then
+//    Exit;
+
+  if Len < 1 then
+    Exit;
+
+  {Строка состоит из допустимых символов?}
+  if not CheckIsNumStr(SIn) then
+    Exit;
+  {Есть ли в строке точка или запятая?}
+  if (Pos('.', SIn) =  0) and (Pos(',', SIn) = 0) then {Нет ни одного разделителя}
+//    Exit;
+    SIn := SIn + Separator + '0000';
+
+  {Ищем первый разделитель}
+  SpacePos := Pos(' ', SIn);
+  CommaPos := Pos(',', SIn);
+  PointPos := Pos('.', SIn);
+  SeparatorPos := MinMoreZero(SpacePos, CommaPos, PointPos);
+  {Запоминаем последний разделитель}
+  if SeparatorPos = SpacePos then
+    LastSeparator := ' '
+  else if SeparatorPos = CommaPos then
+    LastSeparator := ','
+  else
+    LastSeparator := '.';
+
+  {Выделяем левую и правую части}
+  LeftVal := Copy(SIn, 1, SeparatorPos - 1);
+  RightVal := Copy(SIn, SeparatorPos + 1, Len - SeparatorPos);
+
+  {Есть еще разделители?}
+  repeat
+    SpacePos := Pos(' ', RightVal);
+    CommaPos := Pos(',', RightVal);
+    PointPos := Pos('.', RightVal);
+    SeparatorPos := MinMoreZero(SpacePos, CommaPos, PointPos);
+    if SeparatorPos > 0 then begin
+      {Запоминаем последний разделитель}
+      if SeparatorPos = SpacePos then
+        LastSeparator := ' '
+      else if SeparatorPos = CommaPos then
+        LastSeparator := ','
+      else
+        LastSeparator := '.';
+      LeftVal := LeftVal + Copy(RightVal, 1, SeparatorPos - 1);
+      RightVal := Copy(RightVal, SeparatorPos + 1, Len - SeparatorPos);
+    end;
+  until SeparatorPos = 0;
+
+  {Последний разделитель - точка или запятая?}
+  if not (LastSeparator in [',', '.']) then
+    Exit;
+
+  {До разделителя не меньше 1 знака?}
+  if Length(LeftVal) < 1 then
+    Exit;
+  {До разделителя не больше CharBeforeSeparator знаков?}
+  if Length(LeftVal) > CharBeforeSeparator then
+    Exit;
+  {После разделителя - не больше CharAfterSeparator знаков?}
+  if Length(RightVal) > CharAfterSeparator then
+    Exit;
+
+  {Формируем итоговое число}
+  SOut := LeftVal + Separator + RightVal;
+
+  OldDecimalSeparator := DecimalSeparator;
+  try
+    DecimalSeparator := Separator;  {Т.к. SummaOut, возвращаемая ф-ей CheckSumm, содержит '.'}
+    TestSumm := 0;
+    try
+      TestSumm := StrToFloat(SOut);
+    except
+      Exit;
+    end;
+  finally
+    DecimalSeparator := OldDecimalSeparator;
+  end;
+
+  if TestSumm > 0 then
+    Result := True;
+end;  {CheckSumm}
+
+procedure DivSumm(S: Extended; var Left, Right: Int64);
+const
+  CharBeforeSeparator = 15;
+  CharAfterSeparator = 2;
+var
+  SummStr : String;
+  PointPos: Integer;
+begin
+  Left := 0;
+  Right := 0;
+  SummStr := FloatToStrF(S, ffFixed, CharBeforeSeparator, CharAfterSeparator);
+  PointPos := Pos('.', SummStr);
+  if PointPos > 0 then begin
+    Left  := StrToInt64(Copy(SummStr, 1, PointPos - 1));
+    Right := StrToInt64(Copy(SummStr, PointPos + 1, Length(SummStr) - PointPos + 1));
+  end
+  else begin
+    Left := StrToInt64(SummStr);
+    Right := 0;
+  end;
+end;
+
+procedure DivSumm(S: String; var Left, Right: Int64);
+const
+  CharBeforeSeparator = 15;
+  CharAfterSeparator = 2;
+var
+  PointPos: Integer;
+begin
+  Left := 0;
+  Right := 0;
+  PointPos := Pos('.', S);
+  if PointPos > 0 then begin
+    Left  := StrToInt64(Copy(S, 1, PointPos - 1));
+    Right := StrToInt64(Copy(S, PointPos + 1, Length(S) - PointPos + 1));
+  end
+  else begin
+    Left := StrToInt64(S);
+    Right := 0;
+  end;
+end;
+
+function CheckAllIDDifferent(IDArr: array of Integer): Boolean;
+var
+  HighItem: Integer;
+  i, j    : Integer;
+begin
+  Result := True;
+  HighItem := High(IDArr);
+  for i := 0 to HighItem - 1 do
+    for j := i + 1 to HighItem do
+      if IDArr[i] = IDArr[j] then begin
+        Result := False;
+        Exit;
+      end;
+end;
+
+function CheckDate(D: TDate; const BeginDateStr, EndDateStr: String): Boolean;
+{Проверяет, входит ли D в диапазон BeginDate..EndDate}
+{BeginDate, EndDate в формате 'dd.mm.yyyy'}
+var
+  Str : String;
+  OldShortDateFormat: String;
+  OldDateSeparator: Char;
+  BeginDate,
+  EndDate: TDate;
+begin
+  Result := False;
+
+  D := Trunc(D);
+
+  try
+    Str := DateToStr(D);
+
+    OldShortDateFormat := ShortDateFormat;
+    OldDateSeparator := DateSeparator;
+    ShortDateFormat := 'ddmmyyyy';
+    DateSeparator := '.';
+    try
+      BeginDate := StrToDate(BeginDateStr);
+      EndDate := StrToDate(EndDateStr);
+      if (D >= BeginDate) and (D <= EndDate) then
+        Result := True;
+    finally
+      ShortDateFormat := OldShortDateFormat;
+      DateSeparator := OldDateSeparator;
+    end;
+  except
+    on EConvertError do MessageDlg('Некорректная дата!', mtError, [mbOk], 0);
+  end;
+end;  {CheckDate}
+
+function CheckTime(D: TTime): Boolean;
+//Проверяет, корректно ли время D
+var
+  TimeBegin, TimeEnd: TTime;
+begin
+  Result := False;
+
+  TimeBegin := StrToTime('00:00:00');
+  TimeEnd   := StrToTime('23:59:59');
+
+  try
+    if (D >= TimeBegin) and (D <= TimeEnd) then
+      Result := True;
+  except
+    on EConvertError do MessageDlg('Некорректная дата!', mtError, [mbOk], 0);
+  end;
+end;  {CheckTime}
+
+function SummByWords(S: Extended): String;
+var
+  Tenge  : String;
+  Tiin   : String;
+begin
+  Tenge := TengeToWord(Trunc(S));
+  Tiin := Copy(IntToStr(Round(Frac(S) * 100)), 1, 2);
+
+  if Length(Tiin) = 1 then
+    Tiin := '0' + Tiin;
+
+  Result := Tenge + Tiin + ' тиин';
+end;
+
+function CheckRequizChanged(Owner: TComponent): Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  for i := 0 to Owner.ComponentCount - 1 do
+    if (Owner.Components[i] is TCustomEdit) then begin
+      if (Owner.Components[i] as TCustomEdit).Modified then begin
+        Result := True;
+        Break;
+      end;
+    end
+    else
+      if (Owner.Components[i] is TdxInplaceEdit) then begin
+        if (Owner.Components[i] as TdxInplaceEdit).Modified then begin
+          Result := True;
+          Break;
+        end;
+      end
+    else
+      if (Owner.Components[i] is TcxCustomEdit) then begin
+        if (Owner.Components[i] as TcxCustomEdit).EditModified then begin
+          Result := True;
+          Break;
+        end;
+      end
+    else
+      if (Owner.Components[i] is TdxGraphicEdit) then begin
+        if (Owner.Components[i] as TdxGraphicEdit).Modified then begin
+          Result := True;
+          Break;
+        end;
+      end
+end;
+
+function LPad(const S: String; const Len: Integer; const Pad: Char): String;
+begin
+  Result := StringOfChar(Pad, Len - Length(S)) + S;
+end;
+
+function RPad(const S: String; const Len: Integer; const Pad: Char): String;
+begin
+  Result := S + StringOfChar(Pad, Len - Length(S));
+end;
+
+function RCopy(const S: String; const Index, Count: Integer): String;
+begin
+  {Например: Copy('123456789', 3, 2) = '78'}
+  Result := Copy(S, Length(S) - (Index - 1), Count);
+end;
+
+{
+function PosFrom(SubStr, Str: String; FromPos: Integer): Integer;
+var
+  TmpStr: String;
+  TmpPos: Integer;
+begin
+  TmpStr := Copy(Str, FromPos, Length(Str) - FromPos + 1);
+  TmpPos := Pos(SubStr, TmpStr);
+  if TmpPos > 0 then
+    Result := (FromPos - 1) + TmpPos
+  else
+    Result := 0;
+end;
+}
+
+function PosFrom(const SubStr, Str: String; const FromPos: Integer): Integer;
+var
+  TmpPcr: PChar;
+  TmpPcr1: Pointer;
+  TmpPcr2: PChar;
+begin
+  TmpPcr := @Str[FromPos];
+  TmpPcr2 := PChar(SubStr);
+  TmpPcr1 := StrPos(TmpPcr, TmpPcr2);
+  if TmpPcr1 = Nil then
+    Result := 0
+  else
+    Result := FromPos + (TmpPcr1 - TmpPcr);
+end;
+
+function UnixToWindowsCRLF(UnixCRLFStr: String): String;
+{Преобразует переносы строк в стиле Unix ($D (а также и $A))
+ в переносы строк в стиле Windows}
+const
+  CR = #13;
+  LF = #10;
+  CRLF = CR + LF;
+var
+  CRPos,
+  LFPos: Integer;
+begin
+  if UnixCRLFStr = '' then begin
+    Result := '';
+    Exit;
+  end;
+
+  Result := '';
+  {Меняем одиночные CR на CRLF}
+  repeat
+    CRPos := Pos(CR, UnixCRLFStr);
+    if CRPos > 0 then begin
+      Result := Result + Copy(UnixCRLFStr, 1, CRPos - 1) + CRLF;
+      if CRPos < Length(UnixCRLFStr) then
+        if UnixCRLFStr[CRPos + 1] <> LF then
+          Delete(UnixCRLFStr, 1, CRPos)
+        else
+          Delete(UnixCRLFStr, 1, CRPos + 1)
+      else
+        Delete(UnixCRLFStr, 1, CRPos);
+    end;
+  until (CRPos = 0) or (UnixCRLFStr = '');
+
+  UnixCRLFStr := Result + UnixCRLFStr;
+
+  Result := '';
+  {Меняем одиночные LF на CRLF}
+  repeat
+    LFPos := Pos(LF, UnixCRLFStr);
+    if LFPos > 0 then begin
+      if LFPos > 1 then begin
+        if UnixCRLFStr[LFPos - 1] <> CR then
+          Result := Result + Copy(UnixCRLFStr, 1, LFPos - 1)
+        else
+          Result := Result + Copy(UnixCRLFStr, 1, LFPos - 2);
+        Result := Result + CRLF;
+        Delete(UnixCRLFStr, 1, LFPos);
+      end
+      else begin
+        Result := CRLF;
+        Delete(UnixCRLFStr, 1, 1);
+      end;
+    end;
+  until (LFPos = 0) or (UnixCRLFStr = '');
+
+  Result := Result + UnixCRLFStr;
+end;
+
+{Меняет местами значения}
+procedure SwapValues(var Value1, Value2: Integer);
+var
+  TmpValue: Integer;
+begin
+  TmpValue  := Value1;
+  Value1    := Value2;
+  Value2    := TmpValue;
+end;
+
+procedure SwapValues(var Value1, Value2: String);
+var
+  TmpValue: String;
+begin
+  TmpValue  := Value1;
+  Value1    := Value2;
+  Value2    := TmpValue;
+end;
+
+function windows1251_2_WideString(const S: String): WideString;
+begin
+  Result := S;
+end;
+
+function WideString_2_windows1251(const WS: WideString): String;
+begin
+  Result := WS;
+end;
+
+function rk1048_2_WideString(const S: String): WideString;
+var
+  i: Integer;
+begin
+  Result := S;
+  for i := 1 to Length(S) do
+    case S[i] of
+      #$8D: Result[i] := #$049A;
+      #$8E: Result[i] := #$04BA;
+      #$9D: Result[i] := #$049B;
+      #$9E: Result[i] := #$04BB;
+      #$A1: Result[i] := #$04B0;
+      #$A2: Result[i] := #$04B1;
+      #$A3: Result[i] := #$04D8;
+      #$A5: Result[i] := #$04E8;
+      #$AA: Result[i] := #$0492;
+      #$AF: Result[i] := #$04AE;
+      #$B2: Result[i] := #$0406;
+      #$B3: Result[i] := #$0456;
+      #$B4: Result[i] := #$04E9;
+      #$BA: Result[i] := #$0493;
+      #$BC: Result[i] := #$04D9;
+      #$BD: Result[i] := #$04A2;
+      #$BE: Result[i] := #$04A3;
+      #$BF: Result[i] := #$04AF;
+    else
+      ; {Оставляем исходный символ без изменений}
+    end; {case}
+
+(*
+  Result := '';
+  for i := 1 to Length(S) do
+    case S[i] of
+      #$8D: Result := Result + #$049A;
+      #$8E: Result := Result + #$04BA;
+      #$9D: Result := Result + #$049B;
+      #$9E: Result := Result + #$04BB;
+      #$A1: Result := Result + #$04B0;
+      #$A2: Result := Result + #$04B1;
+      #$A3: Result := Result + #$04D8;
+      #$A5: Result := Result + #$04E8;
+      #$AA: Result := Result + #$0492;
+      #$AF: Result := Result + #$04AE;
+      #$B2: Result := Result + #$0406;
+      #$B3: Result := Result + #$0456;
+      #$B4: Result := Result + #$04E9;
+      #$BA: Result := Result + #$0493;
+      #$BC: Result := Result + #$04D9;
+      #$BD: Result := Result + #$04A2;
+      #$BE: Result := Result + #$04A3;
+      #$BF: Result := Result + #$04AF;
+{
+      #$8D: Result := Result + WideChar(#$049A);
+      #$8E: Result := Result + WideChar(#$04BA);
+      #$9D: Result := Result + WideChar(#$049B);
+      #$9E: Result := Result + WideChar(#$04BB);
+      #$A1: Result := Result + WideChar(#$04B0);
+      #$A2: Result := Result + WideChar(#$04B1);
+      #$A3: Result := Result + WideChar(#$04D8);
+      #$A5: Result := Result + WideChar(#$04E8);
+      #$AA: Result := Result + WideChar(#$0492);
+      #$AF: Result := Result + WideChar(#$04AE);
+      #$B2: Result := Result + WideChar(#$0406);
+      #$B3: Result := Result + WideChar(#$0456);
+      #$B4: Result := Result + WideChar(#$04E9);
+      #$BA: Result := Result + WideChar(#$0493);
+      #$BC: Result := Result + WideChar(#$04D9);
+      #$BD: Result := Result + WideChar(#$04A2);
+      #$BE: Result := Result + WideChar(#$04A3);
+      #$BF: Result := Result + WideChar(#$04AF);
+}
+    else
+//      Result := Result + WideChar(S[i]); {Неправильно}
+      Result := Result + S[i];
+    end; {case}
+//  Result := Result;
+*)
+end;
+
+function WideString_2_rk1048(const WS: WideString): String;
+var
+  i: Integer;
+begin
+  Result := WS;
+  for i := 1 to Length(WS) do
+    case WS[i] of
+      #$049A: Result[i] := #$8D;
+      #$04BA: Result[i] := #$8E;
+      #$049B: Result[i] := #$9D;
+      #$04BB: Result[i] := #$9E;
+      #$04B0: Result[i] := #$A1;
+      #$04B1: Result[i] := #$A2;
+      #$04D8: Result[i] := #$A3;
+      #$04E8: Result[i] := #$A5;
+      #$0492: Result[i] := #$AA;
+      #$04AE: Result[i] := #$AF;
+      #$0406: Result[i] := #$B2;
+      #$0456: Result[i] := #$B3;
+      #$04E9: Result[i] := #$B4;
+      #$0493: Result[i] := #$BA;
+      #$04D9: Result[i] := #$BC;
+      #$04A2: Result[i] := #$BD;
+      #$04A3: Result[i] := #$BE;
+      #$04AF: Result[i] := #$BF;
+    else
+      ; {Оставляем исходный символ без изменений}
+    end; {case}
+(*
+  Result := '';
+  for i := 1 to Length(WS) do
+    case WS[i] of
+      #$049A: Result := Result + #$8D;
+      #$04BA: Result := Result + #$8E;
+      #$049B: Result := Result + #$9D;
+      #$04BB: Result := Result + #$9E;
+      #$04B0: Result := Result + #$A1;
+      #$04B1: Result := Result + #$A2;
+      #$04D8: Result := Result + #$A3;
+      #$04E8: Result := Result + #$A5;
+      #$0492: Result := Result + #$AA;
+      #$04AE: Result := Result + #$AF;
+      #$0406: Result := Result + #$B2;
+      #$0456: Result := Result + #$B3;
+      #$04E9: Result := Result + #$B4;
+      #$0493: Result := Result + #$BA;
+      #$04D9: Result := Result + #$BC;
+      #$04A2: Result := Result + #$BD;
+      #$04A3: Result := Result + #$BE;
+      #$04AF: Result := Result + #$BF;
+{
+      #$049A: Result := Result + char(#$8D);
+      #$04BA: Result := Result + char(#$8E);
+      #$049B: Result := Result + char(#$9D);
+      #$04BB: Result := Result + char(#$9E);
+      #$04B0: Result := Result + char(#$A1);
+      #$04B1: Result := Result + char(#$A2);
+      #$04D8: Result := Result + char(#$A3);
+      #$04E8: Result := Result + char(#$A5);
+      #$0492: Result := Result + char(#$AA);
+      #$04AE: Result := Result + char(#$AF);
+      #$0406: Result := Result + char(#$B2);
+      #$0456: Result := Result + char(#$B3);
+      #$04E9: Result := Result + char(#$B4);
+      #$0493: Result := Result + char(#$BA);
+      #$04D9: Result := Result + char(#$BC);
+      #$04A2: Result := Result + char(#$BD);
+      #$04A3: Result := Result + char(#$BE);
+      #$04AF: Result := Result + char(#$BF);
+}
+    else
+//      Result := Result + char(WS[i]); {Неправильно}
+      Result := Result + WS[i];
+    end; {case}
+//  Result := Result;
+*)
+
+end;
+
+function GetDateTime : String;
+Var Tmp : string;
+Begin
+   DateTimeToString(Tmp, 'DD.MM.YYYY HH:NN:SS', Now);
+   Result := Tmp;
+End;
+
+function CurDate: String;
+var
+   tmp : String;
+begin
+   DateTimeToString(Tmp, 'YYYYMMDD', date);
+  Result := Tmp;
+end;
+
+function CreateDirEx(const Dir: string): Boolean;
+{Создает каталог, заданный полным путем, например:
+ C:\MyDir1\MyDir2\MyDir3}
+var
+  Len     : Integer;
+  TmpDir  : String;
+  i       : Integer;
+begin
+  Result := True;
+  Len := Length(Dir);
+  i := 1;
+  TmpDir := '';
+  repeat
+    {Получаем очередной каталог пути}
+    while (i <= Len) and (Dir[i] <> '\') do begin
+      TmpDir := TmpDir + Dir[i];
+      inc(i);
+    end;
+    {Если каталог не существует, пытаемся создать его}
+    if not DirectoryExists(TmpDir) then
+      if not CreateDir(TmpDir) then begin
+        Result := False;
+        Exit;
+      end;
+    if (i <= Len) and (Dir[i] = '\') then begin
+      TmpDir := TmpDir + '\';
+      inc(i);
+    end;
+    while (i <= Len) and (Dir[i] = '\') do
+      inc(i);
+  until i > Len;
+end;
+
+{Получить имя временного файла (уникального)}
+function GetUniqTempFile(const Extension : String = 'tmp') : String;
+var
+  TempFilePath  : String;
+  TempFileName  : String;
+  TmpValue      : String;
+  Guid          : TGuid;
+begin
+  Result := '';
+
+  CreateGUID(Guid);
+  TmpValue := GUIDToString(Guid);
+
+  {Путь к папке TEMP}
+  SetLength(TempFilePath, MAX_PATH + 10);
+  {Получить путь к папке TEMP}
+  GetTempPath(MAX_PATH + 10, @TempFilePath[1]);
+
+  TempFilePath := PChar(TempFilePath);
+  TempFileName := IncludeTrailingBackslash(TempFilePath) + TmpValue + '.' + Extension;
+
+  Result := TempFileName;
+end;
+
+procedure GetBDSettings;
+{Возвращает значения настроек БД, которые спрятаны в таблице G_Firm_Rekvizit, пока только значение НДС}
+begin
+  if not MainDM.dbMain.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  try
+    if not MainDM.spGetSettings.Transaction.InTransaction then
+      MainDM.spGetSettings.Transaction.StartTransaction;
+
+    with MainDM.spGetSettings do begin
+      ExecProc;
+      NdsValue  := ParamByName('NDS_VALUE_').AsFloat;
+    end;
+
+    if MainDM.spGetSettings.Transaction.InTransaction then
+      MainDM.spGetSettings.Transaction.Commit;
+  except
+    on E: EFIBError do begin
+      if MainDM.spGetSettings.Transaction.InTransaction then
+        MainDM.spGetSettings.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in unCommonFunc.GetBDSettings)');
+    end;
+    on E: Exception do begin
+      if MainDM.spGetSettings.Transaction.InTransaction then
+        MainDM.spGetSettings.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in unCommonFunc.GetBDSettings)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+function ExecSP(SP: TpFIBStoredProc): Boolean;
+{Выполняет процедуру, НЕ вызывая методы проверки и установки параметров.
+ Без try..except}
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+begin
+  Result := False;
+
+  with SP do begin
+    if not Transaction.InTransaction then
+      Transaction.StartTransaction;
+
+    ExecProc;
+
+    if FieldIndex['ERR_CODE'] >= 0 then begin
+      ErrCode := ParamByName('ERR_CODE').AsInteger;
+      if (ErrCode <> 0) AND (ErrCode <> -900) then begin
+        if SP.Transaction.InTransaction then
+          SP.Transaction.Rollback;
+        if FieldIndex['ERR_MSG'] >= 0 then begin
+          ErrMsg := ParamByName('ERR_MSG').AsString;
+          DBErrorHandler(ErrCode, ErrMsg);
+        end
+        else
+          MessageDlg('Error code: ' + IntToStr(ErrCode)
+             + #13#10'(occured in TDlgForm.CallSP)', mtInformation, [mbOK], 0);
+        Exit;
+      end;
+    end;
+
+    if Transaction.InTransaction then
+      Transaction.Commit;
+  end;
+
+  Result := True;
+end;
+
+function ExecSPTR(SP: TpFIBStoredProc): Boolean;
+{Выполняет процедуру, НЕ вызывая методы проверки и установки параметров.
+ Без try..except}
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+begin
+  Result := False;
+
+  with SP do begin
+    if not Transaction.InTransaction then
+      Transaction.StartTransaction;
+
+    ExecProc;
+
+    if FieldIndex['ERR_CODE'] >= 0 then begin
+      ErrCode := ParamByName('ERR_CODE').AsInteger;
+      if (ErrCode <> 0) AND (ErrCode <> -900) then begin
+        if SP.Transaction.InTransaction then
+          SP.Transaction.Rollback;
+        if FieldIndex['ERR_MSG'] >= 0 then begin
+          ErrMsg := ParamByName('ERR_MSG').AsString;
+          DBErrorHandler(ErrCode, ErrMsg);
+        end
+        else
+          MessageDlg('Error code: ' + IntToStr(ErrCode)
+             + #13#10'(occured in TDlgForm.CallSP)', mtInformation, [mbOK], 0);
+        Exit;
+      end;
+    end;
+
+    if Transaction.InTransaction then
+      Transaction.Commit;
+  end;
+
+  Result := True;
+end;
+
+{Делает Экспорт оперативных данных - продажи и остатки товаров}
+procedure ExportOperData;
+begin
+  if ExportDataType in [0,2] then begin
+    ReportsDM.PrepareReport(7);
+    ReportsDM.spReport.ParamByName('date_begin_').AsDate := Now;
+    ReportsDM.spReport.ParamByName('date_end_').AsDate := Now;
+    ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+    ReportsDM.ShowReport(3, ExportPath + 'Продажи '+ CurSkladName +' за ' + DateToStr(Date) + '.xls');
+  end;
+
+  if ExportDataType in [1,2] then begin
+    ReportsDM.PrepareReport(12);
+    ReportsDM.spReport.ParamByName('INCLUDE_NOL_').AsInteger := 0;
+    ReportsDM.spReport.ParamByName('INCLUDE_FEW_').AsInteger := 0;
+    ReportsDM.spReport.ParamByName('SORT_BY_NAME_').AsInteger := 0;
+    ReportsDM.spReport.ParamByName('G_CATEGORY_').AsString := '';
+    ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+    ReportsDM.ShowReport(3, ExportPath + 'Остатки товаров ' + CurSkladName + ' на ' + DateToStr(Date) + '.xls');
+  end;
+end;
+
+end.

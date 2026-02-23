@@ -1,0 +1,728 @@
+inherited ProdazhaTovaraListForm: TProdazhaTovaraListForm
+  Left = 373
+  Top = 188
+  Caption = #1055#1088#1086#1076#1072#1078#1072' '#1090#1086#1074#1072#1088#1072
+  ClientHeight = 376
+  ClientWidth = 835
+  ExplicitWidth = 841
+  ExplicitHeight = 402
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited gr1: TcxGrid
+    Width = 835
+    Height = 181
+    TabOrder = 2
+    ExplicitWidth = 835
+    ExplicitHeight = 181
+    inherited tvMain: TcxGridDBTableView
+      OnCustomDrawCell = tvMainCustomDrawCell
+      OnFocusedRecordChanged = tvMainFocusedRecordChanged
+      DataController.Summary.FooterSummaryItems = <
+        item
+          Kind = skSum
+          Column = clmMainSUM_ZAKAZ
+        end
+        item
+          Kind = skSum
+          Column = clmMainSUM_FACT
+        end
+        item
+          Kind = skSum
+          Column = clmMainSUMM_PAY_BONUS
+        end
+        item
+          Kind = skSum
+          Column = clmMainSUMM_BONUS_GOT
+        end>
+      OptionsView.Footer = True
+      object clmMainIS_PAYED_ALL: TcxGridDBColumn
+        Caption = #1054#1087#1083#1072#1095#1077#1085
+        DataBinding.FieldName = 'IS_PAYED_ALL'
+        PropertiesClassName = 'TcxCheckBoxProperties'
+        Properties.ValueChecked = 1
+        Properties.ValueUnchecked = 0
+        HeaderAlignmentHorz = taCenter
+        Width = 84
+      end
+      object clmMainZ_DATE: TcxGridDBColumn
+        Caption = #1044#1072#1090#1072
+        DataBinding.FieldName = 'Z_DATE'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 105
+      end
+      object clmMainZ_NUM: TcxGridDBColumn
+        Caption = #1053#1086#1084#1077#1088
+        DataBinding.FieldName = 'Z_NUM'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 96
+      end
+      object clmMainZ_TIME: TcxGridDBColumn
+        Caption = #1042#1088#1077#1084#1103
+        DataBinding.FieldName = 'Z_TIME'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 101
+      end
+      object clmMainOSNOVANIE: TcxGridDBColumn
+        Caption = #1044#1086#1082'.-'#1086#1089#1085#1086#1074#1072#1085#1080#1077
+        DataBinding.FieldName = 'OSNOVANIE'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 128
+      end
+      object clmMainNOTE: TcxGridDBColumn
+        Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        DataBinding.FieldName = 'NOTE'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainCLIENT_NAME: TcxGridDBColumn
+        Caption = #1050#1083#1080#1077#1085#1090
+        DataBinding.FieldName = 'CLIENT_NAME'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainSUM_ZAKAZ: TcxGridDBColumn
+        Caption = #1057#1091#1084#1084#1072
+        DataBinding.FieldName = 'SUM_ZAKAZ'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainSUM_FACT: TcxGridDBColumn
+        Caption = #1054#1087#1083#1072#1095#1077#1085#1086
+        DataBinding.FieldName = 'SUM_FACT'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainSUMM_PAY_BONUS: TcxGridDBColumn
+        Caption = #1054#1087#1083#1072#1095#1077#1085#1086' '#1073#1086#1085#1091#1089#1072#1084#1080
+        DataBinding.FieldName = 'SUMM_PAY_BONUS'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainSUMM_BONUS_GOT: TcxGridDBColumn
+        Caption = #1055#1086#1083#1091#1095#1077#1085#1086' '#1073#1086#1085#1091#1089#1086#1074
+        DataBinding.FieldName = 'SUMM_BONUS_GOT'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmMainBY_RECIPE: TcxGridDBColumn
+        Caption = #1055#1086' '#1088#1077#1094#1077#1087#1090#1091
+        DataBinding.FieldName = 'BY_RECIPE'
+        PropertiesClassName = 'TcxCheckBoxProperties'
+        Properties.ValueChecked = '1'
+        Properties.ValueUnchecked = '0'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 100
+      end
+      object clmMainIS_RESERVE: TcxGridDBColumn
+        Caption = #1056#1077#1079#1077#1088#1074
+        DataBinding.FieldName = 'IS_RESERVE'
+        PropertiesClassName = 'TcxCheckBoxProperties'
+        Properties.ValueChecked = '1'
+        Properties.ValueUnchecked = '0'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 100
+      end
+      object clmMainSUMM_CASH: TcxGridDBColumn
+        Caption = #1054#1087#1083#1072#1095#1077#1085#1086' '#1085#1072#1083'.'
+        DataBinding.FieldName = 'SUMM_CASH'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+      end
+      object clmMainSUMM_NONCASH: TcxGridDBColumn
+        Caption = #1054#1087#1083#1072#1095#1077#1085#1086' '#1073#1077#1079#1085#1072#1083'.'
+        DataBinding.FieldName = 'SUMM_NONCASH'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+      end
+      object clmMainG_OFFICIAL_FIO: TcxGridDBColumn
+        Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
+        DataBinding.FieldName = 'G_OFFICIAL_FIO'
+        Visible = False
+        HeaderAlignmentHorz = taCenter
+        Width = 100
+      end
+      object clmMainDETAILS_STR: TcxGridDBColumn
+        Caption = #1044#1077#1090#1072#1083#1080
+        DataBinding.FieldName = 'DETAILS_STR'
+        Visible = False
+        Width = 250
+      end
+    end
+  end
+  object splMenu: TcxSplitter [1]
+    Left = 0
+    Top = 207
+    Width = 835
+    Height = 8
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    HotZoneClassName = 'TcxSimpleStyle'
+    HotZone.SizePercent = 32
+    AlignSplitter = salBottom
+    AutoPosition = False
+    PositionAfterOpen = 150
+    AutoSnap = True
+    ResizeUpdate = True
+    Control = grZakazDetails
+    Color = clBtnFace
+    ParentColor = False
+  end
+  object Panel1: TPanel [2]
+    Left = 0
+    Top = 215
+    Width = 835
+    Height = 29
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    Align = alBottom
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    TabOrder = 5
+    object stDetailsCount: TStaticText
+      Left = 8
+      Top = 6
+      Width = 39
+      Height = 18
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      BevelKind = bkFlat
+      Caption = '00000'
+      TabOrder = 0
+    end
+  end
+  object grZakazDetails: TcxGrid [3]
+    Left = 0
+    Top = 244
+    Width = 835
+    Height = 132
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    Align = alBottom
+    TabOrder = 7
+    LookAndFeel.Kind = lfFlat
+    object tvDetails: TcxGridDBTableView
+      Navigator.Buttons.CustomButtons = <>
+      DataController.DataSource = dsZakazDetails
+      DataController.KeyFieldNames = 'ZAKAZ_DETAILS'
+      DataController.Summary.DefaultGroupSummaryItems = <>
+      DataController.Summary.FooterSummaryItems = <>
+      DataController.Summary.SummaryGroups = <>
+      OptionsCustomize.ColumnFiltering = False
+      OptionsSelection.CellSelect = False
+      OptionsView.GroupByBox = False
+      Styles.Inactive = MainDM.stGridSelectedRow
+      object clmtv1TOVAR_NAME: TcxGridDBColumn
+        Caption = #1058#1086#1074#1072#1088
+        DataBinding.FieldName = 'TOVAR_NAME'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmtv1AMOUNT: TcxGridDBColumn
+        Caption = #1050#1086#1083'-'#1074#1086
+        DataBinding.FieldName = 'AMOUNT'
+        HeaderAlignmentHorz = taCenter
+        Width = 83
+      end
+      object clmtv1PRICE: TcxGridDBColumn
+        Caption = #1062#1077#1085#1072
+        DataBinding.FieldName = 'PRICE'
+        HeaderAlignmentHorz = taCenter
+        Width = 87
+      end
+      object clmtv1SUMM: TcxGridDBColumn
+        Caption = #1057#1091#1084#1084#1072
+        DataBinding.FieldName = 'SUMM'
+        HeaderAlignmentHorz = taCenter
+        Width = 81
+      end
+      object clmtv1DISCOUNT_PERC: TcxGridDBColumn
+        Caption = #1057#1082#1080#1076#1082#1072' %'
+        DataBinding.FieldName = 'DISCOUNT_PERC'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmtv1DISCOUNT_SUMM: TcxGridDBColumn
+        Caption = #1057#1082#1080#1076#1082#1072
+        DataBinding.FieldName = 'DISCOUNT_SUMM'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmtv1ARTICUL: TcxGridDBColumn
+        Caption = #1040#1088#1090#1080#1082#1091#1083
+        DataBinding.FieldName = 'ARTICUL'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 95
+      end
+      object clmtv1NOMENCLATUR_NUM: TcxGridDBColumn
+        Caption = #1053#1086#1084#1077#1085#1082#1083'. '#1085#1086#1084#1077#1088
+        DataBinding.FieldName = 'NOMENCLATUR_NUM'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmtv1BARCODE: TcxGridDBColumn
+        Caption = #1064#1090#1088#1080#1093#1082#1086#1076
+        DataBinding.FieldName = 'BARCODE'
+        PropertiesClassName = 'TcxTextEditProperties'
+        Properties.Alignment.Horz = taCenter
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+      object clmtv1ED_NAME: TcxGridDBColumn
+        Caption = #1045#1076'. '#1080#1079#1084'.'
+        DataBinding.FieldName = 'ED_NAME'
+        HeaderAlignmentHorz = taCenter
+        Width = 150
+      end
+    end
+    object lv1: TcxGridLevel
+      GridView = tvDetails
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Categories.Strings = (
+      #1054#1073#1097#1080#1077' '#1086#1087#1077#1088#1072#1094#1080#1080' '#1089' '#1041#1044
+      #1044#1086#1082#1091#1084#1077#1085#1090#1099)
+    Categories.ItemsVisibles = (
+      2
+      2)
+    Categories.Visibles = (
+      True
+      True)
+    LookAndFeel.SkinName = ''
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+    inherited dxBarManagerChildBar1: TdxBar
+      ItemLinks = <
+        item
+          Visible = True
+          ItemName = 'dxBarStaticRecCnt'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButtonRefresh'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButtonEnableAutoRefresh'
+        end
+        item
+          BeginGroup = True
+          UserDefine = [udWidth]
+          UserWidth = 23
+          Visible = True
+          ItemName = 'dxBarSpinEditHeaderHeight'
+        end
+        item
+          BeginGroup = True
+          Visible = True
+          ItemName = 'dcBegin'
+        end
+        item
+          Visible = True
+          ItemName = 'dcEnd'
+        end
+        item
+          BeginGroup = True
+          Visible = True
+          ItemName = 'dxBarButtonIns'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButtonUpd'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButtonDel'
+        end
+        item
+          BeginGroup = True
+          Visible = True
+          ItemName = 'dxBarSubItem'
+        end
+        item
+          BeginGroup = True
+          Visible = True
+          ItemName = 'dxBarButton1'
+        end
+        item
+          BeginGroup = True
+          Visible = True
+          ItemName = 'dxBarButtonClose'
+        end>
+    end
+    object dcBegin: TdxBarDateCombo
+      Caption = #1053#1072#1095#1072#1083#1086' '#1087#1077#1088#1080#1086#1076#1072
+      Category = 0
+      Hint = #1053#1072#1095#1072#1083#1086' '#1087#1077#1088#1080#1086#1076#1072
+      Visible = ivAlways
+      OnChange = dcBeginChange
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000001000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDDD
+        DDDDDDDD00000000000DDDDD0FFFFFFFFF0D00000F0000000F0D0FFF0FFFFFFF
+        FF0D0F000FFF11FFFF0D0FFF0FFF11FFFF0D0FF10FFFF11FFF0D0FF10FFFFF11
+        FF0D0FF10FF11111FF0D0FF10FFFFFFFFF0D0FF104444444440D0FFF04444444
+        440D044400000000000D04444444440DDDDD00000000000DDDDD}
+      ShowCaption = True
+    end
+    object dcEnd: TdxBarDateCombo
+      Caption = #1050#1086#1085#1077#1094
+      Category = 0
+      Hint = #1050#1086#1085#1077#1094
+      Visible = ivAlways
+      OnChange = dcBeginChange
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000001000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDDD
+        DDDDDDDD00000000000DDDDD0FFFFFFFFF0D00000F0000000F0D0FFF0FFFFFFF
+        FF0D0F000FFF11FFFF0D0FFF0FFF11FFFF0D0FF10FFFF11FFF0D0FF10FFFFF11
+        FF0D0FF10FF11111FF0D0FF10FFFFFFFFF0D0FF104444444440D0FFF04444444
+        440D044400000000000D04444444440DDDDD00000000000DDDDD}
+      ShowCaption = True
+    end
+    object dxBarSubItem1: TdxBarSubItem
+      Caption = 'New Item'
+      Category = 0
+      Visible = ivAlways
+      ItemLinks = <>
+    end
+    object dxBarButton6: TdxBarButton
+      Action = aInvoicePay
+      Category = 0
+    end
+    object dxbrbtn1: TdxBarButton
+      Action = aPko
+      Category = 0
+    end
+    object dxbrbtn2: TdxBarButton
+      Action = aAkt
+      Category = 0
+    end
+    object dxBarSubItem2: TdxBarSubItem
+      Caption = 'New SubItem'
+      Category = 0
+      Visible = ivAlways
+      ItemLinks = <>
+    end
+    object dxbrbtn3: TdxBarButton
+      Action = aPrintSimple
+      Category = 0
+    end
+    object dxBarSubItem: TdxBarSubItem
+      Caption = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Category = 1
+      Visible = ivAlways
+      ItemLinks = <
+        item
+          Visible = True
+          ItemName = 'dxBarButton4'
+        end
+        item
+          Visible = True
+          ItemName = 'dxbrbtn3'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButton6'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButton2'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButton3'
+        end
+        item
+          Visible = True
+          ItemName = 'dxbrbtn1'
+        end
+        item
+          Visible = True
+          ItemName = 'dxbrbtn2'
+        end
+        item
+          Visible = True
+          ItemName = 'dxbrbtn4'
+        end>
+    end
+    object dxBarButton2: TdxBarButton
+      Action = aInvoice
+      Category = 1
+    end
+    object dxBarButton3: TdxBarButton
+      Action = aWayBill
+      Category = 1
+    end
+    object dxBarButton4: TdxBarButton
+      Action = aBill
+      Category = 1
+    end
+    object dxBarButton5: TdxBarButton
+      Action = aBillSpec
+      Category = 1
+    end
+    object dxbrbtn4: TdxBarButton
+      Action = aDoReturn
+      Category = 1
+    end
+  end
+  inherited alChild: TActionList
+    inherited aView: TAction
+      ShortCut = 0
+    end
+    object aRefreshChild: TAction
+      Category = #1044#1077#1090#1072#1083#1080
+      Caption = 'aRefreshChild'
+      OnExecute = aRefreshChildExecute
+    end
+    object aUpdDetail: TAction
+      Category = #1044#1077#1090#1072#1083#1080
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+    end
+    object aDelDetail: TAction
+      Category = #1044#1077#1090#1072#1083#1080
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+    end
+    object aInvoicePay: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1057#1095#1077#1090' '#1085#1072' '#1086#1087#1083#1072#1090#1091
+      OnExecute = aInvoicePayExecute
+    end
+    object aInvoice: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1057#1095#1077#1090'-'#1092#1072#1082#1090#1091#1088#1072
+      OnExecute = aInvoiceExecute
+    end
+    object aWayBill: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1053#1072#1082#1083#1072#1076#1085#1072#1103' '#1085#1072' '#1086#1090#1087#1091#1089#1082' '#1090#1086#1074#1072#1088#1086#1074
+      OnExecute = aWayBillExecute
+    end
+    object aBill: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1058#1086#1074#1072#1088#1085#1099#1081' '#1095#1077#1082
+      OnExecute = aBillExecute
+    end
+    object aBillSpec: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1058#1086#1074#1072#1088#1085#1099#1081' '#1095#1077#1082' - '#1088#1086#1079#1085#1080#1094#1072
+      Visible = False
+      OnExecute = aBillSpecExecute
+    end
+    object aPko: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1055#1088#1080#1093#1086#1076#1085#1099#1081' '#1082#1072#1089#1089#1086#1074#1099#1081' '#1086#1088#1076#1077#1088
+      OnExecute = aPkoExecute
+    end
+    object aRko: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1056#1072#1089#1093#1086#1076#1085#1099#1081' '#1082#1072#1089#1089#1086#1074#1099#1081' '#1086#1088#1076#1077#1088
+    end
+    object aAkt: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1040#1082#1090' '#1074#1099#1087#1086#1083#1085#1077#1085#1085#1099#1093' '#1088#1072#1073#1086#1090
+      OnExecute = aPkoExecute
+    end
+    object aPrintSimple: TAction
+      Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+      Caption = #1055#1077#1095#1072#1090#1100' '#1076#1077#1090#1072#1083#1077#1081
+      OnExecute = aPrintSimpleExecute
+    end
+    object aDoReturn: TAction
+      Caption = #1057#1076#1077#1083#1072#1090#1100' '#1074#1086#1079#1074#1088#1072#1090
+      OnExecute = aDoReturnExecute
+    end
+  end
+  inherited cxStyleRepository: TcxStyleRepository
+    PixelsPerInch = 96
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      
+        'SELECT * FROM READ_ZAKAZ_LIST(?DATE_BEGIN_, ?DATE_END_, ?IS_SPIS' +
+        'ANIE_)')
+    object fbntgrfldReadZAKAZ: TFIBIntegerField
+      FieldName = 'ZAKAZ'
+    end
+    object fbntgrfldReadZ_NUM: TFIBIntegerField
+      FieldName = 'Z_NUM'
+    end
+    object fbntgrfldReadG_TOCHKA: TFIBIntegerField
+      FieldName = 'G_TOCHKA'
+    end
+    object spReadZ_DATE: TFIBDateField
+      Alignment = taCenter
+      FieldName = 'Z_DATE'
+      DisplayFormat = 'dd.mm.yyyy'
+    end
+    object spReadZ_TIME: TFIBTimeField
+      FieldName = 'Z_TIME'
+      DisplayFormat = 'HH:MM'
+    end
+    object fbntgrfldReadG_CLIENT: TFIBIntegerField
+      FieldName = 'G_CLIENT'
+    end
+    object spReadOSNOVANIE: TFIBStringField
+      FieldName = 'OSNOVANIE'
+      Size = 150
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object spReadNOTE: TFIBStringField
+      FieldName = 'NOTE'
+      Size = 200
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object spReadCLIENT_NAME: TFIBStringField
+      FieldName = 'CLIENT_NAME'
+      Size = 250
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object spReadDETAILS_STR: TFIBStringField
+      FieldName = 'DETAILS_STR'
+      Size = 3000
+      Transliterate = False
+      EmptyStrToNull = True
+    end
+    object fbntgrfldReadIS_SPISANIE: TFIBIntegerField
+      FieldName = 'IS_SPISANIE'
+    end
+    object fbntgrfldReadIS_PAYED_ALL: TFIBIntegerField
+      FieldName = 'IS_PAYED_ALL'
+    end
+    object fbntgrfldReadINVOICE_PAY: TFIBIntegerField
+      FieldName = 'INVOICE_PAY'
+    end
+    object fbntgrfldReadINVOICE: TFIBIntegerField
+      FieldName = 'INVOICE'
+    end
+    object fbntgrfldReadWAYBILL: TFIBIntegerField
+      FieldName = 'WAYBILL'
+    end
+    object spReadSUM_ZAKAZ: TFIBBCDField
+      FieldName = 'SUM_ZAKAZ'
+      DisplayFormat = '#,##0.00'
+      EditFormat = '0.00'
+      Size = 2
+    end
+    object spReadSUM_FACT: TFIBBCDField
+      FieldName = 'SUM_FACT'
+      DisplayFormat = '#,##0.00'
+      EditFormat = '0.00'
+      Size = 2
+    end
+    object spReadSUMM_PAY_BONUS: TFIBBCDField
+      FieldName = 'SUMM_PAY_BONUS'
+      DisplayFormat = '#,##0.00'
+      EditFormat = '0.00'
+      Size = 2
+    end
+    object fbcdfldReadSUMM_BONUS_GOT: TFIBBCDField
+      FieldName = 'SUMM_BONUS_GOT'
+      DisplayFormat = '#,##0.00'
+      EditFormat = '0.00'
+      Size = 2
+    end
+    object fbntgrfldReadBY_RECIPE: TFIBIntegerField
+      FieldName = 'BY_RECIPE'
+    end
+    object fbntgrfldReadIS_RESERVE: TFIBIntegerField
+      FieldName = 'IS_RESERVE'
+    end
+    object fbcdfldReadSUMM_CASH: TFIBBCDField
+      FieldName = 'SUMM_CASH'
+      Size = 2
+    end
+    object fbcdfldReadSUMM_NONCASH: TFIBBCDField
+      FieldName = 'SUMM_NONCASH'
+      Size = 2
+    end
+    object fbntgrfldReadG_OFFICIAL: TFIBIntegerField
+      FieldName = 'G_OFFICIAL'
+    end
+    object fbstrngfldReadG_OFFICIAL_FIO: TFIBStringField
+      FieldName = 'G_OFFICIAL_FIO'
+      Size = 150
+      EmptyStrToNull = True
+    end
+  end
+  inherited dxEditStyleController: TcxEditStyleController
+    PixelsPerInch = 96
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE DEL_ZAKAZ (?ZAKAZ_, ?IS_SPISANIE_)')
+    StoredProcName = 'DEL_ZAKAZ'
+  end
+  object dsZakazDetails: TDataSource
+    DataSet = spZakazDetails
+    Left = 48
+    Top = 232
+  end
+  object spZakazDetails: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM READ_ZAKAZ_DETAILS_LIST(?ZAKAZ_, ?IS_SPISANIE_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 16
+    Top = 232
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object tmrSearch: TTimer
+    Enabled = False
+    Interval = 400
+    Left = 352
+    Top = 112
+  end
+  object spDoReturn: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      'insert into sklad_tmp'
+      'select GEN_ID(gen_details_tmp, 1),'
+      '       zd.g_product,'
+      '       zd.amount,'
+      '       zd.price - zd.discount_tenge,'
+      '       zd.summ,'
+      '       0, 0, NULL, 0, 0'
+      '  from zakaz_details zd'
+      ' where zd.zakaz = :ZAKAZ_')
+    Left = 576
+    Top = 121
+  end
+end

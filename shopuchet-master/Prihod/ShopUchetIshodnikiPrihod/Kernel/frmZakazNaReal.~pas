@@ -1,0 +1,125 @@
+unit frmZakazNaReal;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons, dxEditor, dxEdLib, dxDBEdtr, dxDBELib, DB, FIBDataSet,
+  pFIBDataSet, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
+  cxDropDownEdit, cxCalendar, unCommonFunc;
+
+type
+  TZakazNaRealForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edTovar: TdxEdit;
+    Shape4: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    edAmount: TdxCurrencyEdit;
+    Shape3: TShape;
+    Label4: TLabel;
+    Shape7: TShape;
+    edSumm: TdxCurrencyEdit;
+    Shape8: TShape;
+    Label3: TLabel;
+    Shape5: TShape;
+    edPrice: TdxCurrencyEdit;
+    Shape6: TShape;
+    Shape9: TShape;
+    Label5: TLabel;
+    Shape10: TShape;
+    Label6: TLabel;
+    edAmountPayed: TdxCurrencyEdit;
+    edSummPayed: TdxCurrencyEdit;
+    Shape11: TShape;
+    Shape12: TShape;
+    Shape13: TShape;
+    Label7: TLabel;
+    Shape14: TShape;
+    Label8: TLabel;
+    edAmountLeft: TdxCurrencyEdit;
+    edSummLeft: TdxCurrencyEdit;
+    Shape15: TShape;
+    Shape16: TShape;
+    Label9: TLabel;
+    Label10: TLabel;
+    Shape17: TShape;
+    Shape18: TShape;
+    edAmountReturned: TdxCurrencyEdit;
+    Shape19: TShape;
+    Shape20: TShape;
+    edSummReturned: TdxCurrencyEdit;
+    procedure edAmountChange(Sender: TObject);
+  private
+    FgProduct : Integer;
+  public
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  ZakazNaRealForm: TZakazNaRealForm;
+
+implementation
+
+{$R *.dfm}
+
+function TZakazNaRealForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if edAmountPayed.Value > edAmount.Value then begin
+    ErrControl := edAmountPayed;
+    MessageDlg('Количество отданного товара под реализацию не может быть меньше оплаченного.', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TZakazNaRealForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    ParamByName('G_PRODUCT_').AsiNTEGER := FgProduct;
+    ParamByName('PRICE_').AsFloat := edPrice.Value;
+    ParamByName('AMOUNT_ALL_').AsFloat := edAmount.Value;
+    ParamByName('SUMM_ALL_').AsFloat := edSumm.Value;
+    ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+  END;
+end;
+
+procedure TZakazNaRealForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      FgProduct := ParamByName('G_PRODUCT_').AsiNTEGER;
+      edTovar.Text := ParamByName('PRODUCT_NAME_').AsString;
+      edAmount.Value := ParamByName('AMOUNT_ALL_').AsFloat;
+      edPrice.Value := ParamByName('PRICE_').AsFloat;
+      edSumm.Value := ParamByName('SUMM_ALL_').AsFloat;
+      edAmountPayed.Value := ParamByName('AMOUNT_PAYED_').AsFloat;
+      edSummPayed.Value := ParamByName('SUMM_PAYED_').AsFloat;
+      edAmountReturned.Value := ParamByName('AMOUNT_RETURNED_').AsFloat;
+      edSummReturned.Value := ParamByName('SUMM_RETURNED_').AsFloat;
+      edAmountLeft.Value := ParamByName('AMOUNT_LEFT_').AsFloat;
+      edSummLeft.Value := ParamByName('SUMM_LEFT_').AsFloat;
+    end;
+  end;
+end;
+
+procedure TZakazNaRealForm.edAmountChange(Sender: TObject);
+begin
+  inherited;
+  edSumm.Value := edAmount.Value * edPrice.Value;
+  edSummLeft.Value := edSumm.Value - edSummPayed.Value;
+end;
+
+end.

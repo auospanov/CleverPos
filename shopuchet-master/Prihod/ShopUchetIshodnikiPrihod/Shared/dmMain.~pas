@@ -1,0 +1,66 @@
+unit dmMain;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ImgList, Db, VLLogFile, FIBDatabase, pFIBDatabase,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet, pFIBDataSet, DCPcrypt2,
+  DCPblockciphers, DCPblowfish,DCPsha1, IB_Services,
+  pFIBErrorHandler, FIB;
+
+type
+  TMainDM = class(TDataModule)
+    imMain: TImageList;
+    MainLogFile: TVLLogFile;
+    dbMain: TpFIBDatabase;
+    tranMainRead: TpFIBTransaction;
+    tranMainWrite: TpFIBTransaction;
+    spGetServerTime: TpFIBStoredProc;
+    lfDebug: TVLLogFile;
+    blowfish: TDCP_blowfish;
+    spGetSettings: TpFIBStoredProc;
+    imMainDisabled: TImageList;
+    spReadCurrOfficRights: TpFIBDataSet;
+    spReadCurrOfficRightsRIGHTS_ITEM: TFIBIntegerField;
+    spGetSysParamCount: TpFIBStoredProc;
+    spFillCurParams: TpFIBStoredProc;
+    spGetConnectCount: TpFIBDataSet;
+    spTochka: TpFIBDataSet;
+    spSetSklad: TpFIBStoredProc;
+    spGetSystemSetup: TpFIBStoredProc;
+    spSetSystemSetup: TpFIBStoredProc;
+    spClearDatabase: TpFIBStoredProc;
+    dbMainThread: TpFIBDatabase;
+    tranMainThreadRead: TpFIBTransaction;
+    tranMainThreadWrite: TpFIBTransaction;
+    spSetNewPrices: TpFIBStoredProc;
+    spPredzakazTovar: TpFIBStoredProc;
+    spGetProductList: TpFIBDataSet;
+  private
+  public
+  end;
+
+var
+  MainDM: TMainDM;
+
+implementation
+
+{$R *.DFM}
+
+{procedure TMainDM.pFibErrorHandlerFIBErrorEvent(Sender: TObject;
+  ErrorValue: EFIBError; KindIBError: TKindIBError; var DoRaise: Boolean);
+var S: String;
+begin
+  if (POS('deadlock', LowerCase(ErrorValue.IBMessage)) > 0) or (POS('update conflicts with concurrent update', LowerCase(ErrorValue.IBMessage)) > 0) then
+    MessageDlg('Запись в данный момент редактируется другим пользователем и доступна только для просмотра!', mtInformation, [mbOk], 0)
+  else begin
+    S := S + 'SQLCode = ' + IntToStr(ErrorValue.SQLCode) + #10#13;
+    S := S + 'IBErrorCode = ' + IntToStr(ErrorValue.IBErrorCode) + #10#13;
+    S := S + 'IBMessage = ' + ErrorValue.IBMessage + #10#13;
+    Application.MessageBox(PAnsiChar(S), 'Ошибка БД', MB_OK + MB_ICONSTOP);
+    DoRaise := False;
+  end;
+end;}
+
+end.

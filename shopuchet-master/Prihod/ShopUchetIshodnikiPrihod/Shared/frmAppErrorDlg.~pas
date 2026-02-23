@@ -1,0 +1,51 @@
+unit frmAppErrorDlg;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons, ExtCtrls, unCommonFunc;
+
+type
+  TAppErrorDlgForm = class(TForm)
+    Bevel1: TBevel;
+    OkButton: TBitBtn;
+    Label1: TLabel;
+    lbErrCode: TLabel;
+    meErrTrace: TMemo;
+    lbErrMsgRus: TMemo;
+    lbErrMsgEng: TMemo;
+    procedure FormKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
+  private
+  public
+  end;
+
+implementation
+
+{$R *.DFM}
+
+procedure TAppErrorDlgForm.FormShow(Sender: TObject);
+begin
+  Height := ScaleDimension(252);
+end;
+
+procedure TAppErrorDlgForm.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key=VK_ESCAPE) then
+    Close;
+
+  {Alt нажата?}
+  if not (ssAlt in Shift) then
+    {Нет, выходим}
+    Exit;
+
+  if chr(Key) = 'D' then begin{D - Debug}
+    meErrTrace.Visible := True;
+    Height := ScaleDimension(350);
+  end;
+end;
+
+end.

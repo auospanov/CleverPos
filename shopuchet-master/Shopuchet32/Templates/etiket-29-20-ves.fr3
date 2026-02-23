@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="42142,4011544329" ReportOptions.Description.Text="" ReportOptions.LastChange="44223,7343813426" ScriptLanguage="PascalScript" ScriptText.Text="begin&#13;&#10;&#13;&#10;end.">
+  <Variables>
+    <item Name=" New Category1"/>
+    <item Name="barcode13"/>
+    <item Name="name_t"/>
+    <item Name="price"/>
+    <item Name="print_price"/>
+    <item Name="print_slogan"/>
+    <item Name="price_bold"/>
+    <item Name="price_size"/>
+    <item Name="name_bold"/>
+    <item Name="pack_date"/>
+  </Variables>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" Font.Charset="1" Font.Color="0" Font.Height="-13" Font.Name="Arial" Font.Style="1" PaperWidth="30" PaperHeight="20" PaperSize="256" LeftMargin="0" RightMargin="0" TopMargin="0" BottomMargin="0" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxMemoView Name="m_Name" Align="baCenter" Left="0" Top="42,35436" Width="113,3859" Height="15,11812" OnBeforePrint="m_NameOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="[name_t]"/>
+    <TfrxMemoView Name="m_Price" Left="63,346475" Top="59,69295" Width="49,13389" Height="14,74015504" OnBeforePrint="m_PriceOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="[price]"/>
+    <TfrxBarCodeView Name="BarCode13" Align="baCenter" Left="5,19295" Top="1,77953" Width="103" Height="38,74799" BarType="bcCodeEAN13" Expression="&#60;barcode13&#62;" HAlign="haCenter" Rotation="0" Text="12345678" WideBarRatio="1" Zoom="1" Font.Charset="1" Font.Color="0" Font.Height="-12" Font.Name="Arial" Font.Style="0"/>
+    <TfrxMemoView Name="Memo1" Left="0" Top="60,47248" Width="56,69295" Height="14,74015504" OnBeforePrint="m_PriceOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="[pack_date]"/>
+  </TfrxReportPage>
+</TfrxReport>

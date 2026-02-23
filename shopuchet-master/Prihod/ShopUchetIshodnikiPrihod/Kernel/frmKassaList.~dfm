@@ -1,0 +1,199 @@
+inherited KassaListForm: TKassaListForm
+  Left = 426
+  Top = 167
+  Caption = #1055#1088#1080#1093#1086#1076
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'KASSA'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\KassaList'
+    OnChangeNode = dxDBGridChangeNode
+    object dxDBGridKASSA: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'KASSA'
+    end
+    object dxDBGridACTION: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ACTION'
+    end
+    object dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_PRIHOD_RASHOD'
+    end
+    object dxDBGridACTION_DATE: TdxDBGridDateColumn
+      Alignment = taCenter
+      Caption = #1044#1072#1090#1072
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ACTION_DATE'
+    end
+    object dxDBGridSTATYA_NAME: TdxDBGridColumn
+      Alignment = taLeftJustify
+      Caption = #1057#1090#1072#1090#1100#1103
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'STATYA_NAME'
+    end
+    object dxDBGridSUMM: TdxDBGridMaskColumn
+      Alignment = taRightJustify
+      Caption = #1057#1091#1084#1084#1072
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM'
+    end
+    object dxDBGridNOTE: TdxDBGridColumn
+      Alignment = taLeftJustify
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1103
+      HeaderAlignment = taCenter
+      Width = 94
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NOTE'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Bars = <
+      item
+        AllowClose = False
+        AllowCustomizing = False
+        AllowQuickCustomizing = False
+        Caption = 'Main'
+        DockedDockingStyle = dsTop
+        DockedLeft = 0
+        DockedTop = 0
+        DockingStyle = dsTop
+        FloatLeft = 271
+        FloatTop = 138
+        FloatClientWidth = 23
+        FloatClientHeight = 22
+        ItemLinks = <
+          item
+            Item = dxBarStaticRecCnt
+            Visible = True
+          end
+          item
+            Item = dxBarButtonRefresh
+            Visible = True
+          end
+          item
+            Item = dxBarButtonEnableAutoRefresh
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            Item = dxBarSpinEditHeaderHeight
+            UserDefine = [udWidth]
+            UserWidth = 23
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            Item = bcNalBeznal
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonView
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonIns
+            Visible = True
+          end
+          item
+            Item = dxBarButtonInsLike
+            Visible = True
+          end
+          item
+            Item = dxBarButtonUpd
+            Visible = True
+          end
+          item
+            Item = dxBarButtonDel
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButton1
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonClose
+            Visible = True
+          end>
+        Name = 'Main'
+        OneOnRow = True
+        Row = 0
+        UseOwnFont = False
+        Visible = True
+        WholeRow = False
+      end>
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+    object bcNalBeznal: TdxBarCombo
+      Caption = #1057#1087#1086#1089#1086#1073' '#1088#1072#1089#1095#1077#1090#1072
+      Category = 0
+      Hint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1086' '#1082#1072#1082#1086#1084#1091' '#1089#1087#1086#1089#1086#1073#1091' '#1088#1072#1089#1095#1077#1090#1072' '#1086#1090#1088#1072#1079#1080#1090#1100' '#1087#1088#1080#1093#1086#1076'/'#1088#1072#1089#1093#1086#1076
+      Visible = ivAlways
+      Text = #1053#1072#1083#1080#1095#1085#1099#1081
+      OnChange = bcNalBeznalChange
+      ShowCaption = True
+      Width = 100
+      Items.Strings = (
+        #1053#1072#1083#1080#1095#1085#1099#1081
+        #1041#1077#1079#1085#1072#1083#1080#1095#1085#1099#1081)
+      ItemIndex = 0
+    end
+  end
+  inherited alChild: TActionList
+    inherited aHelp: TAction
+      Hint = #1042#1099#1079#1086#1074' '#1089#1087#1088#1072#1074#1082#1080
+    end
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'select * from K_READ_KASSA_LIST(?ACTION_, ?G_PAYMENT_TYPE_)')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE K_DEL_KASSA (?KASSA_, ?G_PAYMENT_TYPE_)')
+    StoredProcName = 'K_DEL_KASSA'
+  end
+end

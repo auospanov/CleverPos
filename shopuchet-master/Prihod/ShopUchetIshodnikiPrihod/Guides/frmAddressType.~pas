@@ -1,0 +1,62 @@
+unit frmAddressType;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, Menus, ActnList, dxExEdtr, dxCntner,
+  ExtCtrls, StdCtrls, Buttons, dxEditor, dxEdLib, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, AppEvnts;
+
+type
+  TAddressTypeForm = class(TDBEditForm)
+    Label13: TLabel;
+    Shape25: TShape;
+    Shape4: TShape;
+    edAddress: TdxEdit;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    //procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  AddressTypeForm: TAddressTypeForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TAddressTypeForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'G_ADDRESS_TYPE_';
+end;
+
+function TAddressTypeForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edAddress.Text) = EmptyStr then begin
+    ErrControl := edAddress;
+    MessageDlg('Тип адреса не заполнен', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;  
+end;
+
+procedure TAddressTypeForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    ParamByName('name_').AsString := edAddress.Text;
+  end;
+end;
+
+end.

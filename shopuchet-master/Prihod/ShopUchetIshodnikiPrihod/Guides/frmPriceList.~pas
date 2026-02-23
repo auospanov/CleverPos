@@ -1,0 +1,681 @@
+unit frmPriceList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  ExtCtrls, Menus, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTL, cxControls, cxSplitter, StdCtrls, Buttons, cxContainer, cxEdit,
+  cxCheckBox, AppEvnts, DateUtils, unCommonFunc, Math, FIB, dxDBTLCl,
+  dxGrClms;
+
+type
+  TPriceListForm = class(TDBListForm)
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT_PAR: TdxDBGridMaskColumn;
+    dxDBGridARTICUL: TdxDBGridMaskColumn;
+    dxDBGridNOMENCLATUR_NUM: TdxDBGridMaskColumn;
+    dxDBGridBARCODE: TdxDBGridMaskColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxDBGridG_UNIT: TdxDBGridMaskColumn;
+    dxDBGridPRICE: TdxDBGridMaskColumn;
+    dxDBGridVOLUME_PRICE: TdxDBGridMaskColumn;
+    dxDBGridAMOUNT: TdxDBGridColumn;
+    splMenu: TcxSplitter;
+    tlCategory: TdxDBTreeList;
+    Panel1: TPanel;
+    grProduct: TdxDBGrid;
+    dxDBGridMaskG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn2: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn3: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn4: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn5: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn6: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn7: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn8: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn9: TdxDBGridMaskColumn;
+    dxDBGridColumn1: TdxDBGridColumn;
+    tlCategoryG_PRODUCT: TdxDBTreeListMaskColumn;
+    tlCategoryG_PRODUCT_PAR: TdxDBTreeListMaskColumn;
+    tlCategoryNAME: TdxDBTreeListMaskColumn;
+    Panel3: TPanel;
+    btnRefreshChd: TBitBtn;
+    btnInsChd: TBitBtn;
+    btnUpdChd: TBitBtn;
+    btnDelChd: TBitBtn;
+    btnViewChd: TBitBtn;
+    btnInsLike: TBitBtn;
+    aViewChd: TAction;
+    aInsChd: TAction;
+    aInsLikeChd: TAction;
+    aUpdChd: TAction;
+    aDelChd: TAction;
+    aRefreshChd: TAction;
+    aInsChild: TAction;
+    spReadTovar: TpFIBDataSet;
+    dsReadTovar: TDataSource;
+    aSetNotActive: TAction;
+    BitBtn1: TBitBtn;
+    spSetNotActive: TpFIBStoredProc;
+    bcActive: TdxBarCombo;
+    aPrintLabel: TAction;
+    BitBtn2: TBitBtn;
+    grProductAMOUNT_NA_REAL: TdxDBGridColumn;
+    Panel2: TPanel;
+    Label10: TLabel;
+    edBarcode: TEdit;
+    btClear: TButton;
+    ApplicationEvents: TApplicationEvents;
+    TimerChangeEd: TTimer;
+    aNewPrice: TAction;
+    dxBarButton2: TdxBarButton;
+    grProductPACK_AMOUNT: TdxDBGridColumn;
+    grProductMF_COUNTRY: TdxDBGridColumn;
+    BitBtn3: TBitBtn;
+    aDelChdAll: TAction;
+    grProductNOTE: TdxDBGridColumn;
+    spFindProduct: TpFIBStoredProc;
+    dxdbgrdclmnProductAMOUNT_RESERVE: TdxDBGridColumn;
+    clmnPLACE: TdxDBGridColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure tlCategoryChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure aRefreshChdExecute(Sender: TObject);
+    procedure aViewChdExecute(Sender: TObject);
+    procedure aInsChdExecute(Sender: TObject);
+    procedure aInsLikeChdExecute(Sender: TObject);
+    procedure aUpdChdExecute(Sender: TObject);
+    procedure aDelChdExecute(Sender: TObject);
+    procedure aInsChildExecute(Sender: TObject);
+    procedure aSetNotActiveExecute(Sender: TObject);
+    procedure bcActiveChange(Sender: TObject);
+    procedure aCustomizeColumnsExecute(Sender: TObject);
+    procedure aPrintLabelExecute(Sender: TObject);
+    procedure edBarcodeChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ApplicationEventsMessage(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure TimerChangeEdTimer(Sender: TObject);
+    procedure btClearClick(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+    procedure aRefreshExecute(Sender: TObject);
+    procedure aDelChdAllExecute(Sender: TObject);
+  private
+    { Private declarations }
+    ByScanner : Integer;   //инициация сканером
+    KeysBuffer: String;
+    LastDateForAddedKey: TDateTime;
+    FIns_Child : Integer;  //признак что вызывается INSDATA для создания дочерней записи
+    FrefreshProdBook : boolean; //рефрешить товары с букмарком или нет, с букмарком надо только при нажатии на кнопку "Обновить"
+    function CheckSelectedNode : Boolean;  //выбрана ли хоть одна запись
+    procedure SelectGrProductNode;
+    procedure WMInsChild(var Message: TMessage); message WM_INSCHILD;
+  public
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  PriceListForm: TPriceListForm;
+
+implementation
+
+uses frmPriceListUn, frmCategory, frmDBEdit, frmPriceListRepFilter,
+  dmReports, frmPrintEtiketSetup, unErrorHandlers;
+
+{$R *.dfm}
+
+procedure TPriceListForm.ReadList;
+begin
+  inherited;
+  aView.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aDel.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aUpd.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aInsChild.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aInsLike.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+
+  aRefreshChd.Execute;
+end;
+
+procedure TPriceListForm.ViewData;
+begin
+  ClassForm := TCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.InsData;
+begin
+  ClassForm := TCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    if FIns_Child = 1 then
+      (ClassForm as TCategoryForm).leCategory.LookupKeyValue := spRead.FieldByName('g_product').AsInteger
+    else
+      (ClassForm as TCategoryForm).leCategory.Enabled := False;
+
+    FIns_Child := 0;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.InsLikeData;
+begin
+  ClassForm := TCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.UpdData;
+begin
+  ClassForm := TCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'G_PRODUCT';
+  KeyFieldClass := 'G_PRODUCT_';
+  inherited;
+  FIns_Child := 0;
+end;
+
+procedure TPriceListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить категорию "%s" ?',
+    [spRead.FieldByName('Name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+end;
+
+procedure TPriceListForm.tlCategoryChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  inherited;
+  aView.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aDel.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aUpd.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aInsChild.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aInsLike.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('g_product').AsInteger <> -1);
+  aRefreshChd.Execute;
+end;
+
+procedure TPriceListForm.aRefreshChdExecute(Sender: TObject);
+begin
+  spReadTovar.ParamByName('g_product_par_').AsInteger := spRead.FieldByName('G_PRODUCT').AsInteger;
+  spReadTovar.ParamByName('g_tochka_').AsInteger := CurSklad;
+  if bcActive.ItemIndex = 0 then
+    spReadTovar.ParamByName('is_active_').AsInteger := 1
+  else
+    spReadTovar.ParamByName('is_active_').AsInteger := 0;
+
+  Screen.Cursor := crSQLWait;
+  OpenSP(spReadTovar, FrefreshProdBook);
+  SelectGrProductNode;
+  FrefreshProdBook := False;  // TRUE выставляется только при нажатии на кнопку ОБНОВИТЬ
+  Screen.Cursor := crDefault;
+
+  aViewChd.Enabled := spReadTovar.RecordCount > 0;
+  aInsChd.Enabled  := (spRead.RecordCount > 1) and (spRead.FieldByName('g_product').AsInteger <> -1);;      //кнопка добавить товар доступна, если есть хоть одна родительская категория, но это не "Все товары"
+  aInsLikeChd.Enabled := (spReadTovar.RecordCount > 0);
+  aUpdChd.Enabled := spReadTovar.RecordCount > 0;
+  aDelChd.Enabled := spReadTovar.RecordCount > 0;
+  aDelChdAll.Enabled := spReadTovar.RecordCount > 0;  
+  aSetNotActive.Enabled := spReadTovar.RecordCount > 0;
+  aPrintLabel.Enabled := spReadTovar.RecordCount > 0;
+  aNewPrice.Enabled := spReadTovar.RecordCount > 0;
+  dxBarStaticRecCnt.Caption := IntToStr(spReadTovar.RecordCount);
+end;
+
+procedure TPriceListForm.aViewChdExecute(Sender: TObject);
+var
+  PriceListUnForm :TPriceListUnForm;
+begin
+  if CheckSelectedNode = False then
+    Exit;
+
+  PriceListUnForm := TPriceListUnForm.Create(Self);
+  try
+    PriceListUnForm.OpenMode := omView;
+    PriceListUnForm.RecID := spReadTovar.FieldByName('g_product').AsInteger;
+    PriceListUnForm.ShowModal;
+  finally
+    PriceListUnForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.aInsChdExecute(Sender: TObject);
+var
+  PriceListUnForm :TPriceListUnForm;
+begin
+  PriceListUnForm := TPriceListUnForm.Create(Self);
+  try
+    PriceListUnForm.OpenMode := omInsert;
+    PriceListUnForm.Id_Category := spRead.FieldByName('g_product').AsInteger;
+    // если KeysBuffer не пустой, то значит процедура вызвана сканером штрихкода,
+    // то передаю его в форму PriceListUnForm и подставляю как штрихкод
+    if ByScanner = 1 then
+      PriceListUnForm.BARCODE := KeysBuffer;
+
+    if PriceListUnForm.ShowModal = mrOk then
+    begin
+      aRefreshChd.Execute;
+      spReadTovar.Locate('g_product', PriceListUnForm.RecID, []);
+      if grProduct.FocusedNode <> Nil then begin
+        if grProduct.SelectedCount > 0 then
+          grProduct.SelectedNodes[0].Selected := False;
+        grProduct.FocusedNode.Selected := True;
+      end;      
+    end;
+  finally
+    PriceListUnForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.aInsLikeChdExecute(Sender: TObject);
+var
+  PriceListUnForm :TPriceListUnForm;
+begin
+  if CheckSelectedNode = False then
+    Exit;
+
+  PriceListUnForm := TPriceListUnForm.Create(Self);
+  try
+    PriceListUnForm.OpenMode := omInsertLike;
+    PriceListUnForm.RecID := spReadTovar.FieldByName('g_product').AsInteger;
+    // если старому товару меняется цена, то создается новый товар, с новым артикулом и новой ценой
+    if (Sender as TAction).Name = 'aNewPrice' then
+      PriceListUnForm.G_PROD_FOR_NEW_PRICE := spReadTovar.FieldByName('g_product').AsInteger;
+    if PriceListUnForm.ShowModal = mrOk then
+    begin
+      aRefreshChd.Execute;
+      spReadTovar.Locate('g_product', PriceListUnForm.RecID, []);
+      if grProduct.FocusedNode <> Nil then begin
+        if grProduct.SelectedCount > 0 then
+          grProduct.SelectedNodes[0].Selected := False;
+        grProduct.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    PriceListUnForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.aUpdChdExecute(Sender: TObject);
+var
+  PriceListUnForm :TPriceListUnForm;
+begin
+  // если грид пустой и поле edBarcode.Text не пустое то значит будет вызываться форма для добавления товара через сканер штрихкода
+  if (grProduct.SelectedCount = 0) and (edBarcode.Text <> '') then begin
+    aInsChd.Execute;
+    Exit;
+  end;
+
+  if CheckSelectedNode = False then
+    Exit;
+
+  PriceListUnForm := TPriceListUnForm.Create(Self);
+  try
+    PriceListUnForm.OpenMode := omUpdate;
+    PriceListUnForm.RecID := spReadTovar.FieldByName('g_product').AsInteger;
+    if PriceListUnForm.ShowModal = mrOk then
+    begin
+      aRefreshChd.Execute;
+      spReadTovar.Locate('g_product', PriceListUnForm.RecID, []);
+      if grProduct.FocusedNode <> Nil then begin
+        if grProduct.SelectedCount > 0 then
+          grProduct.SelectedNodes[0].Selected := False;
+        grProduct.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    PriceListUnForm.Free;
+  end;
+end;
+
+procedure TPriceListForm.aDelChdExecute(Sender: TObject);
+var i : integer;
+    str : string;
+begin
+  if CheckSelectedNode = False then
+    Exit;
+
+  if grProduct.SelectedCount > 1 then
+    str := 'группу товаров?'
+  else
+    str := 'товар "%s"?';
+
+  if MessageDlg(Format('Удалить '+ str,
+    [spReadTovar.FieldByName('NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  for i := 0 to grProduct.SelectedCount - 1 do begin
+    spDel.ParamByName('g_product_').AsInteger := StrToInt(grProduct.SelectedNodes[i].Values[grProduct.ColumnByFieldName('G_PRODUCT').Index]);//   spReadTovar.FieldByName('g_product').AsInteger;
+    if not ExecSPTR(spDel) then begin
+      aRefreshChd.Execute;
+      Exit;
+    end;
+  end;
+
+  aRefreshChd.Execute;
+end;
+
+procedure TPriceListForm.aDelChdAllExecute(Sender: TObject);
+begin
+  if MessageDlg('Удалить все товары категории?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  spReadTovar.First;
+  while not spReadTovar.Eof do begin
+    spDel.ParamByName('g_product_').AsInteger := spReadTovar.FieldByName('g_product').AsInteger;
+    if not ExecSPTR(spDel) then begin
+      aRefreshChd.Execute;
+      Exit;
+    end;
+    spReadTovar.Next;
+  end;
+
+  aRefreshChd.Execute;
+end;
+
+procedure TPriceListForm.aInsChildExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_INSCHILD, 0, 0);
+end;
+
+procedure TPriceListForm.WMInsChild(var Message: TMessage);
+begin
+  FIns_Child := 1;
+  InsData;
+end;
+
+procedure TPriceListForm.aSetNotActiveExecute(Sender: TObject);
+begin
+  if CheckSelectedNode = False then
+    Exit;
+
+  if MessageDlg(Format('Изменить признак активности товара "%s" ?',
+    [spReadTovar.FieldByName('NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  spSetNotActive.ParamByName('g_product_').AsInteger := spReadTovar.FieldByName('g_product').AsInteger;
+  IF spReadTovar.FieldByName('IS_ACTIVE').AsInteger = 0 THEN
+    spSetNotActive.ParamByName('IS_ACTIVE_').AsInteger := 1
+  ELSE BEGIN
+    //НЕЛЬЗЯ СДЕЛАТЬ НЕАКТИВНЫМ, ЕСЛИ ЕСТЬ ТОВАР НА СКЛАДЕ ИЛИ НА РЕАЛИЗАЦИИ
+    if (spReadTovar.FieldByName('amount').AsFloat > 0) or (spReadTovar.FieldByName('AMOUNT_NA_REAL').AsFloat > 0) then begin
+      MessageDlg('Товар еше есть на складе или отдан под реализацию. Сделать неактивным невозможно!', mtInformation, [mbOk], 0);
+      Exit;
+    end;
+    spSetNotActive.ParamByName('IS_ACTIVE_').AsInteger := 0;
+  END;
+
+  if not spSetNotActive.Transaction.InTransaction then
+    spSetNotActive.Transaction.StartTransaction;
+
+  if ExecSP(spSetNotActive) then begin
+    if spSetNotActive.Transaction.InTransaction then
+      spSetNotActive.Transaction.Commit;
+    aRefreshChd.Execute;
+  end;
+end;
+
+procedure TPriceListForm.bcActiveChange(Sender: TObject);
+begin
+  Readlist;
+end;
+
+procedure TPriceListForm.aCustomizeColumnsExecute(Sender: TObject);
+begin
+  grProduct.ColumnsCustomizing;
+end;
+
+procedure TPriceListForm.aPrintLabelExecute(Sender: TObject);
+var PrintEtiketSetupForm : TPrintEtiketSetupForm;
+    SloganOrPrice : integer;
+begin
+  //если программа не активирована, то не буду давать делать этикетки
+  if IsActivated = 0 then begin
+    MessageDlg('Программа не активирована! Включены ограничения. Печать этикеток невозможна.', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  if CheckSelectedNode = False then
+    Exit;
+  try
+    PrintEtiketSetupForm := TPrintEtiketSetupForm.Create(Application);
+    if PrintEtiketSetupForm.ShowModal = mrOk then begin
+      //короче такая тема - делалось все на скорях 20.09.2016, одному клиенту не нужна была цена на ценике, поэтому просто добавил строку "Цена и слоган" третьим пунктом в cbSloganOrPrice
+      //а в ReportsDM.PrintLabel как-раз печатается и цена и слоган, если SloganOrPrice = -1, соответственно тут буду переводить, если cbSloganOrPrice.ItemIndex = 2, то SloganOrPrice = -1
+      ReportsDM.PrintLabel(PrintEtiketSetupForm.cbPrinters.Text,
+                          PrintEtiketSetupForm.cbChooseLentWidth.ItemIndex,
+                          Integer(PrintEtiketSetupForm.cbPrintPrice.checked),
+                          Integer(PrintEtiketSetupForm.cbPriceBold.checked),
+                          Integer(PrintEtiketSetupForm.spnPriceSize.Value),
+                          Integer(PrintEtiketSetupForm.cbPrintSlogan.checked),
+                          Integer(PrintEtiketSetupForm.cbSloganBold.checked),
+                          Integer(PrintEtiketSetupForm.spnSloganSize.Value),
+                          PrintEtiketSetupForm.edSlogan.text,
+                          StrToInt(PrintEtiketSetupForm.edAmount.text),
+                          SloganOrPrice,
+                          spReadTovar.FieldByName('Barcode').AsString,
+                          spReadTovar.FieldByName('name').AsString,
+                          spReadTovar.FieldByName('price').AsString,
+                          PrintEtiketSetupForm.cbImportFile.ItemIndex);
+    end;
+  finally
+    PrintEtiketSetupForm.free;
+  end;
+end;
+
+procedure TPriceListForm.edBarcodeChange(Sender: TObject);
+begin
+  TimerChangeEd.Enabled := False;
+  // здесь буду перезапускать таймер, а на его событие - уже включать фильтр
+  if edBarcode.Text <> '' then
+    TimerChangeEd.Enabled := True
+  else BEGIN
+    with spReadTovar do begin
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Open;
+    end;
+  END;  
+end;
+
+procedure TPriceListForm.SelectGrProductNode;
+begin
+  if grProduct.FocusedNode <> Nil then begin
+    if grProduct.SelectedCount > 0 then
+      grProduct.SelectedNodes[0].Selected := False;
+    grProduct.FocusedNode.Selected := True;
+  end;
+end;
+
+function TPriceListForm.CheckSelectedNode : Boolean;
+begin
+  Result := False;
+
+  if grProduct.SelectedCount = 0 then begin
+    MessageDlg('Вы не выбрали ни одного товара! Выберите товар!', mtWarning, [mbOk], 0);
+    edBarcode.Clear;
+    spReadTovar.Filter := '';
+    spReadTovar.Filtered := False;
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TPriceListForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  ByScanner := 0;
+  tlCategory.ShowGrid := False;
+  tlCategory.SetFocus;
+
+  // если конфигурация магазин, то эти колонки не нужны
+  if Config <> 1 then begin
+    grProductPACK_AMOUNT.Destroy;
+    grProductMF_COUNTRY.Destroy;
+  end;
+end;
+
+procedure TPriceListForm.ApplicationEventsMessage(var Msg: tagMSG;
+  var Handled: Boolean);
+  procedure ClearBuffer;
+  begin
+    if MilliSecondsBetween(Now, LastDateForAddedKey) > 200 then
+    begin
+      // при медленном вводе буфер очищяется, т.к. скан идет "мгновенно"
+      KeysBuffer := '';
+    end;
+  end;
+var onChangeCat : TTLChangeNodeEvent;
+begin
+  // обработка штрих-кодов
+  // автор: jaydi85@gmail.com
+
+  // данные считываем на WM_CHAR
+  // НО КЛАВИШУ ЭНТЕР на WM_KEYDOWN
+  // заканчиваем ввод
+  IF Screen.ActiveForm <> Nil THEN BEGIN
+    IF Screen.ActiveForm.Name = Self.Name THEN BEGIN
+      if Msg.message = WM_KEYDOWN then
+      begin
+        if (Msg.wParam = 13) or (Msg.wParam = 10) then
+        begin
+          ClearBuffer;
+          if KeysBuffer <> '' then begin
+            // при сканировании нажатие энтера передавать никуда не надо
+            Handled := True;
+            TimerChangeEd.Enabled := False;
+
+            //проверяю, вдруг такой товар уже есть, тогда вызываю апдейт
+            onChangeCat := tlCategory.OnChangeNode;
+            try
+              spFindProduct.ParamByName('BARCODE_').AsString := KeysBuffer;
+              if not spFindProduct.Transaction.InTransaction then
+                spFindProduct.Transaction.StartTransaction;
+              spFindProduct.ExecProc;
+              if spFindProduct.Transaction.InTransaction then
+                spFindProduct.Transaction.Commit;
+            except
+              on E: EFIBError do begin
+                if spFindProduct.Transaction.InTransaction then
+                  spFindProduct.Transaction.Rollback;
+                DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TDBListForm.DelData)');
+              end;
+              on E: Exception do begin
+                if spFindProduct.Transaction.InTransaction then
+                  spFindProduct.Transaction.Rollback;
+                MessageDlg(E.Message + #13#10'(occured in TDBListForm.DelData)', mtError, [mbOk], 0);
+              end;
+            end;
+            IF spFindProduct.ParamByName('g_product_').AsInteger > 0 THEN BEGIN
+              spRead.Locate('g_product', spFindProduct.ParamByName('g_product_category_').AsInteger, []);
+              tlCategory.OnChangeNode := onChangeCat;
+              spReadTovar.ParamByName('g_product_par_').AsInteger := spRead.FieldByName('g_product').AsInteger;
+              spReadTovar.ParamByName('g_tochka_').AsInteger := CurSklad;
+              OpenSp(spReadTovar, False);
+              spReadTovar.Locate('g_product', spFindProduct.ParamByName('G_PRODUCT_').AsInteger, []);
+              if grProduct.FocusedNode <> Nil then begin
+                if grProduct.SelectedCount > 0 then
+                  grProduct.SelectedNodes[0].Selected := False;
+                grProduct.FocusedNode.Selected := True;
+              end;
+              aUpdChd.Execute;
+            END else begin
+              ByScanner := 1;
+              aInsChd.execute;
+              ByScanner := 0;
+            end;
+
+            KeysBuffer := '';
+          end;
+        end
+      end;
+
+      // сохраняем ввод
+      if Msg.message = WM_CHAR then
+      begin
+        ClearBuffer;
+        if Msg.wParam <> 13 then
+        begin
+          // нажали что-то другое (надо отбросить всякие шифты и контролы)
+          KeysBuffer := KeysBuffer + Chr(Msg.wParam);
+          LastDateForAddedKey := Now;
+        end;
+      end;
+    END;
+  END;
+end;
+
+procedure TPriceListForm.TimerChangeEdTimer(Sender: TObject);
+var s: string;
+begin
+  TimerChangeEd.Enabled := False;
+  if (edBarcode.text<>'') then begin
+    with spReadTovar do begin
+      s := '(NAME CONTAINING ''' + edBarcode.text + ''') OR (ARTICUL CONTAINING ''' + edBarcode.text + ''') OR (NOMENCLATUR_NUM CONTAINING ''' + edBarcode.text +
+           ''') OR (BARCODE CONTAINING '''+ edBarcode.text + ''') OR (CROSSCODE CONTAINING '''+ edBarcode.text + ''')';
+
+      if UseTovarPlace = 1 then
+        s := s + ' OR (PLACE CONTAINING ''' + edBarcode.text + ''')';
+
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Conditions.AddCondition('by_customer', S, True);
+      ApplyConditions;
+      Open;
+    end;
+    SelectGrProductNode;
+  END;
+end;
+
+procedure TPriceListForm.btClearClick(Sender: TObject);
+begin
+  edBarcode.Clear;
+  if Assigned(grProduct.FocusedNode) then
+    grProduct.FocusedNode.Selected := True;
+end;
+
+procedure TPriceListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 5;
+  Application.HelpContext(5);
+  inherited;
+end;
+
+procedure TPriceListForm.aRefreshExecute(Sender: TObject);
+begin
+  FrefreshProdBook := True;
+  inherited;
+end;
+
+end.

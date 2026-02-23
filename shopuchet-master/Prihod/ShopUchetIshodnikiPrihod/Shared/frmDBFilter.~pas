@@ -1,0 +1,48 @@
+unit frmDBFilter;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, dxExEdtr, dxCntner, DB, Oracle, OracleData, frmDlg,
+  ActnList, cxPC, AppEvnts, Menus, frmDBDlg;
+
+type
+  TDBFilterForm = class(TDBDlgForm)
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private
+  protected
+  public
+    
+  end;
+
+implementation
+
+{$R *.DFM}
+
+{ TDBFilterForm }   
+
+procedure TDBFilterForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  ErrControl: TWinControl;
+begin
+  inherited;
+
+  if ModalResult <> mrOk then
+    Exit;
+
+  CanClose := False;
+  if not CheckParams(ErrControl) then begin
+    if ErrControl <> Nil then begin
+      if ErrControl.Parent.ClassNameIs('TcxTabSheet') then
+        (ErrControl.Parent as TcxTabSheet).PageControl.ActivePageIndex := (ErrControl.Parent as TcxTabSheet).PageIndex;
+      ErrControl.SetFocus;
+    end;
+    Exit;
+  end;
+
+  CanClose := True;
+end;
+
+end.

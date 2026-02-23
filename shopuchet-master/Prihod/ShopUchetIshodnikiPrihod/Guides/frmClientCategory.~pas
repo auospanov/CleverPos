@@ -1,0 +1,86 @@
+unit frmClientCategory;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, dxEditor, dxExEdtr, dxDBEdtr,
+  dxDBELib, dxCntner, dxEdLib, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, VLSummdxEdit, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, pFIBErrorHandler, AppEvnts;
+
+type
+  TClientCategoryForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edName: TdxEdit;
+    Shape4: TShape;
+    Label13: TLabel;
+    Shape25: TShape;
+    leClientCategory: TdxLookupEdit;
+    Shape26: TShape;
+    spClientCategory: TpFIBDataSet;
+    dsClientCategory: TDataSource;
+    procedure FormShow(Sender: TObject);
+  private
+    FIs_supplier: Integer; // 0 - Клиент, 1 - Поставщик
+  public
+    property Is_supplier: Integer read FIs_supplier write FIs_supplier;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  ClientCategoryForm: TClientCategoryForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TClientCategoryForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  spClientCategory.ParamByName('is_supplier_').AsInteger := FIs_supplier;
+  OpenSp(spClientCategory, False);
+end;
+
+function TClientCategoryForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TClientCategoryForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leClientCategory.LookupKeyValue := ParamByName('g_client_parent_').AsInteger;
+      edName.Text    := ParamByName('NAME_').AsString;
+    end;
+  end;
+end;
+
+procedure TClientCategoryForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    if leClientCategory.LookupKeyValue > 0 then
+      ParamByName('G_CLIENT_PARENT_').AsInteger := leClientCategory.LookupKeyValue;
+    ParamByName('NAME_').AsString := edName.Text;
+    ParamByName('IS_CATEGORY_').AsInteger := 1;
+    ParamByName('IS_SUPPLIER_').AsInteger := FIs_supplier;
+  end;
+end;
+
+end.

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="42142,4011544329" ReportOptions.Description.Text="" ReportOptions.LastChange="44823,8559910069" ScriptLanguage="PascalScript" ScriptText.Text="procedure m_PriceOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;price_bold&#62; = 1 then&#13;&#10;    m_Price.font.style := fsbold;&#13;&#10;  m_Price.font.size := &#60;price_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure m_SloganOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;slogan_bold&#62; = 1 then&#13;&#10;    m_Slogan.font.style := fsbold;&#13;&#10;  m_Slogan.font.size := &#60;slogan_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure m_NameOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;name_bold&#62; = 1 then&#13;&#10;    m_Name.font.style := fsbold;&#13;&#10;  m_Name.font.size := &#60;name_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure m_ArticulOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;articul_bold&#62; = 1 then&#13;&#10;    m_Articul.font.style := fsbold;&#13;&#10;  m_Articul.font.size := &#60;articul_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;begin&#13;&#10;  if &#60;name_t&#62; = null then&#13;&#10;    m_Name.Visible := False;&#13;&#10;  if (&#60;slogan&#62; = null) then&#13;&#10;    m_Slogan.Visible := False;&#13;&#10;  if (&#60;articul&#62; = null) then&#13;&#10;    m_Articul.Visible := False;&#13;&#10;  if &#60;barcode&#62; = null then&#13;&#10;    BarCode13.Visible := False&#13;&#10;  else&#13;&#10;  begin&#13;&#10;    if&#60;bar_type&#62; = 1 then&#13;&#10;      BarCode13.BarType := bcCodeEAN8&#13;&#10;    else&#13;&#10;      if &#60;bar_type&#62; = 2 then&#13;&#10;        BarCode13.BarType := bcCodeUPC_A&#13;&#10;      else&#13;&#10;        BarCode13.BarType := bcCodeEAN13;&#13;&#10;  end;&#13;&#10;&#13;&#10;  if (&#60;PriceDiscount&#62; = null) or (&#60;PriceDiscount&#62; = '') then&#13;&#10;    if (&#60;price&#62; = null) or (&#60;price&#62; = '') then&#13;&#10;      m_price.text := ''&#13;&#10;    else&#13;&#10;      m_price.text := 'Цена [price]'&#13;&#10;  else&#13;&#10;  begin&#13;&#10;    m_Price.text := 'Цена &#60;strike&#62;[price]&#60;/strike&#62; [PriceDiscount]';&#13;&#10;  end;&#13;&#10;end.">
+  <Variables>
+    <item Name=" New Category1"/>
+    <item Name="barcode"/>
+    <item Name="bar_type"/>
+    <item Name="name_t"/>
+    <item Name="price"/>
+    <item Name="slogan"/>
+    <item Name="price_bold"/>
+    <item Name="price_size"/>
+    <item Name="slogan_bold"/>
+    <item Name="slogan_size"/>
+    <item Name="name_bold"/>
+    <item Name="name_size"/>
+    <item Name="articul"/>
+    <item Name="articul_bold"/>
+    <item Name="articul_size"/>
+    <item Name="PriceDiscount"/>
+  </Variables>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="58" PaperHeight="100" PaperSize="256" LeftMargin="0" RightMargin="0" TopMargin="0" BottomMargin="0" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxBarCodeView Name="BarCode13" Left="43,54731" Top="57,5906" Width="87,96073" Height="280" BarType="bcCodeUPC_A" Expression="&#60;barcode&#62;" HAlign="haCenter" Rotation="90" Text="12345678" WideBarRatio="2" Zoom="2,5" Font.Charset="1" Font.Color="0" Font.Height="-12" Font.Name="Arial" Font.Style="0"/>
+    <TfrxMemoView Name="m_Slogan" Left="171,74026" Top="2,18893" Width="45,35436" Height="370,39394" OnBeforePrint="m_SloganOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-13" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" Rotation="90" VAlign="vaCenter" Text="[slogan]"/>
+    <TfrxMemoView Name="m_Name" Left="1,889765" Top="2" Width="34,01577" Height="374,17347" OnBeforePrint="m_NameOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-15" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" Rotation="90" VAlign="vaCenter" Text="[name_t]"/>
+    <TfrxMemoView Name="m_Articul" Left="139,84261" Top="181,41744" Width="22,67718" Height="192,75603" OnBeforePrint="m_ArticulOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-13" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" Rotation="90" VAlign="vaCenter" Text="[articul]"/>
+    <TfrxMemoView Name="m_Price" Left="139,84261" Top="3,77953" Width="22,67718" Height="162,51979" OnBeforePrint="m_PriceOnBeforePrint" AllowHTMLTags="True" Font.Charset="1" Font.Color="0" Font.Height="-13" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" Rotation="90" VAlign="vaCenter" Text="">
+      <Formats>
+        <item/>
+        <item/>
+      </Formats>
+    </TfrxMemoView>
+    <TfrxLineView Name="Line1" Left="37,7953" Top="0" Width="0" Height="377,953" Color="0" Frame.Typ="1"/>
+    <TfrxLineView Name="Line2" Left="132,28355" Top="0" Width="0" Height="377,953" Color="0" Frame.Typ="1"/>
+    <TfrxLineView Name="Line3" Left="170,07885" Top="0" Width="0" Height="377,953" Color="0" Frame.Typ="1"/>
+    <TfrxLineView Name="Line4" Left="132,28355" Top="173,85838" Width="37,7953" Height="0" Color="0" Frame.Typ="4"/>
+  </TfrxReportPage>
+</TfrxReport>

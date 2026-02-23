@@ -1,0 +1,174 @@
+inherited ContrAgentTypeForm: TContrAgentTypeForm
+  Left = 421
+  Top = 187
+  Caption = #1058#1080#1087' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090#1072
+  ClientHeight = 123
+  ClientWidth = 580
+  OnCreate = FormCreate
+  ExplicitWidth = 586
+  ExplicitHeight = 149
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited Panel1: TPanel
+    Width = 565
+    Height = 71
+    ExplicitWidth = 565
+    ExplicitHeight = 71
+    object Shape1: TShape
+      Left = 8
+      Top = 34
+      Width = 171
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape25: TShape
+      Left = 8
+      Top = 9
+      Width = 171
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label13: TLabel
+      Left = 16
+      Top = 15
+      Width = 157
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 178
+      Top = 9
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 16
+      Top = 40
+      Width = 132
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1050#1088#1072#1090#1082#1086#1077' '#1085#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape2: TShape
+      Left = 178
+      Top = 34
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object edName: TcxTextEdit
+      Left = 184
+      Top = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Properties.MaxLength = 500
+      Style.BorderStyle = ebsFlat
+      Style.StyleController = dxEditStyleController
+      TabOrder = 0
+      Width = 372
+    end
+    object edShortName: TcxTextEdit
+      Left = 184
+      Top = 37
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Properties.MaxLength = 250
+      Style.BorderStyle = ebsFlat
+      Style.StyleController = dxEditStyleController
+      TabOrder = 1
+      Width = 372
+    end
+  end
+  inherited btnOk: TcxButton
+    Left = 409
+    Top = 88
+    ExplicitLeft = 409
+    ExplicitTop = 88
+  end
+  inherited btnCancel: TcxButton
+    Left = 496
+    Top = 88
+    ExplicitLeft = 496
+    ExplicitTop = 88
+  end
+  inherited btHelp: TcxButton
+    Top = 406
+    ExplicitTop = 406
+  end
+  inherited dxEditStyleController: TcxEditStyleController
+    PixelsPerInch = 96
+  end
+  inherited ActionList: TActionList
+    Top = 88
+  end
+  inherited tranRead: TpFIBTransaction
+    Top = 88
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_GET_G_CONTRAGENT (?NAME, ?SHORT_NAME)')
+    StoredProcName = 'G_GET_G_CONTRAGENT'
+    Top = 88
+  end
+  inherited tranWrite: TpFIBTransaction
+    Top = 88
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_INS_G_CONTRAGENT (?NAME_, ?SHORT_NAME_)')
+    StoredProcName = 'G_INS_G_CONTRAGENT'
+    Top = 88
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_UPD_G_CONTRAGENT (?G_CONTRAGENT_, ?NAME_, ?S' +
+        'HORT_NAME_)')
+    StoredProcName = 'G_UPD_G_CONTRAGENT'
+    Top = 88
+  end
+end

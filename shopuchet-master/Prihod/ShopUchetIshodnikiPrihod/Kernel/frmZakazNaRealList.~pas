@@ -1,0 +1,446 @@
+unit frmZakazNaRealList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, dxDBTLCl, dxGrClms, dxTL, dxDBCtrl,
+  dxDBGrid, FIBQuery, pFIBQuery, pFIBStoredProc, DB, FIBDataSet,
+  pFIBDataSet, ExtCtrls, Menus, FIBDatabase, pFIBDatabase, ActnList, dxBar,
+  dxBarExtItems, dxCntner, frmDBEdit, unCommonFunc, cxControls, cxSplitter,
+  StdCtrls, Buttons, frmDBDlg, IniFiles;
+
+type
+  TZakazNaRealListForm = class(TDBListForm)
+    dxDBGridZAKAZ_NA_REAL: TdxDBGridMaskColumn;
+    dxDBGridG_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridCLIENT_NAME: TdxDBGridMaskColumn;
+    dxDBGridZAKAZ_DATE: TdxDBGridDateColumn;
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridPRODUCT_NAME: TdxDBGridMaskColumn;
+    dxDBGridIS_PAYED_ALL: TdxDBGridCheckColumn;
+    bcFilter: TdxBarCombo;
+    aPay: TAction;
+    dxDBGridPRICE: TdxDBGridColumn;
+    dxDBGridAMOUNT_ALL: TdxDBGridColumn;
+    dxDBGridSUMM_ALL: TdxDBGridColumn;
+    dxDBGridAMOUNT_PAYED: TdxDBGridColumn;
+    dxDBGridSUMM_PAYED: TdxDBGridColumn;
+    dxDBGridAMOUNT_LEFT: TdxDBGridColumn;
+    dxDBGridSUMM_LEFT: TdxDBGridColumn;
+    dxDBGridG_PRODUCT_PAR: TdxDBGridColumn;
+    dxDBGridPRODCAT_NAME: TdxDBGridColumn;
+    splOplataReal: TcxSplitter;
+    Panel1: TPanel;
+    stDetailsCount: TStaticText;
+    Panel2: TPanel;
+    splOplataReal2: TcxSplitter;
+    grOplata: TdxDBGrid;
+    dxDBGridZAKAZ: TdxDBGridMaskColumn;
+    dxDBGridG_TOCHKA: TdxDBGridMaskColumn;
+    dxDBGridZ_DATE: TdxDBGridDateColumn;
+    dxDBGridMaskColumn1: TdxDBGridMaskColumn;
+    dxDBGridG_PAYMENT_TYPE: TdxDBGridMaskColumn;
+    dxDBGridZ_NUM: TdxDBGridMaskColumn;
+    dxDBGridOSNOVANIE: TdxDBGridColumn;
+    dxDBGridColumn1: TdxDBGridColumn;
+    dxDBGridPAYMENT_NAME: TdxDBGridColumn;
+    dxDBGridSUM_ZAKAZ: TdxDBGridColumn;
+    dxDBGridNOTE: TdxDBGridColumn;
+    grZakazDetails: TdxDBGrid;
+    dxDBGridMaskColumn6: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn7: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn8: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn9: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn10: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn11: TdxDBGridMaskColumn;
+    dxDBGridColumn2: TdxDBGridColumn;
+    dxDBGridMaskColumn12: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn13: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn14: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn15: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn16: TdxDBGridMaskColumn;
+    spReadOplata: TpFIBDataSet;
+    dsReadOplata: TDataSource;
+    spZakazDetails: TpFIBDataSet;
+    dsZakazDetails: TDataSource;
+    aRefreshChild: TAction;
+    stZakazCount: TStaticText;
+    btnUpdChd: TBitBtn;
+    btnDelChd: TBitBtn;
+    aUpdZakaz: TAction;
+    aDelZakaz: TAction;
+    spDelOplata: TpFIBStoredProc;
+    dxDBGridZAKAZ_NUM: TdxDBGridColumn;
+    aUpdParent: TAction;
+    aDelParent: TAction;
+    aViewParent: TAction;
+    spDelNakl: TpFIBStoredProc;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    aReturn: TAction;
+    dxBarButton2: TdxBarButton;
+    grOplataTYPE_STR: TdxDBGridColumn;
+    dxDBGridAMOUNT_RETURNED: TdxDBGridColumn;
+    dxDBGridSUMM_RETURNED: TdxDBGridColumn;
+    spDelVozvrat: TpFIBStoredProc;
+    dxBarButton3: TdxBarButton;
+    procedure FormCreate(Sender: TObject);
+    procedure bcFilterChange(Sender: TObject);
+    procedure dxDBGridChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure dxDBGridCustomDrawCell(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; ANode: TdxTreeListNode; AColumn: TdxTreeListColumn;
+      ASelected, AFocused, ANewItemRow: Boolean; var AText: String;
+      var AColor: TColor; AFont: TFont; var AAlignment: TAlignment;
+      var ADone: Boolean);
+    procedure aPayExecute(Sender: TObject);
+    procedure aRefreshChildExecute(Sender: TObject);
+    procedure aUpdZakazExecute(Sender: TObject);
+    procedure aDelZakazExecute(Sender: TObject);
+    procedure grOplataChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure aViewParentExecute(Sender: TObject);
+    procedure aUpdParentExecute(Sender: TObject);
+    procedure aDelParentExecute(Sender: TObject);
+    procedure aReturnExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    FMode     : Integer;  // форма TZakazNaRealForm будет вызвана для редактирования деталей (0), или для Оплаты за товар (1)
+    procedure WMPayForReal(var Message: TMessage); message WM_PAYFORREAL;
+    procedure WMReturnForReal(var Message: TMessage); message WM_RETURNFORREAL;
+  public
+    procedure ViewData; override;
+    procedure DelData; override;
+    procedure InsData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  protected
+    procedure PayForReal;
+    procedure ReturnForReal;
+  end;
+
+var
+  ZakazNaRealListForm: TZakazNaRealListForm;
+
+implementation
+
+uses frmProdazhaTovaraN, frmZakazNaReal, frmOplataTovaraRealN,
+  frmZakazRealParent;
+
+{$R *.dfm}
+
+procedure TZakazNaRealListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'zakaz_na_real';
+  KeyFieldClass := 'zakaz_na_real_';
+end;
+
+procedure TZakazNaRealListForm.ViewData;
+begin
+  ClassForm := TZakazNaRealForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.InsData;
+begin
+  ProdazhaTovaraNForm := TProdazhaTovaraNForm.Create(Self);
+  try
+    ProdazhaTovaraNForm.OpenMode := omInsert;
+    ProdazhaTovaraNForm.Is_spisanie := 2;    // РЕЖИМ ВЫДАЧИ ТОВАРА ПОД РЕАЛИЗАЦИЮ
+    ProdazhaTovaraNForm.Client := spRead.FieldByname('g_client').AsInteger;
+    if ProdazhaTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate(KeyFieldList, ProdazhaTovaraNForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then
+      begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    ProdazhaTovaraNForm.Free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.UpdData;
+begin
+  ClassForm := TZakazNaRealForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+    spRead.Locate(KeyFieldList, (ClassForm as TZakazNaRealForm).RecID, []);
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.DelData;
+begin
+  if MessageDlg(Format('Удалить товар "%s" ?',
+    [spRead.FieldByName('PRODUCT_NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+end;
+
+procedure TZakazNaRealListForm.ReadList;
+begin
+  spRead.ParamByName('MODE_').AsInteger := bcFilter.ItemIndex;
+
+  inherited;
+
+  aPay.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('IS_PAYED_ALL').AsInteger = 0);
+  aReturn.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('IS_PAYED_ALL').AsInteger = 0);
+  aRefreshChild.Execute;
+end;
+
+procedure TZakazNaRealListForm.bcFilterChange(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+end;
+
+procedure TZakazNaRealListForm.dxDBGridChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  inherited;
+  aPay.Enabled := (spRead.RecordCount > 0) and (spRead.FieldByName('IS_PAYED_ALL').AsInteger = 0);
+  aRefreshChild.Execute;
+end;
+
+procedure TZakazNaRealListForm.dxDBGridCustomDrawCell(Sender: TObject;
+  ACanvas: TCanvas; ARect: TRect; ANode: TdxTreeListNode;
+  AColumn: TdxTreeListColumn; ASelected, AFocused, ANewItemRow: Boolean;
+  var AText: String; var AColor: TColor; AFont: TFont;
+  var AAlignment: TAlignment; var ADone: Boolean);
+begin
+  inherited;
+  IF bcFilter.ItemIndex = 3 THEN BEGIN
+    if ANode.Selected then
+    begin
+      // ОПЛАЧЕННЫЕ выделяются цветом
+      if ANode.Values[TdxDBGrid(Sender).ColumnByFieldName('IS_PAYED_ALL').Index] = '1' then
+      begin
+        AColor := clWhite;
+        AFont.Color := clTeal;
+      end;
+    end else begin
+      // ОПЛАЧЕННЫЕ выделяются цветом
+      if ANode.Values[TdxDBGrid(Sender).ColumnByFieldName('IS_PAYED_ALL').Index] = '1' then
+      begin
+        AColor := clTeal;
+        AFont.Color := clWhite;
+      end;
+    end;
+  END;
+end;
+
+procedure TZakazNaRealListForm.aPayExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_PAYFORREAL, 0, 0);
+end;
+
+procedure TZakazNaRealListForm.aReturnExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_RETURNFORREAL, 0, 0);
+end;
+
+procedure TZakazNaRealListForm.WMPayForReal(var Message: TMessage);
+begin
+  PayForReal;
+end;
+
+procedure TZakazNaRealListForm.WMReturnForReal(var Message: TMessage);
+begin
+  ReturnForReal;
+end;
+
+procedure TZakazNaRealListForm.PayForReal;
+begin
+
+  OplataTovaraRealNForm := TOplataTovaraRealNForm.Create(Self);
+  try
+    OplataTovaraRealNForm.Client := spRead.FieldByname('g_client').AsInteger;
+    OplataTovaraRealNForm.OpenMode := omInsert;
+    if OplataTovaraRealNForm.Showmodal = mrOK then
+      Readlist;
+  finally
+    OplataTovaraRealNForm.free;
+  end;
+end;
+
+
+procedure TZakazNaRealListForm.ReturnForReal;
+begin
+  OplataTovaraRealNForm := TOplataTovaraRealNForm.Create(Self);
+  try
+    OplataTovaraRealNForm.Client := spRead.FieldByname('g_client').AsInteger;
+    OplataTovaraRealNForm.OpenMode := omInsert;
+    OplataTovaraRealNForm.Mode := 1;   // укажу что идет возврат товара
+    if OplataTovaraRealNForm.Showmodal = mrOK then
+      Readlist;
+  finally
+    OplataTovaraRealNForm.free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.aRefreshChildExecute(Sender: TObject);
+begin
+  Screen.Cursor := crSQLWait;
+
+  spReadOplata.ParamByName('G_CLIENT_').AsInteger := spRead.FieldByName('G_CLIENT').AsInteger;
+  OpenSp(spReadOplata, True);
+  spZakazDetails.PARAMByName('zakaz_').AsInteger := spReadOplata.FieldByName('zakaz').AsInteger;
+  spZakazDetails.PARAMByName('IS_VOZVRAT_').AsInteger := spReadOplata.FieldByName('IS_VOZVRAT').AsInteger;
+  OpenSp(spZakazDetails, True);
+
+  stZakazCount.Caption := Format('%.5d', [spReadOplata.AllRecordCount]);
+  stDetailsCount.Caption := Format('%.5d', [spZakazDetails.AllRecordCount]);
+
+  Screen.Cursor := crDefault;
+end;
+
+procedure TZakazNaRealListForm.aUpdZakazExecute(Sender: TObject);
+begin
+  OplataTovaraRealNForm := TOplataTovaraRealNForm.Create(Self);
+  try
+    OplataTovaraRealNForm.Client := spRead.FieldByname('g_client').AsInteger;
+    OplataTovaraRealNForm.RecID := spReadOplata.FieldByName('zakaz').AsInteger;
+    OplataTovaraRealNForm.Mode  := spReadOplata.FieldByName('IS_VOZVRAT').AsInteger;
+    OplataTovaraRealNForm.OpenMode := omUpdate;
+    if OplataTovaraRealNForm.Showmodal = mrOK then
+      Readlist;
+  finally
+    OplataTovaraRealNForm.free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.aDelZakazExecute(Sender: TObject);
+begin
+  if spReadOplata.FieldByName('is_vozvrat').AsInteger = 0 then begin
+    if MessageDlg(Format('Удалить оплату № "%s" ?',
+      [spReadOplata.FieldByName('z_num').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+    spDelOplata.ParamByName('zakaz_').AsInteger := spReadOplata.FieldByName('zakaz').AsInteger;
+    if ExecSPTR(spDelOplata) then begin
+      ShowMessage('Удалено успешно!');
+      Readlist;
+    end
+
+  end else begin
+    if MessageDlg(Format('Удалить возврат № "%s" ?',
+      [spReadOplata.FieldByName('z_num').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+    spDelVozvrat.ParamByName('sklad_').AsInteger := spReadOplata.FieldByName('zakaz').AsInteger;
+    spDelVozvrat.ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+    if ExecSPTR(spDelVozvrat) then begin
+      ShowMessage('Удалено успешно!');
+      Readlist;
+    end
+  end;
+end;
+
+procedure TZakazNaRealListForm.grOplataChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  spZakazDetails.PARAMByName('zakaz_').AsInteger := spReadOplata.FieldByName('zakaz').AsInteger;
+  spZakazDetails.PARAMByName('IS_VOZVRAT_').AsInteger := spReadOplata.FieldByName('IS_VOZVRAT').AsInteger;  
+  OpenSp(spZakazDetails, True);
+  stDetailsCount.Caption := Format('%.5d', [spZakazDetails.AllRecordCount]);
+end;
+
+procedure TZakazNaRealListForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  //выставляю положения сплиттеров
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    if Ini.ReadInteger('Splitters', 'splOplataReal', 0) = 0 then
+      Panel2.Height := ScaleDimension(Screen.Height div 2)                               //почему-то положение Splitter.PositionAfterOpen не работает, поэтому пришлось так делать, ширину и длину панелей ставить
+    else
+      Panel2.Height := Ini.ReadInteger('Splitters', 'splOplataReal', 0);
+
+    if Ini.ReadInteger('Splitters', 'splOplataReal2', 0) = 0 then
+      grOplata.width := Screen.Width div 2
+    else
+      grOplata.width := Ini.ReadInteger('Splitters', 'splOplataReal2', 0);
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  // сохраняю позиции сплиттеров
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    Ini.WriteInteger('Splitters', 'splOplataReal', Panel2.Height);      //почему-то положение Splitter.PositionAfterOpen не работает, поэтому пришлось так делать, ширину и длину панелей ставить
+    Ini.WriteInteger('Splitters', 'splOplataReal2', grOplata.width);
+  finally
+    Ini.Free;
+  end
+end;
+
+procedure TZakazNaRealListForm.aViewParentExecute(Sender: TObject);
+begin
+  ZakazRealParentForm := TZakazRealParentForm.Create(Self);
+  try
+    ZakazRealParentForm.RecID := spRead.FieldByName('zakaz_real_parent').AsInteger;
+    ZakazRealParentForm.OpenMode := omView;
+    ZakazRealParentForm.Showmodal;
+  finally
+    ZakazRealParentForm.free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.aUpdParentExecute(Sender: TObject);
+begin
+  ZakazRealParentForm := TZakazRealParentForm.Create(Self);
+  try
+    ZakazRealParentForm.RecID := spRead.FieldByName('zakaz_real_parent').AsInteger;
+    ZakazRealParentForm.OpenMode := omUpdate;
+    if ZakazRealParentForm.Showmodal = mrOK then
+      Readlist;
+  finally
+    ZakazRealParentForm.free;
+  end;
+end;
+
+procedure TZakazNaRealListForm.aDelParentExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить накладную № "%s" ?',
+    [spRead.FieldByName('zakaz_num').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  spDelNakl.ParamByName('ZAKAZ_REAL_PARENT_').AsInteger := spRead.FieldByName('ZAKAZ_REAL_PARENT').AsInteger;
+  if ExecSPTR(spDelNakl) then begin
+    ShowMessage('Удалено успешно!');
+    Readlist;
+  end
+end;
+
+procedure TZakazNaRealListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 21;
+  inherited;
+end;
+
+end.

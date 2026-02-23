@@ -1,0 +1,94 @@
+inherited OfficialListForm: TOfficialListForm
+  Left = 534
+  Top = 192
+  Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'G_OFFICIAL'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\OfficialList'
+    object dxDBGridG_OFFICIAL: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_OFFICIAL'
+    end
+    object dxDBGridFIO_DOC: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1060#1048#1054
+      HeaderAlignment = taCenter
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'FIO'
+    end
+    object dxDBGridRNN: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1056#1053#1053
+      HeaderAlignment = taCenter
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'RNN'
+    end
+    object dxDBGridIDN: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1048#1048#1053
+      HeaderAlignment = taCenter
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'IDN'
+    end
+    object dxDBGridDT: TdxDBGridDateColumn
+      Alignment = taCenter
+      Caption = #1044#1056
+      HeaderAlignment = taCenter
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'DT'
+    end
+    object dxDBGridG_APPOINTMENT: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_APPOINTMENT'
+    end
+    object dxDBGridAPP_NAME: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1044#1086#1083#1078#1085#1086#1089#1090#1100
+      HeaderAlignment = taCenter
+      Width = 77
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'APP_NAME'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_OFFICIAL_LIST')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_DEL_G_OFFICIAL (?G_OFFICIAL_)')
+    StoredProcName = 'G_DEL_G_OFFICIAL'
+  end
+end

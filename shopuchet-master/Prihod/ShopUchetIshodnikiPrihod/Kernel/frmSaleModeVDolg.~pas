@@ -1,0 +1,25 @@
+unit frmSaleModeVDolg;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, AppEvnts, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons;
+
+type
+  TSaleModeVDolgForm = class(TDlgForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  SaleModeVDolgForm: TSaleModeVDolgForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

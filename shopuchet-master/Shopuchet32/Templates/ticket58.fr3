@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="42299,7827454051" ReportOptions.Description.Text="" ReportOptions.LastChange="44868,5247768634" ScriptLanguage="PascalScript" ScriptText.Text="procedure MasterData1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if (&#60;frxDBDataset1.&#34;DISCOUNT&#34;&#62; = '0.00' ) then begin&#13;&#10;     ChildDiscount.Visible := false;&#13;&#10;  end else begin&#13;&#10;     ChildDiscount.Visible := true;&#13;&#10;  end;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure Footer1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if (&#60;frxDBDataset1.&#34;SUMM_POLUCH_&#34;&#62; &#60;&#62; '0.00') or (&#60;frxDBDataset1.&#34;SUMM_NONCASH_&#34;&#62; &#60;&#62; '0.00') then begin&#13;&#10;    if &#60;frxDBDataset1.&#34;SUMM_POLUCH_&#34;&#62; = '0.00' then begin&#13;&#10;      ChildCash.Visible := False;&#13;&#10;      ChildSdacha.Visible := False;&#13;&#10;    end;&#13;&#10;&#13;&#10;    if &#60;frxDBDataset1.&#34;SUMM_NONCASH_&#34;&#62; = '0.00' then begin&#13;&#10;      ChildNonCash.Visible := False;&#13;&#10;    end;&#13;&#10;  end;&#13;&#10;&#13;&#10;  if &#60;frxDBDataset1.&#34;SUMM_BONUS_&#34;&#62; = '0.00' then&#13;&#10;    ChildOplataBonusami.Visible := False;&#13;&#10;&#13;&#10;  if &#60;frxDBDataset1.&#34;SUMM_NDS_&#34;&#62; = '0.00' then&#13;&#10;    ChildNDS.Visible := False;&#13;&#10;&#13;&#10;  if ((&#60;frxDBDataset1.&#34;BONUS_STR_&#34;&#62; = '') and (&#60;frxDBDataset1.&#34;BONUSALL_STR_&#34;&#62; = '')) then&#13;&#10;  begin&#13;&#10;    ChildBonus.Visible := False;&#13;&#10;  end;&#13;&#10;&#13;&#10;  if &#60;frxDBDataset1.&#34;DELIVERY_ADDRESS_&#34;&#62; = '' then begin&#13;&#10;    ChildDeliveryAddress.Visible := False;&#13;&#10;  end;&#13;&#10;&#13;&#10;  if Memo9.Text = '' then begin&#13;&#10;    ChildNDS.Visible := False;&#13;&#10;  end;&#13;&#10;end;&#13;&#10;&#13;&#10;begin&#13;&#10;&#13;&#10;end.">
+  <Datasets>
+    <item DataSet="frxDBDataset1" DataSetName="frxDBDataset1"/>
+  </Datasets>
+  <Variables>
+    <item Name=" New Category1"/>
+    <item Name="is_kafe"/>
+  </Variables>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="50" PaperHeight="220" PaperSize="256" LeftMargin="0" RightMargin="0" TopMargin="3" BottomMargin="2" ColumnWidth="0" ColumnPositions.Text="" EndlessHeight="True" HGuides.Text="" VGuides.Text="">
+    <TfrxHeader Name="Header1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="136,06299457" Left="0" Top="18,89765" Width="188,9765" Stretched="True">
+      <TfrxMemoView Name="Memo1" Left="19,330705" Top="0" Width="56,69295" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Courier New" Font.Style="1" HAlign="haCenter" ParentFont="False" Text="Чек №"/>
+      <TfrxMemoView Name="frxDBDataset1NUM_" Left="77,91342" Top="0" Width="79,37013" Height="11,33859" DataField="NUM_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;NUM_&#34;]"/>
+      <TfrxMemoView Name="Memo2" Left="0" Top="15,11812" Width="79,37013" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="Дата и время:"/>
+      <TfrxMemoView Name="frxDBDataset1DATE_" Align="baWidth" Left="79,37013" Top="15,11812" Width="109,60637" Height="11,33859" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[DateDoc] [TimeDoc]">
+        <Formats>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+      <TfrxMemoView Name="frxDBDataset1G_OFFICIAL_FM_" Align="baWidth" Left="0" Top="67,25201" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataField="G_OFFICIAL_FM_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;G_OFFICIAL_FM_&#34;]"/>
+      <TfrxMemoView Name="frxDBDataset1G_CLIENT_NAME_" Align="baWidth" Left="0" Top="80,88188732" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataField="G_CLIENT_NAME_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;G_CLIENT_NAME_&#34;]"/>
+      <TfrxMemoView Name="frxDBDataset1PAYMENT_TYPE_" Align="baWidth" Left="0" Top="108,60637" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataField="PAYMENT_TYPE_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;PAYMENT_TYPE_&#34;]"/>
+      <TfrxLineView Name="Line1" Left="0" Top="123,16543" Width="302,3624" Height="0" Color="0" Frame.Width="1,5" Diagonal="True"/>
+      <TfrxMemoView Name="Memo17" Align="baWidth" Left="0" Top="26,61417079" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataField="FIRM_NAME_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" WordBreak="True" Text="[frxDBDataset1.&#34;FIRM_NAME_&#34;]"/>
+      <TfrxMemoView Name="Memo21" Align="baWidth" Left="0" Top="53,6692889" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;FIRM_ADDRESS_&#34;]"/>
+      <TfrxMemoView Name="Memo3" Align="baWidth" Left="0" Top="40,06298969" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[frxDBDataset1.&#34;FIRM_IDN_&#34;]"/>
+      <TfrxMemoView Name="Memo4" Align="baWidth" Left="0" Top="94,48825" Width="188,9765" Height="13,22834646" StretchMode="smActualHeight" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="Чек №: [NumDoc]"/>
+      <TfrxMemoView Name="Memo12" Align="baWidth" Left="0" Top="125,48031496" Width="188,9765" Height="9,44881646" StretchMode="smActualHeight" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text=""/>
+    </TfrxHeader>
+    <TfrxMasterData Name="MasterData1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="19,78740646" Left="0" Top="177,63791" Width="188,9765" OnBeforePrint="MasterData1OnBeforePrint" Child="ChildDiscount" ColumnWidth="0" ColumnGap="0" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" RowCount="0" Stretched="True">
+      <TfrxMemoView Name="frxDBDataset1NAME" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="9,44881646" StretchMode="smActualHeight" DataField="NAME" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" GapX="1" ParentFont="False" WordBreak="True" Text="[frxDBDataset1.&#34;NAME&#34;]"/>
+      <TfrxMemoView Name="frxDBDataset1SUMM" Align="baRight" Left="-56,69295" Top="10,33859" Width="245,66945" Height="9,44881646" StretchMode="smActualHeight" AutoWidth="True" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" WordWrap="False" Text="[frxDBDataset1.&#34;SUMM_TXT&#34;]"/>
+    </TfrxMasterData>
+    <TfrxChild Name="ChildDiscount" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="219,21274" Width="188,9765" Stretched="True">
+      <TfrxMemoView Name="Memo5" Align="baRight" Left="64,25201" Top="0" Width="124,72449" Height="11,33858268" StretchMode="smActualHeight" AutoWidth="True" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" HideZeros="True" ParentFont="False" WordWrap="False" Text="[frxDBDataset1.&#34;DISCOUNT&#34;]"/>
+      <TfrxMemoView Name="Memo6" Align="baLeft" Left="0" Top="0" Width="60,47248" Height="11,33858268" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="Скидка"/>
+    </TfrxChild>
+    <TfrxFooter Name="Footer1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="10,58268449" Left="0" Top="253,22851" Width="188,9765" OnBeforePrint="Footer1OnBeforePrint" Child="ChildItog" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxLineView Name="Line2" Left="0" Top="3,77953" Width="302,3624" Height="0" Color="0" Frame.Width="1,5" Diagonal="True"/>
+    </TfrxFooter>
+    <TfrxChild Name="ChildItog" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="287,24428" Width="188,9765" Child="ChildNDS" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="Memo7" Align="baLeft" Left="0" Top="0" Width="68,03154" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="Итого:"/>
+      <TfrxMemoView Name="Memo8" Align="baRight" Left="71,81107" Top="0" Width="117,16543" Height="11,33859" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" DisplayFormat.FormatStr="%2.2f" DisplayFormat.Kind="fkNumeric" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" Text="[frxDBDataset1.&#34;SUMM_VSEGO_N_&#34;]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildNDS" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="321,26005" Width="188,9765" Child="ChildCash" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="Memo9" Align="baLeft" Left="0" Top="0" Width="83,14966" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="в том числе НДС:"/>
+      <TfrxMemoView Name="Memo10" Align="baRight" Left="86,92919" Top="0" Width="102,04731" Height="11,33859" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" Text="[frxDBDataset1.&#34;SUMM_NDS_&#34;]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildCash" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="12" Left="0" Top="355,27582" Width="188,9765" Child="ChildNonCash" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="MemoOplataSum" Align="baRight" Left="71,81107" Top="0,66141" Width="117,16543" Height="11,33859" DataField="SUMM_POLUCH_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;SUMM_POLUCH_&#34;]"/>
+      <TfrxMemoView Name="MemoOplata" Align="baLeft" Left="0" Top="0,66141" Width="68,03154" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="Наличными:"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildBonus" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="24,22047" Left="0" Top="491,3389" Width="188,9765" Child="ChildDeliveryAddress" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxMemoView Name="Memo14" Align="baWidth" Left="0" Top="1,54329" Width="188,9765" Height="22,67718" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;BONUS_STR_&#34;]&#13;&#10;[frxDBDataset1.&#34;BONUSALL_STR_&#34;]">
+        <Formats>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+    </TfrxChild>
+    <TfrxChild Name="ChildDeliveryAddress" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="536,69326" Width="188,9765" Child="ChildThanks" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxMemoView Name="MemoAddress" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="11,33859" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" WordBreak="True" VAlign="vaCenter" Text="[frxDBDataset1.&#34;DELIVERY_ADDRESS_&#34;]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildThanks" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="570,70903" Width="188,9765" Child="ChildSlogan" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="MemoThanks" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="Спасибо Вам за покупку!"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildSlogan" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="604,7248" Width="188,9765" Child="ChildIIN" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxMemoView Name="MemoSlogan" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="11,33859" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haCenter" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;SLOGAN_&#34;]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildNonCash" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="389,29159" Width="188,9765" Child="ChildOplataBonusami" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="MemoOplataSumBeznal" Align="baRight" Left="71,81107" Top="0" Width="117,16543" Height="11,33859" DataField="SUMM_NONCASH_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;SUMM_NONCASH_&#34;]"/>
+      <TfrxMemoView Name="MemoOplataBeznal" Align="baLeft" Left="0" Top="0" Width="68,03154" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="Банк. картой:"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildSdacha" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,64564" Left="0" Top="457,32313" Width="188,9765" Child="ChildBonus" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="MemoSdacha" Align="baLeft" Left="0" Top="0,30705" Width="68,03154" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="Сдача:"/>
+      <TfrxMemoView Name="MemoSdachaSum" Align="baRight" Left="71,81107" Top="0,30705" Width="117,16543" Height="11,33859" DataField="SUMM_SDACH_" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;SUMM_SDACH_&#34;]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildOplataBonusami" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="423,30736" Width="188,9765" Child="ChildSdacha" PrintChildIfInvisible="True">
+      <TfrxMemoView Name="Memo15" Align="baRight" Left="71,81107" Top="0" Width="117,16543" Height="11,33859" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;SUMM_BONUS_&#34;]"/>
+      <TfrxMemoView Name="Memo16" Align="baLeft" Left="0" Top="0" Width="68,03154" Height="11,33859" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" VAlign="vaCenter" Text="Бонусами:"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildIIN" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="11,33859" Left="0" Top="638,74057" Width="188,9765" Child="ChildFiscal" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxMemoView Name="Memo11" Align="baLeft" Left="0" Top="0" Width="68,03154" Height="11,33859" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="[IINSTR]"/>
+      <TfrxMemoView Name="Memo13" Align="baRight" Left="71,81107" Top="0" Width="117,16543" Height="11,33859" StretchMode="smActualHeight" DataSet="frxDBDataset1" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-8" Font.Name="Courier New" Font.Style="1" HAlign="haRight" ParentFont="False" Text="[IIN]"/>
+    </TfrxChild>
+    <TfrxChild Name="ChildFiscal" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="52,91342" Left="0" Top="672,75634" Width="188,9765" Child="ChildQR" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxMemoView Name="MemoBonus" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="52,91342" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-7" Font.Name="Courier New" Font.Style="1" ParentFont="False" Text="Фискальный признак: [FNum]&#13;&#10;Время: [DateDoc] [TimeDoc]&#13;&#10;Код ККМ КГД (РНМ): [RHM]&#13;&#10;Kassa &#13;&#10;Оператор фискальных данных: АО &#34;Транстелеком&#34; &#13;&#10;Для проверки чека зайдите на сайт: ofd1.kz">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+    </TfrxChild>
+    <TfrxChild Name="ChildQR" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="75,5906" Left="0" Top="748,34694" Width="188,9765" PrintChildIfInvisible="True" Stretched="True">
+      <TfrxPictureView Name="Picture1" Align="baWidth" Left="0" Top="0" Width="188,9765" Height="75,5906" Center="True" FileLink="[QRLink]" HightQuality="False" Transparent="False" TransparentColor="16777215"/>
+    </TfrxChild>
+  </TfrxReportPage>
+</TfrxReport>

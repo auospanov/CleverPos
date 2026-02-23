@@ -1,0 +1,47 @@
+unit frmDBErrorDlg;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons, ExtCtrls;
+
+type
+  TDBErrorDlgForm = class(TForm)
+    Label1: TLabel;
+    lbErrCode: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    OkButton: TBitBtn;
+    lbErrMsgRus: TMemo;
+    lbErrMsgEng: TMemo;
+    stErrTrace: TMemo;
+    procedure FormKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+  public
+  end;
+
+implementation
+
+{$R *.DFM}
+
+procedure TDBErrorDlgForm.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key=VK_ESCAPE) then
+    Close;
+
+  {Alt нажата?}
+  if not (ssAlt in Shift) then
+    {Нет, выходим}
+    Exit;
+
+  if chr(Key) = 'D' then BEGIN {D - Debug}
+    Height := 384;
+    OkButton.Top := 324;
+    stErrTrace.Visible := True;
+  END;
+end;
+
+end.

@@ -1,0 +1,74 @@
+unit unCryptoSupport;
+
+interface
+
+uses
+  Windows, SysUtils, ole2, comobj, DCPsha1;
+
+type
+  TCLSID = TGUID;
+  POleStr = PWideChar;
+
+{$EXTERNALSYM CoCreateGuid}
+function CoCreateGuid(var guid: TGUID): HResult; stdcall;
+{$EXTERNALSYM StringFromCLSID}
+function StringFromCLSID(const clsid: TCLSID; var psz: POleStr): HResult; stdcall;
+
+function GetGuid: String;
+
+function GetLastSettings: String;
+
+procedure CryptString(var UName, UPassword, RecordID, LastModify :String);
+procedure DeCryptString(var UName, UPassword, RecordID, LastModify :String);
+
+implementation
+
+uses DMMain;
+
+function CoCreateGuid; external 'ole32.dll' name 'CoCreateGuid';
+function StringFromCLSID; external 'ole32.dll' name 'StringFromCLSID';
+
+function GetGuid: String;
+var
+  Reslt  : HResult;
+  GUID   : TGUID;
+  GUIDStr: PWideChar;
+begin
+  Result := '';
+  Reslt := CoCreateGUID(GUID);
+  if Reslt <> S_OK then
+    Exit;
+  Reslt := StringFromCLSID(GUID, GUIDStr);
+  if Reslt <> S_OK then
+    Exit;
+  Result := GUIDStr;
+end;
+
+function GetLastSettings: String;
+var
+  DT: TDateTime;
+begin
+  DT := Now;
+  DateTimeToString(Result, 'yyyymmddhhnnss', DT);
+end;
+
+procedure CryptString(var UName, UPassword, RecordID, LastModify :String);
+begin
+    RecordID := CreateClassID;
+    LastModify := unCryptoSupport.GetLastSettings;
+
+    MainDM.BlowFish.InitStr(RecordID + LastModify, TDCP_sha1); // To replicate the behaviour from DCPcrypt v2 Beta 1 use Cipher.InitStr(KeyStr,TDCP_sha1).
+    Uname := MainDM.BlowFish.EncryptString(Uname);
+    UPassword := MainDM.BlowFish.EncryptString(UPassword);
+    MainDM.BlowFish.Burn;
+end;
+
+procedure DeCryptString(var UName, UPassword, RecordID, LastModify: String);
+begin
+   MainDM.BlowFish.InitStr(RecordID + LastModify, TDCP_sha1); // To replicate the behaviour from DCPcrypt v2 Beta 1 use Cipher.InitStr(KeyStr,TDCP_sha1).
+   UName := MainDM.BlowFish.DecryptString(UName);
+   UPassword := MainDM.BlowFish.DecryptString(UPassword);
+   MainDM.BlowFish.Burn;
+end;
+
+end.

@@ -1,0 +1,63 @@
+program Transmitter;
+
+{$I Transmitter.inc}
+
+{%ToDo 'Transmitter.todo'}
+
+uses
+  Forms,
+  unInitApp in 'unInitApp.pas',
+  unCommonFunc in '..\Shared\unCommonFunc.pas',
+  unDBSupport in '..\Shared\unDBSupport.pas',
+  unDigConversions in '..\Shared\unDigConversions.pas',
+  unToWord in '..\Shared\unToWord.pas',
+  unErrorHandlers in '..\Shared\unErrorHandlers.pas',
+  unErrorParser in '..\Shared\unErrorParser.pas',
+  unFileInfo in '..\Shared\unFileInfo.pas',
+  dmMain in '..\Shared\dmMain.pas' {MainDM: TDataModule},
+  frmMain in 'frmMain.pas' {MainForm},
+  frmSetup in 'frmSetup.pas' {SetupForm},
+  frmAbout in 'frmAbout.pas' {AboutForm},
+  frmSplash in '..\Shared\frmSplash.pas' {SplashForm},
+  frmMDIChild in '..\Shared\frmMDIChild.pas' {MDIChildForm},
+  frmSelectDB in '..\Shared\frmSelectDB.pas' {SelectDBForm},
+  frmSpreadSheetBook in '..\Shared\frmSpreadSheetBook.pas' {SpreadSheetBookForm},
+  frmDBListRO in '..\Shared\frmDBListRO.pas' {DBListROForm},
+  frmDBList in '..\Shared\frmDBList.pas' {DBListForm},
+  frmDBMultiPageListRO in '..\Shared\frmDBMultiPageListRO.pas' {DBMultiPageListROForm},
+  frmDBMultiPageList in '..\Shared\frmDBMultiPageList.pas' {DBMultiPageListForm},
+  frmDBTreeListRO in '..\Shared\frmDBTreeListRO.pas' {DBTreeListROForm},
+  frmDBTreeList in '..\Shared\frmDBTreeList.pas' {DBTreeListForm},
+  frmDBMultiPageTreeListRO in '..\Shared\frmDBMultiPageTreeListRO.pas' {DBMultiPageTreeListROForm},
+  frmDBMultiPageTreeList in '..\Shared\frmDBMultiPageTreeList.pas' {DBMultiPageTreeListForm},
+  frmPopupList in '..\Shared\frmPopupList.pas' {PopupListForm},
+  frmPopupMultipageList in '..\Shared\frmPopupMultipageList.pas' {PopupMultipageListForm},
+  frmPopupTreeList in '..\Shared\frmPopupTreeList.pas' {PopupTreeListForm},
+  frmDlg in '..\Shared\frmDlg.pas' {DlgForm},
+  frmDBDlg in '..\Shared\frmDBDlg.pas' {DBDlgForm},
+  frmDBEdit in '..\Shared\frmDBEdit.pas' {DBEditForm},
+  frmDBTreeEdit in '..\Shared\frmDBTreeEdit.pas' {DBTreeEditForm},
+  frmGuideList in '..\Shared\frmGuideList.pas' {GuideListForm},
+  frmGuide in '..\Shared\frmGuide.pas' {GuideForm},
+  frmLogonDialog in '..\Shared\frmLogonDialog.pas' {LogonDlgForm},
+  frmAppErrorDlg in '..\Shared\frmAppErrorDlg.pas' {AppErrorDlgForm},
+  frmDBErrorDlg in '..\Shared\frmDBErrorDlg.pas' {DBErrorDlgForm},
+  frmInspector in '..\Shared\frmInspector.pas' {InspectorForm},
+  unCryptoSupport in '..\Shared\unCryptoSupport.pas',
+  frmWizardBase in '..\Shared\frmWizardBase.pas' {WizardBaseForm},
+  frmProcessFiles in 'frmProcessFiles.pas' {ProcessFilesForm},
+  frmFoldersSetup in 'frmFoldersSetup.pas' {FoldersSetupForm},
+  unMessageTimer in 'unMessageTimer.pas' {Form1};
+
+{$R *.RES}
+
+begin
+  Application.Initialize;
+  Application.Title := 'Transmitter';
+  InitializeApp;
+
+  Application.CreateForm(TMainDM, MainDM);
+  Application.CreateForm(TMainForm, MainForm);
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

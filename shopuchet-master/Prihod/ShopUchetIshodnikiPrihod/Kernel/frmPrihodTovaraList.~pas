@@ -1,0 +1,423 @@
+unit frmPrihodTovaraList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBMultiPageList, dxExEdtr, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, DB, FIBDataSet, pFIBDataSet,
+  ExtCtrls, Menus, ActnList, dxBar, dxBarExtItems, dxCntner, dxTL,
+  dxDBCtrl, dxDBGrid, cxPC, cxControls, dxDBTLCl, dxGrClms, cxSplitter, frmDBEdit,
+  StdCtrls, unCommonFunc, IniFiles;
+
+type
+  TPrihodTovaraListForm = class(TDBMultiPageListForm)
+    tsPoTovaram: TcxTabSheet;
+    dxDBGrid1: TdxDBGrid;
+    dxDBGridSKLAD: TdxDBGridMaskColumn;
+    dxDBGridDATE_RECEIPT: TdxDBGridDateColumn;
+    dxDBGridG_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridPRODUCT_NAME: TdxDBGridMaskColumn;
+    dxDBGridAMOUNT: TdxDBGridMaskColumn;
+    dxDBGridG_PAYMENT_TYPE: TdxDBGridMaskColumn;
+    dxDBGridCLIENT_NAME: TdxDBGridMaskColumn;
+    dxDBGridOSNOVANIE: TdxDBGridMaskColumn;
+    dxDBGridPAYMENT_NAME: TdxDBGridMaskColumn;
+    dxDBGridNOTE: TdxDBGridColumn;
+    dxDBGridColumn1: TdxDBGridMaskColumn;
+    dxDBGridColumn2: TdxDBGridDateColumn;
+    dxDBGridColumn3: TdxDBGridMaskColumn;
+    dxDBGridCLIENT_NAME1: TdxDBGridMaskColumn;
+    dxDBGridColumn5: TdxDBGridMaskColumn;
+    dxDBGridColumn6: TdxDBGridMaskColumn;
+    dxDBGridColumn7: TdxDBGridMaskColumn;
+    dxDBGridColumn8: TdxDBGridMaskColumn;
+    dxDBGridIS_PAYED_ALL: TdxDBGridCheckColumn;
+    grSklad: TdxDBGrid;
+    dxDBGridMaskColumn4: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn5: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn6: TdxDBGridMaskColumn;
+    splMenu: TcxSplitter;
+    spSkladDetails: TpFIBDataSet;
+    dsSkladDetails: TDataSource;
+    grSkladARTICUL: TdxDBGridMaskColumn;
+    grSkladNOMENCLATUR_NUM: TdxDBGridMaskColumn;
+    grSkladBARCODE: TdxDBGridMaskColumn;
+    aRefreshChild: TAction;
+    Panel1: TPanel;
+    stDetailsCount: TStaticText;
+    dxDBGridDETAILS_STR: TdxDBGridColumn;
+    dxDBGridSUMM_FACT: TdxDBGridColumn;
+    dxDBGridColumn9: TdxDBGridColumn;
+    dxDBGridMaskColumn7: TdxDBGridColumn;
+    dxDBGridPRICE: TdxDBGridColumn;
+    dxDBGridSUMM: TdxDBGridColumn;
+    dxDBGrid1Column14: TdxDBGridColumn;
+    dcBegin: TdxBarDateCombo;
+    dcEnd: TdxBarDateCombo;
+    dxBarSubItem: TdxBarSubItem;
+    aPrintExcel: TAction;
+    dxbrbtn1: TdxBarButton;
+    procedure dxDBGridCustomDrawCell(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; ANode: TdxTreeListNode; AColumn: TdxTreeListColumn;
+      ASelected, AFocused, ANewItemRow: Boolean; var AText: String;
+      var AColor: TColor; AFont: TFont; var AAlignment: TAlignment;
+      var ADone: Boolean);
+    procedure dxDBGridChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure dxPageControl1Change(Sender: TObject);
+    procedure aRefreshChildExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure grSkladMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure dxDBGridMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure dcBeginChange(Sender: TObject);
+    procedure dxDBGridDblClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure aPrintExcelExecute(Sender: TObject);
+  private
+    FIsVozvrat : Integer;
+  public
+    constructor CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+  protected
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ViewData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  PrihodTovaraListForm: TPrihodTovaraListForm;
+
+implementation
+
+uses frmPrihodTovaraN, dmReports;
+
+{$R *.dfm}
+
+constructor TPrihodTovaraListForm.CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String);
+var Caption_ : String;
+    Event : TNotifyEvent;
+begin
+  FIsVozvrat := Prizn;
+
+  IF FIsVozvrat = 0 THEN begin
+    Caption_ := 'Приход товара';
+    Helpc := 17;
+  end else if FIsVozvrat = 1 THEN begin
+    Caption_ := 'Возврат товара';
+    Helpc := 20;
+  end else begin
+    Caption_ := 'Приход товара с другого склада';
+    Helpc := 52;
+  end;
+
+  inherited Create(AOwner, Caption_, ActionName);
+
+  Self.Caption := Caption_;
+
+  //в режиме "Приход с другого склада", нельзя добавлять или удалять или изменять приходы, пусть мутят это на том складе, откуда был приход.
+  IF FIsVozvrat = 3 THEN BEGIN
+    dxDBGridCLIENT_NAME.Caption := 'Склад-поставщик';
+    dxDBGridPAYMENT_NAME.Destroy;
+    dxDBGridColumn6.Destroy;
+    dxDBGridIS_PAYED_ALL.Destroy;
+    dxDBGridG_PAYMENT_TYPE.Destroy;
+    dxDBGridSUMM_FACT.Destroy;
+    aIns.Visible := False;
+    aUpd.Visible := False;
+  END ELSE IF FIsVozvrat = 1 then
+    dxDBGrid.ColumnByName('dxDBGridCLIENT_NAME1').Caption := 'Клиент';
+end;
+
+procedure TPrihodTovaraListForm.ReadList;
+begin
+  spRead.PARAMByName('DATE_BEGIN_').AsDate := dcBegin.Date;
+  spRead.PARAMByName('DATE_END_').AsDate := dcEnd.Date;
+  spRead.PARAMByName('IS_VOZVRAT_').AsInteger := FIsVozvrat;
+
+  inherited;
+  aUpd.Enabled := spRead.RecordCount > 0;
+  aDel.Enabled := spRead.RecordCount > 0;
+  aPrintExcel.Enabled := spRead.RecordCount > 0;
+
+  //if dxPageControl1.ActivePageIndex = 0 then begin
+    aRefreshChild.Execute;
+  {end else begin
+    spSkladDetails.PARAMByName('DATE_BEGIN_').AsDate := dcBegin.Date;
+    spSkladDetails.PARAMByName('DATE_END_').AsDate := dcEnd.Date;
+    spSkladDetails.PARAMByName('sklad_parent_').AsInteger := 0;
+    spSkladDetails.PARAMByName('IS_VOZVRAT_').AsInteger := FIsVozvrat;
+    OpenSp(spSkladDetails, False);
+  end;}
+end;
+
+procedure TPrihodTovaraListForm.InsData;
+begin
+  if (HaveRightInsPrihod = False) and (FIsVozvrat = 0)  then begin
+    MessageDlg('У Вас нет прав на создание накладных"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  PrihodTovaraNForm := TPrihodTovaraNForm.Create(Self);
+  try
+    PrihodTovaraNForm.OpenMode := omInsert;
+    PrihodTovaraNForm.Is_vozvrat := FIsVozvrat;
+    if PrihodTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('sklad', PrihodTovaraNForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then
+      begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    PrihodTovaraNForm.Free;
+  end;
+end;
+
+procedure TPrihodTovaraListForm.InsLikeData;
+begin
+  if (HaveRightInsPrihod = False) and (FIsVozvrat = 0)  then begin
+    MessageDlg('У Вас нет прав на создание накладных"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  PrihodTovaraNForm := TPrihodTovaraNForm.Create(Self);
+  try
+    PrihodTovaraNForm.OpenMode := omInsertLike;
+    PrihodTovaraNForm.Is_vozvrat := FIsVozvrat;
+    if dxPageControl1.ActivePageIndex = 0 then
+      PrihodTovaraNForm.RecId := spRead.FieldByName('sklad').AsInteger
+    else
+      PrihodTovaraNForm.RecId := spSkladDetails.FieldByName('sklad_parent').AsInteger;
+
+    if PrihodTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('sklad', PrihodTovaraNForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then
+      begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    PrihodTovaraNForm.Free;
+  end;
+end;
+
+procedure TPrihodTovaraListForm.UpdData;
+begin
+  if (HaveRightUpdPrihod = False) and (FIsVozvrat = 0)  then begin
+    MessageDlg('У Вас нет прав на редактирование накладных"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  if spRead.FieldByName('is_vozvrat').AsInteger = 2 then begin
+    MessageDlg('Данный возврат является возвратом товара, выданного под реализацию.' + #10#13 +  'Доступно для редактирования в режиме "Выдача под реализацию"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  PrihodTovaraNForm := TPrihodTovaraNForm.Create(Self);
+  try
+    PrihodTovaraNForm.OpenMode := omUpdate;
+    PrihodTovaraNForm.Is_vozvrat := FIsVozvrat;
+    if dxPageControl1.ActivePageIndex = 0 then
+      PrihodTovaraNForm.RecId := spRead.FieldByName('sklad').AsInteger
+    else
+      PrihodTovaraNForm.RecId := spSkladDetails.FieldByName('sklad_parent').AsInteger;
+
+    if PrihodTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('sklad', PrihodTovaraNForm.RecID, []);
+    end;
+  finally
+    PrihodTovaraNForm.Free;
+  end;
+end;
+
+procedure TPrihodTovaraListForm.ViewData;
+begin
+  PrihodTovaraNForm := TPrihodTovaraNForm.Create(Self);
+  try
+    PrihodTovaraNForm.OpenMode := omView;
+    PrihodTovaraNForm.Is_vozvrat := FIsVozvrat;
+    if dxPageControl1.ActivePageIndex = 0 then
+      PrihodTovaraNForm.RecId := spRead.FieldByName('sklad').AsInteger
+    else
+      PrihodTovaraNForm.RecId := spSkladDetails.FieldByName('sklad_parent').AsInteger;
+
+    PrihodTovaraNForm.ShowModal;
+  finally
+    PrihodTovaraNForm.Free;
+  end;
+end;
+
+{procedure TProdazhaTovaraListForm.dcBeginChange(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+end; }
+
+procedure TPrihodTovaraListForm.dxDBGridCustomDrawCell(Sender: TObject;
+  ACanvas: TCanvas; ARect: TRect; ANode: TdxTreeListNode;
+  AColumn: TdxTreeListColumn; ASelected, AFocused, ANewItemRow: Boolean;
+  var AText: String; var AColor: TColor; AFont: TFont;
+  var AAlignment: TAlignment; var ADone: Boolean);
+begin
+  inherited;
+  IF FIsVozvrat <> 3 then begin    // т.к. для списания и перемещения колонка уничтожается, то и нет смысла ее тут анализировать
+    if ANode.Selected then
+    begin
+      // ОПЛАЧЕННЫЕ выделяются цветом
+      if ANode.Values[TdxDBGrid(Sender).ColumnByFieldName('IS_PAYED_ALL').Index] = '0' then
+      begin
+        AColor := clWhite;
+        AFont.Color := clRed;
+      end;
+    end else begin
+      // ОПЛАЧЕННЫЕ выделяются цветом
+      if ANode.Values[TdxDBGrid(Sender).ColumnByFieldName('IS_PAYED_ALL').Index] = '0' then
+      begin
+        AColor := clRed;
+        AFont.Color := clWhite;
+      end;
+    end;
+  END;
+end;
+
+procedure TPrihodTovaraListForm.dxDBGridChangeNode(Sender: TObject;
+  OldNode, Node: TdxTreeListNode);
+begin
+  inherited;
+  aRefreshChild.Execute;
+end;
+
+procedure TPrihodTovaraListForm.dxPageControl1Change(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+  if dxPageControl1.ActivePageIndex = 0 then
+    ActiveListControl := grSklad
+  else
+    ActiveListControl := dxDBGrid1
+end;
+
+procedure TPrihodTovaraListForm.aRefreshChildExecute(Sender: TObject);
+begin
+  IF dxPageControl1.ActivePageIndex = 0 THEN
+    spSkladDetails.PARAMByName('sklad_parent_').AsInteger := spRead.FieldByName('sklad').AsInteger
+  ELSE
+    spSkladDetails.PARAMByName('sklad_parent_').Clear;
+
+  spSkladDetails.PARAMByName('DATE_BEGIN_').AsDate := dcBegin.Date;
+  spSkladDetails.PARAMByName('DATE_END_').AsDate := dcEnd.Date;
+  spSkladDetails.PARAMByName('IS_VOZVRAT_').AsInteger := FIsVozvrat;
+
+  Screen.Cursor := crSQLWait;
+  OpenSp(spSkladDetails, False);
+  Screen.Cursor := crDefault;
+
+  stDetailsCount.Caption := Format('%.5d', [spSkladDetails.RecordCount]);
+end;
+
+procedure TPrihodTovaraListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'sklad';
+  KeyFieldClass := 'sklad_';
+  ActiveListControl := grSklad;
+  inherited;
+end;
+
+procedure TPrihodTovaraListForm.aDelExecute(Sender: TObject);
+begin
+  if (HaveRightDelPrihod = False) and (FIsVozvrat = 0)  then begin
+    MessageDlg('У Вас нет прав на удаление накладных"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  if MessageDlg(Format('Удалить запись товара за  № "%s" ?',
+    [spRead.FieldByName('date_receipt').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+    
+  spDel.ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+  inherited;
+end;
+
+procedure TPrihodTovaraListForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  IF FIsVozvrat = 1 THEN begin
+    tsPoTovaram.Enabled := False;
+    tsPoTovaram.Visible := False;
+  end;
+
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    grSklad.Height := Ini.ReadInteger('PrihodTovaraList', 'SplitterPos', 150);   //у сплиттера не работает положение из ИНИ, приходится выкручиваться высотой cxdvZakazDetails
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TPrihodTovaraListForm.grSkladMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  ActiveListControl := grSklad;
+end;
+
+procedure TPrihodTovaraListForm.dxDBGridMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  ActiveListControl := dxDBGrid;
+end;
+
+procedure TPrihodTovaraListForm.dcBeginChange(Sender: TObject);
+begin
+  Readlist;
+end;
+
+procedure TPrihodTovaraListForm.dxDBGridDblClick(Sender: TObject);
+begin
+  if FIsVozvrat = 3 THEN
+    aView.Execute
+  else
+    aUpd.Execute;
+end;
+
+procedure TPrihodTovaraListForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    Ini.WriteInteger('PrihodTovaraList', 'SplitterPos', grSklad.Height);
+  finally
+    Ini.Free;
+  end
+end;
+
+procedure TPrihodTovaraListForm.aPrintExcelExecute(Sender: TObject);
+begin
+  ReportsDM.PrepareReport(40);
+  ReportsDM.spReport.ParamByName('SKLAD_PARENT_').AsInteger := spRead.FieldByName('sklad').AsInteger;
+  ReportsDM.spReport.ParamByName('CURRENCY_').AsInteger := CurrencyVal;
+  ReportsDM.ShowReport(1, '');
+end;
+
+end.

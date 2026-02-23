@@ -1,0 +1,6 @@
+inherited DBFilterForm: TDBFilterForm
+  Caption = 'DBFilterForm'
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 96
+  TextHeight = 14
+end

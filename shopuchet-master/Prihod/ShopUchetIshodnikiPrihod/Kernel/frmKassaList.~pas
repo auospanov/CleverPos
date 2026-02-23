@@ -1,0 +1,189 @@
+unit frmKassaList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TKassaListForm = class(TDBListForm)
+    dxDBGridKASSA: TdxDBGridMaskColumn;
+    dxDBGridACTION: TdxDBGridMaskColumn;
+    dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn;
+    dxDBGridSUMM: TdxDBGridMaskColumn;
+    dxDBGridACTION_DATE: TdxDBGridDateColumn;
+    dxDBGridSTATYA_NAME: TdxDBGridColumn;
+    dxDBGridNOTE: TdxDBGridColumn;
+    bcNalBeznal: TdxBarCombo;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure bcNalBeznalChange(Sender: TObject);
+    procedure dxDBGridChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+  private
+    FAction : Integer;
+  public
+    property Action : Integer read FAction write FAction;
+    procedure ReadList; override;
+    constructor CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+  end;
+
+var
+  KassaListForm: TKassaListForm;
+
+implementation
+
+uses frmRashodPrihod, frmKassa, frmMain, unCommonFunc;
+
+{$R *.dfm}
+
+constructor TKassaListForm.CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String);
+var Caption_ : String;
+begin
+  FAction := Prizn;
+  if FAction = 1 then begin
+    Caption_ := 'Расход';
+    HelpC := 13;
+  end else begin
+    Caption_ := 'Приход';
+    HelpC := 12;
+  end;
+
+  inherited Create(AOwner, Caption_, ActionName);
+
+  Self.Caption := Caption_;
+end;
+
+procedure TKassaListForm.ReadList;
+begin
+  spRead.ParamByName('action_').AsInteger := FAction;
+  spRead.ParamByName('g_payment_type_').AsInteger := bcNalBeznal.ItemIndex + 1;
+
+  inherited;
+
+  if (spRead.FieldByName('sklad').AsInteger = 0) and (spRead.FieldByName('zakaz').AsInteger = 0) then begin
+    aView.Enabled := spRead.RecordCount > 0;
+    aInsLike.Enabled := spRead.RecordCount > 0;
+    aDel.Enabled := spRead.RecordCount > 0;
+    aUpd.Enabled := spRead.RecordCount > 0;
+  end else begin
+    aView.Enabled := False;
+    aInsLike.Enabled := False;
+    aDel.Enabled := False;
+    aUpd.Enabled := False;
+  end;
+end;
+
+procedure TKassaListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'kassa';
+  KeyFieldClass := 'kassa_';
+end;
+
+procedure TKassaListForm.ViewData;
+begin
+  ClassForm := TKassaForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    (ClassForm as TKassaForm).ActionStat := FAction;
+    (ClassForm as TKassaForm).GPaymentType := bcNalBeznal.ItemIndex + 1;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TKassaListForm.InsData;
+begin
+  ClassForm := TKassaForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TKassaForm).ActionStat := FAction;
+    (ClassForm as TKassaForm).GPaymentType := bcNalBeznal.ItemIndex + 1;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TKassaListForm.InsLikeData;
+begin
+  ClassForm := TKassaForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TKassaForm).ActionStat := FAction;
+    (ClassForm as TKassaForm).GPaymentType := bcNalBeznal.ItemIndex + 1;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TKassaListForm.UpdData;
+begin
+  ClassForm := TKassaForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TKassaForm).ActionStat := FAction;
+    (ClassForm as TKassaForm).GPaymentType := bcNalBeznal.ItemIndex + 1;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TKassaListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить приход/расход "%s" ?',
+    [spRead.FieldByName('statya_name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  spDel.ParamByName('g_payment_type_').AsInteger := bcNalBeznal.ItemIndex + 1;
+  INHERITED;
+  {spDel.SetVariable('kassa_', spRead.FieldByName('kassa').AsInteger);
+  spDel.SetVariable('do_commit_', 1);
+  if ExecSP(spDel) then
+    Readlist;}
+end;
+
+procedure TKassaListForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  dxBarButtonView.Caption := 'Просмотреть';
+end;
+
+procedure TKassaListForm.bcNalBeznalChange(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+end;
+
+procedure TKassaListForm.dxDBGridChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  inherited;
+  if (spRead.FieldByName('sklad').AsInteger = 0) and (spRead.FieldByName('zakaz').AsInteger = 0) then begin
+    aView.Enabled := spRead.RecordCount > 0;
+    aInsLike.Enabled := spRead.RecordCount > 0;
+    aDel.Enabled := spRead.RecordCount > 0;
+    aUpd.Enabled := spRead.RecordCount > 0;
+  end else begin
+    aView.Enabled := False;
+    aInsLike.Enabled := False;
+    aDel.Enabled := False;
+    aUpd.Enabled := False;
+  end;
+end;
+
+end.

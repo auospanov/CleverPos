@@ -1,0 +1,189 @@
+unit PriceListUnSostav;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, AppEvnts, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons, FIBDatabase, pFIBDatabase, DB, FIBDataSet, pFIBDataSet,
+  dxEditor, dxEdLib, frmMyCurrencyFrame, dxDBGrid, dxTL, dxDBCtrl, dxDBTL,
+  cxControls, cxSplitter, unCommonFunc;
+
+type
+  TPriceListUnSostavForm = class(TDlgForm)
+    cxspltrMenu: TcxSplitter;
+    tlCategory: TdxDBTreeList;
+    tlCategoryG_PRODUCT: TdxDBTreeListMaskColumn;
+    tlCategoryG_PRODUCT_PAR: TdxDBTreeListMaskColumn;
+    tlCategoryNAME: TdxDBTreeListMaskColumn;
+    grProduct: TdxDBGrid;
+    dxDBGridMaskColumn1: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn2: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn6: TdxDBGridMaskColumn;
+    grProductPRICE: TdxDBGridColumn;
+    pn1: TPanel;
+    MyCurrencyFrameForm: TMyCurrencyFrameForm;
+    lb1: TLabel;
+    shp1: TShape;
+    shp2: TShape;
+    lb2: TLabel;
+    shp3: TShape;
+    shp4: TShape;
+    edPrice: TdxCurrencyEdit;
+    spReadCategory: TpFIBDataSet;
+    dsReadCategory: TDataSource;
+    dsRead: TDataSource;
+    tranRead: TpFIBTransaction;
+    Panel4: TPanel;
+    Label10: TLabel;
+    sbClear: TSpeedButton;
+    edBarcode: TEdit;
+    tmrChangeEd: TTimer;
+    spRead: TpFIBDataSet;
+    lb3: TLabel;
+    shp5: TShape;
+    shp6: TShape;
+    edPriceVol: TdxCurrencyEdit;
+    btnHelp: TBitBtn;
+    procedure FormShow(Sender: TObject);
+    procedure tmrChangeEdTimer(Sender: TObject);
+    procedure edBarcodeChange(Sender: TObject);
+    procedure tlCategoryChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure sbClearClick(Sender: TObject);
+    procedure grProductChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure grProductDblClick(Sender: TObject);
+    procedure btnHelpClick(Sender: TObject);
+  private
+    FId : Integer;
+    FTyp : Integer;
+    FExceptId : Integer;
+    FAmount : String;
+    procedure RefreshPrice;
+  public
+    property Id : Integer read FId write FId;
+    property ExceptId : Integer read FExceptId write FExceptId;
+    property Amount : String read FAmount write FAmount;
+    property Typ : Integer read FTyp write FTyp;   //1 - составной товар, 2 - продукт, 3 - продукт из продуктов
+  end;
+
+var
+  PriceListUnSostavForm: TPriceListUnSostavForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TPriceListUnSostavForm.FormShow(Sender: TObject);
+var sql_str : string;
+begin
+  inherited;
+
+  OpenSp(spReadCategory, False);
+  spRead.ParamByName('G_PRODUCT_PAR_').AsInteger := spReadCategory.fieldByName('g_product').AsInteger;
+  spRead.ParamByName('EXCEPT_PROD_').AsInteger := FExceptId;
+
+  if FTyp in [1,2] then
+    spRead.SQLs.SelectSQL.Text := spRead.SQLs.SelectSQL.Text + ' AND T.is_kit = 0'  // составные товары и полуфабрикаты могут состо€ть только из простых товаров, только они могут входить в состав набора
+  else if FTyp = 3 then
+    spRead.SQLs.SelectSQL.Text := spRead.SQLs.SelectSQL.Text + ' AND T.is_kit in (0, 2)'; // составной продукт (например пирожок) может состо€ть из полуфабрикатов и простых товаров
+  spRead.SQLs.SelectSQL.Text := spRead.SQLs.SelectSQL.Text + ' order by 4';
+
+  OpenSp(spRead, False);
+  if FId > 0 then begin
+    spRead.Locate('g_product', FId, []);
+    if Assigned(grProduct.FocusedNode) then
+      grProduct.FocusedNode.Selected := True;
+  end;
+  RefreshPrice;
+
+  if FAmount <> '' then
+    MyCurrencyFrameForm.edAmount.Text := FAmount;
+end;
+
+procedure TPriceListUnSostavForm.tmrChangeEdTimer(Sender: TObject);
+var s : string;
+begin
+  tmrChangeEd.Enabled := False;
+  if (edBarcode.text<>'') then begin
+    with spRead do begin
+      s := '(NAME CONTAINING ''' + edBarcode.text + ''') OR (ARTICUL CONTAINING ''' + edBarcode.text + ''') OR (BARCODE CONTAINING '''+ edBarcode.text + ''')';
+      
+      if UseTovarPlace = 1 then
+        s := s + '(PLACE CONTAINING ''' + edBarcode.text + ''')';
+
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Conditions.AddCondition('by_customer', S, True);
+      ApplyConditions;
+      Open;
+    end;
+    if Assigned(grProduct.FocusedNode) then
+      grProduct.FocusedNode.Selected := True;
+    RefreshPrice;
+  END;
+end;
+
+procedure TPriceListUnSostavForm.edBarcodeChange(Sender: TObject);
+begin
+  tmrChangeEd.Enabled := False;
+  // здесь буду перезапускать таймер, а на его событие - уже включать фильтр
+  if edBarcode.Text <> '' then
+    tmrChangeEd.Enabled := True
+  else BEGIN
+    with spRead do begin
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Open;
+    end;
+  END;
+end;
+
+procedure TPriceListUnSostavForm.tlCategoryChangeNode(Sender: TObject;
+  OldNode, Node: TdxTreeListNode);
+begin
+  Screen.Cursor := crHourGlass;
+  spRead.ParamByName('g_product_par_').AsInteger := spReadCategory.FieldByName('g_product').AsInteger;
+  OpenSp(spRead, False);
+
+  if Assigned(grProduct.FocusedNode) then
+    grProduct.FocusedNode.Selected := True;
+  RefreshPrice;
+  Screen.Cursor := crDefault;
+end;
+
+procedure TPriceListUnSostavForm.sbClearClick(Sender: TObject);
+begin
+  edBarcode.Clear;
+  if Assigned(grProduct.FocusedNode) then
+    grProduct.FocusedNode.Selected := True;
+  RefreshPrice;
+end;
+
+procedure TPriceListUnSostavForm.grProductChangeNode(Sender: TObject;
+  OldNode, Node: TdxTreeListNode);
+begin
+  RefreshPrice;
+end;
+
+procedure TPriceListUnSostavForm.RefreshPrice;
+begin
+  MyCurrencyFrameForm.edAmount.Text := '1';
+  edPrice.Value := spRead.fieldByName('price').AsFloat;
+  edPriceVol.Value := spRead.fieldByName('volume_price').AsFloat;
+end;
+
+procedure TPriceListUnSostavForm.grProductDblClick(Sender: TObject);
+begin
+  btnOk.Click;
+end;
+
+procedure TPriceListUnSostavForm.btnHelpClick(Sender: TObject);
+begin
+  Application.HelpContext(69);
+end;
+
+end.

@@ -1,0 +1,128 @@
+inherited RashodPrihodForm: TRashodPrihodForm
+  Left = 559
+  Top = 219
+  Caption = #1057#1090#1072#1090#1100#1103' '#1088#1072#1089#1093#1086#1076#1086#1074'/'#1087#1088#1080#1093#1086#1076#1086#1074
+  ClientHeight = 117
+  ClientWidth = 589
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 421
+    Top = 85
+  end
+  inherited btnCancel: TBitBtn
+    Left = 502
+    Top = 85
+  end
+  inherited Panel1: TPanel
+    Width = 569
+    Height = 70
+    object Shape25: TShape
+      Left = 8
+      Top = 9
+      Width = 177
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 8
+      Top = 34
+      Width = 176
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 40
+      Width = 83
+      Height = 14
+      Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 183
+      Top = 34
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label13: TLabel
+      Left = 18
+      Top = 15
+      Width = 59
+      Height = 14
+      Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape26: TShape
+      Left = 183
+      Top = 9
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object edName: TdxEdit
+      Left = 192
+      Top = 36
+      Width = 369
+      TabOrder = 0
+      MaxLength = 500
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object cbAction: TComboBox
+      Left = 192
+      Top = 11
+      Width = 369
+      Height = 22
+      ItemHeight = 14
+      ItemIndex = 0
+      TabOrder = 1
+      Text = #1055#1088#1080#1093#1086#1076
+      OnChange = cbActionChange
+      Items.Strings = (
+        #1055#1088#1080#1093#1086#1076
+        #1056#1072#1089#1093#1086#1076)
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 85
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_GET_G_PRIHOD_RASHOD (?G_PRIHOD_RASHOD_)')
+    StoredProcName = 'G_GET_G_PRIHOD_RASHOD'
+    Left = 8
+    Top = 88
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_INS_G_PRIHOD_RASHOD (?ACTION_, ?NAME_)')
+    StoredProcName = 'G_INS_G_PRIHOD_RASHOD'
+    Left = 40
+    Top = 88
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_UPD_G_PRIHOD_RASHOD (?G_PRIHOD_RASHOD_, ?ACT' +
+        'ION_, ?NAME_)')
+    StoredProcName = 'G_UPD_G_PRIHOD_RASHOD'
+    Left = 72
+    Top = 88
+  end
+end

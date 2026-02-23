@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicPOS.DTOs\LogicPOS.DTOs.csproj" />
+    <ProjectReference Include="..\LogicPOS.Globalization\LogicPOS.Globalization.csproj" />
+    <ProjectReference Include="..\LogicPOS.Settings\LogicPOS.Settings.csproj" />
+  </ItemGroup>
+
+</Project>

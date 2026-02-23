@@ -1,0 +1,58 @@
+inherited DBEditForm: TDBEditForm
+  Left = 293
+  Top = 53
+  Caption = 'DBEditForm'
+  ClientHeight = 444
+  ClientWidth = 569
+  OnCloseQuery = FormCloseQuery
+  DesignSize = (
+    569
+    444)
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 405
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 112
+    Top = 408
+  end
+  object spGetData: TpFIBStoredProc
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 144
+    Top = 408
+  end
+  object tranWrite: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 176
+    Top = 408
+  end
+  object spIns: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    Left = 208
+    Top = 408
+  end
+  object spUpd: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    Left = 240
+    Top = 408
+  end
+end

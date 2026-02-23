@@ -1,0 +1,106 @@
+unit frmBank;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons,
+  DB, FIBDataSet, pFIBDataSet, dxEditor, dxDBEdtr, dxDBELib, dxEdLib;
+
+type
+  TBankForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    edBik: TdxEdit;
+    Shape3: TShape;
+    Shape5: TShape;
+    Label3: TLabel;
+    Shape6: TShape;
+    meName: TMemo;
+    meShortName: TMemo;
+    procedure edBikKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
+    procedure meShortNameClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  BankForm: TBankForm;
+
+implementation
+
+{$R *.dfm}
+
+function TBankForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edBIK.Text) = EmptyStr then begin
+    ErrControl := edBIK;
+    MessageDlg('БИК банка не введен', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(meName.Text) = EmptyStr then begin
+    ErrControl := meName;
+    MessageDlg('Наименование банка не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TBankForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      edBik.Text       := ParamByName('BIK_').AsString;
+      meName.Text      := ParamByName('NAME_').AsString;
+      meShortName.Text := ParamByName('SHORT_NAME_').AsString;
+    end;
+  end;
+end;
+
+procedure TBankForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    ParamByName('BIK_').AsString  := edBik.Text;
+    ParamByName('NAME_').AsString := meName.Text;
+    ParamByName('SHORT_NAME_').AsString := meShortName.Text;
+  end;
+end;
+
+procedure TBankForm.edBikKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  If not (Key in ['A'..'Z', 'a'..'z', '0'..'9', #8]) Then
+    Key := #0;
+end;
+
+procedure TBankForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_bank_';
+end;
+
+procedure TBankForm.meShortNameClick(Sender: TObject);
+begin
+  inherited;
+  meShortName.Text := meName.Text;
+end;
+
+end.

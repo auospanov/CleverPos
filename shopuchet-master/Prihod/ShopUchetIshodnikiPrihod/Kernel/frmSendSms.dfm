@@ -1,0 +1,1123 @@
+inherited SendSmsForm: TSendSmsForm
+  BorderStyle = bsSizeable
+  Caption = #1056#1072#1089#1089#1099#1083#1082#1072' SMS'
+  ClientHeight = 515
+  ClientWidth = 737
+  Constraints.MinHeight = 543
+  Constraints.MinWidth = 745
+  OnClose = FormClose
+  OnCreate = FormCreate
+  ExplicitWidth = 745
+  ExplicitHeight = 543
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited Panel1: TPanel
+    Width = 721
+    Height = 473
+    ExplicitWidth = 721
+    ExplicitHeight = 473
+    object pn1: TPanel
+      Left = 2
+      Top = 2
+      Width = 717
+      Height = 47
+      Align = alTop
+      ParentColor = True
+      TabOrder = 0
+      DesignSize = (
+        717
+        47)
+      object lbBalance: TLabel
+        Left = 143
+        Top = 8
+        Width = 62
+        Height = 23
+        Caption = #1041#1072#1083#1072#1085#1089
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clRed
+        Font.Height = -19
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object lb42: TLabel
+        Left = 347
+        Top = 7
+        Width = 362
+        Height = 28
+        Anchors = [akTop, akRight]
+        Caption = 
+          #1042#1040#1046#1053#1054'! '#1044#1083#1103' '#1090#1086#1075#1086', '#1095#1090#1086#1073#1099' '#1042#1072#1096#1080' '#1088#1077#1082#1083#1072#1084#1085#1099#1077' SMS '#1085#1077' '#1087#1086#1087#1072#1076#1072#1083#1080' '#1074' '#1089#1087#1072#1084'-'#1092#1080#1083 +
+          #1100#1090#1088' '#1085#1077#1086#1073#1093#1086#1076#1080#1084#1086' '#1079#1072#1082#1083#1102#1095#1080#1090#1100' '#1076#1086#1075#1086#1074#1086#1088' '#1089
+        WordWrap = True
+      end
+      object lb44: TLabel
+        Left = 624
+        Top = 21
+        Width = 56
+        Height = 14
+        Anchors = [akTop, akRight]
+        Caption = 'SMSC.RU'
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlue
+        Font.Height = -12
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+        OnClick = lb44Click
+        OnMouseMove = lb44MouseMove
+        OnMouseLeave = lb44MouseLeave
+      end
+      object btnGetBalance: TcxButton
+        Left = 10
+        Top = 8
+        Width = 113
+        Height = 25
+        Action = aGetBalance
+        LookAndFeel.Kind = lfFlat
+        TabOrder = 0
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+    end
+    object pcPageControl: TcxPageControl
+      Left = 2
+      Top = 49
+      Width = 717
+      Height = 422
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Align = alClient
+      TabOrder = 1
+      Properties.ActivePage = tsClients
+      Properties.CustomButtons.Buttons = <>
+      Properties.Rotate = True
+      Properties.Style = 5
+      Properties.TabPosition = tpLeft
+      Properties.TabWidth = 80
+      LookAndFeel.Kind = lfUltraFlat
+      ClientRectBottom = 422
+      ClientRectLeft = 86
+      ClientRectRight = 717
+      ClientRectTop = 0
+      object ts1: TcxTabSheet
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Caption = #1058#1077#1082#1089#1090' SMS'
+        object gr1: TcxGrid
+          Left = 0
+          Top = 0
+          Width = 631
+          Height = 422
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Align = alClient
+          TabOrder = 1
+          Visible = False
+          LookAndFeel.Kind = lfFlat
+          object tvMain: TcxGridDBTableView
+            Navigator.Buttons.CustomButtons = <>
+            DataController.Summary.DefaultGroupSummaryItems = <>
+            DataController.Summary.FooterSummaryItems = <>
+            DataController.Summary.SummaryGroups = <>
+            OptionsBehavior.IncSearch = True
+            OptionsSelection.CellSelect = False
+            Styles.IncSearch = MainDM.stIncSearchStyle
+          end
+          object lvMain: TcxGridLevel
+            GridView = tvMain
+          end
+        end
+        object pn2: TPanel
+          Left = 0
+          Top = 0
+          Width = 631
+          Height = 422
+          Align = alClient
+          Color = clWhite
+          ParentBackground = False
+          TabOrder = 0
+          object shp1: TShape
+            Left = 15
+            Top = 137
+            Width = 121
+            Height = 26
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object shp3: TShape
+            Left = 15
+            Top = 112
+            Width = 121
+            Height = 26
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object shpNote: TShape
+            Left = 15
+            Top = 53
+            Width = 121
+            Height = 60
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object lbNote: TLabel
+            Left = 23
+            Top = 76
+            Width = 101
+            Height = 14
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Caption = #1058#1077#1082#1089#1090' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object shpNote1: TShape
+            Left = 135
+            Top = 53
+            Width = 448
+            Height = 60
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Pen.Color = clBtnShadow
+          end
+          object lbl2: TLabel
+            Left = 24
+            Top = 119
+            Width = 55
+            Height = 14
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Caption = #1057#1080#1084#1074#1086#1083#1086#1074
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object shp4: TShape
+            Left = 135
+            Top = 112
+            Width = 127
+            Height = 26
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Pen.Color = clBtnShadow
+          end
+          object lb1: TLabel
+            Left = 24
+            Top = 144
+            Width = 40
+            Height = 14
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Caption = #1063#1072#1089#1090#1077#1081
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object shp2: TShape
+            Left = 135
+            Top = 137
+            Width = 127
+            Height = 26
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Pen.Color = clBtnShadow
+          end
+          object lbDesc: TLabel
+            Left = 16
+            Top = 203
+            Width = 585
+            Height = 210
+            Caption = 
+              #1044#1083#1080#1085#1072' '#1086#1076#1085#1086#1075#1086' SMS - 70 '#1089#1080#1084#1074#1086#1083#1086#1074' '#1085#1072' '#1082#1080#1088#1080#1083#1083#1080#1094#1077', '#1080#1083#1080' 160 '#1089#1080#1084#1074#1086#1083#1086#1074' '#1085#1072 +
+              ' '#1083#1072#1090#1080#1085#1080#1094#1077'.'#13#10#13#10#1041#1086#1083#1077#1077' '#1076#1083#1080#1085#1085#1099#1077' '#1089#1086#1086#1073#1097#1077#1085#1080#1103' '#1088#1072#1079#1073#1080#1074#1072#1102#1090#1089#1103' '#1085#1072' '#1085#1077#1089#1082#1086#1083#1100#1082#1086' '#1095 +
+              #1072#1089#1090#1077#1081', '#1082#1072#1078#1076#1072#1103' '#1095#1072#1089#1090#1100' '#1089#1095#1080#1090#1072#1077#1090#1089#1103' '#1082#1072#1082' '#1086#1090#1076#1077#1083#1100#1085#1086#1077' SMS. '#1044#1083#1080#1085#1072' '#1086#1076#1085#1086#1081' '#1095#1072#1089 +
+              #1090#1080' SMS '#1085#1072' '#1083#1072#1090#1080#1085#1080#1094#1077' '#1089#1084#1086#1078#1077#1090' '#1089#1086#1076#1077#1088#1078#1072#1090#1100' '#1076#1086' 153 '#1089#1080#1084#1074#1086#1083#1086#1074', '#1072' 1 SMS '#1085#1072' ' +
+              #1082#1080#1088#1080#1083#1083#1080#1094#1077' '#8212' '#1076#1086' 67 '#1089#1080#1084#1074#1086#1083#1086#1074'.'#13#10#13#10#1053#1077' '#1079#1072#1073#1099#1074#1072#1081#1090#1077', '#1095#1090#1086' '#1087#1088#1086#1073#1077#1083#1099' '#1091#1095#1080#1090#1099#1074#1072 +
+              #1102#1090#1089#1103' '#1085#1072#1088#1072#1074#1085#1077' '#1089' '#1076#1088#1091#1075#1080#1084#1080' '#1089#1080#1084#1074#1086#1083#1072#1084#1080'!'#13#10#13#10#1055#1088#1080#1084#1077#1088' '#1082#1080#1088#1080#1083#1083#1080#1094#1099':'#13#10'"'#1042#1072#1089#1103' '#1055#1091 +
+              #1087#1082#1080#1085', '#1089#1072#1083#1086#1085' "'#1048#1084#1087#1077#1088#1072#1090#1088#1080#1094#1072'" '#1076#1072#1088#1080#1090' '#1042#1072#1084' '#1089#1082#1080#1076#1082#1091' 15% '#1085#1072' '#1074#1089#1077' '#1087#1088#1086#1094#1077#1076#1091#1088#1099' ' +
+              #1084#1072#1089#1089#1072#1078#1085#1086#1075#1086' '#1082#1072#1073#1080#1085#1077#1090#1072'".'#13#10#1048#1090#1086#1075#1086' 90 '#1089#1080#1084#1074#1086#1083#1086#1074', '#1090#1077#1082#1089#1090' '#1073#1091#1076#1077#1090' '#1088#1072#1079#1073#1080#1090' '#1085#1072' ' +
+              '2 '#1095#1072#1089#1090#1080', '#1073#1091#1076#1077#1090' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1086' 2 SMS.'#13#10#13#10#1055#1088#1080#1084#1077#1088' '#1083#1072#1090#1080#1085#1080#1094#1099':'#13#10'"Vasya Pup' +
+              'kin, salon "Imperatrica" darit Vam skidku 15% na vse procedury m' +
+              'assazhnogo kabineta".'#13#10#1048#1090#1086#1075#1086' 92 '#1089#1080#1084#1074#1086#1083#1072', '#1086#1076#1085#1072' '#1095#1072#1089#1090#1100', '#1073#1091#1076#1077#1090' '#1086#1090#1087#1088#1072 +
+              #1074#1083#1077#1085#1086' 1 SMS.'
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            WordWrap = True
+          end
+          object mText: TcxMemo
+            Left = 141
+            Top = 56
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Lines.Strings = (
+              ', '#1089#1072#1083#1086#1085' "Beauty" '#1086#1073#1098#1103#1074#1083#1103#1077#1090' '#1086' '#1089#1082#1080#1076#1082#1077' 15% '#1085#1072' '#1074#1089#1077'!')
+            ParentFont = False
+            Properties.MaxLength = 500
+            Properties.OnChange = mTextPropertiesChange
+            Style.Font.Charset = RUSSIAN_CHARSET
+            Style.Font.Color = clBlack
+            Style.Font.Height = -12
+            Style.Font.Name = 'Tahoma'
+            Style.Font.Style = []
+            Style.StyleController = dxEditStyleController
+            Style.IsFontAssigned = True
+            TabOrder = 1
+            Height = 54
+            Width = 438
+          end
+          object cbTranslit: TcxCheckBox
+            Left = 10
+            Top = 173
+            Caption = 
+              #1058#1088#1072#1085#1089#1083#1080#1090#1077#1088#1072#1094#1080#1103' ('#1087#1077#1088#1077#1074#1077#1089#1090#1080' '#1085#1072' '#1083#1072#1090#1080#1085#1080#1094#1091', '#1090#1072#1082#1080#1084' '#1086#1073#1088#1072#1079#1086#1084' '#1073#1086#1083#1100#1096#1077' '#1089#1080#1084#1074 +
+              #1086#1083#1086#1074' '#1074#1083#1077#1079#1077#1090' '#1074' '#1086#1076#1085#1086' SMS) '
+            Properties.MultiLine = True
+            Properties.OnChange = cbTranslitPropertiesChange
+            Style.StyleController = dxEditStyleController
+            Style.TextColor = clBlack
+            TabOrder = 4
+            Width = 575
+          end
+          object edSymbols: TcxCurrencyEdit
+            Left = 141
+            Top = 114
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            EditValue = 0c
+            Enabled = False
+            ParentFont = False
+            ParentShowHint = False
+            Properties.Alignment.Horz = taRightJustify
+            Properties.DecimalPlaces = 0
+            Properties.DisplayFormat = '0'
+            Properties.UseLeftAlignmentOnEditing = False
+            ShowHint = True
+            Style.Font.Charset = RUSSIAN_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -12
+            Style.Font.Name = 'Tahoma'
+            Style.Font.Style = []
+            Style.StyleController = dxEditStyleController
+            Style.IsFontAssigned = True
+            StyleDisabled.TextColor = clBlack
+            TabOrder = 2
+            Width = 117
+          end
+          object edParts: TcxCurrencyEdit
+            Left = 141
+            Top = 139
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            EditValue = 0c
+            Enabled = False
+            ParentFont = False
+            ParentShowHint = False
+            Properties.Alignment.Horz = taRightJustify
+            Properties.DecimalPlaces = 0
+            Properties.DisplayFormat = '0'
+            Properties.UseLeftAlignmentOnEditing = False
+            ShowHint = True
+            Style.Font.Charset = RUSSIAN_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -12
+            Style.Font.Name = 'Tahoma'
+            Style.Font.Style = []
+            Style.StyleController = dxEditStyleController
+            Style.IsFontAssigned = True
+            StyleDisabled.TextColor = clBlack
+            TabOrder = 3
+            Width = 117
+          end
+          object btnInsField: TcxButton
+            Left = 15
+            Top = 18
+            Width = 170
+            Height = 25
+            Action = aInsField
+            LookAndFeel.Kind = lfFlat
+            TabOrder = 0
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+        end
+      end
+      object tsClients: TcxTabSheet
+        Caption = #1056#1072#1089#1089#1099#1083#1082#1072
+        ImageIndex = 1
+        object pn3: TPanel
+          Left = 0
+          Top = 0
+          Width = 631
+          Height = 50
+          Align = alTop
+          BevelInner = bvRaised
+          BevelOuter = bvNone
+          TabOrder = 0
+          object btnInsLike: TBitBtn
+            Left = 13
+            Top = 8
+            Width = 164
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aIns
+            Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1086#1083#1091#1095#1072#1090#1077#1083#1103
+            TabOrder = 0
+            WordWrap = True
+          end
+          object btnDelChd: TBitBtn
+            Left = 177
+            Top = 8
+            Width = 100
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aDel
+            Caption = #1059#1076#1072#1083#1080#1090#1100
+            Glyph.Data = {
+              36080000424D3608000000000000360000002800000020000000100000000100
+              20000000000000080000120B0000120B00000000000000000000FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00BF988300AF745400A8653F00A9664100AE74
+              5400BE988300FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00A1A1A1008181810073737300757575008181
+              8100A0A0A000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00C1998300AE673E00C5895700D6A36D00DDAF7500DDAF7400D6A4
+              6B00C5895600AE6B4100C8AD9E00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00A2A2A200767676008E8E8E00A1A1A100A9A9A900A8A8A800A0A0
+              A0008D8D8D0077777700B3B3B300FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00BA886C00BC7C4D00DDAE7700DEB07600DEAF7500DEAF7500DEB07400DDAF
+              7500DEAF7400DBAB7200BD7E4E00B9886E00FF00FF00FF00FF00FF00FF00FF00
+              FF009393930084848400AAAAAA00AAAAAA00A9A9A900A9A9A900A9A9A900A9A9
+              A900A9A9A900A6A6A6008585850093939300FF00FF00FF00FF00FF00FF00C6A0
+              8A00BE805300E0B37C00DFB07600DEB17700DFB27900E0B37900E0B27A00E0B2
+              7900DFB27900DFB27700DEB07700C0825300C29F8A00FF00FF00FF00FF00A8A8
+              A80088888800AEAEAE00AAAAAA00AAAAAA00ACACAC00ACACAC00ADADAD00ACAC
+              AC00ACACAC00ABABAB00AAAAAA0089898900A6A6A600FF00FF00FF00FF00B575
+              4C00DFB27D00DFB27A00E0B37B00E0B57D00E1B67E00E2B67F00E2B77F00E2B7
+              7F00E2B67E00E0B47C00E0B47B00DEB07900B7774E00FF00FF00FF00FF008080
+              8000AEAEAE00ACACAC00ADADAD00AEAEAE00AFAFAF00B0B0B000B0B0B000B0B0
+              B000B0B0B000AEAEAE00ADADAD00ABABAB0082828200FF00FF00CBA69100CD9B
+              6F00E2B78000E5BD8900E7C29100E8C39300E8C49400E8C59400E8C49500E8C4
+              9500E8C49400E8C39300E5BF8C00E1B77F00D09C6E00C8A89500AEAEAE009E9E
+              9E00B1B1B100B7B7B700BCBCBC00BDBDBD00BEBEBE00BEBEBE00BEBEBE00BEBE
+              BE00BEBEBE00BDBDBD00B8B8B800B0B0B0009F9F9F00AEAEAE00C08B6A00DCB3
+              8300E3B78100BA865900A9704300AB724500AC734600B0794A00AB724500AD75
+              4700B0784A00B17A4B00C2916200E4B98300DEB17E00BD8A6A0095959500AFAF
+              AF00B2B2B200898989007676760078787800797979007D7D7D00787878007A7A
+              7A007D7D7D007E7E7E0092929200B3B3B300AEAEAE0093939300BD815900E3BF
+              8F00E4BB8400A56B3F00F5EEE900FAF6F300FAF7F300FBF7F400FBF7F500FAF7
+              F400FAF7F300FAF6F200AB724500E5BD8700E5BE8B00BC825D008B8B8B00B9B9
+              B900B4B4B40072727200EFEFEF00F6F6F600F6F6F600F7F7F700F8F8F800F7F7
+              F700F6F6F600F6F6F60078787800B6B6B600B8B8B8008C8C8C00C1896200E9C9
+              A000E5BE8900A56B3F00E6D9D200E7DBD400E9DED700EAE0D900EAE0DA00EBE1
+              DB00EBE0DB00EEE5E100AA714400E7C08C00EACA9D00BF87600091919100C4C4
+              C400B7B7B70072727200DCDCDC00DDDDDD00E0E0E000E1E1E100E2E2E200E3E3
+              E300E3E3E300E7E7E70077777700B9B9B900C3C3C3008F8F8F00C9997800E9CD
+              AC00EAC79600B7845600A56B3F00A56B3F00A56B3F00A56B3F00A56B3F00A56B
+              3F00A56B3F00A56B3F00B7845700EACA9900EBD1AD00C4957400A0A0A000CACA
+              CA00C0C0C0008686860072727200727272007272720072727200727272007272
+              7200727272007272720087878700C1C1C100CCCCCC009C9C9C00D6B69E00DDBB
+              9D00EED3A900EECFA200EED2A500F0D6A900F1D7AB00F1D8AD00F1D8AD00F1D8
+              AD00F1D6AA00F0D5A800EED2A500EFD4A700E0C2A200D2B6A100BABABA00BDBD
+              BD00CBCBCB00C8C8C800C9C9C900CCCCCC00CECECE00CFCFCF00CFCFCF00CFCF
+              CF00CDCDCD00CCCCCC00C9C9C900CBCBCB00C1C1C100B9B9B900FF00FF00CA97
+              6F00F5E8CC00EFD6AB00F1D8AE00F2DAB000F3DCB300F3DEB400F3DEB400F3DE
+              B400F3DCB200F1DBB000F1D8AD00F7EACD00CB997500FF00FF00FF00FF009C9C
+              9C00E0E0E000CDCDCD00CFCFCF00D1D1D100D3D3D300D3D3D300D3D3D300D3D3
+              D300D2D2D200D0D0D000CFCFCF00E2E2E200A0A0A000FF00FF00FF00FF00DCBF
+              A900D7B08C00F8EFD300F3E0B900F3DFB700F4E1B900F5E3BB00F5E2BB00F5E2
+              BB00F4E1B900F4E2BD00FAF1D500D9B39000D9BEA900FF00FF00FF00FF00C2C2
+              C200B1B1B100E5E5E500D6D6D600D5D5D500D6D6D600D8D8D800D8D8D800D8D8
+              D800D6D6D600D8D8D800E7E7E700B4B4B400C1C1C100FF00FF00FF00FF00FF00
+              FF00D7B39500D9B38F00F7EDD300F8EED000F7EBC900F6E8C400F6E8C500F7EC
+              CA00F8EED000F4E8CD00D7AF8B00D4B29600FF00FF00FF00FF00FF00FF00FF00
+              FF00B6B6B600B4B4B400E5E5E500E4E4E400E0E0E000DDDDDD00DDDDDD00E0E0
+              E000E4E4E400E0E0E000B1B1B100B5B5B500FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00E0C4AF00D2A37B00E2C4A200EBD7B800F4E9CD00F4EACE00ECD8
+              B900E3C5A300D2A68000E4D1C200FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00C7C7C700A6A6A600C2C2C200D1D1D100E0E0E000E1E1E100D2D2
+              D200C3C3C300A9A9A900D3D3D300FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00E2CAB400D7B19200D3A57E00D2A68100D6B0
+              9200E0C8B300FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00CBCBCB00B4B4B400A8A8A800A9A9A900B4B4
+              B400C9C9C900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+            NumGlyphs = 2
+            TabOrder = 1
+          end
+          object btnDelAll: TBitBtn
+            Left = 277
+            Top = 8
+            Width = 116
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aDelAll
+            Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1089#1077
+            Glyph.Data = {
+              36060000424D3606000000000000360000002800000020000000100000000100
+              18000000000000060000120B0000120B00000000000000000000FF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              CAB9A9AD7C51A56A39A36837A16635A16536AB8667FF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFB9B9B97F7F7F6F6F6F6D6D6D6B6B6B6B
+              6B6B898989FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCBB6A4
+              C28C59E1AC75E4C296B5783AB5783BB5783BAD7138A57650FF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFB7B7B78D8D8DABABABBDBDBD77777778787878
+              78787272727A7A7AFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFBC8959
+              E6B179E9B47CE9B47CE7C79DB6793CB5793CB5793C68527A323788FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FF8A8A8AAFAFAFB2B2B2B2B2B2C2C2C279797978
+              78787878786666665D5D5DFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCCB094
+              EFD7B3E9B47CE9B47CE9B47CEACDA4B57A3D725B86303ECC2834B8343A8BFF00
+              FFFF00FFFF00FFFF00FFFF00FFB0B0B0D1D1D1B2B2B2B2B2B2B2B2B2C7C7C779
+              79797070707E7E7E7070705F5F5FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              CEAF92F2DDBBE9B47CE9B47CE9B47CD1CEE13342CE3342CD3342CE2B38BA373E
+              8EFF00FFFF00FFFF00FFFF00FFFF00FFB0B0B0D6D6D6B2B2B2B2B2B2B2B2B2D7
+              D7D7808080808080808080727272626262FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFD1B396F5E2C1E9B47CB5A9B8829FF1B1C9F53848D13949D13948D12F3E
+              BD3C4293FF00FFFF00FFFF00FFFF00FFFF00FFB3B3B3DBDBDBB2B2B2B0B0B0B9
+              B9B9D3D3D3848484858585858585767676676767FF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFD4B799E9E1D287A3F287A4F187A3F2B9D0F73D4FD53D4FD53E4F
+              D53444C2404797FF00FFFF00FFFF00FFFF00FFFF00FFB6B6B6DDDDDDBCBCBCBC
+              BCBCBCBCBCD8D8D88989898989898989897B7B7B6B6B6BFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FF8995CCC9E2F98CA8F38DA8F38CA8F3C0D8F94356D94255
+              D94355D93848C250569EFF00FFFF00FFFF00FFFF00FFFF00FFAAAAAAE1E1E1BF
+              BFBFC0C0C0BFBFBFDCDCDC8E8E8E8D8D8D8E8E8E7D7D7D777777FF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FF8E9BD2CFE7FB92ADF391ADF492ADF4C6DEFA485D
+              DB485CDC4659D7313D9AFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB0B0B0E5
+              E5E5C2C2C2C2C2C2C3C3C3E0E0E09191919292928E8E8E656565FF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FF92A0D6D4ECFC97B2F597B2F497B3F5CCE4
+              FB495EDA3949ADFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB4
+              B4B4E8E8E8C6C6C6C5C5C5C6C6C6E3E3E3919191737373FF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF96A5DAD8F0FD9DB7F59CB7F5D9F1
+              FE748BD4FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFB8B8B8EAEAEAC9C9C9C8C8C8EBEBEBA4A4A4FF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF9AA8DEDBF3FEDBF3FF7089
+              D9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFBCBCBCECECECEDEDEDA4A4A4FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFA6B4E38195DCFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFC4C4C4AEAEAEFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            NumGlyphs = 2
+            TabOrder = 2
+            WordWrap = True
+          end
+        end
+        object gr2: TcxGrid
+          Left = 0
+          Top = 97
+          Width = 631
+          Height = 301
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          Align = alClient
+          TabOrder = 2
+          LookAndFeel.Kind = lfFlat
+          LookAndFeel.SkinName = ''
+          object tvClient: TcxGridDBTableView
+            PopupMenu = pm1
+            Navigator.Buttons.CustomButtons = <>
+            DataController.DataSource = dsRead
+            DataController.KeyFieldNames = 'ID'
+            DataController.Summary.DefaultGroupSummaryItems = <>
+            DataController.Summary.FooterSummaryItems = <>
+            DataController.Summary.SummaryGroups = <>
+            OptionsBehavior.IncSearch = True
+            OptionsCustomize.ColumnFiltering = False
+            OptionsSelection.CellSelect = False
+            OptionsView.GroupByBox = False
+            OptionsView.HeaderAutoHeight = True
+            Styles.Inactive = MainDM.stGridSelectedRow
+            object clmClientRecId: TcxGridDBColumn
+              DataBinding.FieldName = 'RecId'
+              Visible = False
+            end
+            object clmClientg_client: TcxGridDBColumn
+              DataBinding.FieldName = 'g_client'
+              Visible = False
+            end
+            object clmClientname: TcxGridDBColumn
+              Caption = #1050#1083#1080#1077#1085#1090
+              DataBinding.FieldName = 'name'
+              Width = 230
+            end
+            object clmClientphone: TcxGridDBColumn
+              Caption = #1058#1077#1083#1077#1092#1086#1085
+              DataBinding.FieldName = 'phone'
+              HeaderAlignmentHorz = taCenter
+              Width = 150
+            end
+            object clmClienttext: TcxGridDBColumn
+              Caption = #1058#1077#1082#1089#1090' SMS'
+              DataBinding.FieldName = 'SmsText'
+              Width = 150
+            end
+            object clmClientstatus: TcxGridDBColumn
+              Caption = #1057#1090#1072#1090#1091#1089
+              DataBinding.FieldName = 'status'
+              HeaderAlignmentHorz = taCenter
+              Width = 150
+            end
+            object clmClientColumn1: TcxGridDBColumn
+              DataBinding.FieldName = 'smsid'
+              Visible = False
+            end
+          end
+          object lvClient: TcxGridLevel
+            GridView = tvClient
+          end
+        end
+        object pn6: TPanel
+          Left = 0
+          Top = 398
+          Width = 631
+          Height = 24
+          Align = alBottom
+          BevelOuter = bvNone
+          TabOrder = 3
+          object pbMain: TcxProgressBar
+            Left = 0
+            Top = 0
+            Align = alClient
+            Style.StyleController = dxEditStyleController
+            TabOrder = 0
+            Width = 631
+          end
+        end
+        object pn5: TPanel
+          Left = 0
+          Top = 50
+          Width = 631
+          Height = 47
+          Align = alTop
+          TabOrder = 1
+          object btnSendNow: TBitBtn
+            Left = 13
+            Top = 8
+            Width = 164
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aSendNow
+            Caption = #1056#1072#1079#1086#1089#1083#1072#1090#1100' '#1089#1077#1081#1095#1072#1089
+            Glyph.Data = {
+              36060000424D3606000000000000360000002800000020000000100000000100
+              18000000000000060000120B0000120B00000000000000000000FF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              B0683FA16142C6AEA2FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FF777777717171B4B4B4FF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              B37045DEAF77B47247A4694DCFBFB8FF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FF7C7C7CAAAAAA7D7D7D787878C3C3C3FF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              B6764BECC38FE8BA7DD8A66FAD693FAB785DD6CBC5FF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FF808080BDBDBDB2B2B2A3A3A376767684
+              8484CDCDCDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              BB7C51EFCD9CE9BB7FE8BC80EABE83D39D6CA9643DB18670E0DAD6FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FF868686C5C5C5B4B4B4B4B4B4B6B6B69F
+              9F9F737373909090DBDBDBFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              BE8257F1D5ACEBC087E9BF85E8BD81E9BF82E9C087CD9765A7613BB99481E6E2
+              E0FF00FFFF00FFFF00FFFF00FFFF00FF8A8A8ACECECEB9B9B9B7B7B7B4B4B4B5
+              B5B5B8B8B89999997171719D9D9DE3E3E3FF00FFFF00FFFF00FFFF00FFFF00FF
+              C0855EF5DEBBEDC68FEDC58DEBC289EAC084E8BC80E9BD82E8BB87C78E60A765
+              41C3A494FF00FFFF00FFFF00FFFF00FF8F8F8FD8D8D8BEBEBEBDBDBDBABABAB7
+              B7B7B4B4B4B5B5B5B7B7B7939393747474ABABABFF00FFFF00FFFF00FFFF00FF
+              C59067F9E9CFF3D4A3F2D09FF0CC98EEC890EBC088E9BE83EAC38AECC693E3B8
+              89A65B33FF00FFFF00FFFF00FFFF00FF969696E4E4E4CBCBCBC8C8C8C4C4C4BF
+              BFBFB9B9B9B6B6B6BABABABFBFBFB6B6B66C6C6CFF00FFFF00FFFF00FFFF00FF
+              C9956EFAEFDAF4DAAEF5D8AAF2D5A6F1D1A1F1D0A2F1D2A8EDCDA1CC956BB679
+              55D1BAABFF00FFFF00FFFF00FFFF00FF9B9B9BEAEAEAD1D1D1CFCFCFCCCCCCC9
+              C9C9C9C9C9CCCCCCC7C7C79B9B9B858585BEBEBEFF00FFFF00FFFF00FFFF00FF
+              CC9B73FCF4E3F8E0B7F6DDB4F6DEB4F7E2C0F6E1C1D9B28CBE835CCEB1A0EDEC
+              EBFF00FFFF00FFFF00FFFF00FFFF00FF9F9F9FEFEFEFD7D7D7D5D5D5D5D5D5DB
+              DBDBDBDBDBB2B2B28D8D8DB7B7B7ECECECFF00FFFF00FFFF00FFFF00FFFF00FF
+              CDA077FEF7E9FBE7C2FBEBCCFBEFD6E3C5A7C6916BCEAD97ECE8E6FF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFA2A2A2F3F3F3DEDEDEE3E3E3E8E8E8C5
+              C5C5989898B2B2B2E9E9E9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              D0A47CFEFBEFFDF4E0EEDAC1D1A07DD0AD94EAE3DEFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFA6A6A6F6F6F6EEEEEED7D7D7A7A7A7B2
+              B2B2E4E4E4FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              D2A77FF5EADBD8B291D2AE91E9DFD7FF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFA8A8A8E8E8E8B4B4B4B1B1B1E0E0E0FF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              D5AA83D5B08EE7DBD0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFACACACB1B1B1DBDBDBFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+            NumGlyphs = 2
+            TabOrder = 0
+            WordWrap = True
+          end
+          object btnUpdChd: TBitBtn
+            Left = 177
+            Top = 8
+            Width = 128
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aSendSchedule
+            Caption = #1047#1072#1087#1083#1072#1085#1080#1088#1086#1074#1072#1090#1100
+            Glyph.Data = {
+              36060000424D3606000000000000360000002800000020000000100000000100
+              18000000000000060000120B0000120B00000000000000000000FF00FFFF00FF
+              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+              00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFA5A6CA5859A72F32962123922F30965658A6A5A5CAFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB7B7B77F7F7F62626259
+              59596262627E7E7EB7B7B7FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FF6062AE3338A5505BC75F6CD66473DE5D6BD64D59C62F33A25C5EAAFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF8787876C6C6C8B8B8B9A9A9AA1
+              A1A1999999898989686868838383FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              3D3FA4515AC16473DB525CCB474EC0434BBE464FC1525DCB6270DA4750BD363A
+              9FFF00FFFF00FFFF00FFFF00FFFF00FF7070708989899F9F9F8E8E8E83838380
+              80808383838E8E8E9E9E9E8282826A6A6AFF00FFFF00FFFF00FFFF00FF4F52AE
+              626DCB6371D7454CBE999CD9DBDCF1FEFDFDDBDBF1999CDA474DC0616DD7505B
+              C46264B0FF00FFFF00FFFF00FF7E7E7E9696969D9D9D818181B9B9B9E6E6E6FD
+              FDFDE6E6E6B9B9B98383839C9C9C8A8A8A898989FF00FFFF00FFA8AAD34951B8
+              7787E0494FBED2D3EBFCFBFAFDFBF9FCFBFA72574DE2E1E0D5D5EC4A51C06A79
+              DD3D45AFA9AAD0FF00FFBDBDBD808080ABABAB838383DEDEDEFBFBFBFBFBFBFB
+              FBFB5F5F5FE1E1E1E0E0E0858585A3A3A3767676BCBCBCFF00FF696DBD7581D5
+              5863CBA1A2D8FBF8F5FCF8F6FBF8F6FBF8F674584FE1DFDDFBF8F6A2A3D95660
+              CB5F6BCE6366B6FF00FF939393A5A5A5919191BCBCBCF8F8F8F9F9F9F8F8F8F8
+              F8F8616161DFDFDFF8F8F8BDBDBD9090909696968C8C8CFF00FF484CB592A0E7
+              444BBCE1DEEAFAF5F2F9F5F2FAF5F2FAF5F2765B50E0DCD9FAF5F2E2DFEA454C
+              BE7385DF4247ADFF00FF7E7E7EBCBCBC808080E4E4E4F6F6F6F5F5F5F6F6F6F6
+              F6F6636363DCDCDCF6F6F6E4E4E4818181A9A9A9777777FF00FF3D44B4A1AFEE
+              3E42B7F4EEEDF8F2EDE0DCD8E3E2E1E5E5E5775C52E0DCD8F7F2EDF4EEEC4045
+              B88193E73A3FAEFF00FF787878C7C7C77A7A7AF0F0F0F2F2F2DCDCDCE2E2E2E5
+              E5E5646464DCDCDCF2F2F2F0F0F07C7C7CB4B4B4747474FF00FF4D54BDA1AEEB
+              444ABADED8E24844B2423BAC3A32A5342A9E5A466FF8F7F6F6EFE9DED9E2454A
+              BC8595E5484FB7FF00FF858585C6C6C67F7F7FDDDDDD7B7B7B7373736B6B6B64
+              64645A5A5AF7F7F7EFEFEFDDDDDD808080B5B5B57F7F7FFF00FF767BCB919CE1
+              666FCC9492CBF5ECE6FEFDFCFFFFFFFFFFFFFFFFFFFEFDFCF4ECE59593CD5C67
+              CC7C8ADC7076C5FF00FFA0A0A0B9B9B9999999AEAEAEEDEDEDFDFDFDFFFFFFFF
+              FFFFFFFFFFFDFDFDECECECB0B0B0949494ACACAC9A9A9AFF00FFB9BBE37882D6
+              A5B3EB4145B7C5C0D7F5EEE7FBF8F5FEFDFCFBF8F6F5EEE7C6C0D74146B78E9F
+              E76A72CFB6B8DEFF00FFCECECEA7A7A7C8C8C87C7C7CCBCBCBEEEEEEF8F8F8FD
+              FDFDF8F8F8EEEEEECBCBCB7C7C7CBABABA9C9C9CCACACAFF00FFFF00FF8A91DA
+              9FAAE896A1E33F43B58C89C6CDC6D7F0E6DFCDC6D78C8AC73E43B68593DF949E
+              E39195D7FF00FFFF00FFFF00FFB2B2B2C3C3C3BCBCBC7A7A7AA7A7A7CECECEE7
+              E7E7CECECEA8A8A87A7A7AB2B2B2BBBBBBB4B4B4FF00FFFF00FFFF00FFFF00FF
+              858BDA9AA5E6ADBAED6973CC4349B8373BB04449B8626BCBA1B0EB959EE3777E
+              D3FF00FFFF00FFFF00FFFF00FFFF00FFAFAFAFC0C0C0CDCDCD9A9A9A7D7D7D73
+              73737E7E7E969696C6C6C6BCBCBCA5A5A5FF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFA1A6E28690DEACB7EDBDC9F5C5D2F8BDC8F5AAB6EC828BDC9BA1DEFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFC1C1C1B2B2B2CCCCCCD9D9D9DE
+              DEDED9D9D9CBCBCBAFAFAFBCBCBCFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+              FF00FFFF00FFD5D7F0AEB2E4949BDE7C86DA9399DEABB0E3D2D5EEFF00FFFF00
+              FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFE2E2E2C9C9C9B9B9B9AB
+              ABABB8B8B8C7C7C7E0E0E0FF00FFFF00FFFF00FFFF00FFFF00FF}
+            NumGlyphs = 2
+            TabOrder = 1
+            WordWrap = True
+          end
+          object btnUpdSend: TBitBtn
+            Left = 305
+            Top = 8
+            Width = 168
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aUpdSend
+            Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1080' '#1086#1090#1087#1088#1072#1074#1080#1090#1100
+            Glyph.Data = {
+              36080000424D3608000000000000360000002800000020000000100000000100
+              20000000000000080000120B0000120B00000000000000000000FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001340
+              580015425E0025699C002C76B4007AB0D000FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF003535
+              3500393939006060600070707000A5A5A500FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001242
+              59005D9CD400A6CFF500A9CFEC00488BC1002C76B400FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF003535
+              350098989800CDCDCD00CACACA008484840070707000FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001E6D
+              9300CBE3F90061AAEC004098E8001567C2001660AA002C76B400FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF005858
+              5800E2E2E200A6A6A600949494006B6B6B006060600070707000FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001E6D
+              9300C8E1F200D1E7FA00347DB5003199C3006DC4DC004A9CCF003483C700FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF005858
+              5800DDDDDD00E5E5E500747474007A7A7A00A4A4A4008C8C8C007D7D7D00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF002689B900B0CBE10067A9C80060DCF50044D6F4008EEEFA005DB4E6003B8F
+              D900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF006F6F6F00C8C8C80097979700AAAAAA009C9C9C00C4C4C400A1A1A1008A8A
+              8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF002689B900BEE6F200B3F4FC0060DCF50044D6F4008EEEFA005DB4
+              E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF006F6F6F00D8D8D800D7D7D700AAAAAA009C9C9C00C4C4C400A1A1
+              A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF002790BF00C3EDF800B3F4FC0060DCF50044D6F4008EEE
+              FA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF0073737300DDDDDD00D7D7D700AAAAAA009C9C9C00C4C4
+              C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4FC0060DCF50044D6
+              F4008EEEFA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7D700AAAAAA009C9C
+              9C00C4C4C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4FC0060DC
+              F50044D6F4008EEEFA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7D700AAAA
+              AA009C9C9C00C4C4C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4
+              FC0068D9F5006FCFF300599DD00073ABDD004F91C900FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7
+              D700AEAEAE00B1B1B10094949400A8A8A8008C8C8C00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3ED
+              F800A8E2F8006CAEDD00A5CFF400A5CFF400BDDBF7005896CD00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDD
+              DD00D0D0D000A4A4A400CCCCCC00CCCCCC00DADADA0092929200FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBA
+              E400A7D4F400C5E1F800CCE3F900CCE3F900BDDBF7005091C900FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF008989
+              8900CDCDCD00DEDEDE00E2E2E200E2E2E200DADADA008C8C8C00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF0050A8D9006AA5D800C9E1F700CBE3F8004295CA0072AAD500FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF0094949400A1A1A100E0E0E000E1E1E10086868600A3A3A300FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF005DB1DE005194CA004E90C80049A9D800FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF009D9D9D008D8D8D008B8B8B0090909000FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+            NumGlyphs = 2
+            TabOrder = 2
+            WordWrap = True
+          end
+          object btnUpdSend1: TBitBtn
+            Left = 473
+            Top = 8
+            Width = 144
+            Height = 25
+            Margins.Left = 2
+            Margins.Top = 2
+            Margins.Right = 2
+            Margins.Bottom = 2
+            Action = aRefreshStatusAll
+            Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1090#1072#1090#1091#1089#1099
+            Glyph.Data = {
+              36080000424D3608000000000000360000002800000020000000100000000100
+              20000000000000080000120B0000120B00000000000000000000FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00BC9B8500A9704B00A6592700A5592700A96F
+              4900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00A0A0A0007A7A7A0066666600666666007979
+              7900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00AC714800C58A5300DCB37C00EFD29800EFD19800B676
+              4300FF00FF00FF00FF00AD6F4500FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF007A7A7A008C8C8C00ACACAC00C3C3C300C3C3C3007C7C
+              7C00FF00FF00FF00FF0079797900FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00B0784E00D1A16900F1D6A500CE9E6E00C0865600BD825100BA93
+              7600FF00FF00B17F5A00E2B97B008F593F00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF007F7F7F009D9D9D00CBCBCB009E9E9E008B8B8B00878787009898
+              9800FF00FF0085858500AEAEAE0067676700FF00FF00FF00FF00FF00FF00FF00
+              FF00C9AC9800C9976500ECD2A300BD855800C7AD9800FF00FF00FF00FF00FF00
+              FF00C3A69200CE9D6600F6DC9B00BA865700AD8A7A00FF00FF00FF00FF00FF00
+              FF00B0B0B00097979700C7C7C7008A8A8A00AFAFAF00FF00FF00FF00FF00FF00
+              FF00AAAAAA009A9A9A00C8C8C8008888880093939300FF00FF00FF00FF00FF00
+              FF00BB8A6500E3C59800CB9D7500CAAE9800FF00FF00FF00FF00FF00FF00DCD0
+              C800C18B5E00F8E5BC00F8DFA500F7E4BA00A4684300CFC1BA00FF00FF00FF00
+              FF0090909000BDBDBD00A0A0A000B1B1B100FF00FF00FF00FF00FF00FF00D2D2
+              D2008F8F8F00DADADA00CECECE00D8D8D80073737300C4C4C400FF00FF00FF00
+              FF00B87F5000F5E6BD00BC835600FF00FF00FF00FF00FF00FF00FF00FF00C090
+              6900B87D4D00BB815300F2D9A100B87D4D00B87C4D00BD8A6200FF00FF00FF00
+              FF00FF00FF00D9D9D90089898900FF00FF00FF00FF00FF00FF00FF00FF009494
+              94008282820087878700C9C9C90082828200828282008F8F8F00B07F5D00A263
+              3B00BB855700F6E7BF00BF8B5E00A0623800AA755200FF00FF00FF00FF00FF00
+              FF00FF00FF00A1653C00F4DEAE00BB865A00FF00FF00FF00FF00868686006E6E
+              6E0089898900DADADA008E8E8E006C6C6C00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF006E6E6E00D1D1D1008A8A8A00FF00FF00FF00FF00EAE2DA00CBA1
+              7900FBF5DC00FCF3CC00FAF4DA00B7896300DFD3CA00FF00FF00FF00FF00FF00
+              FF00C2A59100BA8B5E00E7CEA700C69F7C00FF00FF00FF00FF00E2E2E200A2A2
+              A200EBEBEB00E4E4E400EAEAEA008D8D8D00D4D4D400FF00FF00FF00FF00FF00
+              FF00A9A9A9008C8C8C00C7C7C700A1A1A100FF00FF00FF00FF00FF00FF00DDC8
+              B500DDC1A200FDF7D900D4B59800D0B7A200FF00FF00FF00FF00FF00FF00C4A6
+              9200A66D4300F3E4C300D8B69200DAC6B300FF00FF00FF00FF00FF00FF00C9C9
+              C900BFBFBF00EBEBEB00B6B6B600B9B9B900FF00FF00FF00FF00FF00FF00ABAB
+              AB0074747400DBDBDB00B5B5B500C6C6C600FF00FF00FF00FF00FF00FF00FF00
+              FF00D2B29300EFE1CD00C5A08000FF00FF00C6A68E00A3693C00A66F4300BE94
+              6D00F4E9D100E3CAAD00CDA78400FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00B2B2B200DEDEDE00A2A2A200FF00FF00AAAAAA006F6F6F00747474009595
+              9500E2E2E200C8C8C800A8A8A800FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00D0AD8800FF00FF00FF00FF00B98D6500F8F3E200F9F3E400EDDE
+              C700DCC1A100D0AE8B00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00ACACAC00FF00FF00FF00FF008F8F8F00EDEDED00EEEEEE00DADA
+              DA00BEBEBE00ADADAD00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00DFCDBB00D7B89900CCA67E00CCA67E00D5B7
+              9900E4D4C200FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00CDCDCD00B8B8B800A5A5A500A5A5A500B7B7
+              B700D3D3D300FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+              FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+            NumGlyphs = 2
+            TabOrder = 3
+            WordWrap = True
+          end
+        end
+      end
+    end
+  end
+  inherited btnOk: TcxButton
+    Left = 562
+    Top = 483
+    Visible = False
+    ExplicitLeft = 562
+    ExplicitTop = 483
+  end
+  inherited btnCancel: TcxButton
+    Left = 651
+    Top = 483
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+    ExplicitLeft = 651
+    ExplicitTop = 483
+  end
+  inherited dxEditStyleController: TcxEditStyleController
+    PixelsPerInch = 96
+  end
+  object actlstChild: TActionList
+    Images = MainDM.imMain
+    Left = 64
+    Top = 216
+    object aDel: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      Enabled = False
+      Hint = #1059#1076#1072#1083#1080#1090#1100'|'#1059#1076#1072#1083#1077#1085#1080#1077' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 149
+      ShortCut = 46
+      OnExecute = aDelExecute
+    end
+    object aInsLike: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1087#1080#1102
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1087#1080#1102'|'#1044#1086#1073#1072#1074#1083#1077#1085#1080#1077' '#1082#1086#1087#1080#1080' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 157
+    end
+    object aHelp: TAction
+      Caption = 'aHelp'
+      Hint = #1042#1099#1079#1086#1074' '#1089#1087#1088#1072#1074#1082#1080
+      ImageIndex = 137
+    end
+    object aInsField: TAction
+      Caption = #1042#1089#1090#1072#1074#1080#1090#1100' '#1080#1084#1103' '#1082#1083#1080#1077#1085#1090#1072
+      Hint = 
+        #1053#1072#1078#1084#1080#1090#1077', '#1095#1090#1086#1073#1099' '#1087#1088#1086#1075#1088#1072#1084#1084#1072' '#1072#1074#1090#1086#1084#1072#1090#1086#1084' '#1087#1086#1076#1089#1090#1072#1074#1080#1083#1072' '#1080#1084#1103' '#1082#1083#1080#1077#1085#1090#1072' '#1074' '#1089#1086#1086#1073 +
+        #1097#1077#1085#1080#1077
+      ImageIndex = 150
+      OnExecute = aInsFieldExecute
+    end
+    object aGetBalance: TAction
+      Caption = #1059#1079#1085#1072#1090#1100' '#1073#1072#1083#1072#1085#1089
+      OnExecute = aGetBalanceExecute
+    end
+    object aSendNow: TAction
+      Caption = #1056#1072#1079#1086#1089#1083#1072#1090#1100' '#1089#1077#1081#1095#1072#1089
+      Hint = #1056#1072#1079#1086#1089#1083#1072#1090#1100' SMS '#1085#1077#1084#1077#1076#1083#1077#1085#1085#1086
+      ImageIndex = 167
+      OnExecute = aSendNowExecute
+    end
+    object aSendSchedule: TAction
+      Caption = #1047#1072#1087#1083#1072#1085#1080#1088#1086#1074#1072#1090#1100
+      Hint = #1054#1090#1087#1088#1072#1074#1080#1090#1100' '#1088#1072#1089#1089#1099#1083#1082#1091' '#1074' '#1086#1087#1088#1077#1076#1077#1083#1077#1085#1085#1086#1077' '#1074#1088#1077#1084#1103
+      ImageIndex = 139
+      OnExecute = aSendScheduleExecute
+    end
+    object aUpdSend: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1080' '#1086#1090#1087#1088#1072#1074#1080#1090#1100
+      Hint = #1048#1079#1084#1077#1085#1080#1090#1100' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' SMS '#1080' '#1086#1090#1087#1088#1072#1074#1080#1090#1100' '#1089#1085#1086#1074#1072
+      ImageIndex = 148
+      OnExecute = aUpdSendExecute
+    end
+    object aDelAll: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1089#1077
+      ImageIndex = 162
+      OnExecute = aDelAllExecute
+    end
+    object aIns: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1087#1086#1083#1091#1095#1072#1090#1077#1083#1103
+      ImageIndex = 150
+      OnExecute = aInsExecute
+    end
+    object aRefresh: TAction
+      Caption = 'aRefresh'
+      OnExecute = aRefreshExecute
+    end
+    object aRefreshStatusAll: TAction
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1090#1072#1090#1091#1089#1099
+      Hint = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1090#1072#1090#1091#1089#1099' '#1074#1089#1077#1093' SMS'
+      OnExecute = aRefreshStatusAllExecute
+    end
+    object aRefreshStatus: TAction
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1090#1072#1090#1091#1089' SMS'
+      OnExecute = aRefreshStatusExecute
+    end
+  end
+  object spRead: TpFIBDataSet
+    OnCalcFields = spReadCalcFields
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 184
+    Top = 480
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+    object intgrfldReadId: TIntegerField
+      FieldName = 'Id'
+    end
+    object spReadName: TStringField
+      FieldName = 'Name'
+    end
+    object spReadPhone: TStringField
+      FieldName = 'Phone'
+    end
+    object intgrfldReadSmsId: TIntegerField
+      FieldName = 'SmsId'
+    end
+    object spReadStatus: TStringField
+      FieldName = 'Status'
+    end
+    object spReadSmsText: TStringField
+      DisplayWidth = 500
+      FieldKind = fkCalculated
+      FieldName = 'SmsText'
+      Size = 500
+      Calculated = True
+    end
+  end
+  object dsRead: TDataSource
+    DataSet = mdClient
+    Left = 216
+    Top = 480
+  end
+  object mdClient: TdxMemData
+    Indexes = <>
+    SortOptions = []
+    Left = 280
+    Top = 480
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 248
+    Top = 480
+  end
+  object pm1: TPopupMenu
+    Left = 104
+    Top = 216
+    object SMS1: TMenuItem
+      Action = aRefreshStatus
+    end
+  end
+end

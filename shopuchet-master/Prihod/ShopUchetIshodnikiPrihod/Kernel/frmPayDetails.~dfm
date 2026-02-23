@@ -1,0 +1,211 @@
+inherited PayDetailsForm: TPayDetailsForm
+  Left = 822
+  Top = 278
+  Caption = #1044#1077#1090#1072#1083#1080' '#1087#1083#1072#1090#1077#1078#1072
+  ClientHeight = 262
+  ClientWidth = 411
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited btnOk: TBitBtn
+    Left = 199
+    Top = 221
+  end
+  inherited btnCancel: TBitBtn
+    Left = 305
+    Top = 221
+  end
+  inherited Panel1: TPanel
+    Width = 391
+    Height = 205
+    object sh5: TShape
+      Left = 14
+      Top = 153
+      Width = 121
+      Height = 40
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object sh3: TShape
+      Left = 14
+      Top = 102
+      Width = 121
+      Height = 39
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object sh1: TShape
+      Left = 14
+      Top = 63
+      Width = 121
+      Height = 40
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object shPayment: TShape
+      Left = 14
+      Top = 24
+      Width = 121
+      Height = 40
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object shPayment1: TShape
+      Left = 134
+      Top = 24
+      Width = 202
+      Height = 40
+      Pen.Color = clBtnShadow
+    end
+    object lbPayment: TLabel
+      Left = 28
+      Top = 31
+      Width = 45
+      Height = 24
+      Caption = #1044#1072#1090#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object lb1: TLabel
+      Left = 28
+      Top = 69
+      Width = 59
+      Height = 24
+      Caption = #1057#1091#1084#1084#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object sh2: TShape
+      Left = 134
+      Top = 63
+      Width = 202
+      Height = 40
+      Pen.Color = clBtnShadow
+    end
+    object lb2: TLabel
+      Left = 28
+      Top = 108
+      Width = 62
+      Height = 24
+      Caption = #1056#1072#1089#1095#1077#1090
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object sh4: TShape
+      Left = 134
+      Top = 102
+      Width = 202
+      Height = 39
+      Pen.Color = clBtnShadow
+    end
+    object lb3: TLabel
+      Left = 28
+      Top = 159
+      Width = 44
+      Height = 24
+      Caption = #1044#1086#1083#1075
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object sh6: TShape
+      Left = 134
+      Top = 153
+      Width = 202
+      Height = 40
+      Pen.Color = clBtnShadow
+    end
+    object sbEqualSumm: TSpeedButton
+      Left = 342
+      Top = 66
+      Width = 35
+      Height = 34
+      Constraints.MaxHeight = 35
+      Constraints.MaxWidth = 35
+      Constraints.MinHeight = 22
+      Constraints.MinWidth = 23
+      Glyph.Data = {
+        7E000000424D7E000000000000003E0000002800000010000000100000000100
+        01000000000040000000C40E0000C40E0000020000000000000000000000FFFF
+        FF00FFFF0000FFFF0000FFFF0000E00F0000E00F0000F1AF0000F8EF0000F8FF
+        0000FC7F0000FD7F0000FA7F0000F6EF0000F40F0000F80F0000FFFF0000FFFF
+        0000}
+      OnClick = sbEqualSummClick
+    end
+    object deDate: TcxDateEdit
+      Left = 140
+      Top = 28
+      Width = 189
+      Height = 32
+      ParentFont = False
+      Properties.InputKind = ikMask
+      Style.BorderStyle = ebs3D
+      Style.ButtonStyle = bts3D
+      TabOrder = 0
+    end
+    object edSumm: TdxCurrencyEdit
+      Left = 140
+      Top = 67
+      Width = 189
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      Alignment = taRightJustify
+      OnChange = edSummChange
+      DisplayFormat = ',0.00;-,0.00'
+      StoredValues = 1
+    end
+    object cbPayment: TcxComboBox
+      Left = 140
+      Top = 105
+      Width = 189
+      Height = 32
+      ParentFont = False
+      Properties.Items.Strings = (
+        #1053#1072#1083#1080#1095#1085#1099#1081
+        #1041#1077#1079#1085#1072#1083#1080#1095#1085#1099#1081)
+      Style.BorderStyle = ebs3D
+      TabOrder = 2
+      Text = #1053#1072#1083#1080#1095#1085#1099#1081
+    end
+    object edDolg: TdxCurrencyEdit
+      Left = 140
+      Top = 157
+      Width = 189
+      Enabled = False
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      Alignment = taRightJustify
+      DisplayFormat = ',0.00;-,0.00'
+      StoredValues = 1
+    end
+  end
+end

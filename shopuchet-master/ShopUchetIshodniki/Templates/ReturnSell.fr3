@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="44533,6681792593" ReportOptions.Description.Text="" ReportOptions.LastChange="44573,5672578935" ScriptLanguage="PascalScript" ScriptText.Text="&#13;&#10;begin&#13;&#10;&#13;&#10;end.">
+  <Datasets>
+    <item DataSet="frxDBDataset2" DataSetName="frxDBReportX"/>
+  </Datasets>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="58" PaperHeight="279,4" PaperSize="256" LeftMargin="10" RightMargin="10" TopMargin="10" BottomMargin="10" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxReportTitle Name="ReportTitle1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="71,81107" Left="0" Top="18,89765" Width="143,62214" Stretched="True">
+      <TfrxMemoView Name="Memo1" Align="baWidth" Left="0" Top="3,77953" Width="143,62214" Height="15,11812" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-11" Font.Name="Times New Roman" Font.Style="1" HAlign="haCenter" ParentFont="False" Text="[NAMEORG]"/>
+      <TfrxMemoView Name="Memo2" Align="baWidth" Left="0" Top="22,67718" Width="143,62214" Height="45,35436" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="БИН [BIN]&#13;&#10;Адрес: [Adress]&#13;&#10;ЗНМ [NUM] ИНК ОФД [OFDID]&#13;&#10;[DateDoc] [TimeDoc]&#13;&#10;ВОЗВРАТ ПРОДАЖИ №: [NumDoc]">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+    </TfrxReportTitle>
+    <TfrxMasterData Name="MasterData2" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="15,11812" Left="0" Top="151,1812" Width="143,62214" ColumnWidth="0" ColumnGap="0" DataSet="frxDBDataset2" DataSetName="frxDBReportX" RowCount="0" Stretched="True">
+      <TfrxMemoView Name="Memo7" Align="baLeft" Left="0" Top="0" Width="86,92919" Height="11,33859" StretchMode="smMaxHeight" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="[frxDBReportX.&#34;Names&#34;]"/>
+      <TfrxMemoView Name="Memo8" Align="baRight" Left="86,92919" Top="0" Width="56,69295" Height="11,33859" StretchMode="smMaxHeight" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Times New Roman" Font.Style="0" HAlign="haRight" ParentFont="False" VAlign="vaBottom" Text="[frxDBReportX.&#34;Values&#34;]"/>
+    </TfrxMasterData>
+    <TfrxReportSummary Name="ReportSummary1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="219,21274" Left="0" Top="226,7718" Width="143,62214" Stretched="True">
+      <TfrxMemoView Name="Memo10" Align="baWidth" Left="0" Top="4,77953" Width="143,62214" Height="94,48825" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="Фискальный признак: [FNum]&#13;&#10;Время: [DateDoc] [TimeDoc]&#13;&#10;Код ККМ КГД (РНМ): [RHM]&#13;&#10;Kassa &#13;&#10;Оператор фискальных данных: АО &#34;Транстелеком&#34; &#13;&#10;Для проверки чека зайдите на сайт: ofd1.kz">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+      <TfrxPictureView Name="Picture1" Align="baWidth" Left="0" Top="102,04731" Width="143,62214" Height="113,3859" Center="True" FileLink="[QRLink]" HightQuality="False" Transparent="False" TransparentColor="16777215"/>
+    </TfrxReportSummary>
+  </TfrxReportPage>
+</TfrxReport>

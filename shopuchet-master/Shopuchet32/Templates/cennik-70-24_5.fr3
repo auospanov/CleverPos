@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="43154,7943478472" ReportOptions.Description.Text="" ReportOptions.LastChange="44746,7583114005" ScriptLanguage="PascalScript" ScriptText.Text="procedure m_priceOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;price_bold&#62; = 1 then&#13;&#10;    m_Price.font.style := fsbold;&#13;&#10;  m_Price.font.size := &#60;price_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure m_SloganOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;slogan_bold&#62; = 1 then&#13;&#10;    m_Slogan.font.style := fsbold;&#13;&#10;  m_Slogan.font.size := &#60;slogan_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure m_nameOnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;  if &#60;name_bold&#62; = 1 then&#13;&#10;    m_Name.font.style := fsbold;&#13;&#10;  m_Name.font.size := &#60;name_size&#62;;&#13;&#10;end;&#13;&#10;&#13;&#10;begin&#13;&#10;  if (&#60;print_slogan&#62; = 0) then&#13;&#10;    m_Slogan.Visible := False;&#13;&#10;&#13;&#10;  if (&#60;print_price&#62; = 0) then&#13;&#10;    m_Price.Visible := False;&#13;&#10;end.">
+  <Datasets>
+    <item DataSet="frxPrintA4" DataSetName="frxDBDataset1"/>
+  </Datasets>
+  <Variables>
+    <item Name=" New Category1"/>
+    <item Name="price"/>
+    <item Name="slogan"/>
+    <item Name="price_bold"/>
+    <item Name="price_size"/>
+    <item Name="slogan_size"/>
+    <item Name="slogan_bold"/>
+    <item Name="name_bold"/>
+    <item Name="name_size"/>
+    <item Name="print_price"/>
+    <item Name="print_slogan"/>
+  </Variables>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="210" PaperHeight="297" PaperSize="256" LeftMargin="0" RightMargin="0" TopMargin="8" BottomMargin="8" Columns="3" ColumnWidth="70" ColumnPositions.Text="0&#13;&#10;70&#13;&#10;140" HGuides.Text="" VGuides.Text="">
+    <TfrxMasterData Name="MasterData1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="92,5984251968504" Left="0" Top="18,89765" Width="264,5671" ColumnWidth="0" ColumnGap="0" DataSet="frxPrintA4" DataSetName="frxDBDataset1" RowCount="0">
+      <TfrxMemoView Name="m_name" Align="baCenter" Left="4,72448512" Top="0" Width="255,11812976" Height="27,96850638" OnBeforePrint="m_nameOnBeforePrint" DataField="NAME" DataSet="frxPrintA4" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-12" Font.Name="Arial" Font.Style="0" ParentFont="False" VAlign="vaCenter" Text="[frxDBDataset1.&#34;NAME&#34;]"/>
+      <TfrxMemoView Name="m_price" Align="baRight" Left="143,62196913" Top="27,35436" Width="120,94496" Height="18,89765" OnBeforePrint="m_priceOnBeforePrint" DataSet="frxPrintA4" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-13" Font.Name="Arial" Font.Style="1" HAlign="haRight" ParentFont="False" Text="[frxDBDataset1.&#34;PRICE&#34;] тг."/>
+      <TfrxBarCodeView Name="BarCode13" Left="6,77953" Top="32,13389" Width="103" Height="56,69295" BarType="bcCodeEAN13" Expression="&#60;frxDBDataset1.&#34;BARCODE&#34;&#62;" Rotation="0" Text="12345678" WideBarRatio="2" Zoom="1" Font.Charset="1" Font.Color="0" Font.Height="-12" Font.Name="Arial" Font.Style="0"/>
+      <TfrxMemoView Name="m_Slogan" Align="baRight" Left="128,50384913" Top="65,92919" Width="136,06308" Height="22,67718" OnBeforePrint="m_SloganOnBeforePrint" Font.Charset="1" Font.Color="0" Font.Height="-11" Font.Name="Arial" Font.Style="0" HAlign="haRight" ParentFont="False" VAlign="vaBottom" Text="[slogan]"/>
+      <TfrxMemoView Name="Memo1" Align="baRight" Left="162,51961913" Top="48,91342" Width="102,04731" Height="15,11812" OnBeforePrint="m_priceOnBeforePrint" DataSet="frxPrintA4" DataSetName="frxDBDataset1" Font.Charset="1" Font.Color="0" Font.Height="-9" Font.Name="Arial" Font.Style="0" HAlign="haRight" ParentFont="False" Text="[frxDBDataset1.&#34;UNIT&#34;]"/>
+      <TfrxLineView Name="Line1" Align="baBottom" Left="0" Top="92,5984251968504" Width="264,56692913" Height="0" Color="0" Frame.Typ="4"/>
+      <TfrxLineView Name="Line3" Left="0" Top="0" Width="264,566929133858" Height="0" Color="0" Frame.Typ="4"/>
+      <TfrxLineView Name="Line4" Left="0" Top="0" Width="0" Height="92,5984251968504" Color="0" Frame.Typ="1"/>
+      <TfrxLineView Name="Line2" Left="264,56692913" Top="0" Width="0" Height="92,5984251968504" Color="0" Frame.Typ="1"/>
+    </TfrxMasterData>
+  </TfrxReportPage>
+</TfrxReport>

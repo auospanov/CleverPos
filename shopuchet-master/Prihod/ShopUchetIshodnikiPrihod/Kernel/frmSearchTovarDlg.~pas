@@ -1,0 +1,138 @@
+unit frmSearchTovarDlg;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, dxExEdtr, DB, FIBDataSet, pFIBDataSet, FIBDatabase,
+  pFIBDatabase, dxTL, dxDBCtrl, dxCntner, dxDBTL, StdCtrls, Buttons,
+  ActnList, AppEvnts, ExtCtrls, dxDBGrid, unCommonFunc, Menus;
+
+type
+  TSearchTovarDlgForm = class(TDBDlgForm)
+    pnlTop: TPanel;
+    sbClear: TSpeedButton;
+    btnRefresh: TBitBtn;
+    btnIns: TBitBtn;
+    btnInsLike: TBitBtn;
+    btnUpd: TBitBtn;
+    edSearch: TEdit;
+    tranRead: TpFIBTransaction;
+    spSearchTov: TpFIBDataSet;
+    dsRead: TDataSource;
+    tmrChangeEd: TTimer;
+    dxDBGrid: TdxDBGrid;
+    dxDBGridID: TdxDBGridMaskColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxdbgrdclmn1: TdxDBGridColumn;
+    dxdbgrdclmn2: TdxDBGridColumn;
+    dxdbgrdclmn3: TdxDBGridColumn;
+    btnFindAnalog: TButton;
+    clmnPLACE: TdxDBGridColumn;
+    clmnNomNomer: TdxDBGridColumn;
+    pmGrid: TPopupMenu;
+    pmCustomizeColumns: TMenuItem;
+    aCustomizeColumns: TAction;
+    procedure FormShow(Sender: TObject);
+    procedure edSearchChange(Sender: TObject);
+    procedure tmrChangeEdTimer(Sender: TObject);
+    procedure sbClearClick(Sender: TObject);
+    procedure dxDBGridDblClick(Sender: TObject);
+    procedure btnFindAnalogClick(Sender: TObject);
+    procedure aCustomizeColumnsExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  SearchTovarDlgForm: TSearchTovarDlgForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TSearchTovarDlgForm.FormShow(Sender: TObject);
+begin
+  //inherited;
+  if UseTovarPlace = 0 then
+    clmnPLACE.Destroy;
+
+  spSearchTov.ParamByName('g_tochka_').AsInteger := CurSklad;
+  OpenSp(spSearchTov, False);
+  edSearch.SetFocus;
+  IF CONFIG = 2 THEN
+    btnFindAnalog.Visible := true
+  else
+    btnFindAnalog.Visible := false;
+end;
+
+procedure TSearchTovarDlgForm.edSearchChange(Sender: TObject);
+begin
+  tmrChangeEd.Enabled := False;
+  // здесь буду перезапускать таймер, а на его событие - уже включать фильтр
+  if edSearch.Text <> '' then
+    tmrChangeEd.Enabled := True
+  else BEGIN
+    with spSearchTov do begin
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Open;
+    end;;
+  END;
+end;
+
+procedure TSearchTovarDlgForm.tmrChangeEdTimer(Sender: TObject);
+var s : string;
+begin
+  tmrChangeEd.Enabled := False;
+  if (edSearch.text<>'') then begin
+    with spSearchTov do begin
+      s := '(NAME CONTAINING ''' + edSearch.text + ''') OR (ARTICUL CONTAINING ''' + edSearch.text + ''') OR (BARCODE CONTAINING '''+ edSearch.text + ''') OR (CROSSCODE CONTAINING '''+ edSearch.text + ''')';
+      
+      if UseTovarPlace = 1 then
+        s := s + ' OR (PLACE CONTAINING ''' + edSearch.text + ''')';
+
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Conditions.AddCondition('by_customer', S, True);
+      ApplyConditions;
+      Open;
+    end;
+    if Assigned(dxDBGrid.FocusedNode) then
+      dxDBGrid.FocusedNode.Selected := True;
+  END;
+end;
+
+procedure TSearchTovarDlgForm.sbClearClick(Sender: TObject);
+begin
+  edSearch.Clear;
+end;
+
+procedure TSearchTovarDlgForm.dxDBGridDblClick(Sender: TObject);
+begin
+  ModalResult := mrOk;
+end;
+
+procedure TSearchTovarDlgForm.btnFindAnalogClick(Sender: TObject);
+var s : string;
+    f : double;
+    i : integer;
+begin
+  IF CONFIG = 2 THEN BEGIN
+    s := spSearchTov.FieldByName('articul').AsString;
+    edSearch.Clear;
+    edSearch.Text := s;
+  END;
+end;
+
+procedure TSearchTovarDlgForm.aCustomizeColumnsExecute(Sender: TObject);
+begin
+  inherited;
+  dxDBGrid.ColumnsCustomizing;
+end;
+
+end.

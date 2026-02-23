@@ -1,0 +1,956 @@
+inherited ZakazNaRealListForm: TZakazNaRealListForm
+  Left = 334
+  Top = 132
+  Caption = #1057#1087#1080#1089#1086#1082' '#1090#1086#1074#1072#1088#1086#1074', '#1086#1090#1076#1072#1085#1085#1099#1093' '#1087#1086#1076' '#1088#1077#1072#1083#1080#1079#1072#1094#1080#1102
+  ClientHeight = 570
+  ClientWidth = 835
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    Width = 835
+    Height = 330
+    HeaderMinRowCount = 2
+    KeyField = 'ZAKAZ_NA_REAL'
+    ShowGroupPanel = True
+    SummaryGroups = <
+      item
+        DefaultGroup = False
+        SummaryItems = <
+          item
+            SummaryField = 'AM_ALL'
+            SummaryFormat = #1058#1086#1074#1072#1088#1086#1074' - 0#'
+            SummaryType = cstAvg
+          end
+          item
+            SummaryField = 'SU_ALL'
+            SummaryFormat = #1085#1072' '#1089#1091#1084#1084#1091' - 0,0#'
+            SummaryType = cstAvg
+          end>
+        Name = 'dxDBGridSGAmount'
+      end>
+    Filter.Active = True
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\ZakazNaRealList'
+    OnChangeNode = dxDBGridChangeNode
+    OnCustomDrawCell = dxDBGridCustomDrawCell
+    object dxDBGridZAKAZ_NA_REAL: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ZAKAZ_NA_REAL'
+    end
+    object dxDBGridG_CLIENT: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_CLIENT'
+    end
+    object dxDBGridCLIENT_NAME: TdxDBGridMaskColumn
+      Caption = #1050#1083#1080#1077#1085#1090
+      HeaderAlignment = taCenter
+      Sorted = csUp
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'CLIENT_NAME'
+      GroupIndex = 0
+    end
+    object dxDBGridZAKAZ_NUM: TdxDBGridColumn
+      Alignment = taCenter
+      Caption = #1053#1086#1084#1077#1088' '#1085#1072#1082#1083'.'
+      HeaderAlignment = taCenter
+      Sorted = csUp
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ZAKAZ_NUM'
+      GroupIndex = 1
+      SummaryGroupName = 'dxDBGridSGAmount'
+    end
+    object dxDBGridZAKAZ_DATE: TdxDBGridDateColumn
+      Caption = #1044#1072#1090#1072' '#1079#1072#1082#1072#1079#1072
+      HeaderAlignment = taCenter
+      Sorted = csUp
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ZAKAZ_DATE'
+    end
+    object dxDBGridG_PRODUCT: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_PRODUCT'
+    end
+    object dxDBGridPRODUCT_NAME: TdxDBGridMaskColumn
+      Caption = #1058#1086#1074#1072#1088
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'PRODUCT_NAME'
+    end
+    object dxDBGridPRICE: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1062#1077#1085#1072
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'PRICE'
+    end
+    object dxDBGridAMOUNT_ALL: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1058#1086#1074#1072#1088#1086#1074' '#1074#1089#1077#1075#1086
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'AMOUNT_ALL'
+    end
+    object dxDBGridSUMM_ALL: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1057#1091#1084#1084#1072' '#1079#1072' '#1074#1089#1077
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM_ALL'
+    end
+    object dxDBGridAMOUNT_PAYED: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1058#1086#1074#1072#1088#1086#1074' '#1086#1087#1083#1072#1095#1077#1085#1086
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'AMOUNT_PAYED'
+    end
+    object dxDBGridSUMM_PAYED: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1057#1091#1084#1084#1072' '#1086#1087#1083#1072#1095#1077#1085#1085#1072#1103
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM_PAYED'
+    end
+    object dxDBGridAMOUNT_RETURNED: TdxDBGridColumn
+      Caption = #1058#1086#1074#1072#1088#1086#1074' '#1074#1086#1079#1074#1088#1072#1097#1077#1085#1086
+      HeaderAlignment = taCenter
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'AMOUNT_RETURNED'
+    end
+    object dxDBGridSUMM_RETURNED: TdxDBGridColumn
+      Caption = #1057#1091#1084#1084#1072' '#1074#1086#1079#1074#1088#1072#1090#1086#1074
+      HeaderAlignment = taCenter
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM_RETURNED'
+    end
+    object dxDBGridAMOUNT_LEFT: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1058#1086#1074#1072#1088#1086#1074' '#1086#1089#1090#1072#1083#1086#1089#1100
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'AMOUNT_LEFT'
+    end
+    object dxDBGridSUMM_LEFT: TdxDBGridColumn
+      Alignment = taRightJustify
+      Caption = #1057#1091#1084#1084#1072' '#1076#1086#1083#1075#1072
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM_LEFT'
+    end
+    object dxDBGridIS_PAYED_ALL: TdxDBGridCheckColumn
+      Caption = #1055#1086#1083#1085#1086#1089#1090#1100#1102' '#1074#1099#1087#1083#1072#1095#1077#1085
+      HeaderAlignment = taCenter
+      MinWidth = 20
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'IS_PAYED_ALL'
+      ValueChecked = '1'
+      ValueUnchecked = '0'
+    end
+    object dxDBGridPRODCAT_NAME: TdxDBGridColumn
+      Alignment = taLeftJustify
+      Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'PRODCAT_NAME'
+    end
+    object dxDBGridG_PRODUCT_PAR: TdxDBGridColumn
+      Visible = False
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_PRODUCT_PAR'
+    end
+  end
+  object splOplataReal: TcxSplitter [1]
+    Left = 0
+    Top = 356
+    Width = 835
+    Height = 8
+    HotZoneClassName = 'TcxSimpleStyle'
+    HotZone.SizePercent = 32
+    AlignSplitter = salBottom
+    AutoPosition = False
+    PositionAfterOpen = 150
+    AutoSnap = True
+    ResizeUpdate = True
+    Control = Panel2
+    Color = clBtnFace
+    ParentColor = False
+  end
+  object Panel1: TPanel [2]
+    Left = 0
+    Top = 364
+    Width = 835
+    Height = 33
+    Align = alBottom
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    TabOrder = 6
+    DesignSize = (
+      835
+      33)
+    object stDetailsCount: TStaticText
+      Left = 787
+      Top = 8
+      Width = 39
+      Height = 18
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      BevelKind = bkFlat
+      Caption = '00000'
+      TabOrder = 0
+    end
+    object stZakazCount: TStaticText
+      Left = 8
+      Top = 8
+      Width = 39
+      Height = 18
+      Alignment = taRightJustify
+      BevelKind = bkFlat
+      Caption = '00000'
+      TabOrder = 1
+    end
+    object btnUpdChd: TBitBtn
+      Left = 58
+      Top = 4
+      Width = 87
+      Height = 25
+      Action = aUpdZakaz
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+      TabOrder = 2
+      Glyph.Data = {
+        36080000424D3608000000000000360000002800000020000000100000000100
+        20000000000000080000120B0000120B00000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001340
+        580015425E0025699C002C76B4007AB0D000FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF003535
+        3500393939006060600070707000A5A5A500FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001242
+        59005D9CD400A6CFF500A9CFEC00488BC1002C76B400FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF003535
+        350098989800CDCDCD00CACACA008484840070707000FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001E6D
+        9300CBE3F90061AAEC004098E8001567C2001660AA002C76B400FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF005858
+        5800E2E2E200A6A6A600949494006B6B6B006060600070707000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF001E6D
+        9300C8E1F200D1E7FA00347DB5003199C3006DC4DC004A9CCF003483C700FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF005858
+        5800DDDDDD00E5E5E500747474007A7A7A00A4A4A4008C8C8C007D7D7D00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF002689B900B0CBE10067A9C80060DCF50044D6F4008EEEFA005DB4E6003B8F
+        D900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF006F6F6F00C8C8C80097979700AAAAAA009C9C9C00C4C4C400A1A1A1008A8A
+        8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF002689B900BEE6F200B3F4FC0060DCF50044D6F4008EEEFA005DB4
+        E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF006F6F6F00D8D8D800D7D7D700AAAAAA009C9C9C00C4C4C400A1A1
+        A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF002790BF00C3EDF800B3F4FC0060DCF50044D6F4008EEE
+        FA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF0073737300DDDDDD00D7D7D700AAAAAA009C9C9C00C4C4
+        C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4FC0060DCF50044D6
+        F4008EEEFA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7D700AAAAAA009C9C
+        9C00C4C4C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4FC0060DC
+        F50044D6F4008EEEFA005DB4E6003B8FD900FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7D700AAAA
+        AA009C9C9C00C4C4C400A1A1A1008A8A8A00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3EDF800B3F4
+        FC0068D9F5006FCFF300599DD00073ABDD004F91C900FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDDDD00D7D7
+        D700AEAEAE00B1B1B10094949400A8A8A8008C8C8C00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBAE400C3ED
+        F800A8E2F8006CAEDD00A5CFF400A5CFF400BDDBF7005896CD00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0089898900DDDD
+        DD00D0D0D000A4A4A400CCCCCC00CCCCCC00DADADA0092929200FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF002FBA
+        E400A7D4F400C5E1F800CCE3F900CCE3F900BDDBF7005091C900FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF008989
+        8900CDCDCD00DEDEDE00E2E2E200E2E2E200DADADA008C8C8C00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF0050A8D9006AA5D800C9E1F700CBE3F8004295CA0072AAD500FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF0094949400A1A1A100E0E0E000E1E1E10086868600A3A3A300FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF005DB1DE005194CA004E90C80049A9D800FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF009D9D9D008D8D8D008B8B8B0090909000FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+      NumGlyphs = 2
+    end
+    object btnDelChd: TBitBtn
+      Left = 144
+      Top = 4
+      Width = 100
+      Height = 25
+      Action = aDelZakaz
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      TabOrder = 3
+      Glyph.Data = {
+        36080000424D3608000000000000360000002800000020000000100000000100
+        20000000000000080000120B0000120B00000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00BF988300AF745400A8653F00A9664100AE74
+        5400BE988300FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00A1A1A1008181810073737300757575008181
+        8100A0A0A000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00C1998300AE673E00C5895700D6A36D00DDAF7500DDAF7400D6A4
+        6B00C5895600AE6B4100C8AD9E00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00A2A2A200767676008E8E8E00A1A1A100A9A9A900A8A8A800A0A0
+        A0008D8D8D0077777700B3B3B300FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00BA886C00BC7C4D00DDAE7700DEB07600DEAF7500DEAF7500DEB07400DDAF
+        7500DEAF7400DBAB7200BD7E4E00B9886E00FF00FF00FF00FF00FF00FF00FF00
+        FF009393930084848400AAAAAA00AAAAAA00A9A9A900A9A9A900A9A9A900A9A9
+        A900A9A9A900A6A6A6008585850093939300FF00FF00FF00FF00FF00FF00C6A0
+        8A00BE805300E0B37C00DFB07600DEB17700DFB27900E0B37900E0B27A00E0B2
+        7900DFB27900DFB27700DEB07700C0825300C29F8A00FF00FF00FF00FF00A8A8
+        A80088888800AEAEAE00AAAAAA00AAAAAA00ACACAC00ACACAC00ADADAD00ACAC
+        AC00ACACAC00ABABAB00AAAAAA0089898900A6A6A600FF00FF00FF00FF00B575
+        4C00DFB27D00DFB27A00E0B37B00E0B57D00E1B67E00E2B67F00E2B77F00E2B7
+        7F00E2B67E00E0B47C00E0B47B00DEB07900B7774E00FF00FF00FF00FF008080
+        8000AEAEAE00ACACAC00ADADAD00AEAEAE00AFAFAF00B0B0B000B0B0B000B0B0
+        B000B0B0B000AEAEAE00ADADAD00ABABAB0082828200FF00FF00CBA69100CD9B
+        6F00E2B78000E5BD8900E7C29100E8C39300E8C49400E8C59400E8C49500E8C4
+        9500E8C49400E8C39300E5BF8C00E1B77F00D09C6E00C8A89500AEAEAE009E9E
+        9E00B1B1B100B7B7B700BCBCBC00BDBDBD00BEBEBE00BEBEBE00BEBEBE00BEBE
+        BE00BEBEBE00BDBDBD00B8B8B800B0B0B0009F9F9F00AEAEAE00C08B6A00DCB3
+        8300E3B78100BA865900A9704300AB724500AC734600B0794A00AB724500AD75
+        4700B0784A00B17A4B00C2916200E4B98300DEB17E00BD8A6A0095959500AFAF
+        AF00B2B2B200898989007676760078787800797979007D7D7D00787878007A7A
+        7A007D7D7D007E7E7E0092929200B3B3B300AEAEAE0093939300BD815900E3BF
+        8F00E4BB8400A56B3F00F5EEE900FAF6F300FAF7F300FBF7F400FBF7F500FAF7
+        F400FAF7F300FAF6F200AB724500E5BD8700E5BE8B00BC825D008B8B8B00B9B9
+        B900B4B4B40072727200EFEFEF00F6F6F600F6F6F600F7F7F700F8F8F800F7F7
+        F700F6F6F600F6F6F60078787800B6B6B600B8B8B8008C8C8C00C1896200E9C9
+        A000E5BE8900A56B3F00E6D9D200E7DBD400E9DED700EAE0D900EAE0DA00EBE1
+        DB00EBE0DB00EEE5E100AA714400E7C08C00EACA9D00BF87600091919100C4C4
+        C400B7B7B70072727200DCDCDC00DDDDDD00E0E0E000E1E1E100E2E2E200E3E3
+        E300E3E3E300E7E7E70077777700B9B9B900C3C3C3008F8F8F00C9997800E9CD
+        AC00EAC79600B7845600A56B3F00A56B3F00A56B3F00A56B3F00A56B3F00A56B
+        3F00A56B3F00A56B3F00B7845700EACA9900EBD1AD00C4957400A0A0A000CACA
+        CA00C0C0C0008686860072727200727272007272720072727200727272007272
+        7200727272007272720087878700C1C1C100CCCCCC009C9C9C00D6B69E00DDBB
+        9D00EED3A900EECFA200EED2A500F0D6A900F1D7AB00F1D8AD00F1D8AD00F1D8
+        AD00F1D6AA00F0D5A800EED2A500EFD4A700E0C2A200D2B6A100BABABA00BDBD
+        BD00CBCBCB00C8C8C800C9C9C900CCCCCC00CECECE00CFCFCF00CFCFCF00CFCF
+        CF00CDCDCD00CCCCCC00C9C9C900CBCBCB00C1C1C100B9B9B900FF00FF00CA97
+        6F00F5E8CC00EFD6AB00F1D8AE00F2DAB000F3DCB300F3DEB400F3DEB400F3DE
+        B400F3DCB200F1DBB000F1D8AD00F7EACD00CB997500FF00FF00FF00FF009C9C
+        9C00E0E0E000CDCDCD00CFCFCF00D1D1D100D3D3D300D3D3D300D3D3D300D3D3
+        D300D2D2D200D0D0D000CFCFCF00E2E2E200A0A0A000FF00FF00FF00FF00DCBF
+        A900D7B08C00F8EFD300F3E0B900F3DFB700F4E1B900F5E3BB00F5E2BB00F5E2
+        BB00F4E1B900F4E2BD00FAF1D500D9B39000D9BEA900FF00FF00FF00FF00C2C2
+        C200B1B1B100E5E5E500D6D6D600D5D5D500D6D6D600D8D8D800D8D8D800D8D8
+        D800D6D6D600D8D8D800E7E7E700B4B4B400C1C1C100FF00FF00FF00FF00FF00
+        FF00D7B39500D9B38F00F7EDD300F8EED000F7EBC900F6E8C400F6E8C500F7EC
+        CA00F8EED000F4E8CD00D7AF8B00D4B29600FF00FF00FF00FF00FF00FF00FF00
+        FF00B6B6B600B4B4B400E5E5E500E4E4E400E0E0E000DDDDDD00DDDDDD00E0E0
+        E000E4E4E400E0E0E000B1B1B100B5B5B500FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00E0C4AF00D2A37B00E2C4A200EBD7B800F4E9CD00F4EACE00ECD8
+        B900E3C5A300D2A68000E4D1C200FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00C7C7C700A6A6A600C2C2C200D1D1D100E0E0E000E1E1E100D2D2
+        D200C3C3C300A9A9A900D3D3D300FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00E2CAB400D7B19200D3A57E00D2A68100D6B0
+        9200E0C8B300FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00CBCBCB00B4B4B400A8A8A800A9A9A900B4B4
+        B400C9C9C900FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+      NumGlyphs = 2
+    end
+  end
+  object Panel2: TPanel [3]
+    Left = 0
+    Top = 397
+    Width = 835
+    Height = 173
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = 'Panel2'
+    TabOrder = 7
+    object splOplataReal2: TcxSplitter
+      Left = 409
+      Top = 0
+      Width = 8
+      Height = 173
+      HotZoneClassName = 'TcxSimpleStyle'
+      HotZone.SizePercent = 32
+      AutoPosition = False
+      PositionAfterOpen = 150
+      AutoSnap = True
+      ResizeUpdate = True
+      Control = grOplata
+      Color = clBtnFace
+      ParentColor = False
+    end
+    object grOplata: TdxDBGrid
+      Left = 0
+      Top = 0
+      Width = 409
+      Height = 173
+      Bands = <
+        item
+        end>
+      DefaultLayout = True
+      HeaderPanelRowCount = 1
+      KeyField = 'ZAKAZ'
+      ShowGroupPanel = True
+      ShowSummaryFooter = True
+      SummaryGroups = <>
+      SummarySeparator = ', '
+      Align = alLeft
+      PopupMenu = pmGrid
+      TabOrder = 1
+      OnDblClick = aUpdZakazExecute
+      DataSource = dsReadOplata
+      Filter.Active = True
+      Filter.Criteria = {00000000}
+      OptionsBehavior = [edgoAutoSearch, edgoAutoSort, edgoDragScroll, edgoEnterShowEditor, edgoImmediateEditor, edgoMouseScroll, edgoStoreToRegistry, edgoTabThrough, edgoVertThrough]
+      OptionsDB = [edgoCancelOnExit, edgoCanNavigation, edgoConfirmDelete, edgoLoadAllRecords, edgoUseBookmarks]
+      OptionsView = [edgoBandHeaderWidth, edgoRowSelect, edgoUseBitmap]
+      RegistryPath = '\Software\ShopUchet\ZakazNaRealList\grOplata'
+      OnChangeNode = grOplataChangeNode
+      object grOplataTYPE_STR: TdxDBGridColumn
+        Caption = #1058#1080#1087' '#1086#1087#1077#1088#1072#1094#1080#1080
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'TYPE_STR'
+      end
+      object dxDBGridZAKAZ: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'ZAKAZ'
+      end
+      object dxDBGridG_TOCHKA: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'G_TOCHKA'
+      end
+      object dxDBGridZ_DATE: TdxDBGridDateColumn
+        Alignment = taCenter
+        Caption = #1044#1072#1090#1072
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'Z_DATE'
+      end
+      object dxDBGridMaskColumn1: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'G_CLIENT'
+      end
+      object dxDBGridG_PAYMENT_TYPE: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'G_PAYMENT_TYPE'
+      end
+      object dxDBGridZ_NUM: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1053#1086#1084#1077#1088' '#1079#1072#1082#1072#1079#1072
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'Z_NUM'
+      end
+      object dxDBGridOSNOVANIE: TdxDBGridColumn
+        Alignment = taCenter
+        Caption = #1044#1086#1082'.-'#1086#1089#1085#1086#1074#1072#1085#1080#1077
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'OSNOVANIE'
+      end
+      object dxDBGridColumn1: TdxDBGridColumn
+        Alignment = taCenter
+        Caption = #1050#1083#1080#1077#1085#1090
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'CLIENT_NAME'
+      end
+      object dxDBGridPAYMENT_NAME: TdxDBGridColumn
+        Alignment = taCenter
+        Caption = #1057#1087#1086#1089#1086#1073' '#1088#1072#1089#1095#1077#1090#1072
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'PAYMENT_NAME'
+      end
+      object dxDBGridSUM_ZAKAZ: TdxDBGridColumn
+        Caption = #1057#1091#1084#1084#1072' '#1079#1072#1082#1072#1079#1072
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'SUM_ZAKAZ'
+        SummaryFooterType = cstSum
+      end
+      object dxDBGridNOTE: TdxDBGridColumn
+        Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        HeaderAlignment = taCenter
+        Width = 100
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'NOTE'
+      end
+    end
+    object grZakazDetails: TdxDBGrid
+      Left = 417
+      Top = 0
+      Width = 418
+      Height = 173
+      Bands = <
+        item
+        end>
+      DefaultLayout = True
+      HeaderPanelRowCount = 1
+      KeyField = 'ZAKAZ_details'
+      SummaryGroups = <>
+      SummarySeparator = ', '
+      Align = alClient
+      PopupMenu = pmGrid
+      TabOrder = 2
+      OnDblClick = aUpdExecute
+      DataSource = dsZakazDetails
+      Filter.Criteria = {00000000}
+      OptionsBehavior = [edgoAutoSearch, edgoAutoSort, edgoDragScroll, edgoEnterShowEditor, edgoImmediateEditor, edgoMouseScroll, edgoMultiSelect, edgoMultiSort, edgoStoreToRegistry, edgoTabThrough, edgoVertThrough]
+      OptionsDB = [edgoCancelOnExit, edgoCanNavigation, edgoConfirmDelete, edgoLoadAllRecords, edgoUseBookmarks]
+      RegistryPath = '\Software\ShopUchet\ZakazNaRealList\grZakazDetails'
+      object dxDBGridMaskColumn6: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'ZAKAZ_DETAILS'
+      end
+      object dxDBGridMaskColumn7: TdxDBGridMaskColumn
+        Alignment = taCenter
+        HeaderAlignment = taCenter
+        Visible = False
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'G_PRODUCT'
+      end
+      object dxDBGridMaskColumn8: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1050#1086#1083'-'#1074#1086
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'AMOUNT'
+      end
+      object dxDBGridMaskColumn9: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1062#1077#1085#1072
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'PRICE'
+      end
+      object dxDBGridMaskColumn10: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1057#1091#1084#1084#1072
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'SUMM'
+      end
+      object dxDBGridMaskColumn11: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1057#1082#1080#1076#1082#1072' %'
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'DISCOUNT_PERC'
+      end
+      object dxDBGridColumn2: TdxDBGridColumn
+        Caption = #1057#1082#1080#1076#1082#1072
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'DISCOUNT_SUMM'
+      end
+      object dxDBGridMaskColumn12: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1040#1088#1090#1080#1082#1091#1083
+        HeaderAlignment = taCenter
+        Sorted = csUp
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'ARTICUL'
+      end
+      object dxDBGridMaskColumn13: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1053#1086#1084#1077#1085#1082#1083'. '#1085#1086#1084#1077#1088
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'NOMENCLATUR_NUM'
+      end
+      object dxDBGridMaskColumn14: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1064#1090#1088#1080#1093#1082#1086#1076
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'BARCODE'
+      end
+      object dxDBGridMaskColumn15: TdxDBGridMaskColumn
+        Alignment = taLeftJustify
+        Caption = #1058#1086#1074#1072#1088
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'TOVAR_NAME'
+      end
+      object dxDBGridMaskColumn16: TdxDBGridMaskColumn
+        Alignment = taCenter
+        Caption = #1045#1076'. '#1080#1079#1084'.'
+        HeaderAlignment = taCenter
+        Width = 60
+        BandIndex = 0
+        RowIndex = 0
+        FieldName = 'ED_NAME'
+      end
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Bars = <
+      item
+        AllowClose = False
+        AllowCustomizing = False
+        AllowQuickCustomizing = False
+        Caption = 'Main'
+        DockedDockingStyle = dsTop
+        DockedLeft = 0
+        DockedTop = 0
+        DockingStyle = dsTop
+        FloatLeft = 271
+        FloatTop = 138
+        FloatClientWidth = 23
+        FloatClientHeight = 22
+        ItemLinks = <
+          item
+            Item = dxBarStaticRecCnt
+            Visible = True
+          end
+          item
+            Item = dxBarButtonRefresh
+            Visible = True
+          end
+          item
+            Item = dxBarButtonEnableAutoRefresh
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            Item = dxBarSpinEditHeaderHeight
+            UserDefine = [udWidth]
+            UserWidth = 23
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = bcFilter
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonView
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonIns
+            Visible = True
+          end
+          item
+            Item = dxBarButtonUpd
+            Visible = True
+          end
+          item
+            Item = dxBarButtonDel
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButton3
+            Visible = True
+          end
+          item
+            Item = dxBarButton2
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButton1
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonClose
+            Visible = True
+          end>
+        Name = 'Main'
+        OneOnRow = True
+        Row = 0
+        UseOwnFont = False
+        Visible = True
+        WholeRow = False
+      end>
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+    object bcFilter: TdxBarCombo
+      Caption = #1060#1080#1083#1100#1090#1088
+      Category = 0
+      Hint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1082#1072#1082#1080#1077' '#1079#1072#1087#1080#1089#1080' '#1086#1090#1088#1072#1079#1080#1090#1100' '#1074' '#1090#1072#1073#1083#1080#1094#1077
+      Visible = ivAlways
+      Text = #1053#1077#1086#1087#1083#1072#1095#1077#1085#1085#1099#1077
+      OnChange = bcFilterChange
+      Width = 100
+      Items.Strings = (
+        #1053#1077#1086#1087#1083#1072#1095#1077#1085#1085#1099#1077
+        #1054#1087#1083#1072#1095#1077#1085#1085#1099#1077
+        #1042#1086#1079#1074#1088#1072#1097#1077#1085#1085#1099#1077
+        #1042#1089#1077)
+      ItemIndex = 0
+    end
+    object dxBarButton2: TdxBarButton
+      Action = aReturn
+      Category = 0
+    end
+    object dxBarButton3: TdxBarButton
+      Action = aPay
+      Category = 0
+    end
+  end
+  inherited alChild: TActionList
+    object aPay: TAction
+      Category = #1054#1087#1083#1072#1090#1072
+      Caption = #1054#1087#1083#1072#1090#1080#1090#1100
+      ImageIndex = 161
+      OnExecute = aPayExecute
+    end
+    object aRefreshChild: TAction
+      Category = #1054#1087#1083#1072#1090#1072
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100
+      OnExecute = aRefreshChildExecute
+    end
+    object aUpdZakaz: TAction
+      Category = #1054#1087#1083#1072#1090#1072
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+      ImageIndex = 148
+      OnExecute = aUpdZakazExecute
+    end
+    object aDelZakaz: TAction
+      Category = #1054#1087#1083#1072#1090#1072
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      ImageIndex = 149
+      OnExecute = aDelZakazExecute
+    end
+    object aUpdParent: TAction
+      Category = #1053#1072#1082#1083#1072#1076#1085#1072#1103
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1085#1072#1082#1083#1072#1076#1085#1091#1102
+      ImageIndex = 148
+      OnExecute = aUpdParentExecute
+    end
+    object aDelParent: TAction
+      Category = #1053#1072#1082#1083#1072#1076#1085#1072#1103
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1085#1072#1082#1083#1072#1076#1085#1091#1102
+      ImageIndex = 149
+      OnExecute = aDelParentExecute
+    end
+    object aViewParent: TAction
+      Category = #1053#1072#1082#1083#1072#1076#1085#1072#1103
+      Caption = #1055#1088#1086#1089#1084#1086#1090#1088' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
+      ImageIndex = 147
+      OnExecute = aViewParentExecute
+    end
+    object aReturn: TAction
+      Category = #1054#1087#1083#1072#1090#1072
+      Caption = #1042#1086#1079#1074#1088#1072#1090
+      Hint = #1042#1086#1079#1074#1088#1072#1090' '#1090#1086#1074#1072#1088#1072
+      ImageIndex = 163
+      OnExecute = aReturnExecute
+    end
+  end
+  inherited pmGrid: TPopupMenu
+    Images = MainDM.imMain
+    object N2: TMenuItem [0]
+      Action = aViewParent
+    end
+    object N3: TMenuItem [1]
+      Action = aUpdParent
+    end
+    object N4: TMenuItem [2]
+      Action = aDelParent
+    end
+    object N1: TMenuItem [3]
+      Caption = '-'
+    end
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM READ_ZAKAZ_NA_REAL_LIST(?MODE_)')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE DEL_ZAKAZ_NA_REAL (?ZAKAZ_NA_REAL_)')
+    StoredProcName = 'DEL_ZAKAZ_NA_REAL'
+  end
+  inherited tranWrite: TpFIBTransaction
+    Left = 160
+    Top = 80
+  end
+  object spReadOplata: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM READ_ZAKAZ_NR_OPLATA_LIST(?G_CLIENT_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 120
+    Top = 416
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsReadOplata: TDataSource
+    DataSet = spReadOplata
+    Left = 152
+    Top = 416
+  end
+  object spZakazDetails: TpFIBDataSet
+    SelectSQL.Strings = (
+      
+        'SELECT * FROM READ_ZAKAZ_DETAILS_LIST_REAL(?ZAKAZ_, ?IS_VOZVRAT_' +
+        ')')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 456
+    Top = 416
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsZakazDetails: TDataSource
+    DataSet = spZakazDetails
+    Left = 488
+    Top = 416
+  end
+  object spDelOplata: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      'EXECUTE PROCEDURE DEL_ZAKAZ (?ZAKAZ_)')
+    StoredProcName = 'DEL_ZAKAZ'
+    Left = 184
+    Top = 416
+  end
+  object spDelNakl: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      'EXECUTE PROCEDURE ZR_DEL_ZAKAZ_REAL_PARENT (?ZAKAZ_REAL_PARENT_)')
+    StoredProcName = 'ZR_DEL_ZAKAZ_REAL_PARENT'
+    Left = 128
+    Top = 120
+  end
+  object spDelVozvrat: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      'EXECUTE PROCEDURE DEL_SKLAD (?SKLAD_, ?ALLOW_SELL_ABSENT_GOODS_)')
+    StoredProcName = 'DEL_SKLAD'
+    Left = 184
+    Top = 448
+  end
+end

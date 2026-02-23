@@ -1,0 +1,842 @@
+unit frmSetup;
+
+interface
+
+{$I ShopUchet.inc}
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  dxCntner, ExtCtrls, StdCtrls, Buttons, dxBar, dxExEdtr, dxEditor, dxEdLib,
+  Registry, unCommonFunc, frmDlg, cxPC, cxControls, AppEvnts,
+  DB, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBStoredProc,
+  FIBDatabase, pFIBDatabase, ActnList, frmDBDlg, Printers, FileCtrl;
+
+type
+  TSetupForm = class(TDlgForm)
+    btnDefaults: TBitBtn;
+    dxPageControl1: TcxPageControl;
+    ts1: TcxTabSheet;
+    Label9: TLabel;
+    Shape17: TShape;
+    peToolbarCustomStyle: TdxPickEdit;
+    Shape18: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    peCustomStyle: TdxPickEdit;
+    Shape2: TShape;
+    Label10: TLabel;
+    Shape19: TShape;
+    peTabCustomStyle: TdxPickEdit;
+    Shape20: TShape;
+    Label2: TLabel;
+    Shape3: TShape;
+    Label8: TLabel;
+    Shape15: TShape;
+    peAutoRefresh: TdxPickEdit;
+    petbButtonsStyle: TdxPickEdit;
+    Shape4: TShape;
+    Shape16: TShape;
+    ts2: TcxTabSheet;
+    Label13: TLabel;
+    Shape26: TShape;
+    Label14: TLabel;
+    Shape27: TShape;
+    peMenuFont: TdxPickEdit;
+    Shape28: TShape;
+    seMenuFontSize: TdxSpinEdit;
+    Shape29: TShape;
+    mTestMenuFont: TdxMemo;
+    Shape30: TShape;
+    Label11: TLabel;
+    Shape21: TShape;
+    peGridFont: TdxPickEdit;
+    Shape22: TShape;
+    Label12: TLabel;
+    Shape23: TShape;
+    seGridFontSize: TdxSpinEdit;
+    Shape24: TShape;
+    mTestGridFont: TdxMemo;
+    Shape25: TShape;
+    Label15: TLabel;
+    Shape31: TShape;
+    pePopupFormBorderStyle: TdxPickEdit;
+    Shape32: TShape;
+    Label16: TLabel;
+    Shape33: TShape;
+    pePopupFlatBorder: TdxPickEdit;
+    Shape34: TShape;
+    tsCommon: TcxTabSheet;
+    GroupBox1: TGroupBox;
+    Label3: TLabel;
+    Shape5: TShape;
+    cbBackupPeriod: TComboBox;
+    Shape6: TShape;
+    rbDoBackupOnStart: TRadioButton;
+    rbDoBackupOnExit: TRadioButton;
+    ceCanSellNol: TdxCheckEdit;
+    Label4: TLabel;
+    Shape7: TShape;
+    Shape8: TShape;
+    cbFormula: TComboBox;
+    Label5: TLabel;
+    Shape9: TShape;
+    Shape10: TShape;
+    spUpd: TpFIBStoredProc;
+    spGetData: TpFIBStoredProc;
+    tranRead: TpFIBTransaction;
+    tranWrite: TpFIBTransaction;
+    GroupBox2: TGroupBox;
+    cbPrinters: TComboBox;
+    cbBillWidth: TComboBox;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape12: TShape;
+    Label7: TLabel;
+    Shape13: TShape;
+    Shape14: TShape;
+    Label17: TLabel;
+    Shape35: TShape;
+    Shape36: TShape;
+    bedtFileName: TdxButtonEdit;
+    Label18: TLabel;
+    Shape37: TShape;
+    Shape38: TShape;
+    cbCurrency: TComboBox;
+    Label19: TLabel;
+    Shape39: TShape;
+    Shape40: TShape;
+    seSdvig: TdxSpinEdit;
+    procedure peCustomStyleChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure petbButtonsStyleChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnDefaultsClick(Sender: TObject);
+    procedure peAutoRefreshChange(Sender: TObject);
+    procedure peToolbarCustomStyleChange(Sender: TObject);
+    procedure peTabCustomStyleChange(Sender: TObject);
+    procedure peGridFontChange(Sender: TObject);
+    procedure seGridFontSizeChange(Sender: TObject);
+    procedure peMenuFontChange(Sender: TObject);
+    procedure seMenuFontSizeChange(Sender: TObject);
+    procedure pePopupFormBorderStyleChange(Sender: TObject);
+    procedure pePopupFlatBorderChange(Sender: TObject);
+    procedure cbBackupPeriodChange(Sender: TObject);
+    procedure rbDoBackupOnStartClick(Sender: TObject);
+    procedure ceCanSellNolClick(Sender: TObject);
+    procedure cbPrintersChange(Sender: TObject);
+    procedure cbBillWidthChange(Sender: TObject);
+    procedure bedtFileNameButtonClick(Sender: TObject;
+      AbsoluteIndex: Integer);
+    procedure bedtFileNameChange(Sender: TObject);
+    procedure cbCurrencyChange(Sender: TObject);
+    procedure seSdvigChange(Sender: TObject);
+  private
+    FtbButtonsStyle: TtbButtonsStyle;
+    FAutoRefresh: Integer;
+    FPopupFormBorderStyle: TdxPopupEditFormBorderStyle;
+    FPopupFlatBorder: Boolean;
+    FBackupDir : String;     // папка для хранения резервной копии
+    FBackupPeriod : Integer; // 0 - каждый день, 1 - каждую неделю, 2 - раз в месяц, 3 - никогда
+    FDoBackupOnStart : Integer; // 1 - при входе в программу, 0 - при выходе из нее
+    FAllowSellAbsentGoods : Integer; // 1 - продавать товары с нулевым остатком, 0 - не продавать товары с нулевым остатком
+
+    FMenuFontName: String;
+    FMenuFontSize: Integer;
+
+    FGridFontName: String;
+    FGridFontSize: Integer;
+
+    function SaveSetup: Boolean;
+    function ExecSP(SP: TpFIBStoredProc): Boolean;
+    procedure FillFontItems;
+  protected
+    procedure GetData; override;
+  public
+  end;
+
+const
+  WRITABLE_FONTTYPE = 256;
+  foAnsiOnly        = True;
+  foTrueTypeOnly    = True;
+  foFixedPitchOnly  = False;
+  foOEMFontsOnly    = False;
+  foNoOEMFonts      = False;
+  foNoSymbolFonts   = True;
+  foScalableOnly    = True;
+
+implementation
+
+uses unInitApp, unErrorHandlers;
+
+{$R *.DFM}
+
+procedure TSetupForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  {Заполняем Комбо списком шрифтов}
+  FillFontItems;
+
+  // заполняем принтеры
+  cbPrinters.Items.Assign(Printer.Printers);
+  cbPrinters.ItemIndex := Printer.PrinterIndex;
+
+  GetData;
+end;
+
+procedure TSetupForm.GetData;
+var
+  Reg: TRegistry;
+begin
+  inherited;
+
+  mTestMenuFont.Lines.Clear;
+  mTestMenuFont.Lines.Add('Текст на русском');
+  mTestMenuFont.Lines.Add('English text');
+
+  mTestGridFont.Lines.Clear;
+  mTestGridFont.Lines.Add('Текст на русском');
+  mTestGridFont.Lines.Add('English text');
+
+  peCustomStyle.ItemIndex := Integer(CustomStyle);  {Уже загружено в GetCustomStyle}
+  try
+    Reg := TRegistry.Create;
+    try
+      with Reg do begin
+        RootKey := RegSetupRoot;
+        LazyWrite := False;  {Сохраняем ключи до закрытия}
+        if OpenKey(RegSetupKey, True) then
+          try
+            {-----------------------}
+            {Внешний вид и поведение}
+            {-----------------------}
+            {Стиль панелей инструментов}
+            if ValueExists('ToolbarStyle') then
+              ToolbarStyle := TdxBarManagerStyle(ReadInteger('ToolbarStyle'))
+            else begin
+              ToolbarStyle := bmsEnhanced;
+              WriteInteger('ToolbarStyle', Integer(ToolbarStyle));
+            end;
+            peToolbarCustomStyle.ItemIndex := Integer(ToolbarStyle);
+            {----------------------------}
+            {Стиль диалоговых окон задан выше}
+            {----------------------------}
+            {Стиль закладок}
+            if ValueExists('TabStyle') then
+              TabStyle := TcxPCStyleID(ReadInteger('TabStyle'))
+            else begin
+              TabStyle := 4{dxtsFlat};
+              WriteInteger('TabStyle', Integer(TabStyle));
+            end;
+            peTabCustomStyle.ItemIndex := Integer(TabStyle);
+
+            {----------------------------}
+            {Стиль кнопок в списках}
+            if ValueExists('tbButtonsStyle') then
+              FtbButtonsStyle := TtbButtonsStyle(ReadInteger('tbButtonsStyle'))
+            else begin
+              FtbButtonsStyle := bsGlyphText;
+              WriteInteger('tbButtonsStyle', Integer(FtbButtonsStyle));
+            end;
+            petbButtonsStyle.ItemIndex := Integer(FtbButtonsStyle);
+            {----------------------------}
+            {Автообновление списков}
+            if ValueExists('AutoRefresh') then  {Когда выполнять AutoRefresh}
+              FAutoRefresh := ReadInteger('AutoRefresh')
+            else begin
+              FAutoRefresh := 5; {5 мин.}
+              WriteInteger('AutoRefresh', FAutoRefresh);
+            end;
+            case FAutoRefresh of
+              0  : peAutoRefresh.ItemIndex := 0;
+              1  : peAutoRefresh.ItemIndex := 1;
+              2  : peAutoRefresh.ItemIndex := 2;
+              3  : peAutoRefresh.ItemIndex := 3;
+              4  : peAutoRefresh.ItemIndex := 4;
+              5  : peAutoRefresh.ItemIndex := 5;
+              10 : peAutoRefresh.ItemIndex := 6;
+              20 : peAutoRefresh.ItemIndex := 7;
+              30 : peAutoRefresh.ItemIndex := 8;
+            end;
+            {Стиль выпадающих окон}
+            if ValueExists('PopupFormBorderStyle') then  {Когда выполнять AutoRefresh}
+              FPopupFormBorderStyle := TdxPopupEditFormBorderStyle(ReadInteger('PopupFormBorderStyle'))
+            else begin
+              FPopupFormBorderStyle := pbsDialog;
+              WriteInteger('PopupFormBorderStyle', Integer(FPopupFormBorderStyle));
+            end;
+            case FPopupFormBorderStyle of
+              pbsDialog  : pePopupFormBorderStyle.ItemIndex := 0;
+              pbsSimple  : pePopupFormBorderStyle.ItemIndex := 1;
+              pbsSysPanel: pePopupFormBorderStyle.ItemIndex := 2;
+            end;
+            {Плоская рамка выпад. окна}
+            if ValueExists('PopupFlatBorder') then
+              FPopupFlatBorder := ReadBool('PopupFlatBorder')
+            else begin
+              FPopupFlatBorder := True;
+              WriteBool('PopupFlatBorder', FPopupFlatBorder);
+            end;
+            if FPopupFlatBorder then
+              pePopupFlatBorder.ItemIndex := 1
+            else
+              pePopupFlatBorder.ItemIndex := 0;
+
+            {Папка для хранения копии БД}
+            if ValueExists('BackupDir') then
+              FBackupDir := ReadString('BackupDir')
+            else begin
+              FBackupDir := ExtractFilePath(Application.exename) + 'Backup';
+              WriteString('BackupDir', FBackupDir);
+            end;
+            bedtFileName.Text := FBackupDir;
+
+            {Периодичность создания копии БД}
+            if ValueExists('BackupPeriod') then
+              FBackupPeriod := ReadInteger('BackupPeriod')
+            else begin
+              FBackupPeriod := 0;
+              WriteInteger('BackupPeriod', FBackupPeriod);
+            end;
+            cbBackupPeriod.ItemIndex := FBackupPeriod;
+
+            {Когда делать копию БД - при входе в программу (1), или при выходе (0)}
+            if ValueExists('DoBackupOnStart') then
+              FDoBackupOnStart := ReadInteger('DoBackupOnStart')
+            else begin
+              FDoBackupOnStart := 0;
+              WriteInteger('DoBackupOnStart', FDoBackupOnStart);
+            end;
+            rbDoBackupOnStart.Checked := FDoBackupOnStart = 1;
+            rbDoBackupOnExit.Checked := FDoBackupOnStart = 0;
+
+            {Валюта 0 - тенге 1 - рубли 2 - гривны}
+            if ValueExists('Currency') then
+              Currency := ReadInteger('Currency')
+            else begin
+              Currency := 0;
+              WriteInteger('Currency', Currency);
+            end;
+            cbCurrency.ItemIndex := Currency;
+
+            {Продавать товары с нулевым остатком или нет 0 - нет, 1 - да}
+            if ValueExists('AllowSellAbsentGoods') then
+              FAllowSellAbsentGoods := ReadInteger('AllowSellAbsentGoods')
+            else begin
+              FAllowSellAbsentGoods := 0;
+              WriteInteger('AllowSellAbsentGoods', FAllowSellAbsentGoods);
+            end;
+            ceCanSellNol.Checked := FAllowSellAbsentGoods = 1;
+
+            {Принтер для печати чеков и ширина чековой ленты}
+            if ValueExists('BillPrinterName') then begin
+              BillPrinter := ReadString('BillPrinterName');
+              cbPrinters.Text := BillPrinter;
+            end else begin
+              BillPrinter := cbPrinters.Text;
+              WriteString('BillPrinterName', BillPrinter);
+            end;
+            if ValueExists('BillWidth') then begin
+              BillWidth := ReadInteger('BillWidth');
+              cbBillWidth.ItemIndex := BillWidth;
+            end else begin
+              BillWidth := cbBillWidth.ItemIndex;
+              WriteInteger('BillWidth', BillWidth);
+            end;
+            if ValueExists('BillSdvig') then begin
+              BillSdvig := ReadInteger('BillSdvig');
+              seSdvig.IntValue := BillSdvig;
+            end else begin
+              BillSdvig := seSdvig.IntValue;
+              WriteInteger('BillSdvig', BillSdvig);
+            end;
+
+            {-----------------------}
+            {Шрифты                 }
+            {-----------------------}
+            {Шрифт в меню}
+            if ValueExists('MenuFontName') then
+              FMenuFontName := ReadString('MenuFontName')
+            else begin
+              FMenuFontName := 'Tahoma';
+              WriteString('MenuFontName', FMenuFontName);
+            end;
+            peMenuFont.ItemIndex := peMenuFont.Items.IndexOf(FMenuFontName);
+            {----------------------------}
+            if ValueExists('MenuFontSize') then
+              FMenuFontSize := ReadInteger('MenuFontSize')
+            else begin
+              FMenuFontSize := 9;
+              WriteInteger('MenuFontSize', FMenuFontSize);
+            end;
+            seMenuFontSize.IntValue := FMenuFontSize;
+
+            {----------------------------}
+            {Шрифт в сетках}
+            if ValueExists('GridFontName') then
+              FGridFontName := ReadString('GridFontName')
+            else begin
+              FGridFontName := 'Tahoma';
+              WriteString('GridFontName', FGridFontName);
+            end;
+            peGridFont.ItemIndex := peGridFont.Items.IndexOf(FGridFontName);
+            {----------------------------}
+            if ValueExists('GridFontSize') then
+              FGridFontSize := ReadInteger('GridFontSize')
+            else begin
+              FGridFontSize := 9;
+              WriteInteger('GridFontSize', FGridFontSize);
+            end;
+            seGridFontSize.IntValue := FGridFontSize;
+            {----------------------------}
+          finally
+            CloseKey;
+          end;
+      end;
+    finally
+      Reg.Free;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message + #13#10'(occured in TSetupForm.GetData)', mtError, [mbOk], 0);
+  end;
+
+  spGetdata.ParamByName('system_setup_').AsFloat := 1;
+  ExecSp(spGetdata);
+  cbFormula.ItemIndex := spGetdata.ParamByName('s_value_').AsInteger;
+end;
+
+function TSetupForm.SaveSetup: Boolean;
+var
+  Reg: TRegistry;
+begin
+  Result := False;
+  try
+    Reg := TRegistry.Create;
+    try
+      with Reg do begin
+        RootKey := RegSetupRoot;
+        LazyWrite := False;  {Сохраняем ключи до закрытия}
+        if OpenKey(RegSetupKey, True) then
+          try
+            {Внешний вид и поведение}
+            WriteInteger('ToolbarStyle', Integer(ToolbarStyle));
+            WriteInteger('CustomStyle', Integer(CustomStyle));
+            WriteInteger('TabStyle', Integer(TabStyle));
+
+            WriteInteger('tbButtonsStyle', Integer(FtbButtonsStyle));
+            WriteInteger('AutoRefresh', FAutoRefresh);
+
+            WriteInteger('PopupFormBorderStyle', Integer(FPopupFormBorderStyle));
+            WriteBool('PopupFlatBorder', FPopupFlatBorder);
+
+            if DirectoryExists(FBackupDir) = False then begin
+              MessageDlg('Папка для сохранения копии БД не существует! "' + FBackupDir + '"', mtError, [mbOK], 0);
+              Exit;
+            end;
+            WriteString('BackupDir', FBackupDir);
+            BackupDir := FBackupDir;
+            
+            WriteInteger('BackupPeriod', FBackupPeriod);
+
+            WriteInteger('DoBackupOnStart', FDoBackupOnStart);
+
+            {Продавать товары с нулевым остатком или нет 0 - нет, 1 - да}
+            WriteInteger('AllowSellAbsentGoods', FAllowSellAbsentGoods);
+            AllowSellAbsGoods := FAllowSellAbsentGoods;
+
+            {Валюта 0 - тенге, 1 - рубли, 2 - гривны}
+            WriteInteger('Currency', Currency);
+
+            {Принтер чеков и ширины ленты чеков}
+            WriteString('BillPrinterName', BillPrinter);
+            WriteInteger('BillWidth', BillWidth);
+            WriteInteger('BillSdvig', BillSdvig);
+
+            {Шрифты}
+            WriteString('MenuFontName', FMenuFontName);
+            WriteInteger('MenuFontSize', FMenuFontSize);
+
+            WriteString('GridFontName', FGridFontName);
+            WriteInteger('GridFontSize', FGridFontSize);
+
+            {Оповещаем главное окно об изменении настроек}
+            PostMessage(Application.MainForm.Handle, WM_SETUPCHANGED, 0, 0);
+          finally
+            CloseKey;
+          end;
+      end;
+    finally
+      Reg.Free;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message + #13#10'(occured in TSetupForm.SaveSetup)', mtError, [mbOk], 0);
+  end;
+
+  spUpd.ParamByName('s_value_').AsInteger := cbFormula.ItemIndex;
+  spUpd.ParamByName('system_setup_').AsInteger := 1;
+  spUpd.ParamByName('s_value_').AsInteger := Integer(ceCanSellNol.checked);
+  spUpd.ParamByName('system_setup_').AsInteger := 2;
+  if Execsp(spUpd) then
+    Result := True;
+end;
+
+procedure TSetupForm.peToolbarCustomStyleChange(Sender: TObject);
+begin
+  inherited;
+  ToolbarStyle := TdxBarManagerStyle(peToolbarCustomStyle.ItemIndex);
+end;
+
+procedure TSetupForm.peCustomStyleChange(Sender: TObject);
+begin
+  inherited;
+  CustomStyle := TCustomStyle(peCustomStyle.ItemIndex);
+  SetCustomStyle;
+end;
+
+procedure TSetupForm.peTabCustomStyleChange(Sender: TObject);
+begin
+  inherited;
+  TabStyle := TcxPCStyleID(peTabCustomStyle.ItemIndex);
+  SetCustomStyle;
+end;
+
+procedure TSetupForm.petbButtonsStyleChange(Sender: TObject);
+begin
+  inherited;
+  FtbButtonsStyle := TtbButtonsStyle(petbButtonsStyle.ItemIndex);
+//  SetCustomStyle;  {Здесь их нет}
+end;
+
+procedure TSetupForm.peAutoRefreshChange(Sender: TObject);
+begin
+  inherited;
+  {В минутах}
+  case peAutoRefresh.ItemIndex of
+    0: FAutoRefresh := 0;
+    1: FAutoRefresh := 1;
+    2: FAutoRefresh := 2;
+    3: FAutoRefresh := 3;
+    4: FAutoRefresh := 4;
+    5: FAutoRefresh := 5;
+    6: FAutoRefresh := 10;
+    7: FAutoRefresh := 20;
+    8: FAutoRefresh := 30;
+  end;
+end;
+
+procedure TSetupForm.pePopupFormBorderStyleChange(Sender: TObject);
+begin
+  inherited;
+  case pePopupFormBorderStyle.ItemIndex of
+    0: FPopupFormBorderStyle := pbsDialog;
+    1: FPopupFormBorderStyle := pbsSimple;
+    2: FPopupFormBorderStyle := pbsSysPanel;
+  end;
+end;
+
+procedure TSetupForm.pePopupFlatBorderChange(Sender: TObject);
+begin
+  inherited;
+  if pePopupFlatBorder.ItemIndex = 0 then
+    FPopupFlatBorder := False
+  else
+    FPopupFlatBorder := True;
+end;
+
+procedure TSetupForm.cbBackupPeriodChange(Sender: TObject);
+begin
+  FBackupPeriod := cbBackupPeriod.ItemIndex;
+end;
+
+procedure TSetupForm.rbDoBackupOnStartClick(Sender: TObject);
+begin
+  FDoBackupOnStart := Integer(rbDoBackupOnStart.Checked);
+end;
+
+procedure TSetupForm.peMenuFontChange(Sender: TObject);
+begin
+  inherited;
+  FMenuFontName := peMenuFont.Items[peMenuFont.ItemIndex];
+  if peMenuFont.ItemIndex >= 0 then
+    mTestMenuFont.Font.Name := FMenuFontName;
+end;
+
+procedure TSetupForm.seMenuFontSizeChange(Sender: TObject);
+begin
+  inherited;
+  FMenuFontSize := seMenuFontSize.IntValue;
+  mTestMenuFont.Font.Size := FMenuFontSize;
+end;
+
+procedure TSetupForm.peGridFontChange(Sender: TObject);
+begin
+  inherited;
+  FGridFontName := peGridFont.Items[peGridFont.ItemIndex];
+  if peGridFont.ItemIndex >= 0 then
+    mTestGridFont.Font.Name := FGridFontName;
+end;
+
+procedure TSetupForm.seGridFontSizeChange(Sender: TObject);
+begin
+  inherited;
+  FGridFontSize := seGridFontSize.IntValue;
+  mTestGridFont.Font.Size := FGridFontSize;
+end;
+
+procedure TSetupForm.btnDefaultsClick(Sender: TObject);
+begin
+  inherited;
+  if MessageDlg('Установить для всех настроек значения по умолчанию?',
+    mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  {Устанавливаем значения по умолчанию}
+  {Стиль панелей инструментов}
+  ToolbarStyle := bmsEnhanced;
+
+  {Стиль диалогов}
+  CustomStyle := csRealBlank;
+
+  {Стиль закладок}
+  TabStyle := 1{dxtsTabs};
+
+  {Стиль списков}
+  FtbButtonsStyle := bsGlyphText;
+  FAutoRefresh := 5;
+
+  {Стиль выпадающих окон}
+  FPopupFormBorderStyle := pbsDialog;
+  FPopupFlatBorder := True;
+
+  FBackupDir := ExtractFilePath(Application.exename) + 'Backup';
+
+  FBackupPeriod := 0;
+
+  FDoBackupOnStart := 0;
+
+  FAllowSellAbsentGoods := 0;
+
+  {Шрифт в меню}
+  FMenuFontName := 'Tahoma';
+  FMenuFontSize := 9;
+
+  {Шрифт в гридах}
+  FGridFontName := 'Tahoma';
+  FGridFontSize := 9;
+
+  {---------------------------}
+
+  {Стиль панелей инструментов}
+  peToolbarCustomStyle.ItemIndex := Integer(ToolbarStyle);
+
+  {Стиль диалогов}
+  peCustomStyle.ItemIndex := Integer(CustomStyle);  {Уже загружено в GetCustomStyle}
+
+  {Стиль Закладок}
+  peTabCustomStyle.ItemIndex := Integer(TabStyle);
+
+  {Стиль списков}
+  petbButtonsStyle.ItemIndex := Integer(FtbButtonsStyle);
+  peAutoRefresh.ItemIndex := 5;  {Через 5 сек}
+
+  {Стиль выпадающих окон}
+  pePopupFormBorderStyle.ItemIndex := 0; {pbsDialog}
+  pePopupFlatBorder.ItemIndex := 1; {True}
+
+  {Папака для хранения копии БД}
+  bedtFileName.Text := FBackupDir;
+
+  {Период создания копии БД}
+  cbBackupPeriod.ItemIndex := FBackupPeriod;
+
+  {Делать копию при входе в приложение, или при выходе}
+  rbDoBackupOnStart.Checked := False;
+  rbDoBackupOnExit.Checked := True;
+  FDoBackupOnStart := 0;
+
+  {Продавать товары с нулевым остатком 0 -нет, 1 - да}
+  ceCanSellNol.Checked := False;
+  FAllowSellAbsentGoods := 0;
+
+  {Валюта}
+  cbCurrency.ItemIndex := 0;
+  Currency := 0;
+
+  seSdvig.IntValue := 0;
+
+  {Шрифт в меню}
+  peMenuFont.ItemIndex := peMenuFont.Items.IndexOf(FMenuFontName);
+  seMenuFontSize.IntValue := FMenuFontSize;
+
+  {Шрифт в гридах}
+  peGridFont.ItemIndex := peGridFont.Items.IndexOf(FGridFontName);
+  seGridFontSize.IntValue := FGridFontSize;
+
+  {Оповещаем главное окно об изменении настроек}
+  //PostMessage(Application.MainForm.Handle, WM_SETUPCHANGED, 0, 0);
+end;
+
+procedure TSetupForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  //inherited; {Полностью переопределяем метод}
+
+  if ModalResult <> mrOk then
+    Exit;
+
+  CanClose := False;
+
+  if SaveSetup then
+    CanClose := True;
+end;
+
+procedure TSetupForm.FillFontItems;
+  function IsValidFont(Box: TdxPickEdit;
+    LogFont: TLogFont; FontType: Integer): Boolean;
+  begin
+    Result := True;
+    if foAnsiOnly then
+      Result := Result and (LogFont.lfCharSet = ANSI_CHARSET);
+    if foTrueTypeOnly then
+      Result := Result and (FontType and TRUETYPE_FONTTYPE = TRUETYPE_FONTTYPE);
+    if foFixedPitchOnly then
+      Result := Result and (LogFont.lfPitchAndFamily and FIXED_PITCH = FIXED_PITCH);
+    if foOEMFontsOnly then
+      Result := Result and (LogFont.lfCharSet = OEM_CHARSET);
+    if foNoOEMFonts then
+      Result := Result and (LogFont.lfCharSet <> OEM_CHARSET);
+    if foNoSymbolFonts then
+      Result := Result and (LogFont.lfCharSet <> SYMBOL_CHARSET);
+    if foScalableOnly then
+      Result := Result and (FontType and RASTER_FONTTYPE = 0);
+  end;
+  function EnumFontsProc(var EnumLogFont: TEnumLogFont; var TextMetric: TNewTextMetric;
+    FontType: Integer; Data: LPARAM): Integer; export; stdcall;
+  var
+    FaceName: string;
+  begin
+    FaceName := StrPas(EnumLogFont.elfLogFont.lfFaceName);
+    with TdxPickEdit(Data) do
+      if (Items.IndexOf(FaceName) < 0) and IsValidFont(TdxPickEdit(Data), EnumLogFont.elfLogFont, FontType) then begin
+        if EnumLogFont.elfLogFont.lfCharSet <> SYMBOL_CHARSET then
+          FontType := FontType or WRITABLE_FONTTYPE;
+        Items.AddObject(FaceName, TObject(FontType));
+      end;
+    Result := 1;
+  end;
+var
+  DC: HDC;
+begin
+  with peMenuFont do begin
+    Items.BeginUpdate;
+    try
+      Clear;
+      DC := GetDC(0);
+      try
+        EnumFontFamilies(DC, nil, @EnumFontsProc, Longint(peMenuFont));
+      finally
+        ReleaseDC(0, DC);
+      end;
+    finally
+      Items.EndUpdate;
+    end;
+  end;
+
+  with peGridFont do begin
+    Items.BeginUpdate;
+    try
+      Clear;
+      DC := GetDC(0);
+      try
+        EnumFontFamilies(DC, nil, @EnumFontsProc, Longint(peGridFont));
+      finally
+        ReleaseDC(0, DC);
+      end;
+    finally
+      Items.EndUpdate;
+    end;
+  end;
+end;
+
+procedure TSetupForm.ceCanSellNolClick(Sender: TObject);
+begin
+  inherited;
+  FAllowSellAbsentGoods := Integer(ceCanSellNol.checked);
+end;
+
+function TSetupForm.ExecSP(SP: TpFIBStoredProc): Boolean;
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+begin
+  Result := False;
+
+  with SP do begin
+    if not Transaction.InTransaction then
+      Transaction.StartTransaction;
+
+    ExecProc;
+
+    if FieldIndex['ERR_CODE'] >= 0 then begin
+      ErrCode := ParamByName('ERR_CODE').AsInteger;
+      if ErrCode <> 0 then begin
+        if Transaction.InTransaction then
+          Transaction.Rollback;
+        if FieldIndex['ERR_MSG'] >= 0 then begin
+          ErrMsg := ParamByName('ERR_MSG').AsString;
+          DBErrorHandler(ErrCode, ErrMsg);
+        end
+        else
+          MessageDlg('Error code: ' + IntToStr(ErrCode)
+             + #13#10'(occured in TDlgForm.CallSP)', mtInformation, [mbOK], 0);
+        Exit;
+      end;
+    end;
+
+    if Transaction.InTransaction then
+      Transaction.Commit;
+  end;
+
+  Result := True;
+end;
+
+procedure TSetupForm.cbPrintersChange(Sender: TObject);
+begin
+  BillPrinter := cbPrinters.Text;
+end;
+
+procedure TSetupForm.cbBillWidthChange(Sender: TObject);
+begin
+  BillWidth := cbBillWidth.ItemIndex;
+end;
+
+procedure TSetupForm.bedtFileNameButtonClick(Sender: TObject;
+  AbsoluteIndex: Integer);
+var
+  Dir : String;
+begin
+  if SelectDirectory('Выберите папку', 'C:\', Dir) then begin
+    bedtFileName.Text := Dir;
+    FBackupDir := Dir;
+  end;
+end;
+
+procedure TSetupForm.bedtFileNameChange(Sender: TObject);
+begin
+  inherited;
+  ceCanSellNol.Modified := True;
+  FBackupDir := bedtFileName.Text;
+end;
+
+procedure TSetupForm.cbCurrencyChange(Sender: TObject);
+begin
+  Currency := cbCurrency.ItemIndex;
+end;
+
+procedure TSetupForm.seSdvigChange(Sender: TObject);
+begin
+  BillSdvig := seSdvig.IntValue;
+end;
+
+end.

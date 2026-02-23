@@ -1,0 +1,52 @@
+unit frmAbout;
+
+interface
+
+{$I ShopUchet.inc}
+
+uses Windows, Classes, Graphics, Forms, Controls, StdCtrls,
+  Buttons, ExtCtrls, SysUtils;
+
+type
+  TAboutForm = class(TForm)
+    Panel1: TPanel;
+    ProgramIcon: TImage;
+    ProductName: TLabel;
+    Version: TLabel;
+    Copyright: TLabel;
+    OKBtn: TBitBtn;
+    Label1: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+  private
+  public
+  end;
+
+var
+  AboutForm: TAboutForm;
+
+implementation
+
+uses unFileInfo;
+
+{$R *.DFM}
+
+procedure TAboutForm.FormShow(Sender: TObject);
+var
+  LocalInfo : unFileInfo.TFixedFileInfo;
+begin
+  LocalInfo  := unFileInfo.FileInfo(Application.ExeName);
+
+  Version.Caption := Format('Version %d.%d.%d.%d',
+    [LocalInfo.wFileVersionLS, LocalInfo.wFileVersionMS,
+     LocalInfo.wProductVersionLS, LocalInfo.wProductVersionMS]);
+end;
+
+procedure TAboutForm.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #27 then {Esc}
+    Close;
+end;
+
+end.
+

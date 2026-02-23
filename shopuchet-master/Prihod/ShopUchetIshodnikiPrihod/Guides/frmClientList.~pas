@@ -1,0 +1,512 @@
+unit frmClientList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  FIBDataSet, pFIBDataSet, ExtCtrls, Menus, FIBDatabase, pFIBDatabase,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTL, cxPC, cxControls, cxSplitter, StdCtrls, Buttons, dxDBTLCl,
+  dxGrClms, XPStyleActnCtrls, ActnMan, ToolWin, ActnCtrls, ActnMenus;
+
+type
+  TClientListForm = class(TDBListForm)
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT_PAR: TdxDBGridMaskColumn;
+    dxDBGridARTICUL: TdxDBGridMaskColumn;
+    dxDBGridNOMENCLATUR_NUM: TdxDBGridMaskColumn;
+    dxDBGridBARCODE: TdxDBGridMaskColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxDBGridG_UNIT: TdxDBGridMaskColumn;
+    dxDBGridPRICE: TdxDBGridMaskColumn;
+    dxDBGridVOLUME_PRICE: TdxDBGridMaskColumn;
+    dxDBGridAMOUNT: TdxDBGridColumn;
+  splMenu: TcxSplitter;
+  Panel1: TPanel;
+    grClient: TdxDBGrid;
+    Panel3: TPanel;
+    btnRefreshChd: TBitBtn;
+    btnInsChd: TBitBtn;
+    btnUpdChd: TBitBtn;
+    btnDelChd: TBitBtn;
+    btnViewChd: TBitBtn;
+    btnInsLike: TBitBtn;
+    aViewChd: TAction;
+    aInsChd: TAction;
+    aInsLikeChd: TAction;
+    aUpdChd: TAction;
+    aDelChd: TAction;
+    aRefreshChd: TAction;
+    grClientG_CLIENT: TdxDBGridMaskColumn;
+    grClientG_CLIENT_PARENT: TdxDBGridMaskColumn;
+    grClientG_CONTRAGENT: TdxDBGridMaskColumn;
+    grClientNAME: TdxDBGridMaskColumn;
+    grClientRNN: TdxDBGridMaskColumn;
+    grClientIDN: TdxDBGridMaskColumn;
+    grClientSUPPL_AGENT_NAME: TdxDBGridMaskColumn;
+    cxSplitter1: TcxSplitter;
+    pcClientRekv: TcxPageControl;
+    tsContact: TcxTabSheet;
+    tsBankRekv: TcxTabSheet;
+    dxDBGrid1: TdxDBGrid;
+    dxDBGrid2: TdxDBGrid;
+    dxDBGrid1ADDRESS_TYPE: TdxDBGridMaskColumn;
+    dxDBGrid1ADDRESS_TYPE_STR: TdxDBGridMaskColumn;
+    dxDBGrid1ADDRESS: TdxDBGridMaskColumn;
+    dxDBGrid1PHONE: TdxDBGridMaskColumn;
+    dxDBGrid1FAX: TdxDBGridMaskColumn;
+    dxDBGrid1EMAIL: TdxDBGridMaskColumn;
+    dxDBGrid1WEBSITE: TdxDBGridMaskColumn;
+    dxDBGrid1IS_DEFAULT: TdxDBGridCheckColumn;
+    dxDBGrid2G_ACCOUNT: TdxDBGridMaskColumn;
+    dxDBGrid2ACCOUNT: TdxDBGridMaskColumn;
+    dxDBGrid2G_BANK: TdxDBGridMaskColumn;
+    dxDBGrid2BIK: TdxDBGridMaskColumn;
+    dxDBGrid2NAME: TdxDBGridMaskColumn;
+    dxDBGrid2IS_DEFAULT: TdxDBGridCheckColumn;
+    aInsContact: TAction;
+    aUpdContact: TAction;
+    aDelContact: TAction;
+    Panel4: TPanel;
+    BitBtn9: TBitBtn;
+    BitBtn10: TBitBtn;
+    BitBtn12: TBitBtn;
+    aInsChdCategory: TAction;
+    grClientIS_BEZNAL: TdxDBGridCheckColumn;
+    spReadClient: TpFIBDataSet;
+    dsReadClient: TDataSource;
+    spReadContact: TpFIBDataSet;
+    dsReadContact: TDataSource;
+    spReadBankRekv: TpFIBDataSet;
+    dsReadBankRekv: TDataSource;
+    spDelContact: TpFIBStoredProc;
+    spDelBankRekv: TpFIBStoredProc;
+    grClientBARCODE: TdxDBGridColumn;
+    grClientN_PERCENT: TdxDBGridColumn;
+    grClientSKIDKA: TdxDBGridColumn;
+    grClientSUMM: TdxDBGridColumn;
+    grClientSUMM_ALL: TdxDBGridColumn;
+    dxBarButton2: TdxBarButton;
+    pn1: TPanel;
+    tlCategory: TdxDBTreeList;
+    tlCategoryG_PRODUCT: TdxDBTreeListMaskColumn;
+    tlCategoryG_PRODUCT_PAR: TdxDBTreeListMaskColumn;
+    tlCategoryNAME: TdxDBTreeListMaskColumn;
+    dxBarStatic1: TdxBarStatic;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure tlCategoryChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure aRefreshChdExecute(Sender: TObject);
+    procedure aViewChdExecute(Sender: TObject);
+    procedure aInsChdExecute(Sender: TObject);
+    procedure aInsLikeChdExecute(Sender: TObject);
+    procedure aUpdChdExecute(Sender: TObject);
+    procedure aDelChdExecute(Sender: TObject);
+    procedure grClientChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure aInsContactExecute(Sender: TObject);
+    procedure aUpdContactExecute(Sender: TObject);
+    procedure aDelContactExecute(Sender: TObject);
+    procedure pcClientRekvChange(Sender: TObject);
+    procedure aInsChdCategoryExecute(Sender: TObject);
+    procedure aCustomizeColumnsExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    FIs_supplier: Integer; // 0 - Клиент, 1 - Поставщик
+    FIns_Child : Integer;  //признак что вызывается INSDATA для создания дочерней записи
+  public
+    property Is_supplier: Integer read FIs_supplier write FIs_supplier;
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+    procedure ReadClientContact;
+    constructor CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+  end;
+
+var
+  ClientListForm: TClientListForm;
+
+implementation
+
+uses frmClient, frmClientCategory, frmDBEdit, frmClientAddress,
+  frmClientBankRek;
+
+{$R *.dfm}
+
+constructor TClientListForm.CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String);
+var Caption_ : String;
+begin
+  FIs_supplier := Prizn;
+
+  IF FIs_supplier = 0 THEN begin
+    Caption_ := 'Клиенты';
+    Helpc := 6;
+  end ELSE begin
+    Caption_ := 'Поставщики';
+    Helpc := 7;
+  end;
+
+  inherited Create(AOwner, Caption_, ActionName);
+
+  Self.Caption := Caption_;
+  FIns_Child := 0;
+end;
+
+procedure TClientListForm.ReadList;
+begin
+  spRead.ParamByName('is_supplier_').AsInteger := FIs_supplier;
+  inherited;
+
+  spReadClient.ParamByName('G_CLIENT_PARENT_').AsInteger := spRead.FieldByName('G_CLIENT').AsInteger;
+  OpenSp(spReadClient, True);
+
+  aDel.Enabled := spRead.RecordCount > 0;
+  aView.Enabled := spRead.RecordCount > 0;
+  aInsChdCategory.Enabled := spRead.RecordCount > 0;
+  aUpd.Enabled := spRead.RecordCount > 0;
+  aRefreshChd.Execute;
+end;
+
+procedure TClientListForm.ReadClientContact;
+begin
+  if pcClientRekv.ActivePage = tsContact then begin
+    spReadContact.ParamByName('g_client_').AsInteger := spReadClient.FieldByName('G_client').AsInteger;
+    OpenSP(spReadContact, True);
+    aUpdContact.Enabled := spReadContact.RecordCount > 0;
+    aDelContact.Enabled := spReadContact.RecordCount > 0;
+  end else if pcClientRekv.ActivePage = tsBankRekv then  begin
+    spReadBankRekv.ParamByName('g_client_').AsInteger := spReadClient.FieldByName('G_client').AsInteger;
+    OpenSP(spReadBankRekv, True);
+    aUpdContact.Enabled := spReadBankRekv.RecordCount > 0;
+    aDelContact.Enabled := spReadBankRekv.RecordCount > 0;
+  end;
+end;
+
+procedure TClientListForm.ViewData;
+begin
+  ClassForm := TClientCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    //ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TClientListForm.InsData;
+begin
+  ClassForm := TClientCategoryForm.Create(Self);
+  try
+    if FIns_Child = 1 then
+      (ClassForm as TClientCategoryForm).leClientCategory.LookupKeyValue := spRead.FieldByName('g_client').AsInteger
+    else
+      (ClassForm as TClientCategoryForm).leClientCategory.Enabled := False;
+
+    FIns_Child := 0;
+    (ClassForm as TClientCategoryForm).Is_supplier := FIs_supplier;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TClientListForm.InsLikeData;
+begin
+  ClassForm := TClientCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TClientCategoryForm).Is_supplier := FIs_supplier;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TClientListForm.UpdData;
+begin
+  ClassForm := TClientCategoryForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TClientCategoryForm).Is_supplier := FIs_supplier;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TClientListForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'G_client';
+  KeyFieldClass := 'G_client_';
+  inherited;
+end;
+
+procedure TClientListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить категорию "%s" ?',
+    [spRead.FieldByName('Name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  if spReadClient.RecordCount > 0 then begin
+    MessageDlg('Есть дочерние записи. Удаление невозможно!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  inherited;
+
+  {spDel.SetVariable('g_CLIENT_', spRead.FieldByName('g_CLIENT').AsInteger);
+  if ExecSP(spDel) then
+    Readlist;}
+end;
+
+procedure TClientListForm.tlCategoryChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  aRefreshChd.Execute;
+end;
+
+procedure TClientListForm.aRefreshChdExecute(Sender: TObject);
+begin
+  aInsChd.Enabled := spRead.RecordCount > 0;
+  spReadClient.ParamByName('g_client_parent_').AsInteger := spRead.FieldByName('G_client').AsInteger;
+  OpenSP(spReadClient, False);
+  aViewChd.Enabled := spReadClient.RecordCount > 0;
+  aInsLikeChd.Enabled := spReadClient.RecordCount > 0;
+  aUpdChd.Enabled := spReadClient.RecordCount > 0;
+  aDelChd.Enabled := spReadClient.RecordCount > 0;
+
+  ReadClientContact;
+end;
+
+procedure TClientListForm.aViewChdExecute(Sender: TObject);
+var
+  ClientForm :TClientForm;
+begin
+  inherited;
+  ClientForm := TClientForm.Create(Self);
+  try
+    ClientForm.OpenMode := omView;
+    ClientForm.RecID := spReadClient.FieldByName('g_client').AsInteger;
+    ClientForm.Is_supplier := FIs_supplier;
+    ClientForm.ShowModal;
+  finally
+    ClientForm.Free;
+  end;
+end;
+
+procedure TClientListForm.aInsChdExecute(Sender: TObject);
+var
+  ClientForm :TClientForm;
+begin
+  inherited;
+  ClientForm := TClientForm.Create(Self);
+  try
+    ClientForm.OpenMode := omInsert;
+    ClientForm.Id_Category := spRead.FieldByName('g_CLIENT').AsInteger;
+    ClientForm.Is_supplier := FIs_supplier;
+    if ClientForm.ShowModal = mrOk then BEGIN
+      aRefreshChd.Execute;
+      spReadClient.Locate('G_CLIENT', ClientForm.RecID, []);
+      if grClient.FocusedNode <> Nil then begin
+        if grClient.SelectedCount > 0 then
+          grClient.SelectedNodes[0].Selected := False;
+        grClient.FocusedNode.Selected := True;
+      end;
+    END;
+  finally
+    ClientForm.Free;
+  end;
+end;
+
+procedure TClientListForm.aInsLikeChdExecute(Sender: TObject);
+var
+  ClientForm :TClientForm;
+begin
+  inherited;
+  ClientForm := TClientForm.Create(Self);
+  try
+    ClientForm.OpenMode := omInsertLike;
+    ClientForm.RecID := spReadClient.FieldByName('g_client').AsInteger;
+    ClientForm.Is_supplier := FIs_supplier;
+    if ClientForm.ShowModal = mrOk then
+      aRefreshChd.Execute;
+  finally
+    ClientForm.Free;
+  end;
+end;
+
+procedure TClientListForm.aUpdChdExecute(Sender: TObject);
+var
+  ClientForm :TClientForm;
+begin
+  inherited;
+  ClientForm := TClientForm.Create(Self);
+  try
+    ClientForm.OpenMode := omUpdate;
+    ClientForm.RecID := spReadClient.FieldByName('g_client').AsInteger;
+    ClientForm.Is_supplier := FIs_supplier;    
+    if ClientForm.ShowModal = mrOk then
+    begin
+      aRefreshChd.Execute;
+      spReadClient.Locate('g_client', ClientForm.RecID, []);
+    end;
+  finally
+    ClientForm.Free;
+  end;
+end;
+
+procedure TClientListForm.aDelChdExecute(Sender: TObject);
+begin
+  inherited;
+  if MessageDlg(Format('Удалить запись "%s" ?',
+    [spReadClient.FieldByName('NAME').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  if not spDel.Transaction.InTransaction then
+    spDel.Transaction.StartTransaction;
+  spDel.ParamByName('g_client_').AsInteger := spReadClient.FieldByName('g_client').AsInteger;
+  if ExecSP(spDel) then begin
+    if spDel.Transaction.InTransaction then
+      spDel.Transaction.Commit;
+    aRefreshChd.Execute;
+  end;
+end;
+
+procedure TClientListForm.grClientChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  inherited;
+  ReadClientContact;
+end;
+
+procedure TClientListForm.aInsContactExecute(Sender: TObject);
+begin
+  inherited;
+  if pcClientRekv.ActivePage = tsContact then begin
+    ClientAddressForm := TClientAddressForm.Create(Self);
+    try
+      ClientAddressForm.OpenMode := omInsert;
+      ClientAddressForm.GClient := spReadClient.FieldByName('g_CLIENT').AsInteger;
+
+      if ClientAddressForm.ShowModal = mrOk then
+        ReadClientContact;
+    finally
+      ClientAddressForm.Free;
+    end;
+
+  end else begin
+    ClientBankRekForm := TClientBankRekForm.Create(Self);
+    try
+      ClientBankRekForm.OpenMode := omInsert;
+      ClientBankRekForm.GClient := spReadClient.FieldByName('g_CLIENT').AsInteger;
+
+      if ClientBankRekForm.ShowModal = mrOk then
+        ReadClientContact;
+    finally
+      ClientBankRekForm.Free;
+    end;
+  end;
+end;
+
+procedure TClientListForm.aUpdContactExecute(Sender: TObject);
+begin
+  inherited;
+  if pcClientRekv.ActivePage = tsContact then begin
+    ClientAddressForm := TClientAddressForm.Create(Self);
+    try
+      ClientAddressForm.OpenMode := omUpdate;
+      ClientAddressForm.RecID := spReadContact.FieldByName('g_address').AsInteger;
+      ClientAddressForm.GClient := spReadClient.FieldByName('g_CLIENT').AsInteger;
+      if ClientAddressForm.ShowModal = mrOk then
+      begin
+        ReadClientContact;
+      end;
+    finally
+      ClientAddressForm.Free;
+    end;
+
+  end else begin
+    ClientBankRekForm := TClientBankRekForm.Create(Self);
+    try
+      ClientBankRekForm.OpenMode := omUpdate;
+      ClientBankRekForm.RecID := spReadBankRekv.FieldByName('g_account').AsInteger;
+      ClientBankRekForm.GClient := spReadClient.FieldByName('g_CLIENT').AsInteger;
+      if ClientBankRekForm.ShowModal = mrOk then
+      begin
+        ReadClientContact;
+      end;
+    finally
+      ClientBankRekForm.Free;
+    end;
+  end;
+end;
+
+procedure TClientListForm.aDelContactExecute(Sender: TObject);
+var SP : TpFIBStoredProc;
+begin
+  if pcClientRekv.ActivePage = tsContact then begin
+    if MessageDlg(Format('Удалить адрес "%s" ?',
+      [spReadContact.FieldByName('Address').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+
+    SP := spDelContact;
+    SP.ParamByName('G_ADDRESS_').AsInteger := spReadContact.FieldByName('G_ADDRESS').AsInteger;
+
+  end else begin
+    if MessageDlg(Format('Удалить счет "%s" ?',
+      [spReadBankRekv.FieldByName('Account').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+
+    SP := spDelBankRekv;
+    SP.ParamByName('G_account_').AsInteger := spReadBankRekv.FieldByName('G_account').AsInteger;
+  end;
+
+  if not SP.Transaction.InTransaction then
+    SP.Transaction.StartTransaction;
+
+  if ExecSP(SP) then begin
+    if SP.Transaction.InTransaction then
+      SP.Transaction.Commit;
+    ReadClientContact;
+  end;
+end;
+
+procedure TClientListForm.pcClientRekvChange(Sender: TObject);
+begin
+  ReadClientContact;
+end;
+
+procedure TClientListForm.aInsChdCategoryExecute(Sender: TObject);
+begin
+  FIns_Child := 1;
+  InsData;
+end;
+
+procedure TClientListForm.aCustomizeColumnsExecute(Sender: TObject);
+begin
+  grClient.ColumnsCustomizing;
+end;
+
+procedure TClientListForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if FIs_supplier = 1 then begin
+    grClientN_PERCENT.Destroy;
+    grClientBARCODE.Destroy;
+    grClientSKIDKA.Destroy;
+    grClientSUMM.Destroy;
+    grClientSUMM_ALL.Destroy;
+  end;
+  aIns.Hint := 'Добавить группу клиентов';
+  aInsLike.Hint := 'Добавить копию группы клиентов';
+  aView.Hint := 'Просмотреть группу клиентов';
+  aUpd.Hint := 'Изменить группу клиентов';
+  aDel.Hint := 'Удалить группу клиентов';
+end;
+
+end.

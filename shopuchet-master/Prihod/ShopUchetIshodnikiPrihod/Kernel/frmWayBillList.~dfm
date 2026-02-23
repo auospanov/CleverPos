@@ -1,0 +1,102 @@
+inherited WayBillListForm: TWayBillListForm
+  Caption = #1046#1091#1088#1085#1072#1083' '#1085#1072#1082#1083#1072#1076#1085#1099#1093' '#1085#1072' '#1086#1090#1087#1091#1089#1082' '#1090#1086#1074#1072#1088#1086#1074' '#1085#1072' '#1089#1090#1086#1088#1086#1085#1091
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'WayBill'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\WayBillList'
+    object dxDBGridWAYBILL: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'WAYBILL'
+    end
+    object dxDBGridNUM: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1053#1086#1084#1077#1088
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NUM'
+    end
+    object dxDBGridINIT_DATE: TdxDBGridDateColumn
+      Alignment = taCenter
+      Caption = #1044#1072#1090#1072
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'INIT_DATE'
+    end
+    object dxDBGridPOSTAVSHIK: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1054#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'POSTAVSHIK'
+    end
+    object dxDBGridIDN: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1048#1048#1053' '#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1103
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'IDN'
+    end
+    object dxDBGridGRUZOPOLUCHATEL: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1055#1086#1083#1091#1095#1072#1090#1077#1083#1100
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'GRUZOPOLUCHATEL'
+    end
+    object dxDBGridTRANSP_NAKLAD: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1058#1058#1053
+      HeaderAlignment = taCenter
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'TRANSP_NAKLAD'
+    end
+    object dxDBGridZAKAZ: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 100
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ZAKAZ'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM W_READ_WAYBILL_LIST')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE W_DEL_WAYBILL (?WAYBILL_)')
+    StoredProcName = 'W_DEL_WAYBILL'
+  end
+end

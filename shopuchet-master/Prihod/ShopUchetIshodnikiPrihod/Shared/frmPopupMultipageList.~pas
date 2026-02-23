@@ -1,0 +1,358 @@
+unit frmPopupMultipageList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  dxTL, dxDBCtrl, Db, dxCntner, dxDBTL, ImgList, dxExEdtr, Variants,
+  ActnList, Menus, StdCtrls, Buttons, ExtCtrls, frmdbEdit, dxDBGrid,
+  cxPC, cxControls, FIB, FIBDataSet, pFIBDataSet, FIBDatabase,
+  pFIBDatabase, unCommonFunc;
+
+type
+  TPopupMultipageListForm = class(TForm)
+    dsRead: TDataSource;
+    PopupMenu: TPopupMenu;
+    ActionList: TActionList;
+    pnlMain: TPanel;
+    pnlTop: TPanel;
+    btnIns: TBitBtn;
+    btnRefresh: TBitBtn;
+    pnlBottom: TPanel;
+    btnCancel: TBitBtn;
+    btnOK: TBitBtn;
+    aRefresh: TAction;
+    aIns: TAction;
+    stRecCnt: TStaticText;
+    aInsLike: TAction;
+    btnInsLike: TBitBtn;
+    dxPageControl: TcxPageControl;
+    ts1: TcxTabSheet;
+    dxDBGrid: TdxDBGrid;
+    aCustomizeColumns: TAction;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    tranRead: TpFIBTransaction;
+    spRead: TpFIBDataSet;
+    procedure btnOkClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure aRefreshExecute(Sender: TObject);
+    procedure aInsExecute(Sender: TObject);
+    procedure aInsLikeExecute(Sender: TObject);
+    procedure dxDBGridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure aCustomizeColumnsExecute(Sender: TObject);
+  private
+    FRecID: Integer;
+    FRecIDStr: String;
+    FClassForm: TDBEditForm;
+    FKeyFieldList : String;
+    FKeyFieldClass : String;
+    FKeyFieldIsStr: Boolean;
+    FSelectedFieldName: String;
+    FSelectedID: Integer;
+    FSelectedIDStr: String;
+    FSelectedFieldIsStr: Boolean;
+    procedure WMBestAlign(var Message: TMessage); message WM_BESTALIGN;
+  protected
+    procedure ClosePopupForm(AControl: TControl; AAccept: Boolean); virtual;
+    procedure ReadList; virtual;
+    procedure InsData; virtual;
+    procedure InsLikeData; virtual;
+  public
+    property RecID: Integer read FRecID write FRecID default 0;
+    property RecIDStr: String read FRecIDStr write FRecIDStr;
+    property ClassForm: TDBEditForm read FClassForm write FClassForm;
+    property KeyFieldList: String read FKeyFieldList write FKeyFieldList;
+    property KeyFieldClass: String read FKeyFieldClass write FKeyFieldClass;
+    property KeyFieldIsStr: Boolean read FKeyFieldIsStr write FKeyFieldIsStr default False;
+    property SelectedFieldName: String read FSelectedFieldName write FSelectedFieldName;
+    property SelectedID: Integer read FSelectedID write FSelectedID;
+    property SelectedIDStr: String read FSelectedIDStr write FSelectedIDStr;
+    property SelectedFieldIsStr: Boolean read FSelectedFieldIsStr write FSelectedFieldIsStr default false;
+  end;
+
+implementation
+
+uses dmMain, unErrorHandlers;
+
+{$R *.DFM}
+
+procedure TPopupMultipageListForm.ClosePopupForm(AControl: TControl;
+  AAccept: Boolean);
+begin
+  if dxPageControl.ActivePage = ts1 then begin
+    if (dxDBGrid.FocusedNode <> nil) and (not dxDBGrid.FocusedNode.HasChildren) then
+      if FSelectedFieldIsStr then
+        FSelectedIDStr := dxDBGrid.FocusedNode.Strings[dxDBGrid.ColumnByFieldName(FSelectedFieldName).Index]
+      else
+        FSelectedID := dxDBGrid.FocusedNode.Values[dxDBGrid.ColumnByFieldName(FSelectedFieldName).Index];
+  end;
+
+  if GetParentForm(AControl) is TdxPopupEditForm then
+    TdxPopupEditForm(GetParentForm(AControl)).ClosePopup(AAccept);
+end;
+
+procedure TPopupMultipageListForm.dxDBGridKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_ESCAPE then
+    ClosePopupForm(dxDBGrid, False);
+  if Key = VK_RETURN then
+    btnOkClick(nil);
+end;
+
+procedure TPopupMultipageListForm.btnOkClick(Sender: TObject);
+begin
+  if dxPageControl.ActivePageIndex = 0 then begin
+    if KeyFieldIsStr then begin
+      if spRead.FieldByName(KeyFieldList).AsString = '' then
+        Exit;
+    end
+    else begin
+      if spRead.FieldByName(KeyFieldList).AsInteger < 1 then
+        Exit;
+    end;
+
+    if (dxDBGrid.FocusedNode <> nil)
+      and not (dxDBGrid.FocusedNode.HasChildren) then
+        ClosePopupForm(dxDBGrid, True);
+  end;
+end;
+
+procedure TPopupMultipageListForm.btnCancelClick(Sender: TObject);
+begin
+  ClosePopupForm(dxDBGrid, False);
+end;
+
+procedure TPopupMultipageListForm.WMBestAlign(var Message: TMessage);
+var
+  PopupEditForm: TdxPopupEditForm;
+  PopupEditFormOwnerControl: TdxInplaceEdit;
+  DeltaY: Integer;
+  Rect : PRect;
+  Ret  : BOOL;
+begin
+  if pnlMain.Parent is TdxPopupEditForm then begin
+    PopupEditForm := pnlMain.Parent as TdxPopupEditForm;
+
+    new(Rect);
+    try
+      Ret := SystemParametersInfo(SPI_GETWORKAREA, 0, Rect, 0);
+
+      if not Ret then
+        with Rect^ do begin
+          Left   := 0;
+          Top    := 0;
+          Right  := Screen.Width;
+          Bottom := Screen.Height;
+        end;
+
+      {Определяем, куда выпали}
+      PopupEditFormOwnerControl := PopupEditForm.OwnerControl;
+      if PopupEditForm.Top < PopupEditFormOwnerControl.Top then begin
+        {Выпали вверх}
+        if PopupEditForm.Top < Rect^.Top then begin
+          DeltaY := -PopupEditForm.Top;
+          PopupEditForm.Top := Rect^.Top;
+          PopupEditForm.Height := PopupEditForm.Height - DeltaY;
+        end
+      end
+      else begin
+        {Выпали вниз}
+        if PopupEditForm.Top + PopupEditForm.Height > (Rect^.Bottom - Rect^.Top) then begin
+          PopupEditForm.Height := (Rect^.Bottom - Rect^.Top) - PopupEditForm.Top;
+        end;
+      end;
+    finally
+      dispose(Rect);
+    end;
+    dxDBGrid.SetFocus;  {Для удобства работы клавиатурой}
+  end;
+end;
+
+procedure TPopupMultipageListForm.ReadList;
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+  BM : TBookMark;
+begin
+//  dxDBGrid.HighlightColor := dxDBGrid.Color;
+//  dxDBGrid.HighlightTextColor := dxDBGrid.Font.Color;
+
+  {В потомке при необходимости задаются параметры вызова хранимой процедуры,
+  затем потомок должен вызвать этот метод (inherited)}
+  try
+    with spRead do begin
+      BM := GetBookmark;
+      Screen.Cursor := crSQLWait;  {Property SQLScreenCursor почему-то не работает}
+      try
+        Close;
+        if spRead.Transaction.InTransaction then
+          spRead.Transaction.CommitRetaining;
+        Open;
+
+        if Fields.FindField('ERR_CODE') <> Nil then begin
+          if VarIsNull(FieldByName('ERR_CODE').Value) or (FieldByName('ERR_CODE').AsString = '') then
+            ErrCode := 0
+          else
+            ErrCode := FieldByName('ERR_CODE').AsInteger;
+          if ErrCode <> 0 then begin
+            if spRead.Transaction.InTransaction then
+              spRead.Transaction.CommitRetaining;
+            if Fields.FindField('ERR_MSG').Index >= 0 then begin
+              ErrMsg := FieldByName('ERR_MSG').AsString;
+              DBErrorHandler(ErrCode, ErrMsg);
+            end
+            else
+              MessageDlg('Error code: ' + IntToStr(ErrCode)
+                 + #13#10'(occured in TPopupMultipageListForm.ReadList)', mtInformation, [mbOK], 0);
+            Exit;
+          end;
+        end;
+
+        if BM <> Nil then
+          if BookmarkValid(BM) then
+            try
+              GotoBookmark(BM);
+            except
+            end;
+
+        if dxDBGrid.FocusedNode <> Nil then
+          dxDBGrid.FocusedNode.Selected := True;
+      finally
+        if BM <> Nil then
+          FreeBookmark(BM);
+        Screen.Cursor := crDefault;
+      end;
+
+      stRecCnt.Caption := Format('%d', [AllRecordCount]);
+    end;
+
+    PostMessage(Self.Handle, WM_BESTALIGN, 0, 0);
+  except
+    on E: EFIBError do begin
+      if spRead.Transaction.InTransaction then
+        spRead.Transaction.CommitRetaining;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TPopupMultipageListForm.ReadList)');
+    end;
+    on E: Exception do begin
+      if spRead.Transaction.InTransaction then
+        spRead.Transaction.CommitRetaining;
+      MessageDlg(E.Message + #13#10'(occured in TPopupMultipageListForm.ReadList)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure TPopupMultipageListForm.InsData;
+begin
+  {Вначале должен вызываться метод потомка, создающий форму класса,
+   затем потомок должен вызвать этот метод (inherited)}
+  try
+    FClassForm.KeyField := FKeyFieldClass;
+    if FKeyFieldIsStr then
+      FClassForm.KeyFieldIsStr := True
+    else
+      FClassForm.KeyFieldIsStr := False;
+
+    FClassForm.OpenMode := omInsert;
+    if FClassForm.ShowModal = mrOk then begin
+{----}
+(*
+      aRefresh.Execute;  {aRefresh здесь не подходит, т.к. WM_REFRESH
+                          произойдет после Locate и курсор опять встанет на
+                          строку, где был раньше}
+*)
+      ReadList;
+
+{----}
+      {Курсор на новую запись}
+      if FKeyFieldIsStr then
+        spRead.Locate(FKeyFieldList, FClassForm.RecIDStr, [])
+      else
+        spRead.Locate(FKeyFieldList, FClassForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message + #13#10'(occured in TPopupMultipageListForm.InsData)', mtInformation, [mbOk], 0);
+  end;
+end;
+
+procedure TPopupMultipageListForm.InsLikeData;
+begin
+  {Вначале должен вызываться метод потомка, создающий форму класса,
+   затем потомок должен вызвать этот метод (inherited)}
+  if dxPageControl.ActivePageIndex = 0 then begin
+    try
+      FClassForm.KeyField := FKeyFieldClass;
+      if FKeyFieldIsStr then begin
+        FClassForm.KeyFieldIsStr := True;
+        FClassForm.RecIDStr := spRead.FieldByName(FKeyFieldList).AsString;
+        FClassForm.RecID := 0;
+      end
+      else begin
+        FClassForm.KeyFieldIsStr := False;
+        FClassForm.RecID := spRead.FieldByName(FKeyFieldList).AsInteger;
+        FClassForm.RecIDStr := '';
+      end;
+
+      FClassForm.OpenMode := omInsertLike;
+      if FClassForm.ShowModal = mrOk then begin
+  {----}
+  (*
+        aRefresh.Execute;  {aRefresh здесь не подходит, т.к. WM_REFRESH
+                            произойдет после Locate и курсор опять встанет на
+                            строку, где был раньше}
+  *)
+
+        ReadList;
+
+  {----}
+        {Курсор на новую запись}
+        if FKeyFieldIsStr then
+          spRead.Locate(FKeyFieldList, FClassForm.RecIDStr, [])
+        else
+          spRead.Locate(FKeyFieldList, FClassForm.RecID, []);
+        if Assigned(dxDBGrid.FocusedNode) then begin
+          if dxDBGrid.SelectedCount > 0 then
+            dxDBGrid.SelectedNodes[0].Selected := False;
+          dxDBGrid.FocusedNode.Selected := True;
+        end;
+      end;
+    except
+      on E: Exception do
+        MessageDlg(E.Message + #13#10'(occured in TPopupMultipageListForm.InsLikeData)', mtInformation, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure TPopupMultipageListForm.aRefreshExecute(Sender: TObject);
+begin
+  ReadList;
+end;
+
+procedure TPopupMultipageListForm.aInsExecute(Sender: TObject);
+begin
+  InsData;
+end;
+
+procedure TPopupMultipageListForm.aInsLikeExecute(Sender: TObject);
+begin
+  InsLikeData;
+end;
+
+procedure TPopupMultipageListForm.aCustomizeColumnsExecute(
+  Sender: TObject);
+begin
+  dxDBGrid.ColumnsCustomizing;
+end;
+
+end.

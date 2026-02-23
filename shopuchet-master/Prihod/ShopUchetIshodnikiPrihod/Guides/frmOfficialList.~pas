@@ -1,0 +1,117 @@
+unit frmOfficialList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TOfficialListForm = class(TDBListForm)
+    dxDBGridG_OFFICIAL: TdxDBGridMaskColumn;
+    dxDBGridFIO_DOC: TdxDBGridMaskColumn;
+    dxDBGridRNN: TdxDBGridMaskColumn;
+    dxDBGridIDN: TdxDBGridMaskColumn;
+    dxDBGridDT: TdxDBGridDateColumn;
+    dxDBGridG_APPOINTMENT: TdxDBGridMaskColumn;
+    dxDBGridAPP_NAME: TdxDBGridMaskColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  OfficialListForm: TOfficialListForm;
+
+implementation
+
+uses frmOfficial;
+
+{$R *.dfm}
+
+procedure TOfficialListForm.ReadList;
+begin
+  inherited;
+end;
+
+procedure TOfficialListForm.ViewData;
+begin
+  ClassForm := TOfficialForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TOfficialListForm.InsData;
+begin
+  ClassForm := TOfficialForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TOfficialListForm.InsLikeData;
+begin
+  ClassForm := TOfficialForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TOfficialListForm.UpdData;
+begin
+  ClassForm := TOfficialForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TOfficialListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить сотрудника "%s" ?',
+    [spRead.FieldByName('FIO_DOC').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+  inherited;
+  {spDel.SetVariable(KeyFieldList, spRead.FieldByName(KeyFieldClass).AsInteger);
+  if ExecSP(spDel) then
+    Readlist;}
+end;
+
+procedure TOfficialListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'g_official';
+  KeyFieldClass := 'g_official_';
+end;
+
+procedure TOfficialListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 9;
+  inherited;
+end;
+
+end.

@@ -1,0 +1,214 @@
+unit frmClient;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons, cxEdit, cxCheckBox, frmDBEdit, VLSummdxEdit, dxEdLib, dxEditor,
+  dxDBEdtr, dxDBELib, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, DB, FIBDataSet, pFIBDataSet, pFIBErrorHandler, AppEvnts,
+  cxPC, cxControls, unCommonFunc;
+
+type
+  TClientForm = class(TDBEditForm)
+    aInsContrAgentType: TAction;
+    spClientCategory: TpFIBDataSet;
+    dsClientCategory: TDataSource;
+    spReadContrAgent: TpFIBDataSet;
+    dsReadContrAgent: TDataSource;
+    pcClient: TcxPageControl;
+    tsClient: TcxTabSheet;
+    tsDCard: TcxTabSheet;
+    Shape9: TShape;
+    Shape8: TShape;
+    Shape7: TShape;
+    Shape6: TShape;
+    Shape5: TShape;
+    Shape4: TShape;
+    Shape3: TShape;
+    Shape26: TShape;
+    Shape25: TShape;
+    Shape2: TShape;
+    Shape16: TShape;
+    Shape15: TShape;
+    Shape12: TShape;
+    Shape11: TShape;
+    Shape10: TShape;
+    Shape1: TShape;
+    leContrAgent: TdxLookupEdit;
+    leCategory: TdxLookupEdit;
+    Label8: TLabel;
+    Label6: TLabel;
+    Label5: TLabel;
+    Label4: TLabel;
+    Label3: TLabel;
+    Label2: TLabel;
+    Label13: TLabel;
+    Label1: TLabel;
+    edRNN: TdxEdit;
+    edName: TdxEdit;
+    edKBE: TdxEdit;
+    edIDN: TdxEdit;
+    ceIsBeznal: TdxCheckEdit;
+    ceByDefault: TdxCheckEdit;
+    Label7: TLabel;
+    Shape13: TShape;
+    edBarcode: TdxEdit;
+    Shape14: TShape;
+    lbProcentBonus: TLabel;
+    Shape17: TShape;
+    sePercent: TdxCurrencyEdit;
+    Shape18: TShape;
+    Label11: TLabel;
+    Shape21: TShape;
+    Shape22: TShape;
+    seSkidka1: TdxCurrencyEdit;
+    lbBonusSumm: TLabel;
+    lbAllSumm: TLabel;
+    SpeedButton2: TSpeedButton;
+    seSkidka: TdxCurrencyEdit;
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure aInsContrAgentTypeExecute(Sender: TObject);
+    procedure seSkidka1Change(Sender: TObject);
+    procedure seSkidkaChange(Sender: TObject);
+  private
+    FId_Category: Integer;
+    FIs_supplier: Integer; // 0 - Клиент, 1 - Поставщик
+  public
+    property Id_Category: Integer read FId_Category write FId_Category;
+    property Is_supplier: Integer read FIs_supplier write FIs_supplier;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  ClientForm: TClientForm;
+
+implementation
+
+uses frmContrAgentType;
+
+{$R *.dfm}
+
+procedure TClientForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  IF FIs_supplier = 0 THEN begin
+    CAPTION := 'Реквизиты клиента';
+    Helpc := 6;
+  end ELSE begin
+    CAPTION := 'Реквизиты поставщика';
+    Helpc := 7;
+    seSkidka.Enabled := False;
+    tsDCard.TabVisible := False;
+  end;
+
+  OpenSp(spClientCategory, False);
+  OpenSp(spReadContrAgent, False);
+
+  lbProcentBonus.Width := ScaleDimension(213);
+end;
+
+function TClientForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(leCategory.Text) = EmptyStr then begin
+    ErrControl := leCategory;
+    MessageDlg('Категория не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(leContrAgent.Text) = EmptyStr then begin
+    ErrControl := leContrAgent;
+    MessageDlg('Тип контрагента не выбран', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TClientForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leCategory.LookupKeyValue := ParamByName('G_CLIENT_PARENT_').AsInteger;
+      leContrAgent.LookupKeyValue := ParamByName('G_CONTRAGENT_').AsInteger;
+      edName.TEXT := ParamByName('NAME_').AsString;
+      edRNN.TEXT := ParamByName('RNN_').AsString;
+      edIDN.TEXT := ParamByName('IDN_').AsString;
+      edKBE.TEXT := ParamByName('KBE_').AsString;
+      seSkidka.Value := ParamByName('Skidka_').AsFloat;
+      ceIsBeznal.CHECKED := ParamByName('is_beznal_').AsInteger = 1;
+      ceByDefault.CHECKED := ParamByName('by_default_').AsInteger = 1;
+      edBarcode.Text := ParamByName('BARCODE_').AsString;
+      sePercent.Value := ParamByName('N_PERCENT_').AsFloat;
+      lbBonusSumm.Caption := 'Сумма накоплений ' + ParamByName('SUMM_').AsString;
+      lbAllSumm.Caption := 'Общая сумма покупок ' + ParamByName('SUMM_All_').AsString;
+    end;
+  end;
+  if OpenMode = omInsert then
+    leCategory.LookupKeyValue := FId_Category;
+end;
+
+procedure TClientForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    ParamByName('G_CLIENT_PARENT_').AsInteger := leCategory.LookupKeyValue;
+    ParamByName('G_CONTRAGENT_').AsInteger := leContrAgent.LookupKeyValue;
+    ParamByName('NAME_').AsString := edName.Text;
+    ParamByName('RNN_').AsString := edRnn.Text;
+    ParamByName('IDN_').AsString := edIdn.Text;
+    ParamByName('KBE_').AsString := edKbe.Text;
+    ParamByName('IS_SUPPLIER_').AsInteger := FIs_supplier;
+    ParamByName('by_default_').AsInteger := Integer(ceByDefault.Checked);
+    ParamByName('Skidka_').AsFloat := seSkidka.Value;
+    ParamByName('IS_category_').AsInteger := 0;
+    ParamByName('IS_beznal_').AsInteger := Integer(ceIsBeznal.Checked);
+    ParamByName('BARCODE_').AsString := edBarcode.Text;
+    ParamByName('N_PERCENT_').AsFloat := sePercent.Value;
+  end;
+end;
+
+procedure TClientForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_client_';
+end;
+
+procedure TClientForm.aInsContrAgentTypeExecute(Sender: TObject);
+begin
+  inherited;
+  ContrAgentTypeForm := TContrAgentTypeForm.Create(Self);
+  try
+    ContrAgentTypeForm.OpenMode := omInsert;
+    if ContrAgentTypeForm.ShowModal = mrOk then
+      OpenSp(spReadContrAgent, False);
+  finally
+    ContrAgentTypeForm.Free;
+  end;
+end;
+
+procedure TClientForm.seSkidka1Change(Sender: TObject);
+begin
+  seSkidka.Value := seSkidka1.Value;
+end;
+
+procedure TClientForm.seSkidkaChange(Sender: TObject);
+begin
+  seSkidka1.Value := seSkidka.Value;
+end;
+
+end.

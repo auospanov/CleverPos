@@ -1,0 +1,68 @@
+unit unInfo;
+
+interface
+
+uses
+  ActiveX, ComObj, Variants;
+
+function GetWin32_BIOSInfo : String;
+function GetWin32_ProcessorInfo : String;
+
+implementation
+
+function GetWin32_BIOSInfo : String;
+const
+  WbemUser            ='';
+  WbemPassword        ='';
+  WbemComputer        ='localhost';
+  wbemFlagForwardOnly = $00000020;
+var
+  FSWbemLocator : OLEVariant;
+  FWMIService   : OLEVariant;
+  FWbemObjectSet: OLEVariant;
+  FWbemObject   : OLEVariant;
+  oEnum         : IEnumvariant;
+  iValue        : LongWord;
+  S             : String;
+begin;
+  FSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+  FWMIService   := FSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2', WbemUser, WbemPassword);
+  FWbemObjectSet:= FWMIService.ExecQuery('SELECT * FROM Win32_BIOS','WQL',wbemFlagForwardOnly);
+  oEnum         := IUnknown(FWbemObjectSet._NewEnum) as IEnumVariant;
+  while oEnum.Next(1, FWbemObject, iValue) = 0 do
+  begin
+    S := String(FWbemObject.SerialNumber);
+    //version.text := String(FWbemObject.Version);   //  версия не нужна, может совпадать
+    FWbemObject:=Unassigned;
+  end;
+  Result := S;
+end;
+
+function GetWin32_ProcessorInfo : String;
+const
+  WbemUser            ='';
+  WbemPassword        ='';
+  WbemComputer        ='localhost';
+  wbemFlagForwardOnly = $00000020;
+var
+  FSWbemLocator : OLEVariant;
+  FWMIService   : OLEVariant;
+  FWbemObjectSet: OLEVariant;
+  FWbemObject   : OLEVariant;
+  oEnum         : IEnumvariant;
+  iValue        : LongWord;
+  S             : String;
+begin;
+  FSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+  FWMIService   := FSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2', WbemUser, WbemPassword);
+  FWbemObjectSet:= FWMIService.ExecQuery('SELECT * FROM Win32_Processor','WQL',wbemFlagForwardOnly);
+  oEnum         := IUnknown(FWbemObjectSet._NewEnum) as IEnumVariant;
+  while oEnum.Next(1, FWbemObject, iValue) = 0 do
+  begin
+    S := String(FWbemObject.ProcessorId);
+    FWbemObject:=Unassigned;
+  end;
+  Result := S;  
+end;
+
+end.

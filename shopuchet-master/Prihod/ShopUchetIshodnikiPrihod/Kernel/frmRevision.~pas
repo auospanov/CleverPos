@@ -1,0 +1,354 @@
+unit frmRevision;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  FIBDataSet, pFIBDataSet, ExtCtrls, Menus, FIBDatabase, pFIBDatabase,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  cxControls, cxSplitter, StdCtrls, Buttons, cxContainer, cxEdit,
+  cxTextEdit, cxMaskEdit, cxSpinEdit, dxEditor, dxEdLib, Spin, dxDBTLCl,
+  dxGrClms, AppEvnts, DateUtils, unCommonFunc, dxBarExtDBItems, Math,
+  frmMyCurrencyFrame;
+
+type
+  TRevisionForm = class(TDBListForm)
+    dxDBGridREVISION: TdxDBGridMaskColumn;
+    dxDBGridSKLAD: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT_NAME: TdxDBGridMaskColumn;
+    dxDBGridBARCODE: TdxDBGridMaskColumn;
+    dxDBGridARTICUL: TdxDBGridMaskColumn;
+    dxDBGridAMOUNT_BD: TdxDBGridMaskColumn;
+    dxDBGridAMOUNT_REAL: TdxDBGridMaskColumn;
+    spFillRevision: TpFIBStoredProc;
+    Panel1: TPanel;
+    Label8: TLabel;
+    edSearch: TEdit;
+    Label1: TLabel;
+    spUpdAmountReal: TpFIBStoredProc;
+    aUpdAmount: TAction;
+    aClear: TAction;
+    SpeedButton1: TSpeedButton;
+    aPrint: TAction;
+    aDoUnific: TAction;
+    Button1: TButton;
+    spUnific: TpFIBStoredProc;
+    aRefill: TAction;
+    dxDBGridColumn9: TdxDBGridCheckColumn;
+    ApplicationEvents: TApplicationEvents;
+    bcOstatkiOrNakl: TdxBarCombo;
+    TimerSearch: TTimer;
+    cbScaner: TCheckBox;
+    Timer1: TTimer;
+    MyCurrencyFrameForm: TMyCurrencyFrameForm;
+    dxBarButton2: TdxBarButton;
+    clmnPLACE: TdxDBGridColumn;
+    procedure edSearchChange(Sender: TObject);
+    procedure btClearClick(Sender: TObject);
+    procedure aUpdAmountExecute(Sender: TObject);
+    procedure aClearExecute(Sender: TObject);
+    procedure aDoUnificExecute(Sender: TObject);
+    procedure aRefillExecute(Sender: TObject);
+    procedure dxDBGridChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure ApplicationEventsMessage(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure bcOstatkiOrNaklChange(Sender: TObject);
+    procedure TimerSearchTimer(Sender: TObject);
+    procedure cbScanerClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure MyCurrencyFrameFormedAmountChange(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    KeysBuffer: String;
+    LastDateForAddedKey: TDateTime;
+    FCategory : String;  // Категория продукта
+    FIsChangeNode : Boolean;
+    procedure ReadList; override;
+    procedure WMFillList(var Message: TMessage); message WM_FILLLIST;
+  protected
+    procedure FillList;
+  public
+  end;
+
+var
+  RevisionForm: TRevisionForm;
+
+implementation
+
+uses frmRevisionUnific, frmPriceListRepFilter, dmMain,
+  frmTovarNaklForRevis;
+
+{$R *.dfm}
+
+procedure TRevisionForm.ReadList;
+begin
+  spRead.ParamByName('g_tochka_').AsInteger := CurSklad;
+  inherited;
+
+  aUpdAmount.Enabled := spRead.RecordCount > 0;
+end;
+
+procedure TRevisionForm.edSearchChange(Sender: TObject);
+begin
+  TimerSearch.Enabled := False;
+  // здесь буду перезапускать таймер, а на его событие - уже включать фильтр
+  if edSearch.Text <> '' then
+    TimerSearch.Enabled := True
+  else BEGIN
+    with spRead do begin
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Open;
+    end;
+  END;
+end;
+
+procedure TRevisionForm.btClearClick(Sender: TObject);
+begin
+  inherited;
+  edSearch.Clear;
+end;
+
+procedure TRevisionForm.aUpdAmountExecute(Sender: TObject);
+begin
+  if spRead.Locate('barcode', KeysBuffer, []) then begin
+    spUpdAmountReal.ParamByName('REVISION_').AsInteger := spRead.FieldByName('revision').AsInteger;
+    spUpdAmountReal.ParamByName('AMOUNT_REAL_').AsFloat := spRead.FieldByName('Amount_real').AsFloat + 1;
+    if ExecSPTR(spUpdAmountReal) then
+      Readlist;
+  end else begin
+    MessageDLG('Товар со штрихкодом ' + KeysBuffer + ' не найден!', mtWarning, [mbOk], 0);
+    KeysBuffer := '';
+  end;
+end;
+
+procedure TRevisionForm.aClearExecute(Sender: TObject);
+begin
+  edSearch.Clear;
+  if Assigned(dxDBGrid.FocusedNode) then
+    dxDBGrid.FocusedNode.Selected := True;
+end;
+
+procedure TRevisionForm.aDoUnificExecute(Sender: TObject);
+var RevisionUnificForm : TRevisionUnificForm;
+begin
+  if MessageDlg('Вы уверены, что хотите провести серию автоматических списаний' + #10#13 +
+                ' и приходов товара, для приведения БД в актуальное состояние?',
+    mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  RevisionUnificForm := TRevisionUnificForm.Create(Self);
+  try
+    if RevisionUnificForm.ShowModal = mrOk then begin
+      spUnific.ParamByName('MODE_').AsInteger := RevisionUnificForm.ComboBox.ItemIndex;
+      if ExecSPTR(spUnific) then begin
+        ShowMessage('Унификация выполнена успешно!' + #10#13 +
+                    'Произведено приходов товара ' + IntToStr(spUnific.ParamByname('COUNT_PRIH_').AsInteger)+ #10#13 +
+                    'Произведено списаний товара ' + IntToStr(spUnific.ParamByname('COUNT_SPIS_').AsInteger));
+        Readlist;
+      end;
+    end
+  finally
+    RevisionUnificForm.Free;
+  end;
+end;
+
+procedure TRevisionForm.aRefillExecute(Sender: TObject);
+begin
+  PostMessage(Self.Handle, WM_FILLLIST, 0, 0);
+end;
+
+procedure TRevisionForm.WMFillList(var Message: TMessage);
+begin
+  if not MainDM.dbMain.Connected then
+    Exit;
+  FillList;
+end;
+
+procedure TRevisionForm.FillList;
+var PriceListRepFilterForm: TPriceListRepFilterForm;
+    TovarNaklForRevisForm: TTovarNaklForRevisForm;
+begin
+  if bcOstatkiOrNakl.ItemIndex = 0 then begin
+    PriceListRepFilterForm := TPriceListRepFilterForm.Create(Self);
+    try
+      PriceListRepFilterForm.cbSortByName.Visible := False;
+      PriceListRepFilterForm.HelpC := 42;
+      if PriceListRepFilterForm.ShowModal = mrOk then begin
+        if length(PriceListRepFilterForm.G_CategoryArr) > 0 then
+          spFillRevision.ParamByName('G_PRODUCT_PAR_').AsString := PriceListRepFilterForm.G_CategoryArr
+        else
+          spFillRevision.ParamByName('G_PRODUCT_PAR_').AsString := '';
+
+        spFillRevision.ParamByName('sklad_').AsInteger := 0;
+      end else
+        Exit;
+    finally
+      PriceListRepFilterForm.Free;
+    end;
+  end else begin
+    TovarNaklForRevisForm := TTovarNaklForRevisForm.Create(Self);
+    try
+      if TovarNaklForRevisForm.ShowModal = mrOk then
+        spFillRevision.ParamByName('sklad_').AsInteger := TovarNaklForRevisForm.Sklad
+      else
+        Exit;
+
+      spFillRevision.ParamByName('G_PRODUCT_PAR_').AsString := '';
+    finally
+      TovarNaklForRevisForm.Free;
+    end;
+  end;
+
+  ExecSpTR(spFillRevision);
+  ReadList;
+end;
+
+procedure TRevisionForm.ApplicationEventsMessage(var Msg: tagMSG;
+  var Handled: Boolean);
+procedure ClearBuffer;
+  begin
+    if MilliSecondsBetween(Now, LastDateForAddedKey) > 200 then
+    begin
+      // при медленном вводе буфер очищяется, т.к. скан идет "мгновенно"
+      KeysBuffer := '';
+    end;
+  end;
+begin
+  // обработка штрих-кодов
+  // автор: jaydi85@gmail.com
+
+  // данные считываем на WM_CHAR
+  // НО КЛАВИШУ ЭНТЕР на WM_KEYDOWN
+
+  // заканчиваем ввод
+  IF Screen.ActiveForm <> Nil THEN BEGIN
+    IF Screen.ActiveForm.Name = Self.Name THEN BEGIN
+      if Msg.message = WM_KEYDOWN then
+      begin
+        if (Msg.wParam = 13) or (Msg.wParam = 10) then
+        begin
+          // при сканировании нажатие энтера передавать никуда не надо
+          Handled := True;
+          ClearBuffer;
+          if KeysBuffer <> '' then begin
+            TimerSearch.Enabled := False;
+            aUpdAmount.Execute;
+            KeysBuffer := '';
+          end;
+        end
+      end;
+
+      // сохраняем ввод
+      if Msg.message = WM_CHAR then
+      begin
+        ClearBuffer;
+        if Msg.wParam <> 13 then
+        begin
+          // нажали что-то другое (надо отбросить всякие шифты и контролы)
+          KeysBuffer := KeysBuffer + Chr(Msg.wParam);
+          LastDateForAddedKey := Now;
+        end;
+      end;
+    END;
+  END;
+end;
+
+procedure TRevisionForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'revision';
+  KeyFieldClass := 'revision_';
+  inherited;
+  FIsChangeNode := False;
+end;
+
+procedure TRevisionForm.bcOstatkiOrNaklChange(Sender: TObject);
+begin
+  aDoUnific.Enabled := bcOstatkiOrNakl.ItemIndex = 0;
+end;
+
+procedure TRevisionForm.TimerSearchTimer(Sender: TObject);
+var s : string;
+begin
+  TimerSearch.Enabled := False;
+  if (edSearch.text<>'') then begin
+    with spRead do begin
+      s := '(NAME CONTAINING ''' + edSearch.text + ''') OR (ARTICUL CONTAINING ''' + edSearch.text + ''') OR (BARCODE CONTAINING '''+ edSearch.text + ''')';
+      
+      if UseTovarPlace = 1 then
+        s := s + ' OR (PLACE CONTAINING ''' + edSearch.text + ''')';
+
+      if Active then Close;
+      CancelConditions;
+      Conditions.Clear;
+      Conditions.AddCondition('by_customer', S, True);
+      ApplyConditions;
+      Open;
+    end;
+    if Assigned(dxDBGrid.FocusedNode) then
+      dxDBGrid.FocusedNode.Selected := True;
+  END;
+end;
+
+procedure TRevisionForm.dxDBGridChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  FIsChangeNode := True;  //чтобы не запускался таймер после смены строки
+  MyCurrencyFrameForm.edAmount.Text := spRead.FieldByName('Amount_real').AsString;
+end;
+
+procedure TRevisionForm.cbScanerClick(Sender: TObject);
+begin
+  MyCurrencyFrameForm.sbCur.Enabled := Integer(cbScaner.Checked) = 0;
+  MyCurrencyFrameForm.edAmount.Enabled := Integer(cbScaner.Checked) = 0;
+end;
+
+procedure TRevisionForm.Timer1Timer(Sender: TObject);
+var i : integer;
+begin
+  Timer1.Enabled := False;
+  spUpdAmountReal.ParamByName('REVISION_').AsInteger := spRead.FieldByName('revision').AsInteger;
+  spUpdAmountReal.ParamByName('AMOUNT_REAL_').AsFloat:= MyCurrencyFrameForm.Value;
+  if ExecSPTR(spUpdAmountReal) THEN BEGIN
+    Screen.Cursor := crHourGlass;
+    //FIsChangeNode := TRUE;
+    i := MyCurrencyFrameForm.edAmount.SelStart;
+    spRead.ReopenLocate('revision');
+    MyCurrencyFrameForm.edAmount.SelStart := i;  //иначе курсор смещается при переоткрытии spRead
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TRevisionForm.MyCurrencyFrameFormedAmountChange(
+  Sender: TObject);
+begin
+  inherited;
+  MyCurrencyFrameForm.edAmountChange(Sender);
+
+  if not FIsChangeNode then begin
+    Timer1.Enabled := False;
+    Timer1.Enabled := true;
+  end;
+
+  FIsChangeNode := False;
+end;
+
+procedure TRevisionForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 42;
+  inherited;
+end;
+
+procedure TRevisionForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  MyCurrencyFrameForm.sbCur.Height := ScaleDimension(32);
+end;
+
+end.

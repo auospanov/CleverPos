@@ -1,0 +1,29 @@
+unit frmRevisionUnific;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, StdCtrls, ExtCtrls, AppEvnts, dxExEdtr, dxCntner,
+  Buttons;
+
+type
+  TRevisionUnificForm = class(TDlgForm)
+    ComboBox: TComboBox;
+    Shape6: TShape;
+    Label2: TLabel;
+    Shape2: TShape;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  RevisionUnificForm: TRevisionUnificForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

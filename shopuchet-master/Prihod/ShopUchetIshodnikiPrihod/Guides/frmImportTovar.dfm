@@ -1,0 +1,396 @@
+inherited ImportTovarForm: TImportTovarForm
+  Left = 621
+  Top = 155
+  Caption = #1048#1084#1087#1086#1088#1090' '#1090#1086#1074#1072#1088#1086#1074
+  ClientHeight = 519
+  ClientWidth = 572
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 387
+    Top = 486
+    Width = 95
+    Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
+    ModalResult = 6
+    OnClick = btnOkClick
+  end
+  inherited btnCancel: TBitBtn
+    Left = 489
+    Top = 486
+    Caption = #1042#1099#1081#1090#1080
+    OnClick = btnCancelClick
+  end
+  inherited Panel1: TPanel
+    Width = 556
+    Height = 473
+    object Shape5: TShape
+      Left = 8
+      Top = 58
+      Width = 489
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape1: TShape
+      Left = 8
+      Top = 119
+      Width = 159
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape25: TShape
+      Left = 8
+      Top = 33
+      Width = 160
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 8
+      Top = 8
+      Width = 160
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 14
+      Width = 76
+      Height = 14
+      Caption = #1055#1091#1090#1100' '#1082' '#1092#1072#1081#1083#1091
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 167
+      Top = 8
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label13: TLabel
+      Left = 18
+      Top = 39
+      Width = 101
+      Height = 14
+      Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103' '#1090#1086#1074#1072#1088#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape26: TShape
+      Left = 167
+      Top = 33
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 18
+      Top = 125
+      Width = 61
+      Height = 14
+      Caption = #1055#1086#1089#1090#1072#1074#1097#1080#1082
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape3: TShape
+      Left = 166
+      Top = 119
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label3: TLabel
+      Left = 9
+      Top = 333
+      Width = 161
+      Height = 13
+      Caption = '1. '#1059#1082#1072#1078#1080#1090#1077' '#1087#1091#1090#1100' '#1082' '#1092#1072#1081#1083#1091' Excel;'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 9
+      Top = 349
+      Width = 311
+      Height = 13
+      Caption = '2. '#1042#1099#1073#1077#1088#1080#1090#1077' '#1082#1072#1090#1077#1075#1086#1088#1080#1102', '#1074' '#1082#1086#1090#1086#1088#1091#1102' '#1073#1091#1076#1077#1090#1077' '#1075#1088#1091#1079#1080#1090#1100' '#1090#1086#1074#1072#1088#1099';'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 9
+      Top = 395
+      Width = 414
+      Height = 13
+      Caption = 
+        '4. '#1045#1089#1083#1080' '#1087#1086#1087#1091#1090#1085#1086', '#1042#1099' '#1093#1086#1090#1080#1090#1077' '#1086#1092#1086#1088#1084#1080#1090#1100' '#1087#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072', '#1090#1086' '#1074#1099#1073#1077#1088#1080#1090#1077' '#1087 +
+        #1086#1089#1090#1072#1074#1097#1080#1082#1072'.'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label6: TLabel
+      Left = 11
+      Top = 414
+      Width = 529
+      Height = 52
+      Caption = 
+        #1045#1089#1083#1080' '#1074' '#1089#1090#1088#1086#1082#1077' '#1090#1086#1074#1072#1088#1072' '#1042#1099' '#1079#1072#1087#1086#1083#1085#1080#1083#1080' '#1082#1086#1083#1086#1085#1082#1080' "'#1062#1077#1085#1072' '#1087#1088#1080#1093#1086#1076#1072'" '#1080' "'#1054#1089#1090#1072 +
+        #1090#1086#1082'", '#1090#1086' '#1087#1086' '#1076#1072#1085#1085#1086#1084#1091' '#1090#1086#1074#1072#1088#1091' '#1073#1091#1076#1077#1090' '#1086#1092#1086#1088#1084#1083#1077#1085' '#1087#1088#1080#1093#1086#1076' '#1087#1086' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1091#1102 +
+        #1097#1080#1084' '#1094#1077#1085#1077' '#1080' '#1082#1086#1083#1080#1095#1077#1089#1090#1074#1091'. '#1045#1089#1083#1080' '#1074' '#1093#1086#1076#1077' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1074#1099#1103#1074#1083#1077#1085' '#1090#1086#1074#1072#1088' '#1089' '#1072#1088#1090#1080 +
+        #1082#1091#1083#1086#1084'/'#1096#1090#1088#1080#1093#1082#1086#1076#1086#1084' '#1091#1078#1077' '#1080#1084#1077#1102#1097#1080#1084#1089#1103' '#1074' '#1073#1072#1079#1077', '#1090#1086' '#1090#1072#1082#1086#1081' '#1090#1086#1074#1072#1088' '#1079#1072#1085#1086#1074#1086' '#1076#1086#1073 +
+        #1072#1074#1083#1077#1085' '#1085#1077' '#1073#1091#1076#1077#1090', '#1085#1086' '#1087#1086' '#1085#1077#1084#1091' '#1073#1091#1076#1077#1090' '#1086#1092#1086#1088#1084#1083#1077#1085' '#1087#1088#1080#1093#1086#1076', '#1077#1089#1083#1080' '#1091#1082#1072#1079#1072#1085#1086' '#1082 +
+        #1086#1083#1080#1095#1077#1089#1090#1074#1086' '#1080' '#1094#1077#1085#1072'.'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object Label7: TLabel
+      Left = 18
+      Top = 64
+      Width = 449
+      Height = 14
+      Caption = 
+        #1054#1073#1085#1086#1074#1080#1090#1100' '#1088#1077#1082#1074#1080#1079#1080#1090#1099' '#1090#1086#1074#1072#1088#1072', '#1077#1089#1083#1080' '#1096#1090#1088#1080#1093#1082#1086#1076' '#1080#1083#1080' '#1072#1088#1090#1080#1082#1091#1083' '#1091#1078#1077' '#1080#1084#1077#1077#1090#1089#1103 +
+        ' '#1074' '#1073#1072#1079#1077'.'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape6: TShape
+      Left = 496
+      Top = 58
+      Width = 53
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label8: TLabel
+      Left = 9
+      Top = 365
+      Width = 535
+      Height = 26
+      Caption = 
+        '3. '#1045#1089#1083#1080' '#1042#1099' '#1093#1086#1090#1080#1090#1077' '#1086#1073#1085#1086#1074#1080#1090#1100' '#1088#1077#1082#1074#1079#1080#1090#1099' '#1090#1086#1074#1072#1088#1086#1074' ('#1085#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077', '#1094#1077#1085#1091',' +
+        ' '#1086#1087#1090#1086#1074#1091#1102' '#1094#1077#1085#1091', '#1077#1076'. '#1080#1079#1084#1077#1088#1077#1085#1080#1103'), '#1087#1086' '#1080#1084#1077#1102#1097#1080#1084#1089#1103' '#1096#1090#1088#1080#1093#1082#1086#1076#1091' '#1080#1083#1080' '#1072#1088#1090#1080#1082#1091 +
+        #1083#1091', '#1090#1086' '#1087#1086#1089#1090#1072#1074#1100#1090#1077' '#1075#1072#1083#1086#1095#1082#1091' "'#1054#1073#1085#1086#1074#1080#1090#1100' '#1088#1077#1082#1074#1080#1079#1080#1090#1099' '#1090#1086#1074#1072#1088#1072'"'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object Memo1: TMemo
+      Left = 8
+      Top = 151
+      Width = 540
+      Height = 145
+      ReadOnly = True
+      ScrollBars = ssVertical
+      TabOrder = 4
+      OnKeyPress = Memo1KeyPress
+    end
+    object leCategory: TdxLookupEdit
+      Left = 172
+      Top = 35
+      Width = 372
+      TabOrder = 1
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_PRODUCT'
+      ListSource = dsProductCategory
+      LookupKeyValue = Null
+    end
+    object lePostavshik: TdxLookupEdit
+      Left = 172
+      Top = 121
+      Width = 371
+      Enabled = False
+      TabOrder = 5
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_CLIENT'
+      ListSource = dsPostavshik
+      LookupKeyValue = Null
+    end
+    object rbPriceListOnly: TRadioButton
+      Left = 10
+      Top = 98
+      Width = 143
+      Height = 17
+      Caption = #1058#1086#1083#1100#1082#1086' '#1072#1089#1089#1086#1088#1090#1080#1084#1077#1085#1090
+      Checked = True
+      TabOrder = 2
+      TabStop = True
+      OnClick = rbPriceListOnlyClick
+    end
+    object rbWithPrihod: TRadioButton
+      Left = 162
+      Top = 98
+      Width = 175
+      Height = 17
+      Caption = #1040#1089#1089#1086#1088#1090#1080#1084#1077#1085#1090' '#1089' '#1087#1088#1080#1093#1086#1076#1086#1084
+      TabOrder = 3
+      OnClick = rbWithPrihodClick
+    end
+    object ProgressBar: TProgressBar
+      Left = 8
+      Top = 303
+      Width = 537
+      Height = 20
+      TabOrder = 6
+    end
+    object bedtFileName: TdxButtonEdit
+      Left = 172
+      Top = 10
+      Width = 371
+      TabOrder = 0
+      OnKeyPress = cbUppRowNoKeyPress
+      StyleController = dxEditStyleController
+      Buttons = <
+        item
+          Default = True
+        end>
+      OnButtonClick = bedtFileNameButtonClick
+      ExistButtons = True
+    end
+    object cbUpdate: TCheckBox
+      Left = 504
+      Top = 64
+      Width = 17
+      Height = 17
+      TabOrder = 7
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 486
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Top = 504
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Top = 504
+  end
+  inherited ApplicationEvents1: TApplicationEvents
+    Left = 208
+    Top = 224
+  end
+  inherited ActionList: TActionList
+    Left = 112
+    Top = 504
+  end
+  object odlg: TOpenDialog
+    Filter = 'Excel (*.xls)|*.xls'
+    Left = 168
+    Top = 224
+  end
+  object dsProductCategory: TDataSource
+    DataSet = spProductCategory
+    Left = 383
+    Top = 152
+  end
+  object dsPostavshik: TDataSource
+    DataSet = spPostavshik
+    Left = 495
+    Top = 168
+  end
+  object spLoad: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_IMPORT_G_PRODUCT (?G_PRODUCT_PAR_, ?ARTICUL_' +
+        ', ?NOMENCLATUR_NUM_, ?BARCODE_, ?NAME_, ?NAME_G_UNIT_, ?PRICE_, ' +
+        '?VOLUME_PRICE_, ?G_CLIENT_, ?SELF_PRICE_, ?AMOUNT_, ?IS_THIS_LAS' +
+        'T_, ?UPDATE_IF_EXIST_)')
+    StoredProcName = 'G_IMPORT_G_PRODUCT'
+    Left = 136
+    Top = 224
+  end
+  object spProductCategory: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_PRODCAT_LIST')
+    Filter = 'g_product > 0'
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Filtered = True
+    Left = 352
+    Top = 152
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 320
+    Top = 152
+  end
+  object spPostavshik: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_CLIENT_LIST(?G_CLIENT_PARENT_)')
+    Filter = 'is_supplier = 1'
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Filtered = True
+    Left = 448
+    Top = 168
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object tranWrite: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 104
+    Top = 224
+  end
+end

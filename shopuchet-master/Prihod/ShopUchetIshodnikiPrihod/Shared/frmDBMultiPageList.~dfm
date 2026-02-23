@@ -1,0 +1,189 @@
+inherited DBMultiPageListForm: TDBMultiPageListForm
+  Caption = 'DBMultiPageListForm'
+  ClientHeight = 564
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited dxPageControl1: TcxPageControl
+    Height = 536
+    ClientRectBottom = 508
+    ClientRectRight = 1013
+    ClientRectTop = 0
+    inherited ts1: TcxTabSheet
+      inherited dxDBGrid: TdxDBGrid
+        Height = 508
+        OnDblClick = aUpdExecute
+        Filter.Criteria = {00000000}
+        OptionsBehavior = [edgoAutoSearch, edgoAutoSort, edgoDragScroll, edgoEnterShowEditor, edgoImmediateEditor, edgoMultiSelect, edgoMultiSort, edgoStoreToRegistry, edgoTabThrough, edgoVertThrough]
+      end
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Bars = <
+      item
+        AllowClose = False
+        AllowCustomizing = False
+        AllowQuickCustomizing = False
+        Caption = 'Main'
+        DockedDockingStyle = dsTop
+        DockedLeft = 0
+        DockedTop = 0
+        DockingStyle = dsTop
+        FloatLeft = 271
+        FloatTop = 138
+        FloatClientWidth = 23
+        FloatClientHeight = 22
+        ItemLinks = <
+          item
+            Item = dxBarStaticRecCnt
+            Visible = True
+          end
+          item
+            Item = dxBarButtonRefresh
+            Visible = True
+          end
+          item
+            Item = dxBarButtonEnableAutoRefresh
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonEnableAutoSize
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonView
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonIns
+            Visible = True
+          end
+          item
+            Item = dxBarButton1
+            Visible = True
+          end
+          item
+            Item = dxBarButtonUpd
+            Visible = True
+          end
+          item
+            Item = dxBarButtonDel
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButton2
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonClose
+            Visible = True
+          end>
+        Name = 'Main'
+        OneOnRow = True
+        Row = 0
+        UseOwnFont = False
+        Visible = True
+        WholeRow = False
+      end>
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      28
+      0)
+    object dxBarButtonView: TdxBarButton
+      Action = aView
+      Category = 0
+    end
+    object dxBarButtonIns: TdxBarButton
+      Action = aIns
+      Category = 0
+    end
+    object dxBarButtonUpd: TdxBarButton
+      Action = aUpd
+      Category = 0
+    end
+    object dxBarButtonDel: TdxBarButton
+      Action = aDel
+      Category = 0
+    end
+    object dxBarButton1: TdxBarButton
+      Action = aInsLike
+      Category = 0
+    end
+    object dxBarButton2: TdxBarButton
+      Action = aHelp
+      Category = 0
+    end
+  end
+  inherited alChild: TActionList
+    object aView: TAction
+      Caption = #1055#1088#1086#1089#1084#1086#1090#1088#1077#1090#1100
+      Hint = #1055#1088#1086#1089#1084#1086#1090#1088#1077#1090#1100'|'#1055#1088#1086#1089#1084#1086#1090#1088' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 147
+      ShortCut = 114
+      OnExecute = aViewExecute
+    end
+    object aIns: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100'|'#1044#1086#1073#1072#1074#1083#1077#1085#1080#1077' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 150
+      ShortCut = 45
+      OnExecute = aInsExecute
+    end
+    object aUpd: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+      Hint = #1048#1079#1084#1077#1085#1080#1090#1100'|'#1048#1079#1084#1077#1085#1077#1085#1080#1077' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 148
+      ShortCut = 13
+      OnExecute = aUpdExecute
+    end
+    object aDel: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      Hint = #1059#1076#1072#1083#1080#1090#1100'|'#1059#1076#1072#1083#1077#1085#1080#1077' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 149
+      ShortCut = 46
+      OnExecute = aDelExecute
+    end
+    object aInsLike: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1087#1080#1102
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1087#1080#1102'|'#1044#1086#1073#1072#1074#1083#1077#1085#1080#1077' '#1082#1086#1087#1080#1080' '#1079#1072#1087#1080#1089#1080
+      ImageIndex = 157
+      OnExecute = aInsLikeExecute
+    end
+    object aHelp: TAction
+      Hint = #1042#1099#1079#1086#1074' '#1089#1087#1088#1072#1074#1082#1080
+      ImageIndex = 137
+      OnExecute = aHelpExecute
+    end
+  end
+  object tranWrite: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'write'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 128
+    Top = 48
+  end
+  object spDel: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    Left = 128
+    Top = 80
+  end
+end

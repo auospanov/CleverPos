@@ -1,0 +1,96 @@
+unit frmSalePayment;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls,
+  StdCtrls, Buttons, dxEditor, dxEdLib, dxDBEdtr, dxDBELib, DB, FIBDataSet,
+  pFIBDataSet, Math, FIBDatabase, pFIBDatabase;
+
+type
+  TSalePaymentForm = class(TDBDlgForm)
+    lb1: TLabel;
+    edSummFact: TdxCurrencyEdit;
+    lb2: TLabel;
+    edSdacha: TdxCurrencyEdit;
+    lbBonus: TLabel;
+    edBonus: TdxCurrencyEdit;
+    lb3: TLabel;
+    edBonusAll: TdxCurrencyEdit;
+    cbPayBonus: TCheckBox;
+    lbSummSelf: TLabel;
+    lb4: TLabel;
+    spPaymentType: TpFIBDataSet;
+    lePAYMENT_TYPE: TdxLookupEdit;
+    dsPaymentType: TDataSource;
+    tranRead: TpFIBTransaction;
+    btnInsLike: TBitBtn;
+    mNote: TMemo;
+    procedure FormShow(Sender: TObject);
+    procedure edSummFactChange(Sender: TObject);
+    procedure cbPayBonusClick(Sender: TObject);
+    procedure btnInsLikeClick(Sender: TObject);
+  private
+    FPaymentType : Integer;
+    FBonus : Double;
+    FSummBonus : Double;
+    FSummZakaz : Double;
+    FBonusPercent : Double;
+  public
+    property PaymentType : Integer read FPaymentType write FPaymentType;
+    property SummBonus : Double read FSummBonus write FSummBonus;
+    property SummZakaz : Double read FSummZakaz write FSummZakaz;
+    property BonusPercent : Double read FBonusPercent write FBonusPercent;
+  end;
+
+var
+  SalePaymentForm: TSalePaymentForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TSalePaymentForm.FormShow(Sender: TObject);
+begin
+  //inherited;
+  OpenSP(spPaymentType, False);
+  if FPaymentType > 0 then
+    lePAYMENT_TYPE.LookupKeyValue := FPaymentType
+  else
+    lePAYMENT_TYPE.LookupKeyValue := 1;   // по умолчанию поставлю наличный расчет
+
+  edSummFact.Value := FSummZakaz;
+  edBonus.Value := FSummZakaz * FBonusPercent;
+  edBonusAll.Value := FSummBonus;
+  cbPayBonus.Enabled := edBonusAll.Value > 0;
+end;
+
+procedure TSalePaymentForm.edSummFactChange(Sender: TObject);
+begin
+  edSdacha.Value := edSummFact.Value - FSummZakaz;
+
+  if cbPayBonus.Checked then
+    edSdacha.Value := edSdacha.Value + MIN(FSummZakaz, FSummBonus);
+end;
+
+procedure TSalePaymentForm.cbPayBonusClick(Sender: TObject);
+begin
+  IF cbPayBonus.Checked THEN BEGIN
+    edBonusAll.Value := MAX(FSummBonus - FSummZakaz, 0);
+    edSummFact.Value := Max(FSummZakaz - FSummBonus, 0);
+  END ELSE BEGIN
+    edBonusAll.Value := FSummBonus;
+    edSummFact.Value := FSummZakaz;
+  END;
+end;
+
+procedure TSalePaymentForm.btnInsLikeClick(Sender: TObject);
+begin
+  if cbPayBonus.Checked then
+    edSummFact.Value := Max(FSummZakaz - FSummBonus, 0)
+  else
+    edSummFact.Value := FSummZakaz;
+end;
+
+end.

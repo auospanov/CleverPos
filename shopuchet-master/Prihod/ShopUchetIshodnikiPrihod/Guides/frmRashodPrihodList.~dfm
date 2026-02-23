@@ -1,0 +1,162 @@
+inherited RashodPrihodListForm: TRashodPrihodListForm
+  Left = 519
+  Top = 227
+  Caption = #1057#1090#1072#1090#1100#1080' '#1088#1072#1089#1093#1086#1076#1072'/'#1087#1088#1080#1093#1086#1076#1072
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'G_PRIHOD_RASHOD'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\RashodPrihodList'
+    object dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_PRIHOD_RASHOD'
+    end
+    object dxDBGridACTION: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1055#1088#1080#1093#1086#1076'/'#1056#1072#1089#1093#1086#1076
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'DO_ACTION'
+    end
+    object dxDBGridNAME: TdxDBGridMaskColumn
+      Alignment = taLeftJustify
+      Caption = #1057#1090#1072#1090#1100#1103
+      HeaderAlignment = taCenter
+      Width = 60
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NAME'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Bars = <
+      item
+        AllowClose = False
+        AllowCustomizing = False
+        AllowQuickCustomizing = False
+        Caption = 'Main'
+        DockedDockingStyle = dsTop
+        DockedLeft = 0
+        DockedTop = 0
+        DockingStyle = dsTop
+        FloatLeft = 271
+        FloatTop = 138
+        FloatClientWidth = 23
+        FloatClientHeight = 22
+        ItemLinks = <
+          item
+            Item = dxBarStaticRecCnt
+            Visible = True
+          end
+          item
+            Item = dxBarButtonRefresh
+            Visible = True
+          end
+          item
+            Item = dxBarButtonEnableAutoRefresh
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonEnableAutoSize
+            Visible = True
+          end
+          item
+            Item = dxBarSpinEditHeaderHeight
+            UserDefine = [udWidth]
+            UserWidth = 23
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarCombo
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonView
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonIns
+            Visible = True
+          end
+          item
+            Item = dxBarButtonInsLike
+            Visible = True
+          end
+          item
+            Item = dxBarButtonUpd
+            Visible = True
+          end
+          item
+            Item = dxBarButtonDel
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButton1
+            Visible = True
+          end
+          item
+            BeginGroup = True
+            Item = dxBarButtonClose
+            Visible = True
+          end>
+        Name = 'Main'
+        OneOnRow = True
+        Row = 0
+        UseOwnFont = False
+        Visible = True
+        WholeRow = False
+      end>
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+    object dxBarCombo: TdxBarCombo
+      Caption = #1060#1080#1083#1100#1090#1088
+      Category = 0
+      Hint = #1060#1080#1083#1100#1090#1088
+      Visible = ivAlways
+      Text = #1042#1089#1077
+      OnChange = dxBarComboChange
+      Width = 100
+      Items.Strings = (
+        #1055#1088#1080#1093#1086#1076
+        #1056#1072#1089#1093#1086#1076
+        #1042#1089#1077)
+      ItemIndex = 2
+    end
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_PRIHOD_RASHOD_LIST(?ACTION_)')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_DEL_G_PRIHOD_RASHOD (?G_PRIHOD_RASHOD_)')
+    StoredProcName = 'G_DEL_G_PRIHOD_RASHOD'
+  end
+end

@@ -1,0 +1,693 @@
+inherited UpdProdazhaTovaraForm: TUpdProdazhaTovaraForm
+  Left = 672
+  Top = 187
+  Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1085#1072#1082#1083#1072#1076#1085#1091#1102
+  ClientHeight = 276
+  ClientWidth = 592
+  OnCreate = FormCreate
+  ExplicitWidth = 598
+  ExplicitHeight = 302
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited Panel1: TPanel
+    Width = 577
+    Height = 235
+    ExplicitWidth = 577
+    ExplicitHeight = 235
+    object shSummSkidka: TShape
+      Left = 8
+      Top = 135
+      Width = 176
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object shSkidka: TShape
+      Left = 8
+      Top = 85
+      Width = 177
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 8
+      Top = 10
+      Width = 176
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape7: TShape
+      Left = 8
+      Top = 110
+      Width = 176
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object shPrice: TShape
+      Left = 8
+      Top = 60
+      Width = 176
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape1: TShape
+      Left = 8
+      Top = 35
+      Width = 176
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 18
+      Top = 41
+      Width = 67
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object lbPrice: TLabel
+      Left = 18
+      Top = 66
+      Width = 28
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1062#1077#1085#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Label4: TLabel
+      Left = 18
+      Top = 116
+      Width = 35
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1057#1091#1084#1084#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape8: TShape
+      Left = 183
+      Top = 110
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object shPrice1: TShape
+      Left = 183
+      Top = 60
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object Shape3: TShape
+      Left = 183
+      Top = 35
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 16
+      Width = 34
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1058#1086#1074#1072#1088
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 183
+      Top = 10
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object lbSkidka: TLabel
+      Left = 18
+      Top = 91
+      Width = 39
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1057#1082#1080#1076#1082#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object shSkidka1: TShape
+      Left = 183
+      Top = 85
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object lbSummSkidka: TLabel
+      Left = 18
+      Top = 141
+      Width = 78
+      Height = 14
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1057#1091#1084#1084#1072' '#1089#1082#1080#1076#1082#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object shSummSkidka1: TShape
+      Left = 183
+      Top = 135
+      Width = 382
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Pen.Color = clBtnShadow
+    end
+    object GroupBox1: TGroupBox
+      Left = 8
+      Top = 170
+      Width = 558
+      Height = 55
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1042' '#1090#1086#1084' '#1095#1080#1089#1083#1077' '#1053#1044#1057
+      TabOrder = 9
+      object Shape10: TShape
+        Left = 264
+        Top = 18
+        Width = 97
+        Height = 26
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape9: TShape
+        Left = 32
+        Top = 18
+        Width = 97
+        Height = 26
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Label5: TLabel
+        Left = 42
+        Top = 24
+        Width = 59
+        Height = 14
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Caption = #1057#1090#1072#1074#1082#1072'(%)'
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -12
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape15: TShape
+        Left = 127
+        Top = 18
+        Width = 111
+        Height = 26
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Pen.Color = clBtnShadow
+      end
+      object Label6: TLabel
+        Left = 274
+        Top = 23
+        Width = 35
+        Height = 14
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Caption = #1057#1091#1084#1084#1072
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -12
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape11: TShape
+        Left = 360
+        Top = 18
+        Width = 145
+        Height = 26
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Pen.Color = clBtnShadow
+      end
+      object edNDS: TcxCurrencyEdit
+        Left = 131
+        Top = 21
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        EditValue = 0c
+        ParentFont = False
+        Properties.Alignment.Horz = taRightJustify
+        Properties.DisplayFormat = '0.00'
+        Properties.OnChange = edNDSPropertiesChange
+        Style.Font.Charset = RUSSIAN_CHARSET
+        Style.Font.Color = clWindowText
+        Style.Font.Height = -12
+        Style.Font.Name = 'Tahoma'
+        Style.Font.Style = []
+        Style.StyleController = dxEditStyleController
+        Style.IsFontAssigned = True
+        TabOrder = 0
+        Width = 104
+      end
+      object edNDSSumm: TcxCurrencyEdit
+        Left = 366
+        Top = 21
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        EditValue = 0c
+        Enabled = False
+        ParentFont = False
+        Properties.Alignment.Horz = taRightJustify
+        Properties.DisplayFormat = '0.00'
+        Style.Font.Charset = RUSSIAN_CHARSET
+        Style.Font.Color = clWindowText
+        Style.Font.Height = -12
+        Style.Font.Name = 'Tahoma'
+        Style.Font.Style = []
+        Style.StyleController = dxEditStyleController
+        Style.IsFontAssigned = True
+        StyleDisabled.TextColor = clBlack
+        TabOrder = 1
+        Width = 134
+      end
+    end
+    object rbOpt: TRadioButton
+      Left = 456
+      Top = 64
+      Width = 73
+      Height = 17
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1054#1087#1090#1086#1074#1072#1103
+      TabOrder = 4
+      OnClick = rbOptClick
+    end
+    object rbRoznica: TRadioButton
+      Left = 352
+      Top = 64
+      Width = 97
+      Height = 17
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = #1056#1086#1079#1085#1080#1095#1085#1072#1103
+      Checked = True
+      TabOrder = 3
+      TabStop = True
+      OnClick = rbRoznicaClick
+    end
+    object pnSkidka: TPanel
+      Left = 345
+      Top = 86
+      Width = 216
+      Height = 24
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      BevelOuter = bvNone
+      Color = clBtnHighlight
+      TabOrder = 5
+      object rbSkidkaInProcent: TRadioButton
+        Left = 7
+        Top = 5
+        Width = 82
+        Height = 17
+        Hint = #1089#1082#1080#1076#1082#1072' '#1074' '#1087#1088#1086#1094#1077#1085#1090#1072#1093
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Caption = #1055#1088#1086#1094#1077#1085#1090
+        Checked = True
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        TabStop = True
+        OnClick = rbSkidkaInProcentClick
+      end
+      object rbSkidkaInTenge: TRadioButton
+        Left = 111
+        Top = 5
+        Width = 98
+        Height = 17
+        Hint = #1089#1082#1080#1076#1082#1072' '#1074' '#1074#1072#1083#1102#1090#1077
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        Caption = #1044#1077#1085'. '#1077#1076#1080#1085#1080#1094#1072
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnClick = rbSkidkaInTengeClick
+      end
+    end
+    inline MyCurrencyFrameForm: TMyCurrencyFrameForm
+      Left = 189
+      Top = 37
+      Width = 371
+      Height = 22
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      TabOrder = 1
+      ExplicitLeft = 189
+      ExplicitTop = 37
+      ExplicitWidth = 371
+      ExplicitHeight = 22
+      inherited edAmount: TEdit
+        Left = 0
+        Width = 348
+        Height = 22
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        OnChange = MyCurrencyFrameForm1edAmountChange
+        ExplicitLeft = 0
+        ExplicitWidth = 348
+        ExplicitHeight = 22
+      end
+      inherited sbCur: TSpinButton
+        Left = 350
+        Top = 1
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 2
+        ExplicitLeft = 350
+        ExplicitTop = 1
+      end
+    end
+    object edTovar: TcxTextEdit
+      Left = 189
+      Top = 13
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Enabled = False
+      Properties.MaxLength = 500
+      Style.BorderStyle = ebsFlat
+      Style.StyleController = dxEditStyleController
+      TabOrder = 0
+      Width = 369
+    end
+    object edPrice: TcxCurrencyEdit
+      Left = 189
+      Top = 63
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      EditValue = 0c
+      ParentFont = False
+      Properties.Alignment.Horz = taRightJustify
+      Properties.DisplayFormat = '0.00'
+      Properties.UseDisplayFormatWhenEditing = True
+      Properties.UseLeftAlignmentOnEditing = False
+      Properties.UseThousandSeparator = True
+      Properties.ValidateOnEnter = False
+      Properties.OnChange = edPricePropertiesChange
+      Style.Font.Charset = RUSSIAN_CHARSET
+      Style.Font.Color = clWindowText
+      Style.Font.Height = -12
+      Style.Font.Name = 'Tahoma'
+      Style.Font.Style = []
+      Style.StyleController = dxEditStyleController
+      Style.IsFontAssigned = True
+      TabOrder = 2
+      Width = 151
+    end
+    object seSkidka: TcxCurrencyEdit
+      Left = 189
+      Top = 88
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      EditValue = 0c
+      ParentFont = False
+      Properties.Alignment.Horz = taRightJustify
+      Properties.DisplayFormat = '0.00'
+      Properties.UseDisplayFormatWhenEditing = True
+      Properties.UseLeftAlignmentOnEditing = False
+      Properties.UseThousandSeparator = True
+      Properties.ValidateOnEnter = False
+      Properties.OnChange = seSkidkaPropertiesChange
+      Style.Font.Charset = RUSSIAN_CHARSET
+      Style.Font.Color = clWindowText
+      Style.Font.Height = -12
+      Style.Font.Name = 'Tahoma'
+      Style.Font.Style = []
+      Style.StyleController = dxEditStyleController
+      Style.IsFontAssigned = True
+      TabOrder = 6
+      Width = 151
+    end
+    object edSumm: TcxCurrencyEdit
+      Left = 189
+      Top = 113
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      EditValue = 0c
+      Enabled = False
+      ParentFont = False
+      Properties.Alignment.Horz = taRightJustify
+      Properties.DisplayFormat = '0.00'
+      Style.Font.Charset = RUSSIAN_CHARSET
+      Style.Font.Color = clWindowText
+      Style.Font.Height = -12
+      Style.Font.Name = 'Tahoma'
+      Style.Font.Style = []
+      Style.StyleController = dxEditStyleController
+      Style.IsFontAssigned = True
+      StyleDisabled.TextColor = clBlack
+      TabOrder = 7
+      Width = 369
+    end
+    object seSkidkaSumm: TcxCurrencyEdit
+      Left = 189
+      Top = 138
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      EditValue = 0c
+      Enabled = False
+      ParentFont = False
+      Properties.Alignment.Horz = taRightJustify
+      Properties.DisplayFormat = '0.00'
+      Style.Font.Charset = RUSSIAN_CHARSET
+      Style.Font.Color = clWindowText
+      Style.Font.Height = -12
+      Style.Font.Name = 'Tahoma'
+      Style.Font.Style = []
+      Style.StyleController = dxEditStyleController
+      Style.IsFontAssigned = True
+      StyleDisabled.TextColor = clBlack
+      TabOrder = 8
+      Width = 369
+    end
+  end
+  inherited btnOk: TcxButton
+    Left = 424
+    Top = 244
+    ExplicitLeft = 424
+    ExplicitTop = 244
+  end
+  inherited btnCancel: TcxButton
+    Left = 508
+    Top = 244
+    ExplicitLeft = 508
+    ExplicitTop = 244
+  end
+  inherited btHelp: TcxButton
+    Top = 244
+    ExplicitTop = 244
+  end
+  inherited ApplicationEvents1: TApplicationEvents
+    Left = 104
+    Top = 248
+  end
+  inherited dxEditStyleController: TcxEditStyleController
+    PixelsPerInch = 96
+  end
+  inherited ActionList: TActionList
+    Top = 520
+    object aIns: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1090#1086#1074#1072#1088
+    end
+    object aUpd: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+    end
+    object aDel: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+    end
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE GET_ZAKAZ_DETAILS_TMP (?ZAKAZ_DETAILS_)')
+    StoredProcName = 'GET_ZAKAZ_DETAILS_TMP'
+    Left = 8
+    Top = 248
+  end
+  inherited spIns: TpFIBStoredProc
+    Left = 40
+    Top = 248
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE UPDATE_ZAKAZ_DETAILS_TMP (?ZAKAZ_DETAILS_, ?AM' +
+        'OUNT_, ?PRICE_, ?SUMM_, ?DISCOUNT_PERC_, ?DISCOUNT_TENGE_, ?DISC' +
+        'OUNT_SUMM_, ?NDS_, ?NDS_SUMM_, ?ALLOW_SELL_ABSENT_GOODS_)')
+    StoredProcName = 'UPDATE_ZAKAZ_DETAILS_TMP'
+    Left = 72
+    Top = 248
+  end
+  object spIsHaveDiscount: TpFIBStoredProc
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_GET_G_DISCOUNT_BY_PRODUCT (?G_PRODUCT_)')
+    StoredProcName = 'G_GET_G_DISCOUNT_BY_PRODUCT'
+    Left = 432
+    Top = 88
+  end
+end

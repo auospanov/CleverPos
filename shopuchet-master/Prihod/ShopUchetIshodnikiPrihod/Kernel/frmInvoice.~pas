@@ -1,0 +1,398 @@
+unit frmInvoice;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, dxEditor, dxExEdtr, dxDBEdtr,
+  dxDBELib, dxCntner, dxEdLib, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, unCommonFunc, FIBQuery,
+  pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase, FIBDataSet,
+  pFIBDataSet, AppEvnts, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox;
+
+type
+  TInvoiceForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edNum: TdxEdit;
+    Shape4: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    Shape3: TShape;
+    edDate: TcxDateEdit;
+    dsAddress: TDataSource;
+    Label3: TLabel;
+    Shape5: TShape;
+    leAddress: TdxLookupEdit;
+    Shape6: TShape;
+    edPostavshik: TdxEdit;
+    Label4: TLabel;
+    Shape7: TShape;
+    edIDN: TdxEdit;
+    Shape8: TShape;
+    Label5: TLabel;
+    Shape9: TShape;
+    Shape10: TShape;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape12: TShape;
+    dsAccount: TDataSource;
+    leAccount: TdxLookupEdit;
+    Label9: TLabel;
+    Shape17: TShape;
+    edOtpravitel: TdxEdit;
+    Shape18: TShape;
+    Label10: TLabel;
+    Shape19: TShape;
+    edPoluchatel: TdxEdit;
+    Shape20: TShape;
+    Label11: TLabel;
+    Shape21: TShape;
+    Shape22: TShape;
+    edClient: TdxEdit;
+    Label12: TLabel;
+    Shape23: TShape;
+    edIDNClient: TdxEdit;
+    Shape24: TShape;
+    Label14: TLabel;
+    Shape27: TShape;
+    Shape28: TShape;
+    Label15: TLabel;
+    edOsnovanie: TdxEdit;
+    Shape29: TShape;
+    dsIspolnitel: TDataSource;
+    Label13: TLabel;
+    Shape25: TShape;
+    leIspolnitel: TdxLookupEdit;
+    aPrint: TAction;
+    BitBtn1: TBitBtn;
+    Label16: TLabel;
+    Shape31: TShape;
+    Shape32: TShape;
+    dsPaymentType: TDataSource;
+    lePAYMENT_TYPE: TdxLookupEdit;
+    Label17: TLabel;
+    Shape33: TShape;
+    Shape34: TShape;
+    edDoverka: TdxEdit;
+    Label18: TLabel;
+    Shape35: TShape;
+    edSposobOtpravki: TdxEdit;
+    Shape36: TShape;
+    Label19: TLabel;
+    Shape37: TShape;
+    edNakladnaya: TdxEdit;
+    Shape38: TShape;
+    Label20: TLabel;
+    Shape39: TShape;
+    Shape40: TShape;
+    Label7: TLabel;
+    Shape13: TShape;
+    leIikClient: TdxLookupEdit;
+    Shape14: TShape;
+    dsIikClient: TDataSource;
+    Label8: TLabel;
+    Shape15: TShape;
+    leRukovoditel: TdxLookupEdit;
+    Shape16: TShape;
+    dsRukovoditel: TDataSource;
+    Label21: TLabel;
+    Shape41: TShape;
+    Shape42: TShape;
+    dsGlavBuh: TDataSource;
+    leGlavBuh: TdxLookupEdit;
+    Shape26: TShape;
+    Label22: TLabel;
+    Shape43: TShape;
+    leMestoClienta: TdxLookupEdit;
+    Shape44: TShape;
+    dsMestoClienta: TDataSource;
+    edPunkt: TdxEdit;
+    edAddressGruzopoluch: TdxEdit;
+    Shape30: TShape;
+    spAddress: TpFIBDataSet;
+    spAccount: TpFIBDataSet;
+    spPaymentType: TpFIBDataSet;
+    spMestoClienta: TpFIBDataSet;
+    spIikClient: TpFIBDataSet;
+    spRukovoditel: TpFIBDataSet;
+    spIspolnitel: TpFIBDataSet;
+    spGlavBuh: TpFIBDataSet;
+    lbPostavshik: TLabel;
+    sh1: TShape;
+    sh2: TShape;
+    leFirm: TcxLookupComboBox;
+    spFirm: TpFIBDataSet;
+    dsFirm: TDataSource;
+    procedure aPrintExecute(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure leMestoClientaChange(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+    procedure leFirmPropertiesChange(Sender: TObject);
+  private
+    FNotSaved : integer;  // 1 - счет еще не сохранен, 0 - сохранен (то есть счета не было до сего момента, будет создан сейчас)
+    FZakaz : integer;
+    FGClient : integer;
+  public
+    property NotSaved: Integer read FNotSaved write FNotSaved;
+    property Zakaz: Integer read FZakaz write FZakaz;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  InvoiceForm: TInvoiceForm;
+
+implementation
+
+uses dmReports;
+
+{$R *.dfm}
+
+function TInvoiceForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if leAddress.LookupKeyValue = 0 then begin
+    ErrControl := leAddress;
+    MessageDlg('Адрес местонахожд. поставщика не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leAccount.LookupKeyValue = 0 then begin
+    ErrControl := leAccount;
+    MessageDlg('ИИК поставщика не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if lePAYMENT_TYPE.LookupKeyValue = 0 then begin
+    ErrControl := lePAYMENT_TYPE;
+    MessageDlg('Способ оплаты не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leMestoClienta.LookupKeyValue = 0 then begin
+    ErrControl := leMestoClienta;
+    MessageDlg('Адрес местонахождения получ-ля не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leIikClient.LookupKeyValue = 0 then begin
+    ErrControl := leIikClient;
+    MessageDlg('ИИК клиента не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leRukovoditel.LookupKeyValue = 0 then begin
+    ErrControl := leRukovoditel;
+    MessageDlg('Руководитель не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leGlavBuh.Text = '' then begin
+    ErrControl := leGlavBuh;
+    MessageDlg('Главный бухгалтер не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  if leIspolnitel.LookupKeyValue = 0 then begin
+    ErrControl := leIspolnitel;
+    MessageDlg('Исполнитель не указан!', mtInformation, [mbOK], 0);
+    Exit
+  end;
+
+  Result := True;
+end;
+
+procedure TInvoiceForm.GetData;
+begin
+  spGetData.ParamByName('ZAKAZ_').AsInteger := FZakaz;
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      edNum.Text := ParamByName('NUM_').AsString;
+      edDate.Date := ParamByName('INIT_DATE_').AsDate;
+      // раньше не было leFirm.EditValue поэтому у многих клиентов нет этого, надо проверять если 0, то можно заполнять
+      if (ParamByName('g_firm_').AsInteger = 0) OR (ManyFirm = 0) then begin
+        edPostavshik.Text := ParamByName('POSTAVSHIK_').AsString;
+        edIDN.Text := ParamByName('IDN_').AsString;
+        OpenSP(spAddress, False);
+        OpenSP(spAccount, False);
+        leAddress.LookupKeyValue := ParamByName('ADDRESS_').AsInteger;
+        leAccount.LookupKeyValue := ParamByName('IIK_').AsInteger;
+      end else
+        leFirm.EditValue := ParamByName('g_firm_').AsInteger;
+      edOsnovanie.Text := ParamByName('agreement_').AsString;
+      lePAYMENT_TYPE.LookupKeyValue := ParamByName('G_PAYMENT_TYPE_').AsInteger;
+      edDoverka.Text := ParamByName('DOVERENNOST_').AsString;
+      edSposobOtpravki.Text := ParamByName('SPOSOB_OTPRAVKI_').AsString;
+      edNakladnaya.Text := ParamByName('NAKLADNAYA_').AsString;
+      edOtpravitel.Text := ParamByName('GRUZOOTPRAVITEL_').AsString;
+      edPoluchatel.Text := ParamByName('GRUZOPOLUCHATEL_').AsString;
+      FGClient          := ParamByName('G_CLIENT_').AsInteger;
+      edClient.Text := ParamByName('CLIENT_NAME_').AsString;
+      edIDNClient.Text := ParamByName('IDN_CLIENT_').AsString;
+      leMestoClienta.LookupKeyValue := ParamByName('ADDRESS_POKUPATEL_').AsInteger;
+      edPunkt.Text := ParamByName('PUNKT_NAZNACHENIYA_').AsString;
+      edAddressGruzopoluch.Text := ParamByName('ADDRESS_POLUCHATELYA_').AsString;
+
+      spIikClient.ParamByName('G_CLIENT_').AsInteger := FGClient;
+      OpenSP(spIikClient, False);
+      leIikClient.LookupKeyValue := ParamByName('IIK_CLIENT_').AsInteger;
+      leRukovoditel.LookupKeyValue := ParamByName('G_OFFICIAL_RUKOVOD_').AsInteger;
+      leIspolnitel.LookupKeyValue := ParamByName('G_OFFICIAL_').AsInteger;
+      IF spGlavBuh.RecordCount = 0 THEN
+        leGlavBuh.Text := 'Не предусмотрен'
+      ELSE
+        leGlavBuh.LookupKeyValue := ParamByName('G_OFFICIAL_GB_').AsInteger;
+
+      // ЕСЛИ ФОРМА ВЫЗЫВАЕТСЯ УЖЕ С ЖУРНАЛА СЧЕТ-ФАКТУР, ТО ТАМ ID ЗАКАЗА БЕРУ ИЗ GET, ЗДЕСЬ ЖЕ ПЕРЕДАЮ С ФОРМЫ ПРОДАЖ
+      IF FZakaz = 0 THEN
+        FZakaz := ParamByName('ZAKAZ_SAVED_').AsInteger;
+    end;
+  end;
+end;
+
+procedure TInvoiceForm.SetParams(SP: TpFIBStoredProc);
+begin
+  with SP do begin
+    ParamByName('NUM_').AsString := edNum.Text;
+    ParamByName('INIT_DATE_').AsDate := edDate.Date;
+    ParamByName('POSTAVSHIK_').AsString := edPostavshik.Text;
+    IF NOT VarIsNull(leFirm.EditValue) THEN
+      ParamByName('G_FIRM_').AsInteger := leFirm.EditValue;
+    ParamByName('IDN_').AsString := edIDN.Text;
+    ParamByName('ADDRESS_').AsInteger := leAddress.LookupKeyValue;
+    ParamByName('IIK_').AsInteger := leAccount.LookupKeyValue;
+    ParamByName('agreement_').AsString := edOsnovanie.Text;
+    ParamByName('G_PAYMENT_TYPE_').AsInteger := lePAYMENT_TYPE.LookupKeyValue;
+    ParamByName('PUNKT_NAZNACHENIYA_').AsString := edPunkt.Text;
+    ParamByName('DOVERENNOST_').AsString := edDoverka.Text;
+    ParamByName('SPOSOB_OTPRAVKI_').AsString := edSposobOtpravki.Text;
+    ParamByName('NAKLADNAYA_').AsString := edNakladnaya.Text;
+    ParamByName('GRUZOOTPRAVITEL_').AsString := edOtpravitel.Text;
+    ParamByName('GRUZOPOLUCHATEL_').AsString := edPoluchatel.Text;
+    ParamByName('ADDRESS_POLUCHATELYA_').AsString := edAddressGruzopoluch.Text;
+    ParamByName('G_CLIENT_').AsInteger := FGClient;
+    ParamByName('CLIENT_NAME_').AsString := edClient.Text;
+    ParamByName('IDN_CLIENT_').AsString := edIDNClient.Text;
+    ParamByName('ADDRESS_POKUPATEL_').AsInteger := leMestoClienta.LookupKeyValue;
+    ParamByName('IIK_CLIENT_').AsInteger := leIikClient.LookupKeyValue;
+    ParamByName('G_OFFICIAL_').AsInteger := leIspolnitel.LookupKeyValue;
+    IF leRukovoditel.LookupKeyValue > 0 THEN
+      ParamByName('G_OFFICIAL_RUKOVOD_').AsInteger := leRukovoditel.LookupKeyValue;
+    IF leGlavBuh.LookupKeyValue > 0 THEN
+      ParamByName('G_OFFICIAL_GB_').AsInteger := leGlavBuh.LookupKeyValue;
+    ParamByName('ZAKAZ_').AsInteger := FZakaz;
+  end;
+
+  inherited;
+end;
+
+procedure TInvoiceForm.aPrintExecute(Sender: TObject);
+begin
+  inherited;
+
+  if FNotSaved = 1 then begin
+    MessageDlg('Сначала сохраните счет-фактуру!', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  IF CurrencyVal <> 0 THEN BEGIN
+    ReportsDM.PrepareReport(27)
+  END ELSE
+    ReportsDM.PrepareReport(4);
+
+  ReportsDM.spReport.ParamByName('CURRENCY_').AsInteger := CurrencyVal;
+  ReportsDM.spReport.ParamByName('INVOICE_').AsInteger := RecId;
+  ReportsDM.ShowReport(1, 'Счет-фактура №' + edNum.Text + ' от ' + edDate.Text);
+end;
+
+procedure TInvoiceForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  if ModalResult <> mrOk then
+    Exit;
+
+  CanClose := False;
+  {if (OpenMode = omUpdate) and (not CheckRequizChanged(Self)) then
+  begin
+    //Возможно, OK просто нажата после утверждения или для закрытия окна. Изменений не было
+    Success := True;
+    CanClose := True;
+    Exit;
+  end;}
+
+  if (OpenMode in [omInsert, omInsertLike, omInsertChild]) or (FNotSaved = 1) then
+    Success := InsData
+  else if OpenMode = omUpdate then
+    Success := UpdData;
+
+  if Success then begin
+    FNotSaved := 0;
+    MessageDlg('Счет-фактура сохранена успешно!', mtInformation, [mbOK], 0);
+  end;
+
+  CanClose := False;
+end;
+
+procedure TInvoiceForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'INVOICE_';  
+end;
+
+procedure TInvoiceForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  IF ManyFirm = 0 then BEGIN
+    lbPostavshik.Visible := False;
+    sh1.Visible := False;
+    sh2.Visible := FALSE;
+    leFirm.Visible := FALSE;
+    leFirm.Enabled := False;
+  end ELSE
+    OpenSP(spFirm, False);
+  OpenSP(spPaymentType, False);
+  OpenSP(spPaymentType, False);
+  OpenSP(spMestoClienta, False);
+  spRukovoditel.ParamByName('GLAVBUH_OR_RUKOVODITEL_').AsInteger := 1;
+  OpenSP(spRukovoditel, False);
+  OpenSP(spIspolnitel, False);
+  spGlavBuh.ParamByName('GLAVBUH_OR_RUKOVODITEL_').AsInteger := 2;
+  OpenSP(spGlavBuh, False);
+end;
+
+procedure TInvoiceForm.leMestoClientaChange(Sender: TObject);
+begin
+  inherited;
+  edPunkt.Text := leMestoClienta.Text;
+  edAddressGruzopoluch.Text := leMestoClienta.Text;  
+end;
+
+procedure TInvoiceForm.btHelpClick(Sender: TObject);
+begin
+  Helpc := 38;
+  inherited;
+end;
+
+procedure TInvoiceForm.leFirmPropertiesChange(Sender: TObject);
+begin
+  edPostavshik.Text := leFirm.Text;
+  edIDN.Text := spFirm.FieldByName('IDN').AsString;
+  spAddress.ParamByName('g_firm_').AsInteger := leFirm.editValue;
+  OpenSP(spAddress, False);
+  spAddress.Locate('IS_DEFAULT', 1, []);
+  leAddress.LookupKeyValue := spAddress.FieldByName('g_address').AsInteger;
+  spAccount.ParamByName('g_firm_').AsInteger := leFirm.editValue;
+  OpenSP(spAccount, False);
+  spAccount.Locate('IS_DEFAULT', 1, []);
+  leAccount.LookupKeyValue := spAccount.FieldByName('g_account').AsInteger;
+end;
+
+end.

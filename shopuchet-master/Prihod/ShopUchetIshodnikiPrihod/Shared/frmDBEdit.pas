@@ -1,0 +1,223 @@
+unit frmDBEdit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, DB, FIB,
+  ActnList,
+  frmDlg, frmDBDlg, unCommonFunc, AppEvnts, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, pFIBErrorHandler, cxContainer,
+  cxEdit, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee,
+  dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
+  dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky, dxSkinLondonLiquidSky,
+  dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black, dxSkinOffice2007Blue,
+  dxSkinOffice2007Green, dxSkinOffice2007Pink, dxSkinOffice2007Silver,
+  dxSkinOffice2010Black, dxSkinOffice2010Blue, dxSkinOffice2010Silver,
+  dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver, dxSkinSpringTime,
+  dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinXmas2008Blue, cxLookAndFeels, cxStyles, System.Actions, cxClasses, UITypes,
+  cxGraphics, cxLookAndFeelPainters, Vcl.Menus, cxButtons, dxSkinBlueprint,
+  dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle, dxSkinHighContrast,
+  dxSkinMetropolis, dxSkinMetropolisDark, dxSkinOffice2013DarkGray,
+  dxSkinOffice2013LightGray, dxSkinOffice2013White, dxSkinSevenClassic,
+  dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVS2010, dxSkinWhiteprint;
+
+type
+  TOpenMode = (omView, omInsert, omUpdate, omInsertLike, omInsertChild);
+
+  TDBEditForm = class(TDBDlgForm)
+    tranRead: TpFIBTransaction;
+    spGetData: TpFIBStoredProc;
+    tranWrite: TpFIBTransaction;
+    spIns: TpFIBStoredProc;
+    spUpd: TpFIBStoredProc;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
+  private
+    FKeyField   : String;
+    FKeyFieldIsStr: Boolean;
+    FRecID      : Integer;
+    FRecIDStr   : String;
+    FOpenMode   : TOpenMode;
+    FSuccess    : Boolean;
+    procedure WMReadOnlyControls(var Message: TMessage); message WM_READONLYCONTROLS;
+    procedure WMApplyChanges(var Message: TMessage); message WM_APPLYCHANGES;
+  protected
+    procedure GetData; override;
+    function InsData: Boolean; virtual;
+  public
+    property KeyField: String read FKeyField write FKeyField;
+    property KeyFieldIsStr: Boolean read FKeyFieldIsStr write FKeyFieldIsStr default False;
+    property RecID: Integer read FRecID write FRecID default 0;
+    property RecIDStr: String read FRecIDStr write FRecIDStr;
+    property OpenMode: TOpenMode read FOpenmode write FOpenMode default omView;
+    property Success: Boolean read FSuccess write FSuccess default False;
+    function UpdData: Boolean; virtual;
+  end;
+
+var
+  DBEditForm: TDBEditForm;
+
+implementation
+
+uses dmMain, unErrorHandlers, unInitApp;
+
+{$R *.DFM}
+
+{ TDBEditForm }
+
+procedure TDBEditForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if FOpenMode = omView then begin
+    btnOk.Enabled := False;
+//    btnOk.Visible := False;
+  end;
+end;
+
+procedure TDBEditForm.GetData;
+{Выполняет spGetData}
+begin
+  inherited;
+
+  if FOpenMode in [omView, omUpdate, omInsertLike] then
+  begin
+    try
+      if not spGetData.Transaction.InTransaction then
+        spGetData.Transaction.StartTransaction;
+
+      if FKeyFieldIsStr then
+        spGetData.ParamByName(FKeyField).AsString := FRecIDStr
+      else
+        spGetData.ParamByName(FKeyField).AsInteger := FRecID;
+
+      Screen.Cursor := crSQLWait;
+      try
+        ExecSP(spGetData);
+      finally
+        Screen.Cursor := crDefault;
+      end;
+
+      if spGetData.Transaction.InTransaction then
+        spGetData.Transaction.CommitRetaining;
+    except
+      on E: EFIBError do begin
+        if spGetData.Transaction.InTransaction then
+          spGetData.Transaction.RollbackRetaining;
+        DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TDBEditForm.GetData)');
+      end;
+      on E: Exception do begin
+        if spGetData.Transaction.InTransaction then
+          spGetData.Transaction.RollbackRetaining;
+        MessageDlg(E.Message + #13#10'(occured in TDBEditForm.GetData)', mtError, [mbOk], 0);
+      end;
+    end;
+  end;
+
+  if FOpenMode = omView then
+    PostMessage(Self.Handle, WM_READONLYCONTROLS, 0, 0);
+    {Обработчик сооб-я будет вызван ТОЛЬКО ПОСЛЕ отработки этого метода в потомке,}
+    {что и необходимо для установки значений всех контролов ДО установки ReadOnly}
+
+  {После вызова этого метода (inherited) должен вызываться метод потомка,
+   читающий полученные их хранимой процедуры значения и помещающий их в
+   контролы}
+end;
+
+procedure TDBEditForm.WMReadOnlyControls(var Message: TMessage);
+begin
+  ReadOnlyControls;
+end;
+
+function TDBEditForm.InsData: Boolean;
+{Выполняет spIns}
+begin
+  Result := False;
+  try
+    if CallSP(spIns) then begin
+      if FKeyFieldIsStr then
+        FRecIdStr := spIns.ParamByName(FKeyField).AsString
+      else
+        FRecId := spIns.ParamByName(FKeyField).AsInteger;
+      Result := True;
+    end
+    else
+      Exit;
+  except
+    on E: EFIBError do begin
+      if spIns.Transaction.InTransaction then
+        spIns.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TDBEditForm.InsData)');
+    end;
+    on E: Exception do begin
+      if spIns.Transaction.InTransaction then
+        spIns.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in TDBEditForm.InsData)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+function TDBEditForm.UpdData: Boolean;
+{Выполняет spUpd}
+begin
+  Result := False;
+  try
+    if FKeyFieldIsStr then
+      spUpd.ParamByName(FKeyField).AsString := FRecIdStr
+    else
+      spUpd.ParamByName(FKeyField).AsInteger := FRecId;
+
+    if CallSP(spUpd) then
+      Result := True;
+  except
+    on E: EFIBError do begin
+      if spUpd.Transaction.InTransaction then
+        spUpd.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TDBEditForm.UpdData)');
+    end;
+    on E: Exception do begin
+      if spUpd.Transaction.InTransaction then
+        spUpd.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in TDBEditForm.UpdData)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure TDBEditForm.WMApplyChanges(var Message: TMessage);
+var
+  Res: Boolean;
+begin
+  Res := UpdData;
+
+  if Res then
+    Message.ResultLo := 0   {success}
+  else
+    Message.ResultLo := 1;  {failure}
+end;
+
+procedure TDBEditForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+{Вызывет InsData или UpdData, если нажата btnOk в зависимости от FOpenMode}
+begin
+  inherited;
+  if ModalResult <> mrOk then
+    Exit;
+
+  CanClose := False;
+
+  if (FOpenMode = omUpdate) and (not unCommonFunc.CheckRequizChanged(Self)) then begin
+    {Возможно, OK просто нажата после утверждения или для закрытия окна. Изменений не было}
+    FSuccess := True;
+    CanClose := True;
+    Exit;
+  end;
+
+  if FOpenMode in [omInsert, omInsertLike, omInsertChild] then
+    FSuccess := InsData
+  else if FOpenMode = omUpdate then
+    FSuccess := UpdData;
+
+  CanClose := FSuccess;
+end;
+
+end.

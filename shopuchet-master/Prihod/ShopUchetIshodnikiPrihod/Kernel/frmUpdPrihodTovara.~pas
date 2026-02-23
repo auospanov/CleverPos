@@ -1,0 +1,193 @@
+unit frmUpdPrihodTovara;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, OracleData, dxEditor, dxExEdtr, dxDBEdtr,
+  dxDBELib, dxCntner, dxEdLib, ExtCtrls, StdCtrls, Menus, Oracle, ActnList,
+  Buttons, VLSummdxEdit, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, dxDBGrid, dxTL, dxDBCtrl,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase,
+  FIBDataSet, pFIBDataSet, AppEvnts, unCommonFunc;
+
+type
+  TUpdPrihodTovaraForm = class(TDBEditForm)
+    Label13: TLabel;
+    Shape25: TShape;
+    Shape26: TShape;
+    dsPaymentType: TDataSource;
+    lePAYMENT_TYPE: TdxLookupEdit;
+    Label7: TLabel;
+    Shape12: TShape;
+    Shape13: TShape;
+    edDate: TcxDateEdit;
+    Label8: TLabel;
+    Shape14: TShape;
+    edOsnovanie: TdxEdit;
+    Shape16: TShape;
+    Label9: TLabel;
+    Shape17: TShape;
+    lePostavshik: TdxLookupEdit;
+    Shape18: TShape;
+    dsPostavshik: TDataSource;
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    Label1: TLabel;
+    Shape1: TShape;
+    Label3: TLabel;
+    Shape5: TShape;
+    Label4: TLabel;
+    Shape7: TShape;
+    GroupBox1: TGroupBox;
+    Shape10: TShape;
+    Shape9: TShape;
+    Label5: TLabel;
+    Shape15: TShape;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape8: TShape;
+    Shape6: TShape;
+    Shape3: TShape;
+    Label2: TLabel;
+    Shape2: TShape;
+    edTovar: TdxEdit;
+    Shape4: TShape;
+    spPostavshik: TpFIBDataSet;
+    spPaymentType: TpFIBDataSet;
+    Label10: TLabel;
+    Shape19: TShape;
+    mNote: TMemo;
+    Shape20: TShape;
+    edAmount: TdxCurrencyEdit;
+    edPrice: TdxCurrencyEdit;
+    edSumm: TdxCurrencyEdit;
+    edNDSSumm: TdxCurrencyEdit;
+    edNDS: TdxCurrencyEdit;
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edAmountChange(Sender: TObject);
+    procedure edPriceChange(Sender: TObject);
+    procedure edNDSChange(Sender: TObject);
+  private
+    FG_product: Integer;
+    FPName: String;
+    FIs_vozvrat : Integer; // 0 - обычный приход, 1 - возврат товара
+  public
+    property G_product: Integer read FG_product write FG_product;
+    property PName: String read FPName write FPName;
+    property Is_vozvrat: Integer read FIs_vozvrat write FIs_vozvrat default 0;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  UpdPrihodTovaraForm: TUpdPrihodTovaraForm;
+
+implementation
+
+uses frmZakupkaTovara;
+
+{$R *.dfm}
+
+procedure TUpdPrihodTovaraForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if FIs_vozvrat = 1 then begin
+    Caption := 'Редактировать возврат товара';
+    Label9.Visible := False;      //скрываю все, что связано с клиентом и способом расчета, при списании они не нужны
+    Shape17.Visible := False;
+    lePostavshik.Visible := False;
+    Shape18.Visible := False;
+    Label13.Visible := False;
+    Shape25.Visible := False;
+    lePAYMENT_TYPE.Visible := False;
+    Shape26.Visible := False;
+
+    edPrice.Enabled := False;
+    edNDS.Enabled := False;
+  end else begin
+    OpenSp(spPostavshik, False);
+    OpenSp(spPaymentType, False);
+    lePAYMENT_TYPE.LookupKeyValue := 1;   // по умолчанию поставлю наличный расчет
+  end;
+  
+  edDate.Date := Date;
+end;
+
+function TUpdPrihodTovaraForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if NOT CheckDate(edDate.Date, '01.01.2000', '01.01.2099') then begin
+    ErrControl := edDate;
+    MessageDlg('Введена некорректная дата', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TUpdPrihodTovaraForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'sklad_';
+end;
+
+procedure TUpdPrihodTovaraForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    ParamByName('DATE_RECEIPT_').AsDate := edDate.Date;
+    ParamByName('G_CLIENT_').AsInteger := lePostavshik.LookupKeyValue;
+    ParamByName('G_PAYMENT_TYPE_').AsInteger := lePAYMENT_TYPE.LookupKeyValue;
+    ParamByName('OSNOVANIE_').AsString := edOsnovanie.Text;
+    ParamByName('NOTE_').AsString := mNote.Text;
+    ParamByName('AMOUNT_').AsFloat := edAmount.Value;
+    ParamByName('PRICE_').AsFloat := edPrice.Value;
+    ParamByName('SUMM_').AsFloat := edSumm.Value;
+    ParamByName('NDS_').AsFloat := edNDS.Value;
+    ParamByName('NDS_SUMM_').AsFloat := edNDS.Value;
+  end;
+end;
+
+procedure TUpdPrihodTovaraForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      edTovar.Text := ParamByName('G_PROD_NAME_').AsString;
+      edDate.Date := ParamByName('DATE_RECEIPT_').AsDate;
+      edAmount.Value := ParamByName('AMOUNT_').AsFloat;
+      edPrice.Value := ParamByName('PRICE_').AsFloat;
+      edSumm.Value := ParamByName('SUMM_').AsFloat;
+      edOsnovanie.Text := ParamByName('OSNOVANIE_').AsString;
+      mNote.Text := ParamByName('NOTE_').AsString;
+      edNDS.Value := ParamByName('NDS_').AsFloat;
+      edNDSSumm.Value := ParamByName('NDS_SUMM_').AsFloat;
+      lePostavshik.LookupKeyValue := ParamByName('G_CLIENT_').AsInteger;
+      lePAYMENT_TYPE.LookupKeyValue := ParamByName('G_PAYMENT_TYPE_').AsInteger;
+    end;
+  end;
+end;
+
+procedure TUpdPrihodTovaraForm.edAmountChange(Sender: TObject);
+begin
+  edSumm.Value := edAmount.Value * edPrice.Value;
+end;
+
+procedure TUpdPrihodTovaraForm.edPriceChange(Sender: TObject);
+begin
+  edSumm.Value := edAmount.Value * edPrice.Value;
+end;
+
+procedure TUpdPrihodTovaraForm.edNDSChange(Sender: TObject);
+begin
+  inherited;
+  edNDSSumm.Value := edSumm.Value * edNDS.Value / 100;
+end;
+
+end.

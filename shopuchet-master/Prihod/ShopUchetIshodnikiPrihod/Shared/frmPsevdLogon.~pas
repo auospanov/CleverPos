@@ -1,0 +1,97 @@
+unit frmPsevdLogon;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls,
+  StdCtrls, Buttons, FIBDatabase, pFIBDatabase, DB, FIBDataSet,
+  pFIBDataSet, dxEditor, dxDBEdtr, dxDBELib, FIBQuery, pFIBQuery,
+  pFIBStoredProc, IniFiles;
+
+type
+  TPsevdLogonForm = class(TDBDlgForm)
+    Label1: TLabel;
+    leIspolnitel: TdxLookupEdit;
+    edPassword: TEdit;
+    spIspolnitel: TpFIBDataSet;
+    dsIspolnitel: TDataSource;
+    tranRead: TpFIBTransaction;
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    Label3: TLabel;
+    Shape1: TShape;
+    Shape3: TShape;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edPasswordChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    FPassword : String;
+  public
+    { Public declarations }
+  end;
+
+var
+  PsevdLogonForm: TPsevdLogonForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TPsevdLogonForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  if ModalResult = mrOk then begin
+    if (leIspolnitel.LookupKeyValue = 0) or (leIspolnitel.LookupKeyValue = null) then begin
+      ShowMessage('Выберите сотрудника!');
+      Canclose := False;
+    end;
+
+    if Trim(FPassword) <> spIspolnitel.FieldByName('password').AsString then begin
+      ShowMessage('Пароль неверный!');
+      Canclose := False;
+    end;
+
+    // Запомню последнего пользователя
+    Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+    try
+      Ini.WriteInteger('Logon', 'OfficialId', leIspolnitel.LookupKeyValue);
+    finally
+      Ini.Free;
+    end;
+  end;
+end;
+
+procedure TPsevdLogonForm.edPasswordChange(Sender: TObject);
+begin
+  FPassword := edPassword.Text;
+end;
+
+procedure TPsevdLogonForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+  Off_Login : Integer;
+begin
+  inherited;
+
+  // Запомню последнего пользователя
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    Off_Login := Ini.ReadInteger('Logon', 'OfficialId', 0);
+  finally
+    Ini.Free;
+  end;
+
+  OpenSp(spIspolnitel, False);
+  if Off_Login = 0 then begin
+    spIspolnitel.First;
+    leIspolnitel.LookupKeyValue := spIspolnitel.FieldByName('g_official').AsInteger;
+  end else
+    leIspolnitel.LookupKeyValue := Off_Login;
+end;
+
+end.

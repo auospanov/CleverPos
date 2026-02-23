@@ -1,0 +1,1137 @@
+unit frmExportOperData;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, StdCtrls,
+  ExtCtrls, AppEvnts, Buttons, ActiveX, FileCtrl, Inifiles, cxControls,
+  cxContainer, cxEdit, cxCheckBox, cxGraphics, cxLookAndFeels,
+  cxLookAndFeelPainters, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel,
+  dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
+  dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky, dxSkinLondonLiquidSky,
+  dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black, dxSkinOffice2007Blue,
+  dxSkinOffice2007Green, dxSkinOffice2007Pink, dxSkinOffice2007Silver,
+  dxSkinOffice2010Black, dxSkinOffice2010Blue, dxSkinOffice2010Silver,
+  dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver, dxSkinSpringTime,
+  dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinXmas2008Blue, cxTextEdit, cxMaskEdit, cxButtonEdit, System.UITypes,
+  cxClasses, Vcl.Menus, cxButtons, cxEditRepositoryItems, dxBarBuiltInMenu, cxPC,
+  dxSkinBlueprint, dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle,
+  dxSkinHighContrast, dxSkinMetropolis, dxSkinMetropolisDark,
+  dxSkinOffice2013DarkGray, dxSkinOffice2013LightGray, dxSkinOffice2013White,
+  dxSkinSevenClassic, dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVS2010,
+  dxSkinWhiteprint, dxSkinscxPCPainter, cxDropDownEdit, cxLookupEdit,
+  cxDBLookupEdit, cxDBLookupComboBox, Data.DB, FIBDataSet, pFIBDataSet, REST.Types,
+  System.Json, IPPeerClient, REST.Client, Data.Bind.Components,
+  Data.Bind.ObjectScope, System.Win.Registry, cxStyles, cxCustomData, cxFilter,
+  cxData, cxDataStorage, cxNavigator, cxDBData, cxGridLevel,
+  cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGridCustomView,
+  cxGrid, cxGroupBox, cxRadioGroup, dxmdaset, FIBQuery, pFIBQuery;
+
+type
+  TExportOperDataForm = class(TDlgForm)
+    cxPageControl1: TcxPageControl;
+    tsCommon: TcxTabSheet;
+    tsFtp: TcxTabSheet;
+    lb1: TLabel;
+    lbPayment: TLabel;
+    cbProfit: TcxCheckBox;
+    cbSales: TcxCheckBox;
+    cbOstatok: TcxCheckBox;
+    cbOstatokXML: TcxCheckBox;
+    cbSalesInXml: TcxCheckBox;
+    lbFtpServer: TLabel;
+    shpFtpServer: TShape;
+    lbLogin: TLabel;
+    shpLogin: TShape;
+    lbPassword: TLabel;
+    shpPassword: TShape;
+    shpFtpServer1: TShape;
+    edFtpServer: TcxTextEdit;
+    shpLogin1: TShape;
+    edLogin: TcxTextEdit;
+    shpPassword1: TShape;
+    edPassword: TcxTextEdit;
+    cbUploadToFtp: TcxCheckBox;
+    cbProfitFtp: TcxCheckBox;
+    cbSalesFtp: TcxCheckBox;
+    cbOstatokFtp: TcxCheckBox;
+    cbOstatokXmlFtp: TcxCheckBox;
+    cbSalesInXmlFtp: TcxCheckBox;
+    Label1: TLabel;
+    lbFtpPort: TLabel;
+    shpFtpPort: TShape;
+    shpFtpPort1: TShape;
+    edFtpPort: TcxTextEdit;
+    cbZakupkaInXml: TcxCheckBox;
+    Panel2: TPanel;
+    lb4: TLabel;
+    lbExportPeriod: TLabel;
+    shpExportPeriod: TShape;
+    shpExportPeriod1: TShape;
+    cbTime: TcxComboBox;
+    cbZakupkaInXmlFtp: TcxCheckBox;
+    cbOstatokItekaFtp: TcxCheckBox;
+    spReadSklad: TpFIBDataSet;
+    dsReadSklad: TDataSource;
+    shpSklad1: TShape;
+    leSklad: TcxLookupComboBox;
+    tsMobileApp: TcxTabSheet;
+    Label3: TLabel;
+    Shape3: TShape;
+    Label4: TLabel;
+    Shape4: TShape;
+    Shape5: TShape;
+    edMobileLogin: TcxTextEdit;
+    Shape6: TShape;
+    edMobilePass: TcxTextEdit;
+    cbUploadToMobile: TcxCheckBox;
+    RESTClient: TRESTClient;
+    RESTRequest: TRESTRequest;
+    RESTResponse: TRESTResponse;
+    Label2: TLabel;
+    edMobileIp: TcxTextEdit;
+    tsKaspiShop: TcxTabSheet;
+    spG_Tochka: TpFIBDataSet;
+    dsG_Tochka: TDataSource;
+    spCity: TpFIBDataSet;
+    dsKaspi_Point: TDataSource;
+    spKaspi_Point: TpFIBDataSet;
+    dsCity: TDataSource;
+    cxGrid4: TcxGrid;
+    cxgrdbtblvwGrid4DBTableView1: TcxGridDBTableView;
+    cxIDPOINT: TcxGridDBColumn;
+    cxIDCITY: TcxGridDBColumn;
+    cxG_TOCHKA: TcxGridDBColumn;
+    cxADRESS: TcxGridDBColumn;
+    cxgrdlvlGrid4Level1: TcxGridLevel;
+    pnl1: TPanel;
+    cbKaspi: TcxCheckBox;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    shp3: TShape;
+    lb3: TLabel;
+    shp4: TShape;
+    bedtFileName: TcxButtonEdit;
+    Shape2: TShape;
+    Label5: TLabel;
+    Shape1: TShape;
+    edtLink: TcxTextEdit;
+    Shape9: TShape;
+    Label7: TLabel;
+    Shape10: TShape;
+    edtMerch: TcxTextEdit;
+    cxRgTypeID: TcxRadioGroup;
+    dxKaspiPoint: TdxMemData;
+    lrgntfldReportXIDPOINT: TLargeintField;
+    intgrfldReportXIDCITY: TIntegerField;
+    lrgntfldReportXG_TOCHKA: TLargeintField;
+    strngfldReportXADRESS: TStringField;
+    tsInternetShop: TcxTabSheet;
+    cxPageControl2: TcxPageControl;
+    tsEcwid: TcxTabSheet;
+    Shape7: TShape;
+    Label6: TLabel;
+    Label8: TLabel;
+    Shape8: TShape;
+    Shape11: TShape;
+    edtIdStore: TcxTextEdit;
+    Shape12: TShape;
+    edtSecretToken: TcxTextEdit;
+    cbEcwid: TcxCheckBox;
+    pUpdIDProduct: TpFIBQuery;
+    btnClear: TcxButton;
+    pClearProducts: TpFIBDataSet;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure cbSalesPropertiesChange(Sender: TObject);
+    procedure bedtFileNamePropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure cbUploadToFtpPropertiesChange(Sender: TObject);
+    procedure edFtpPortKeyPress(Sender: TObject; var Key: Char);
+    function FirstMobLoad : Boolean;
+    procedure edMobilePassKeyPress(Sender: TObject; var Key: Char);
+    procedure cbUploadToMobilePropertiesChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure cxPageControl1Change(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure edtMerchExit(Sender: TObject);
+    procedure dxKaspiPointAfterInsert(DataSet: TDataSet);
+    procedure dxKaspiPointAfterEdit(DataSet: TDataSet);
+    procedure dxKaspiPointAfterDelete(DataSet: TDataSet);
+    procedure edtMerchKeyPress(Sender: TObject; var Key: Char);
+    procedure btnClearClick(Sender: TObject);
+    procedure cbEcwidClick(Sender: TObject);
+  private
+    FFirstLoadMobDone : Integer;
+    FirstEQWID: Integer;
+    function saveKaspiPoint: Boolean;
+    procedure SetVisibility;
+  public
+    { Public declarations }
+  end;
+
+var
+  ExportOperDataForm: TExportOperDataForm;
+  editPoint: Boolean = False;
+
+implementation
+
+uses
+  unCommonFunc, unInitApp, dmMain, unMobileUploadRoutine, UnECWID;
+
+{$R *.dfm}
+
+function TExportOperDataForm.saveKaspiPoint: Boolean;
+begin
+  try
+    Result := False;
+    if dxKaspiPoint.Active then
+    begin
+      dxKaspiPoint.First;
+      if not spKaspi_Point.Transaction.InTransaction then
+        spKaspi_Point.Transaction.StartTransaction;
+      spKaspi_Point.Open;
+      spKaspi_Point.First;
+      while not spKaspi_Point.Eof do
+      begin
+        spKaspi_Point.Delete;
+      end;
+      while not dxKaspiPoint.Eof do
+      begin
+        if dxKaspiPoint.FieldByName('IDCITY').IsNull then
+        begin
+          MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но не заполнен город', mtError, [mbOK], 0);
+          Exit;
+        end;
+        if dxKaspiPoint.FieldByName('G_TOCHKA').IsNull then
+        begin
+          MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но не заполнен склад из ShopUchet', mtError, [mbOK], 0);
+          Exit;
+        end;
+        if (dxKaspiPoint.FieldByName('ADRESS').IsNull) or (Trim(dxKaspiPoint.FieldByName('Adress').AsString) = '') then
+        begin
+          MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но не заполнен склад из Kaspi магазина', mtError, [mbOK], 0);
+          Exit;
+        end;
+        spKaspi_Point.Insert;
+        spKaspi_Point.FieldByName('IDCITY').AsLargeInt := dxKaspiPoint.FieldByName('IDCITY').AsLargeInt;
+        spKaspi_Point.FieldByName('G_TOCHKA').AsLargeInt := dxKaspiPoint.FieldByName('G_TOCHKA').AsLargeInt;
+        spKaspi_Point.FieldByName('ADRESS').AsWideString := dxKaspiPoint.FieldByName('ADRESS').AsWideString;
+        spKaspi_Point.Post;
+        dxKaspiPoint.Next;
+      end;
+      if spKaspi_Point.Transaction.InTransaction then
+        spKaspi_Point.Transaction.CommitRetaining;
+      Result := True;
+    end;
+
+  except
+    on E: Exception do
+      Log('Ошибка сохранения данных по складам. Детали: ' + E.message);
+  end;
+end;
+
+procedure TExportOperDataForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  Ini: TMemIniFile; //необходимо создать объект, чтоб потом с ним работать
+  Reg: TRegistry;
+  ECWID: TECWID;
+  s: string;
+begin
+  if ModalResult = mrOk then
+  begin
+
+    if (bedtFileName.Text = '') and (cbTime.ItemIndex > 0) and (cbUploadToFtp.Checked) then
+      bedtFileName.Text := GetEnvironmentVariable('temp') + '\';
+
+    if not SysUtils.DirectoryExists(bedtFileName.Text) and
+    ((Integer(cbSales.checked) + Integer(cbOstatok.checked) +
+      Integer(cbOstatokXML.checked) + Integer(cbProfit.checked) +
+      Integer(cbSalesInXml.checked) + Integer(cbZakupkaInXml.checked)) > 0) and
+    (cbTime.ItemIndex > 0) then begin
+      MessageDlg('Такого пути не существует! Переопределите папку для сохранения!', mtWarning, [mbOK], 0);
+      bedtFileName.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+    if (cbUploadToFtp.Checked) and ((edFtpServer.Text = '') or (edFtpPort.Text = '') or (edLogin.Text = '') or
+    (edPassword.Text = '')) then begin
+      MessageDlg('Не задан один из параметров FTP!', mtError, [mbOK], 0);
+      edFtpServer.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+    if (cbUploadToMobile.Checked) and ((edMobileLogin.Text = '') or (edMobilePass.Text = '')) then begin
+      MessageDlg('Не задан логин или пароль для выгрузки в мобильное приложение', mtError, [mbOK], 0);
+      edMobileLogin.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+    if (cbUploadToMobile.Checked) and (cbTime.ItemIndex = 0) then begin
+      MessageDlg('Поставлена галочка "Выгружать в мобильное приложение", но период выгрузки не задан!', mtError, [mbOK], 0);
+      cbTime.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+    if (cbKaspi.Checked) and (dxKaspiPoint.Active) then
+    begin
+      if Trim(edtMerch.Text)=''  then
+      begin
+        MessageDlg('Не указан ID партнера! Введите ID партнера', mtWarning, [mbOK], 0);
+        edtmerch.SetFocus;
+        CanClose := False;
+        Exit;
+      end;
+      if Trim(bedtFileName.Text) = '' then
+      begin
+        //MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но папка для выгрузки не указана!', mtError, [mbOK], 0);
+        bedtFileName.Text := GetTempWindows;
+        //CanClose := False;
+        //Exit;
+      end;
+      if (cbTime.ItemIndex = 0) then
+      begin
+        MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но период выгрузки не задан!', mtError, [mbOK], 0);
+        cbTime.SetFocus;
+        CanClose := False;
+        Exit;
+      end;
+      if dxKaspiPoint.Modified then
+        dxKaspiPoint.Post;
+      if dxKaspiPoint.RecordCount<=0 then
+      begin
+        MessageDlg('Поставлена галочка "Выгружать в Kaspi магазин", но не задан ни один склад', mtError, [mbOK], 0);
+        CanClose := False;
+        Exit;
+      end;
+      //Сохраняю склады в таблицу
+      if editPoint then
+        if not saveKaspiPoint then
+          CanClose := False;
+    end;
+
+    if cbEcwid.Checked then
+    begin
+      if Trim(edtIdStore.Text) = EmptyStr then
+      begin
+        MessageDlg('Поставлена галочка "Выгружать в Интернет магазин ECWID", но не задан ID магазина', mtError, [mbOK], 0);
+        edtIdStore.SetFocus;
+        CanClose := False;
+        Exit;
+      end;
+      if Trim(edtSecretToken.Text) = EmptyStr then
+      begin
+        MessageDlg('Поставлена галочка "Выгружать в Интернет магазин ECWID", но не задан Secret токен', mtError, [mbOK], 0);
+        edtSecretToken.SetFocus;
+        CanClose := False;
+        Exit;
+      end;
+    end;
+    if
+      ((Integer(cbSales.Checked) + Integer(cbOstatok.Checked) + Integer(cbOstatokXML.Checked) +
+      Integer(cbProfit.Checked) + Integer(cbSalesInXml.Checked) +
+      Integer(cbZakupkaInXml.Checked)) = 0)
+      and
+      ((Integer(cbSalesFtp.Checked) + Integer(cbOstatokFtp.Checked) + Integer(cbOstatokXMLFtp.Checked) +
+      Integer(cbProfitFtp.Checked) + Integer(cbSalesInXmlFtp.Checked) +
+      Integer(cbZakupkaInXmlFtp.Checked) + Integer(cbOstatokItekaFtp.Checked)) = 0)
+      and
+      (Integer(cbUploadToMobile.Checked) = 0)
+      and (Integer(cbKaspi.Checked) = 0) and (Integer(cbEcwid.Checked) = 0)
+    then
+      cbTime.ItemIndex := 0;
+
+    Ini:=TMemIniFile.Create(extractfilepath(Application.ExeName)+'Settings.ini', TEncoding.UTF8);
+    try
+      Ini.WriteString('ExportOperData', 'DataType', IntToStr(Integer(cbSales.checked)) +
+      IntToStr(Integer(cbOstatok.checked)) + IntToStr(Integer(cbOstatokXML.checked)) +
+      IntToStr(Integer(cbProfit.checked)) + IntToStr(Integer(cbSalesInXml.checked)) +
+      IntToStr(Integer(cbZakupkaInXml.checked)));
+
+      Ini.WriteString('ExportOperData', 'DataTypeFtp', IntToStr(Integer(cbSalesFtp.checked)) +
+      IntToStr(Integer(cbOstatokFtp.checked)) + IntToStr(Integer(cbOstatokXMLFtp.checked)) +
+      IntToStr(Integer(cbProfitFtp.checked)) + IntToStr(Integer(cbSalesInXmlFtp.checked)) +
+      IntToStr(Integer(cbZakupkaInXmlFtp.checked)) + IntToStr(Integer(cbOstatokItekaFtp.checked)));
+
+      Ini.WriteBool('ExportOperData', 'UploadToFtp', cbUploadToFtp.Checked);
+      Ini.WriteInteger('ExportOperData', 'cbTime', cbTime.ItemIndex);
+      Ini.WriteString('ExportOperData', 'ExportPath', bedtFileName.Text);
+      Ini.WriteString('ExportOperData', 'FtpServer', edFtpServer.Text);
+      Ini.WriteString('ExportOperData', 'Ftplogin', edLogin.Text);
+      Ini.WriteString('ExportOperData', 'Ftppassword', edPassword.Text);
+      Ini.WriteString('ExportOperData', 'FtpPort', edFtpPort.Text);
+      Ini.WriteString('ExportOperData', 'ItekaTochka', IntToStr(leSklad.EditValue));
+      Ini.WriteBool('ExportOperData', 'UploadToMobile', cbUploadToMobile.Checked);
+      Ini.WriteString('ExportOperData', 'MobileIp', edMobileIp.Text);
+      Ini.WriteString('ExportOperData', 'MobileLogin', edMobileLogin.Text);
+      Ini.WriteString('ExportOperData', 'MobilePass', edMobilePass.Text);
+      Ini.WriteBool('ExportOperData','Kaspi', cbKaspi.Checked);
+      Ini.WriteString('ExportOperData','merchantid', edtMerch.Text);
+      Ini.WriteInteger('ExportOperData','IDSKU', cxRgTypeID.ItemIndex);
+
+      Ini.WriteBool('ExportOperData','Ecwid', cbEcwid.Checked);
+      Ini.WriteString('ExportOperData','EcwidStroreID', edtIdStore.Text);
+      Ini.WriteString('ExportOperData','EcwidSecretToken', edtSecretToken.Text);
+
+      ExportKaspi := cbKaspi.Checked;
+      merchantid := edtMerch.Text;
+      IDSKU := cxRgTypeID.ItemIndex;
+      ExportEcwid := cbEcwid.Checked;
+      EcwidStoreID := edtIdStore.Text;
+      EcwidSecretToken := edtSecretToken.Text;
+    finally
+      Ini.UpdateFile;
+      Ini.Free;
+    end;
+
+    // сохраняю запись о том, что первичная выгрузка уже сделана
+    // Такая логика
+    // Если очистили edMobileLogin и edMobilePass, значит хотят сменить логин на другой
+    // соответственно нужно дать пользователю возможность снова выгрузить данные о товарах.
+    if ((edMobileLogin.Text = '') and (edMobilePass.Text = ''))  then //or (cbUploadToMobile.Checked = False)
+      FFirstLoadMobDone := 0
+
+    // либо делаю первичную выгрузку
+    else begin
+      if cbUploadToMobile.Checked and (FFirstLoadMobDone = 0) and (cbTime.ItemIndex <> 0) then begin
+        cxPageControl1.ActivePageIndex := 0;
+        MessageDlg('Сейчас будет произведена первичная выгрузка товаров в мобильное приложение.' + CRLF +
+          'Пожалуйста, не закрывайте окно с настройками и не выходите из программы!', mtWarning, [mbOk], 0);
+
+        Canclose := FirstMobLoad;
+
+        if Canclose then begin
+          try
+            Ini:=TMemIniFile.Create(extractfilepath(Application.ExeName)+'Settings.ini', TEncoding.UTF8);
+            try
+              Ini.WriteString('ExportOperData', 'MobileToken', ExportMobileToken);
+            finally
+              Ini.UpdateFile;
+              Ini.Free;
+            end;
+
+          except
+            on E: Exception do
+              MessageDlg(E.Message, mtError, [mbOk], 0);
+          end;
+        end;
+      end;
+    end;
+
+    Reg := TRegistry.Create;
+    try
+      with Reg do begin
+        RootKey := RegSetupRoot;
+        LazyWrite := False;  {Сохраняем ключи до закрытия}
+        if OpenKey(RegSetupKey, True) then
+          try
+            WriteInteger('FFirstLoadMobDone', FFirstLoadMobDone);
+          finally
+            CloseKey;
+          end;
+      end;
+    finally
+      Reg.Free;
+    end;
+
+    if (edtIdStore.Text = '') and (edtSecretToken.Text = '') then
+      FirstEQWID := 0
+    else
+    begin
+
+      if FirstEQWID = 0 then
+      begin
+        if ExportEcwid then
+        begin
+          MessageDlg('Сейчас будет произведена первичная выгрузка товаров в интернет магазин ecwid.' + CRLF +
+          'Пожалуйста, не закрывайте окно с настройками и не выходите из программы!', mtWarning, [mbOk], 0);
+          Screen.Cursor := crHourGlass;
+          try
+            ECWID := TECWID.Create(edtIdStore.Text, edtSecretToken.Text);
+            s := ECWID.FirstUpdateProducts;
+            if s = '' then
+            begin
+              if MainDM.dxECWID.Active then
+              begin
+                if not pUpdIDProduct.Transaction.InTransaction then
+                  pUpdIDProduct.Transaction.StartTransaction;
+                MainDM.dxECWID.First;
+                while not MainDM.dxECWID.Eof do
+                begin
+                  try
+                    pUpdIDProduct.Close;
+                    pUpdIDProduct.ParamByName('NOMENCLATUR_NUM').AsWideString := MainDM.dxECWID.FieldByName('ID').AsWideString;
+                    pUpdIDProduct.ParamByName('NAME').AsWideString := MainDM.dxECWID.FieldByName('NAME').AsWideString;
+                    pUpdIDProduct.ExecQuery;
+                  except
+                  end;
+                  MainDM.dxECWID.Next;
+                end;
+                if pUpdIDProduct.Transaction.InTransaction then
+                  pUpdIDProduct.Transaction.Commit;
+              end;
+              FirstEQWID := 1;
+              CanClose := True;
+              MessageDlg('Выгрузка завершена успешно!', mtInformation, [mbOk], 0);
+            end
+            else
+            begin
+              MessageDlg(s, mtError, [mbOK], 0);
+              CanClose := False;
+            end;
+          finally
+            ECWID.Destroy;
+            Screen.Cursor := crDefault;
+          end;
+        end;
+      end;
+    end;
+
+    try
+      Reg := TRegistry.Create;
+      try
+        with Reg do begin
+          RootKey := RegSetupRoot;
+          LazyWrite := False;  {Сохраняем ключи до закрытия}
+          if OpenKey(RegSetupKey, True) then
+            try
+              WriteInteger('FirstEQWID', FirstEQWID);
+            finally
+              CloseKey;
+            end;
+        end;
+      finally
+        Reg.Free;
+      end;
+    except
+      on E: Exception do
+        MessageDlg(E.Message, mtError, [mbOk], 0);
+    end;
+
+  end;
+
+  inherited;
+end;
+
+procedure TExportOperDataForm.FormShow(Sender: TObject);
+var
+  Ini: TMemIniFile; //необходимо создать объект, чтоб потом с ним работать
+  Val : String;
+  Reg: TRegistry;
+begin
+  inherited;
+
+  cxPageControl1.ActivePageIndex := 0;
+
+  //tsKaspiShop.TabVisible := false;
+  if (CurrencyVal = 0) and (isProKey) then //Если валюта тенге то показываем вкладку для Каспий магазина
+    tsKaspiShop.TabVisible := True
+  else
+    tsKaspiShop.TabVisible := false;
+
+  if (isProKey = False) then begin
+    tsMobileApp.TabVisible := False;
+  end;
+
+  if AppName = 'serviceuchet' then begin
+    cbSalesInXml.Visible := False;
+    cbOstatokXML.Visible := False;
+    cbZakupkaInXml.Visible := False;
+  end;
+
+  //ставлю всем компонентам размеры и шрифты, на разных DPI по разному
+  cbProfit.Style.Font.Size := 9;
+  cbSales.Style.Font.Size := 9;
+  cbOstatok.Style.Font.Size := 9;
+  cbOstatokXML.Style.Font.Size := 9;
+  cbSalesInXml.Style.Font.Size := 9;
+  cbZakupkaInXml.Style.Font.Size := 9;
+
+  Ini:=TMemIniFile.Create(extractfilepath(Application.ExeName)+'Settings.ini', TEncoding.UTF8);
+  try
+    Val := Ini.ReadString('ExportOperData', 'DataType', '000000');
+    cbSales.Checked       := Copy(Val, 1, 1) = '1';
+    cbOstatok.Checked     := Copy(Val, 2, 1) = '1';
+    cbOstatokXML.Checked  := Copy(Val, 3, 1) = '1';
+    cbProfit.Checked      := Copy(Val, 4, 1) = '1';
+    cbSalesInXml.Checked  := Copy(Val, 5, 1) = '1';
+    cbZakupkaInXml.Checked  := Copy(Val, 6, 1) = '1';
+
+    Val := Ini.ReadString('ExportOperData', 'DataTypeFtp', '000000');
+    cbSalesFtp.Checked       := Copy(Val, 1, 1) = '1';
+    cbOstatokFtp.Checked     := Copy(Val, 2, 1) = '1';
+    cbOstatokXMLFtp.Checked  := Copy(Val, 3, 1) = '1';
+    cbProfitFtp.Checked      := Copy(Val, 4, 1) = '1';
+    cbSalesInXmlFtp.Checked  := Copy(Val, 5, 1) = '1';
+    cbZakupkaInXmlFtp.Checked  := Copy(Val, 6, 1) = '1';
+    cbOstatokItekaFtp.Checked  := Copy(Val, 7, 1) = '1';
+
+    cbUploadToFtp.Checked := Ini.ReadBool('ExportOperData', 'UploadToFtp', False);
+    cbTime.ItemIndex      := Ini.ReadInteger('ExportOperData', 'cbTime', 0);
+    bedtFileName.Text     := Ini.ReadString('ExportOperData', 'ExportPath', '');
+    edFtpServer.Text      := Ini.ReadString('ExportOperData', 'FtpServer', '');
+    edFtpPort.Text      := Ini.ReadString('ExportOperData', 'FtpPort', '');
+    edLogin.Text          := Ini.ReadString('ExportOperData', 'Ftplogin', '');
+    edPassword.Text       := Ini.ReadString('ExportOperData', 'Ftppassword', '');
+    leSklad.EditValue     := StrToInt(Ini.ReadString('ExportOperData', 'ItekaTochka', '0'));
+    cbUploadToMobile.Checked := Ini.ReadBool('ExportOperData', 'UploadToMobile', False);
+    edMobileIp.Text := Ini.ReadString('ExportOperData', 'MobileIp', '');
+    edMobileLogin.Text := Ini.ReadString('ExportOperData', 'MobileLogin', '');
+    edMobilePass.Text := Ini.ReadString('ExportOperData', 'MobilePass', '');
+
+    cbKaspi.Checked := Ini.ReadBool('ExportOperData','Kaspi', False);
+    edtMerch.Text := Ini.ReadString('ExportOperData','merchantid', '');
+    edtLink.Text := 'https://kaspi.shopuchet.kz/files/' + edtMerch.Text + '/Kaspi_Shop.xml';
+    cxRgTypeID.ItemIndex := Ini.ReadInteger('ExportOperData','IDSKU', 1);
+
+    cbEcwid.Checked := Ini.ReadBool('ExportOperData','Ecwid', False);
+    edtIdStore.Text := Ini.ReadString('ExportOperData','EcwidStroreID', '');
+    edtSecretToken.Text := Ini.ReadString('ExportOperData','EcwidSecretToken', '');
+  finally
+    Ini.Free;
+  end;
+
+  try
+    Reg := TRegistry.Create;
+    try
+      with Reg do begin
+        RootKey := RegSetupRoot;
+        LazyWrite := False;  {Сохраняем ключи до закрытия}
+        if OpenKey(RegSetupKey, True) then
+          try
+            if ValueExists('FFirstLoadMobDone') then
+              FFirstLoadMobDone := ReadInteger('FFirstLoadMobDone')
+            else begin
+              FFirstLoadMobDone := 0;
+              WriteInteger('FirstLoadMobEnabled', FFirstLoadMobDone);
+            end;
+
+            if ValueExists('FirstEQWID') then
+              FirstEQWID := ReadInteger('FirstEQWID')
+            else begin
+              FirstEQWID := 0;
+              WriteInteger('FirstEQWID', FirstEQWID);
+            end;
+          finally
+            CloseKey;
+          end;
+      end;
+    finally
+      Reg.Free;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOk], 0);
+  end;
+
+  SetVisibility;
+end;
+
+function TExportOperDataForm.FirstMobLoad : boolean;
+var o, data, delete: TJSONObject;
+  json_array, json_array_child: TJSONArray;
+  json_item, json_item_child: TJSONObject;
+  i : integer;
+  data_is_added, head_filled : boolean;
+  parent_id_old, rec_id : Int64;
+  str, errStr, res : string;
+  Ini : TMemIniFile;
+begin
+  Result := false;
+
+  if (edMobileLogin.Text = '') and (edMobilePass.Text = '') then begin
+    MessageDlg('Логин или пароль не заполнен! Выгрузка невозможна.', mtError, [mbOk], 0);
+    edMobileLogin.SetFocus;
+    Exit;
+  end;
+
+  Screen.Cursor := crHourGlass;
+
+  try
+    // ПОЛУЧАЮ ТОКЕН
+    {
+    решено было тут заходить не по токену, а именно по логину и паролю
+    res := GetToken(ExportMobileToken, ExportMobileServer, edMobileLogin.Text, edMobilePass.Text);
+    if Pos('Ошибка', res) > 0 then begin
+      MessageDlg(res, mtError, [mbOk], 0);
+
+      Exit;
+    end
+    else
+      ExportMobileToken := res;}
+
+    o := TJSONObject.Create;
+    try
+      res := LogonToMobile(MainDm.RESTClient, MainDm.RESTRequest, MainDm.RESTResponse,
+        ExportMobileServer, edMobileLogin.Text, edMobilePass.Text, o);
+    finally
+      o.free;
+      o := nil;
+    end;
+
+    if Pos('Ошибка при логине', res) > 0 then begin
+      if Pos('Нет такого пользователя', res) > 0 then
+        MessageDlg('Ошибка при выгрузке. Детали:' + CRLF + 'Пользователя "' +
+          Login + '" не существует.', mtError, [mbOk], 0)
+      else
+        MessageDlg('Ошибка при выгрузке. Детали:' + CRLF, mtError, [mbOk], 0);
+
+      Exit;
+    end
+    else begin
+      ExportMobileToken := res;
+    end;
+
+    o := TJSONObject.Create;
+
+    data := TJSONObject.Create;
+    MainDm.spReadUniversal.SelectSQL.Text := //'SELECT FIRST 10000* '+
+                                             // 'FROM ( '+
+                                              'WITH RECURSIVE TREE AS (SELECT T.G_PRODUCT, '+
+                                                                             'T.G_PRODUCT_PAR, '+
+                                                                             'T.NAME TOVAR_NAME, '+
+                                                                             '1 LVL '+
+                                                                        'FROM G_PRODUCT T '+
+                                                                       'WHERE T.G_PRODUCT_PAR IS NULL '+
+                                                                         'AND T.IS_CATEGORY = 1 '+
+                                                                         'AND T.IS_ACTIVE = 1 '+
+                                                                         'AND T.NAME <> '''' '+
+                                                                      'UNION ALL '+
+                                                                      'SELECT T.G_PRODUCT, '+
+                                                                             'T.G_PRODUCT_PAR, '+
+                                                                             'T.NAME TOVAR_NAME, '+
+                                                                             'GG.LVL + 1 '+
+                                                                        'FROM G_PRODUCT T INNER JOIN TREE GG ON GG.G_PRODUCT = T.G_PRODUCT_PAR '+
+                                                                       'WHERE T.IS_CATEGORY = 1 '+
+                                                                         'AND T.IS_ACTIVE = 1 '+
+                                                                         'AND T.NAME <> '''' '+
+                                                                     ') '+
+                                              'SELECT G_PRODUCT, G_PRODUCT_PAR PARENT_ID, TOVAR_NAME, LVL, '''' ARTICUL, '''' BARCODE,  0 PRICE, 1 IS_CATEGORY FROM TREE '+
+                                              'UNION ALL '+
+                                              'SELECT G.G_PRODUCT, G.G_PRODUCT_PAR PARENT_ID, G.NAME TOVAR_NAME, 10000 LVL, G.ARTICUL, G.BARCODE, G.PRICE, G.IS_CATEGORY '+
+                                              'FROM G_PRODUCT G '+
+                                              'WHERE G.IS_CATEGORY = 0 '+
+                                              'AND G.IS_ACTIVE = 1 '+
+                                              'AND G.NAME <> '''' '+
+                                              //'AND G.G_PRODUCT in (2874, 2875, 2876, 2879) ' +
+                                              'ORDER BY 4, 2';
+
+    //========================================================================
+    // ОБЪЕКТ G_PRODUCT
+    //========================================================================
+
+    try
+      OpenSPClean(MainDm.spReadUniversal, False);
+      if MainDm.spReadUniversal.RecordCount > 0 then begin
+        data_is_added := true;
+        o.AddPair('data', data);
+        json_array := BuildGprodJson(MainDm.spReadUniversal, errStr);
+        if json_array = nil then begin
+          MessageDlg(errStr, mtError, [mbOk], 0);
+          Exit;
+        end;
+
+        data.AddPair('g_product', json_array);
+      end;
+    except
+      on E: Exception do begin
+        MessageDlg('Ошибка выгрузки товаров в моб. приложение. Детали: ' + E.Message, mtError, [mbOk], 0);
+        Exit;
+      end;
+    end;
+
+    //========================================================================
+    // ОБЪЕКТ G_TOCHKA
+    //========================================================================
+    try
+      MainDm.spReadUniversal.Close;
+      MainDm.spReadUniversal.SelectSQL.Text := 'SELECT * FROM G_TOCHKA';
+      OpenSPClean(MainDm.spReadUniversal, False);
+      if MainDm.spReadUniversal.RecordCount > 0 then begin
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('g_tochka', json_array);
+
+          with MainDm.spReadUniversal do begin
+            First;
+
+            while not Eof do begin
+              try
+                json_item := TJSONObject.Create;
+                json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('g_tochka').AsString));
+                json_item.AddPair( TJSONPair.Create('name', FieldByName('NAME').AsString));
+                json_array.AddElement(json_item);
+
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        MessageDlg('Ошибка выгрузки складов в моб. приложение. Детали: ' + E.Message, mtError, [mbOk], 0);
+        Exit;
+      end;
+    end;
+
+    //========================================================================
+    // ОБЪЕКТ REMAINDERS, ВЫГРУЖАЮТСЯ ОСТАТКИ ПО ТОВАРАМ
+    //========================================================================
+    try
+      MainDm.spReadUniversal.Close;
+      MainDm.spReadUniversal.SelectSQL.Text := 'SELECT LT.LT_SKLAD_PRODUCT, ' +
+                                                       'LT.G_PRODUCT, '+
+                                                       '(LT.AMOUNT - LT.AMOUNT_RESERVE) AMOUNT, '+
+                                                       'LT.G_TOCHKA, '+
+                                                       '(SELECT * FROM GET_LAST_SELF_PRICE(LT.G_PRODUCT, LT.G_TOCHKA, 1)) COST_PRICE '+
+                                                'FROM LT_SKLAD_PRODUCT LT, G_PRODUCT GP, G_TOCHKA GT '+
+                                                'WHERE LT.G_PRODUCT = GP.G_PRODUCT ' +
+                                                'AND LT.AMOUNT <> 0 ' +
+                                                'AND LT.G_PRODUCT <> -2 ' +
+                                                'AND GP.IS_ACTIVE = 1 ' +
+                                                'AND LT.G_TOCHKA = GT.G_TOCHKA '
+                                                //'AND GP.G_PRODUCT in (2874, 2875, 2876, 2879) ';
+                                        ;
+      OpenSPClean(MainDm.spReadUniversal, False);
+      if MainDm.spReadUniversal.RecordCount > 0 then begin
+        if data_is_added = false then begin
+          data_is_added := true;
+          o.AddPair('data', data);
+        end;
+
+        try
+          json_array := TJSONArray.Create();
+          data.AddPair('remainders', json_array);
+
+          with MainDm.spReadUniversal do begin
+            First;
+            //MessageBox(GetDesktopWindow, PChar('Загрузка остатков'), PChar('Внимание'), MB_OK + MB_ICONSTOP);
+            while not Eof do begin
+              try
+                json_item := TJSONObject.Create;
+                json_item.AddPair( TJSONPair.Create('rec_id', FieldByName('lt_sklad_product').AsString));
+                json_item.AddPair( TJSONPair.Create('g_tochka_id', FieldByName('G_TOCHKA').AsString));
+                json_item.AddPair( TJSONPair.Create('g_product_id', FieldByName('g_product').AsString));
+                json_item.AddPair( TJSONPair.Create('amount', floattostrf(FieldByName('amount').AsFloat, ffFixed, 15, 2)));
+                json_item.AddPair( TJSONPair.Create('cost_price', floattostrf(FieldByName('cost_price').AsFloat, ffFixed, 15, 2)));
+                json_array.AddElement(json_item);
+
+                Next;
+              finally
+                //g_product_item.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+              end;
+            end;
+          end;
+        finally
+          //g_product.Free;  // ЕСЛИ СТАВИТЬ ТО ПОЧЕМУ-ТО ОШИБКА ACCESS VIOLATION, ПОХОЖЕ ЧТО o.Free В КОНЦЕ ДОСТАТОЧНО
+        end;
+      end;
+    except
+      on E: Exception do begin
+        with MainDM.MainLogFile do
+          if Active then begin
+            WriteLog('Ошибка выгрузки остатков в моб. приложение. Детали: ' + E.Message, True);
+          end;
+
+        Exit;
+      end;
+    end;
+    //========================================================================
+    // ОБЪЕКТ REMAINDERS КОНЕЦ
+    //========================================================================
+    with MainDM.MainLogFile do
+      if Active then begin
+        WriteLog(o.ToString, True);
+      end;
+
+    errStr := SendToMobile(MainDm.RESTClient, MainDm.RESTRequest, MainDm.RESTResponse,
+      edMobileIp.Text, ExportMobileToken, o);
+
+    if Pos('Ошибка', errStr) <> 0 then
+    begin
+      if Pos('refers to not existing row in g_product', errStr) > 0 then
+      begin
+        Log(errStr);
+        errStr := ReSendAfterError(MainDm.dbMain, MainDm.tranMainWrite,
+          Trim(StringReplace(errStr, ', table remainders refers to not existing row in g_product', '', [rfReplaceAll])), ExportMobileToken);
+      end;
+      if errStr <> '' then
+      begin
+        MessageDlg(errStr, mtError, [mbOk], 0);
+        exit;
+      end;
+
+      //повторно отправляю данные
+      errStr := SendToMobile(MainDm.RESTClient, MainDm.RESTRequest, MainDm.RESTResponse,
+        edMobileIp.Text, ExportMobileToken, o);
+      if Pos('Ошибка', errStr) <> 0 then
+      begin
+        MessageDlg(errStr, mtError, [mbOk], 0);
+        exit;
+      end
+    end
+    else
+    begin
+      MessageDlg('Выгрузка завершена успешно!', mtInformation, [mbOk], 0);
+      FFirstLoadMobDone := 1;
+      Result := true;
+    end;
+
+  finally
+    MainDm.spReadUniversal.Close;
+    if Assigned(o) then
+      o.Free;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TExportOperDataForm.cbUploadToFtpPropertiesChange(Sender: TObject);
+begin
+  SetVisibility;
+end;
+
+procedure TExportOperDataForm.cbUploadToMobilePropertiesChange(Sender: TObject);
+begin
+  SetVisibility;
+end;
+
+procedure TExportOperDataForm.cxPageControl1Change(Sender: TObject);
+begin
+  inherited;
+  case cxPageControl1.ActivePageIndex of
+    3:
+    begin
+      try
+        spG_Tochka.Close;
+        spG_Tochka.Open;
+        spCity.Close;
+        spCity.Open;
+        spKaspi_Point.Close;
+        spKaspi_Point.Open;
+        dxKaspiPoint.Close;
+        dxKaspiPoint.Open;
+        spKaspi_Point.First;
+        while not spKaspi_Point.Eof do
+        begin
+          dxKaspiPoint.Insert;
+          dxKaspiPoint.FieldByName('IDPOINT').AsLargeInt := spKaspi_Point.FieldByName('IDPOINT').AsLargeInt;
+          dxKaspiPoint.FieldByName('IDCITY').AsLargeInt := spKaspi_Point.FieldByName('IDCITY').AsLargeInt;
+          dxKaspiPoint.FieldByName('G_TOCHKA').AsLargeInt := spKaspi_Point.FieldByName('G_TOCHKA').AsLargeInt;
+          dxKaspiPoint.FieldByName('ADRESS').AsWideString := spKaspi_Point.FieldByName('ADRESS').AsWideString;
+          dxKaspiPoint.Post;
+          spKaspi_Point.Next;
+        end;
+      except
+        on E: Exception do
+          Log('Ошибка открытия данных для Kaspi магазина. Детали: ' + E.message);
+      end;
+    end;
+  end;
+end;
+
+procedure TExportOperDataForm.dxKaspiPointAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  editPoint := True;
+end;
+
+procedure TExportOperDataForm.dxKaspiPointAfterEdit(DataSet: TDataSet);
+begin
+  inherited;
+  editPoint := True;
+end;
+
+procedure TExportOperDataForm.dxKaspiPointAfterInsert(DataSet: TDataSet);
+begin
+  inherited;
+  editPoint := True;
+end;
+
+procedure TExportOperDataForm.BitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  if not dxKaspiPoint.Active then Exit;
+  dxKaspiPoint.Insert;
+end;
+
+procedure TExportOperDataForm.Button1Click(Sender: TObject);
+var rt : Boolean;
+begin
+  rt := FirstMobLoad;
+end;
+
+procedure TExportOperDataForm.cbEcwidClick(Sender: TObject);
+begin
+  inherited;
+  edtIdStore.Enabled := cbEcwid.Checked;
+  edtSecretToken.Enabled := cbEcwid.Checked;
+end;
+
+procedure TExportOperDataForm.cbSalesPropertiesChange(Sender: TObject);
+begin
+  if
+  ((Integer(cbSales.Checked) + Integer(cbOstatok.Checked) + Integer(cbOstatokXML.Checked) +
+  Integer(cbProfit.Checked) + Integer(cbSalesInXml.Checked) +
+  Integer(cbZakupkaInXml.Checked)) = 0)
+  and
+  ((Integer(cbSalesFtp.Checked) + Integer(cbOstatokFtp.Checked) + Integer(cbOstatokXMLFtp.Checked) +
+  Integer(cbProfitFtp.Checked) + Integer(cbSalesInXmlFtp.Checked) +
+  Integer(cbZakupkaInXmlFtp.Checked) + Integer(cbOstatokItekaFtp.Checked)) = 0)
+  and (Integer(cbKaspi.Checked) = 0)
+  then
+    cbTime.ItemIndex := 0;
+
+  if (Sender as TcxCheckBox).Name = 'cbOstatokItekaFtp' then begin
+    leSklad.Enabled := (Sender as TcxCheckBox).Checked;
+
+    if (Sender as TcxCheckBox).Checked then begin
+      OpenSP(spReadSklad, False);
+      leSklad.EditValue := CurSklad;
+    end else begin
+      if spReadSklad.Active then
+        spReadSklad.Close;
+    end;
+  end;
+end;
+
+procedure TExportOperDataForm.SetVisibility;
+begin
+  cbProfitFtp.Enabled := cbUploadToFtp.Checked;
+  cbSalesFtp.Enabled := cbUploadToFtp.Checked;
+  cbOstatokFtp.Enabled := cbUploadToFtp.Checked;
+  cbOstatokXmlFtp.Enabled := cbUploadToFtp.Checked;
+  cbSalesInXmlFtp.Enabled := cbUploadToFtp.Checked;
+  cbZakupkaInXmlFtp.Enabled := cbUploadToFtp.Checked;
+  cbOstatokItekaFtp.Enabled := cbUploadToFtp.Checked;
+  edFtpServer.Enabled := cbUploadToFtp.Checked;
+  edFtpPort.Enabled := cbUploadToFtp.Checked;
+  edLogin.Enabled := cbUploadToFtp.Checked;
+  edPassword.Enabled := cbUploadToFtp.Checked;
+
+  if not cbUploadToFtp.Checked then begin
+    cbProfitFtp.Checked := False;
+    cbSalesFtp.Checked := False;
+    cbOstatokItekaFtp.Checked := False;
+    cbZakupkaInXmlFtp.Checked := False;
+    cbSalesInXmlFtp.Checked := False;
+    cbOstatokFtp.Checked := False;
+    cbOstatokXmlFtp.Checked := False;
+  end;
+
+  edMobileIp.Enabled := cbUploadToMobile.Checked;
+  edMobileLogin.Enabled := cbUploadToMobile.Checked;
+  edMobilePass.Enabled := cbUploadToMobile.Checked;
+
+  edtMerch.Enabled := cbKaspi.Checked;
+  edtLink.Enabled := cbKaspi.Checked;
+  cxRgTypeID.Enabled := cbKaspi.Checked;
+  BitBtn1.Enabled := cbKaspi.Checked;
+  BitBtn2.Enabled := cbKaspi.Checked;
+  cxGrid4.Enabled := cbKaspi.Checked;
+
+
+end;
+
+procedure TExportOperDataForm.edFtpPortKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not (Key in ['0'..'9', #8]) then
+    Key := #0;
+end;
+
+procedure TExportOperDataForm.edMobilePassKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if (key in ['а'..'я']) or (key in ['А'..'Я']) or (key='Ё') or (key='ё') then
+    Key:=#0;
+end;
+
+procedure TExportOperDataForm.edtMerchExit(Sender: TObject);
+begin
+  inherited;
+  edtLink.Text := 'https://kaspi.shopuchet.kz/files/' + edtMerch.Text + '/Kaspi_Shop.xml';
+end;
+
+procedure TExportOperDataForm.edtMerchKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if not (Key in ['0'..'9', #8]) then
+    Key := #0;
+end;
+
+procedure TExportOperDataForm.bedtFileNamePropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var
+  Dir : String;
+begin
+  if SelectDirectory('Выберите папку', '', Dir) then
+    bedtFileName.Text := IncludeTrailingPathDelimiter(Dir);
+end;
+
+procedure TExportOperDataForm.BitBtn2Click(Sender: TObject);
+begin
+  inherited;
+  dxKaspiPoint.Delete;
+end;
+
+procedure TExportOperDataForm.btnClearClick(Sender: TObject);
+var
+  ECWID: TECWID;
+begin
+  try
+    Screen.Cursor := crHourGlass;
+    try
+      ECWID := TECWID.Create(edtIdStore.Text, edtSecretToken.Text);
+      pClearProducts.Open;
+      pClearProducts.First;
+      while not pClearProducts.Eof do
+      begin
+        ECWID.DelProduct(pClearProducts.FieldByName('nomenclatur_num').AsWideString);
+        pClearProducts.Next;
+      end;
+
+      with TpFIBQuery.Create(nil) do
+      begin
+        try
+          Database := MainDM.dbMain;
+          Transaction := MainDM.tranMainWrite;
+          SQL.Clear;
+          SQL.Add('update G_PRODUCT set nomenclatur_num = '+QuotedStr(''));
+          if not Transaction.InTransaction then
+            Transaction.StartTransaction;
+          ExecQuery;
+          if Transaction.InTransaction then
+            Transaction.Commit;
+        finally
+          Free;
+        end;
+      end;
+
+    except
+      on e: Exception do
+        Log('Ошибка при выполении. Детали: ' + e.Message);
+    end;
+  finally
+    ECWID.Destroy;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+end.

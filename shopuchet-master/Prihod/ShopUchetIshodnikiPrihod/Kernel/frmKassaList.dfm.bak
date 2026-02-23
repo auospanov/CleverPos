@@ -1,0 +1,90 @@
+inherited KassaListForm: TKassaListForm
+  Left = 702
+  Top = 241
+  Caption = #1055#1088#1080#1093#1086#1076
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\KassaPrihodGrid'
+    object dxDBGridKASSA: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'KASSA'
+    end
+    object dxDBGridACTION: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ACTION'
+    end
+    object dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_PRIHOD_RASHOD'
+    end
+    object dxDBGridSUMM: TdxDBGridCurrencyColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SUMM'
+      Nullable = False
+    end
+    object dxDBGridACTION_DATE: TdxDBGridDateColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ACTION_DATE'
+    end
+    object dxDBGridNOTE: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NOTE'
+    end
+    object dxDBGridZAKAZ: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ZAKAZ'
+    end
+    object dxDBGridSKLAD: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'SKLAD'
+    end
+    object dxDBGridSTATYA_NAME: TdxDBGridMaskColumn
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'STATYA_NAME'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM K_READ_KASSA_LIST(:ACTION_)')
+  end
+end

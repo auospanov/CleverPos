@@ -1,0 +1,72 @@
+unit frmKassaOstatok;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, Menus, ActnList, dxExEdtr, dxCntner,
+  ExtCtrls, StdCtrls, Buttons, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, AppEvnts;
+
+type
+  TKassaOstatokForm = class(TDBEditForm)
+    Label7: TLabel;
+    Shape12: TShape;
+    edDate: TcxDateEdit;
+    Shape13: TShape;
+    lbOstatok: TLabel;
+    Label1: TLabel;
+    Shape1: TShape;
+    Shape2: TShape;
+    cbNalBeznal: TComboBox;
+    procedure FormShow(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    procedure GetData; override;
+  end;
+
+var
+  KassaOstatokForm: TKassaOstatokForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TKassaOstatokForm.GetData;
+begin
+  if not spGetData.Transaction.InTransaction then
+    spGetData.Transaction.StartTransaction;
+
+  spGetData.ParamByName('g_payment_type_').AsInteger := cbNalBeznal.ItemIndex + 1;
+  ExecSP(spGetData);
+
+  if spGetData.Transaction.InTransaction then
+    spGetData.Transaction.CommitRetaining;
+end;
+
+procedure TKassaOstatokForm.FormShow(Sender: TObject);
+begin
+  //inherited;
+  edDate.Date := Date;
+end;
+
+procedure TKassaOstatokForm.btnOkClick(Sender: TObject);
+begin
+  spGetData.ParamByName('date_').AsDate := edDate.Date;
+  GetData;
+  lbOstatok.Caption := 'Остаток: ' + FloatToStr(spGetData.ParamByName('summ_').AsFloat);
+end;
+
+procedure TKassaOstatokForm.btHelpClick(Sender: TObject);
+begin
+  HelpC := 14;
+  inherited;
+end;
+
+end.

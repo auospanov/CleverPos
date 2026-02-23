@@ -1,0 +1,55 @@
+unit frmTovarNaklForRevis;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, dxCntner, dxEditor, dxExEdtr, dxDBEdtr, dxDBELib, DB,
+  FIBDataSet, pFIBDataSet, ExtCtrls, StdCtrls, AppEvnts, Buttons, frmDBDlg,
+  ActnList;
+
+type
+  TTovarNaklForRevisForm = class(TDBDlgForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape6: TShape;
+    spPrihod: TpFIBDataSet;
+    dsPrihod: TDataSource;
+    dxLookupEdit: TdxLookupEdit;
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private
+    { Private declarations }
+  public
+    Sklad : Integer;
+  end;
+
+var
+  TovarNaklForRevisForm: TTovarNaklForRevisForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TTovarNaklForRevisForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  OpenSp(spPrihod, False);
+  spPrihod.First;
+end;
+
+procedure TTovarNaklForRevisForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  if ModalResult = mrOK then begin
+    if dxLookupEdit.LookupKeyValue > 0 then
+      Sklad := dxLookupEdit.LookupKeyValue
+    else begin
+      MessageDlg('Товарная накладная не выбрана!', mtWarning, [mbOK], 0);
+      CanClose := False;
+    end;
+  end
+end;
+
+end.

@@ -1,0 +1,110 @@
+unit frmGUnitList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, Oracle, DB, OracleData, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TGUnitListForm = class(TDBListForm)
+    dxDBGridG_UNIT: TdxDBGridMaskColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxDBGridSHORT_NAME: TdxDBGridMaskColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  GUnitListForm: TGUnitListForm;
+
+implementation
+
+uses frmGUnit;
+
+{$R *.dfm}
+
+procedure TGUnitListForm.ReadList;
+begin
+  inherited;
+end;
+
+procedure TGUnitListForm.ViewData;
+begin
+  ClassForm := TGUnitForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TGUnitListForm.InsData;
+begin
+  ClassForm := TGUnitForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TGUnitListForm.InsLikeData;
+begin
+  ClassForm := TGUnitForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TGUnitListForm.UpdData;
+begin
+  ClassForm := TGUnitForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TGUnitListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить единицу измерения "%s" ?',
+    [spRead.FieldByName('Name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+  inherited;
+end;
+
+procedure TGUnitListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'g_unit';
+  KeyFieldClass := 'g_unit_';
+end;
+
+procedure TGUnitListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 4;
+  inherited;
+end;
+
+end.

@@ -1,0 +1,209 @@
+unit frmDBDlg;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, dxExEdtr, dxCntner, DB,
+  FIB, FIBDatabase, pFIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, pFIBStoredProc,
+  ActnList, cxPC, Variants, frmDlg, AppEvnts;
+
+type
+  TDBDlgForm = class(TDlgForm)
+    ActionList: TActionList;
+    aShowDBCompState: TAction;
+    aRefreshOfficialRights: TAction;
+    btHelp: TBitBtn;
+    procedure aShowDBCompStateExecute(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+  private
+    FHelpC : Integer;
+  protected
+    procedure SetParams(SP: TpFIBStoredProc); virtual;
+    function OpenSP(SP: TpFIBDataSet; UseBookmark: Boolean): Boolean; virtual;
+    function ExecSP(SP: TpFIBStoredProc): Boolean; virtual;
+    function CallSP(SP: TpFIBStoredProc): Boolean; virtual;
+    function CallSPWithout(SP: TpFIBStoredProc): Boolean; virtual;
+  public
+    property HelpC : integer read FHelpC write FHelpC default 0;
+    function CheckParams(var ErrControl: TWinControl): Boolean; virtual;
+  end;
+
+implementation
+
+uses unErrorHandlers, unDBSupport, frmInspector;
+
+{$R *.DFM}
+
+{ TDBDlgForm }
+
+function TDBDlgForm.CheckParams(var ErrControl: TWinControl): Boolean;
+{Проверяет параметры перед вызовом CallSP}
+begin
+// Переопределяется в потомке
+  Result := False;
+  ErrControl := Nil;
+end;
+
+procedure TDBDlgForm.SetParams(SP: TpFIBStoredProc);
+{Устанавливает параметры перед вызовом CallSP}
+begin
+// Переопределяется в потомке
+end;
+
+function TDBDlgForm.OpenSP(SP: TpFIBDataSet;
+  UseBookmark: Boolean): Boolean;
+{Открывает хр. процедуру (Open). С try..except}
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+  BM: TBookmark;
+begin
+  {Параметры процедуры должны задаваться до вызова этого метода}
+  Result := False;
+  try
+    with SP do begin
+      BM := GetBookmark;
+      try
+        Close;
+        if SP.Transaction.InTransaction then
+          SP.Transaction.CommitRetaining;
+        Open;
+
+        if Fields.FindField('ERR_CODE') <> Nil then begin
+          if VarIsNull(FieldByName('ERR_CODE').Value) or (FieldByName('ERR_CODE').AsString = '') then
+            ErrCode := 0
+          else
+            ErrCode := FieldByName('ERR_CODE').AsInteger;
+          if ErrCode <> 0 then begin
+            if SP.Transaction.InTransaction then
+              SP.Transaction.CommitRetaining;
+            if Fields.FindField('ERR_MSG').Index >= 0 then begin
+              ErrMsg := FieldByName('ERR_MSG').AsString;
+              DBErrorHandler(ErrCode, ErrMsg);
+            end
+            else
+              MessageDlg('Error code: ' + IntToStr(ErrCode)
+                 + #13#10'(occured in TDBDlgForm.OpenSP)', mtInformation, [mbOK], 0);
+            Exit;
+          end;
+        end;
+
+        if UseBookmark then
+          if BM <> Nil then
+            if BookmarkValid(BM) then
+              try
+                GotoBookmark(BM);
+              except
+              end;
+      finally;
+        FreeBookmark(BM);
+      end;
+      Result := True;
+    end;
+  except
+    on E: EFIBError do begin
+      if SP.Transaction.InTransaction then
+        SP.Transaction.CommitRetaining;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in TDBDlgForm.OpenSP)');
+    end;
+    on E: Exception do begin
+      if SP.Transaction.InTransaction then
+        SP.Transaction.CommitRetaining;
+      MessageDlg(E.Message + #13#10'(occured in TDBDlgForm.OpenSP)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+function TDBDlgForm.ExecSP(SP: TpFIBStoredProc): Boolean;
+{Выполняет процедуру, НЕ вызывая методы проверки и установки параметров.
+ Без try..except}
+var
+  ErrCode: Integer;
+  ErrMsg : String;
+begin
+  Result := False;
+
+  with SP do begin
+    ExecProc;
+    if FieldIndex['ERR_CODE'] >= 0 then begin
+      ErrCode := ParamByName('ERR_CODE').AsInteger;
+      if (ErrCode <> 0) AND (ErrCode <> -900) then begin
+        if SP.Transaction.InTransaction then
+          SP.Transaction.Rollback;
+        if FieldIndex['ERR_MSG'] >= 0 then begin
+          ErrMsg := ParamByName('ERR_MSG').AsString;
+          DBErrorHandler(ErrCode, ErrMsg);
+        end
+        else
+          MessageDlg('Error code: ' + IntToStr(ErrCode)
+             + #13#10'(occured in TDlgForm.CallSP)', mtInformation, [mbOK], 0);
+        Exit;
+      end;
+    end;
+  end;
+
+  Result := True;
+end;
+
+function TDBDlgForm.CallSP(SP: TpFIBStoredProc): Boolean;
+{Выполняет процедуру, вызывая методы проверки и установки параметров.
+ Без try..except}
+var
+  ErrControl: TWinControl;
+begin
+  Result := False;
+
+  if not CheckParams(ErrControl) then begin
+    if ErrControl <> Nil then
+      ErrControl.SetFocus;
+    Exit;
+  end;
+
+  if not SP.Transaction.InTransaction then  
+    SP.Transaction.StartTransaction;
+
+  SetParams(SP);
+
+  Result := ExecSP(SP);
+
+  if SP.Transaction.InTransaction then
+    SP.Transaction.Commit;
+end;
+
+function TDBDlgForm.CallSPWithout(SP: TpFIBStoredProc): Boolean;
+{Выполняет процедуру, вызывая методы проверки и установки параметров.
+ Без try..except}
+var
+  ErrControl: TWinControl;
+begin
+  Result := False;
+
+  if not SP.Transaction.InTransaction then  
+    SP.Transaction.StartTransaction;
+
+  Result := ExecSP(SP);
+
+  if SP.Transaction.InTransaction then
+    SP.Transaction.Commit;
+end;
+
+procedure TDBDlgForm.aShowDBCompStateExecute(Sender: TObject);
+begin
+  inherited;
+
+  with TInspectorForm.Create(Self) do
+    try
+      frm := self;
+      ShowModal;
+    finally
+      Free;
+    end;
+end;
+
+procedure TDBDlgForm.btHelpClick(Sender: TObject);
+begin
+  Application.HelpContext(FHelpC);
+end;
+
+end.

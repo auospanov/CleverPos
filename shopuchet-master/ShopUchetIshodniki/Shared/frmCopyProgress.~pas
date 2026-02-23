@@ -1,0 +1,119 @@
+
+unit frmCopyProgress;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ComCtrls, ExtCtrls, ZipForge, Registry, unInitApp;
+
+type
+  TCopyProgressForm = class(TForm)
+    Panel1: TPanel;
+    ProgressBar1: TProgressBar;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Timer: TTimer;
+    procedure TimerTimer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    FParam1 : String;
+    FParam2 : Integer;  // 0 - без ошибок, 1 - были ошибки
+  public
+    property Param1 : String read FParam1 write FParam1;
+    property Param2 : Integer read FParam2 write FParam2;
+  end;
+  
+var
+  CopyProgressForm: TCopyProgressForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TCopyProgressForm.TimerTimer(Sender: TObject);
+var
+  FZip: TZipForge;
+  FFileName,FFileZipName : string;
+  Reg: TRegistry;
+begin
+  Timer.Enabled := False;
+  FParam2 := 0;
+
+  try
+    //проверяю есть ли такая папка для сохранения БД, и главное если это не стандартная папка, ее проверять не надо, она потом будет автоматом создаваться
+    if UPPERCASE(FParam1) <> UPPERCASE(ExtractFilePath(Application.exename) + 'Backup') then
+      if DirectoryExists(FParam1) = False then begin
+        MessageDlg('Папка для сохранения копии БД не существует! "' + FParam1 + '".' + #13#10 + 'Резервная копия не создана. Перенастройте папку в настройках приложения!', mtError, [mbOK], 0);
+        FParam2 := 1;
+        Close;
+        Exit;
+      end;
+      
+    FFileZipName := FParam1; //ExtractFilePath(Application.exename) + 'Backup';
+    if not DirectoryExists(FFileZipName) then
+      CreateDir(FFileZipName);
+
+    ProgressBar1.Position := 10;
+
+    FFileName := ExtractFilePath(Application.exename) + 'SHOPUCHET.GDB';
+
+    // проверяю есть ли уже архивы за сегодня, если есть - удаляю
+    FFileZipName := FParam1 {ExtractFilePath(Application.exename) + 'Backup\'} + FormatDateTime('YYYYMMDD', Date) + '.zip';
+    if FileExists(FFileZipName) then
+      DeleteFile(pChar(FFileZipName));
+
+    ProgressBar1.Position := 40;
+
+    FZip := TZipForge.Create(nil);
+    FZip.FileName := FParam1 {ExtractFilePath(Application.exename) + 'Backup\'} + FormatDateTime('YYYYMMDD', Date) + '.zip';
+    FZip.OpenArchive(fmCreate);
+
+    ProgressBar1.Position := 60;
+
+    if (Length(FFileName) > 0) then
+      FZip.AddFiles(FFileName);
+    FZip.CloseArchive;
+
+    ProgressBar1.Position := 80;
+
+    //ставлю запись о дате последнего копирования
+    try
+      Reg := TRegistry.Create;
+      try
+        with Reg do begin
+          RootKey := RegSetupRoot;
+          LazyWrite := False;  {Сохраняем ключи до закрытия}
+          if OpenKey(RegSetupKey, True) then
+            try
+              WriteString('LastBackpDate', DateToStr(Date));
+            finally
+              CloseKey;
+            end;
+        end;
+      finally
+        Reg.Free;
+      end;
+    except
+      on E: Exception do begin
+        MessageDlg(E.Message + #13#10'(occured in unBackup.Execute)', mtError, [mbOk], 0);
+        FParam2 := 1;
+        Exit;
+      end;
+    end;
+  finally
+    FZip.Free;
+  end;
+
+  ProgressBar1.Position := 100;
+  Sleep(300);
+  Close;
+end;
+
+procedure TCopyProgressForm.FormShow(Sender: TObject);
+begin
+  Timer.Enabled := True;
+end;
+
+end.

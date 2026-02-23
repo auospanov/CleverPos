@@ -1,0 +1,778 @@
+inherited OplataTovaraRealForm: TOplataTovaraRealForm
+  Left = 583
+  Top = 86
+  Caption = #1055#1086#1080#1089#1082' '#1090#1086#1074#1072#1088#1072
+  ClientHeight = 705
+  ClientWidth = 939
+  OnCreate = FormCreate
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited btnOk: TBitBtn
+    Left = 595
+    Top = 663
+    Width = 214
+    Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1074' '#1085#1072#1082#1083#1072#1076#1085#1091#1102
+  end
+  inherited btnCancel: TBitBtn
+    Left = 827
+    Top = 663
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+  end
+  inherited Panel1: TPanel
+    Width = 923
+    Height = 650
+    object Panel3: TPanel
+      Left = 2
+      Top = 2
+      Width = 919
+      Height = 434
+      Align = alClient
+      Caption = 'Panel3'
+      TabOrder = 0
+      object Panel4: TPanel
+        Left = 1
+        Top = 1
+        Width = 917
+        Height = 52
+        Align = alTop
+        TabOrder = 0
+        object Label10: TLabel
+          Left = 10
+          Top = 12
+          Width = 120
+          Height = 21
+          Caption = #1055#1086#1080#1089#1082' '#1090#1086#1074#1072#1088#1072
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clNavy
+          Font.Height = -17
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object edBarcode: TEdit
+          Left = 134
+          Top = 9
+          Width = 279
+          Height = 26
+          CharCase = ecLowerCase
+          MaxLength = 13
+          TabOrder = 0
+          OnChange = edBarcodeChange
+        end
+        object btClear: TButton
+          Left = 422
+          Top = 8
+          Width = 96
+          Height = 32
+          Caption = #1054#1095#1080#1089#1090#1080#1090#1100
+          TabOrder = 1
+          OnClick = btClearClick
+        end
+      end
+      object tlCategory: TdxDBTreeList
+        Left = 1
+        Top = 53
+        Width = 322
+        Height = 380
+        Bands = <
+          item
+          end>
+        DefaultLayout = True
+        HeaderPanelRowCount = 1
+        KeyField = 'G_PRODUCT'
+        ParentField = 'G_PRODUCT_PAR'
+        Align = alLeft
+        TabOrder = 1
+        DataSource = dsReadCategory
+        OptionsBehavior = [etoAutoDragDrop, etoAutoDragDropCopy, etoDragExpand, etoDragScroll, etoEditing, etoEnterShowEditor, etoImmediateEditor, etoStoreToRegistry, etoTabThrough]
+        RegistryPath = '\Software\ShopUchet\OplataTovaraReal\tlCategoryReal'
+        TreeLineColor = clGrayText
+        OnChangeNode = tlCategoryChangeNode
+        object tlCategoryG_PRODUCT: TdxDBTreeListMaskColumn
+          Visible = False
+          Width = 130
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'G_PRODUCT'
+        end
+        object tlCategoryG_PRODUCT_PAR: TdxDBTreeListMaskColumn
+          Visible = False
+          Width = 180
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'G_PRODUCT_PAR'
+        end
+        object tlCategoryNAME: TdxDBTreeListMaskColumn
+          Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103
+          Width = 200
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'NAME'
+        end
+      end
+      object splMenu: TcxSplitter
+        Left = 323
+        Top = 53
+        Width = 8
+        Height = 380
+        HotZoneClassName = 'TcxSimpleStyle'
+        HotZone.SizePercent = 32
+        AutoPosition = False
+        PositionAfterOpen = 150
+        AutoSnap = True
+        ResizeUpdate = True
+        Control = tlCategory
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object grProduct: TdxDBGrid
+        Left = 331
+        Top = 53
+        Width = 587
+        Height = 380
+        Bands = <
+          item
+          end>
+        DefaultLayout = True
+        HeaderPanelRowCount = 1
+        KeyField = 'ZAKAZ_NA_REAL'
+        ShowGroupPanel = True
+        SummaryGroups = <>
+        SummarySeparator = ', '
+        Align = alClient
+        TabOrder = 3
+        OnDblClick = grProductDblClick
+        DataSource = dsReadProd
+        Filter.Criteria = {00000000}
+        OptionsBehavior = [edgoAutoSearch, edgoAutoSort, edgoDragScroll, edgoEnterShowEditor, edgoImmediateEditor, edgoMouseScroll, edgoMultiSelect, edgoMultiSort, edgoStoreToRegistry, edgoTabThrough, edgoVertThrough]
+        OptionsDB = [edgoCancelOnExit, edgoCanNavigation, edgoConfirmDelete, edgoLoadAllRecords, edgoUseBookmarks]
+        RegistryPath = '\Software\ShopUchet\OplataTovaraReal\grProductReal2'
+        OnChangeNode = grProductChangeNode
+        object dxDBGridG_PRODUCT: TdxDBGridMaskColumn
+          Alignment = taCenter
+          HeaderAlignment = taCenter
+          Visible = False
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'G_PRODUCT'
+        end
+        object dxDBGridMaskColumn2: TdxDBGridMaskColumn
+          Alignment = taCenter
+          HeaderAlignment = taCenter
+          Visible = False
+          Width = 75
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'G_PRODUCT_PAR'
+        end
+        object dxDBGridMaskColumn6: TdxDBGridMaskColumn
+          Alignment = taLeftJustify
+          Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+          HeaderAlignment = taCenter
+          Sorted = csUp
+          Width = 106
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'NAME'
+        end
+        object grProductOSNOVANIE: TdxDBGridColumn
+          Alignment = taCenter
+          Caption = #1053#1086#1084#1077#1088' '#1085#1072#1082#1083'.'
+          HeaderAlignment = taCenter
+          Sorted = csUp
+          Visible = False
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'OSNOVANIE'
+          GroupIndex = 0
+        end
+        object dxDBGridMaskColumn3: TdxDBGridMaskColumn
+          Alignment = taCenter
+          Caption = #1040#1088#1090#1080#1082#1091#1083
+          HeaderAlignment = taCenter
+          Width = 75
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'ARTICUL'
+        end
+        object dxDBGridMaskColumn4: TdxDBGridMaskColumn
+          Alignment = taCenter
+          Caption = #1053#1086#1084#1077#1085#1082#1083'. '#1085#1086#1084#1077#1088
+          HeaderAlignment = taCenter
+          Width = 117
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'NOMENCLATUR_NUM'
+        end
+        object dxDBGridMaskColumn5: TdxDBGridMaskColumn
+          Alignment = taCenter
+          Caption = #1064#1090#1088#1080#1093#1082#1086#1076
+          HeaderAlignment = taCenter
+          Width = 79
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'BARCODE'
+        end
+        object grProductColumn8: TdxDBGridColumn
+          Visible = False
+          BandIndex = 0
+          RowIndex = 0
+          FieldName = 'ZAKAZ_NA_REAL'
+        end
+      end
+    end
+    object Panel2: TPanel
+      Left = 2
+      Top = 436
+      Width = 919
+      Height = 212
+      Align = alBottom
+      BevelOuter = bvNone
+      TabOrder = 1
+      object Shape19: TShape
+        Left = 9
+        Top = 171
+        Width = 188
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape14: TShape
+        Left = 9
+        Top = 107
+        Width = 64
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape4: TShape
+        Left = 494
+        Top = 12
+        Width = 191
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape7: TShape
+        Left = 9
+        Top = 139
+        Width = 188
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape5: TShape
+        Left = 9
+        Top = 75
+        Width = 188
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Shape1: TShape
+        Left = 9
+        Top = 12
+        Width = 188
+        Height = 33
+        Brush.Color = 16577773
+        Pen.Color = clBtnShadow
+      end
+      object Label1: TLabel
+        Left = 22
+        Top = 19
+        Width = 80
+        Height = 18
+        Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape3: TShape
+        Left = 195
+        Top = 12
+        Width = 281
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object Label3: TLabel
+        Left = 22
+        Top = 82
+        Width = 34
+        Height = 18
+        Caption = #1062#1077#1085#1072
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape6: TShape
+        Left = 195
+        Top = 75
+        Width = 281
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object Label4: TLabel
+        Left = 22
+        Top = 147
+        Width = 45
+        Height = 18
+        Caption = #1057#1091#1084#1084#1072
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape8: TShape
+        Left = 195
+        Top = 139
+        Width = 281
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object Label2: TLabel
+        Left = 501
+        Top = 18
+        Width = 154
+        Height = 18
+        Caption = #1054#1089#1090#1072#1090#1086#1082' '#1087#1086' '#1085#1072#1082#1083#1072#1076#1085#1086#1081
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape12: TShape
+        Left = 684
+        Top = 12
+        Width = 221
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object Label8: TLabel
+        Left = 18
+        Top = 114
+        Width = 47
+        Height = 18
+        Caption = #1057#1082#1080#1076#1082#1072
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape16: TShape
+        Left = 195
+        Top = 107
+        Width = 281
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object Label11: TLabel
+        Left = 22
+        Top = 179
+        Width = 95
+        Height = 18
+        Caption = #1057#1091#1084#1084#1072' '#1089#1082#1080#1076#1082#1080
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = 7492630
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        Transparent = True
+      end
+      object Shape20: TShape
+        Left = 195
+        Top = 171
+        Width = 281
+        Height = 33
+        Pen.Color = clBtnShadow
+      end
+      object GroupBox1: TGroupBox
+        Left = 495
+        Top = 67
+        Width = 320
+        Height = 103
+        Caption = #1042' '#1090#1086#1084' '#1095#1080#1089#1083#1077' '#1053#1044#1057
+        TabOrder = 7
+        object Shape10: TShape
+          Left = 10
+          Top = 57
+          Width = 124
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object Shape9: TShape
+          Left = 10
+          Top = 24
+          Width = 125
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object Label5: TLabel
+          Left = 23
+          Top = 32
+          Width = 75
+          Height = 18
+          Caption = #1057#1090#1072#1074#1082#1072'(%)'
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object Shape15: TShape
+          Left = 132
+          Top = 24
+          Width = 178
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object Label6: TLabel
+          Left = 23
+          Top = 63
+          Width = 81
+          Height = 18
+          Caption = #1057#1091#1084#1084#1072' ('#1090#1075'.)'
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object Shape11: TShape
+          Left = 132
+          Top = 57
+          Width = 178
+          Height = 33
+          Pen.Color = clBtnShadow
+        end
+        object edNDSSumm: TdxCurrencyEdit
+          Left = 143
+          Top = 59
+          Width = 158
+          Enabled = False
+          TabOrder = 0
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          StoredValues = 1
+        end
+        object edNDS: TdxCurrencyEdit
+          Left = 143
+          Top = 27
+          Width = 158
+          TabOrder = 1
+          Alignment = taRightJustify
+          OnChange = edNDSChange
+          DisplayFormat = ',0.00;-,0.00'
+          StoredValues = 1
+        end
+      end
+      object rbRoznica: TRadioButton
+        Left = 10
+        Top = 50
+        Width = 125
+        Height = 22
+        Caption = #1056#1086#1079#1085#1080#1095#1085#1072#1103
+        Checked = True
+        TabOrder = 3
+        TabStop = True
+        OnClick = rbRoznicaClick
+      end
+      object rbOpt: TRadioButton
+        Left = 123
+        Top = 50
+        Width = 94
+        Height = 22
+        Caption = #1054#1087#1090#1086#1074#1072#1103
+        TabOrder = 6
+        OnClick = rbOptClick
+      end
+      object edPrice: TdxCurrencyEdit
+        Left = 202
+        Top = 77
+        Width = 267
+        TabOrder = 1
+        Alignment = taRightJustify
+        OnChange = edPriceChange
+        DisplayFormat = ',0.00;-,0.00'
+        StoredValues = 1
+      end
+      object edSumm: TdxCurrencyEdit
+        Left = 199
+        Top = 141
+        Width = 268
+        Enabled = False
+        TabOrder = 4
+        Alignment = taRightJustify
+        DisplayFormat = ',0.00;-,0.00'
+        StoredValues = 1
+      end
+      object seSkidkaSumm: TdxCurrencyEdit
+        Left = 199
+        Top = 175
+        Width = 268
+        Enabled = False
+        TabOrder = 5
+        Alignment = taRightJustify
+        DisplayFormat = ',0.00;-,0.00'
+        StoredValues = 1
+      end
+      object seSkidka: TdxCurrencyEdit
+        Left = 202
+        Top = 109
+        Width = 267
+        TabOrder = 2
+        Alignment = taRightJustify
+        OnChange = seSkidkaChange
+        DisplayFormat = '0.00%'
+        StoredValues = 1
+      end
+      object Panel5: TPanel
+        Left = 73
+        Top = 108
+        Width = 122
+        Height = 31
+        BevelOuter = bvNone
+        TabOrder = 8
+        object rbSkidkaInProcent: TRadioButton
+          Left = 9
+          Top = 6
+          Width = 46
+          Height = 22
+          Hint = #1089#1082#1080#1076#1082#1072' '#1074' '#1087#1088#1086#1094#1077#1085#1090#1072#1093
+          Caption = '%'
+          Checked = True
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          TabStop = True
+          OnClick = rbSkidkaInProcentClick
+        end
+        object rbSkidkaInTenge: TRadioButton
+          Left = 63
+          Top = 6
+          Width = 48
+          Height = 22
+          Hint = #1089#1082#1080#1076#1082#1072' '#1074' '#1074#1072#1083#1102#1090#1077
+          Caption = #1074#1072#1083
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          OnClick = rbSkidkaInTengeClick
+        end
+      end
+      inline MyCurrencyFrameForm: TMyCurrencyFrameForm
+        Left = 203
+        Top = 15
+        Width = 265
+        Height = 29
+        Color = clWhite
+        ParentColor = False
+        TabOrder = 0
+        inherited edAmount: TEdit
+          Width = 238
+          Height = 26
+          Text = '1.00'
+          OnChange = MyCurrencyFrameFormedAmountChange
+        end
+        inherited sbCur: TSpinButton
+          Left = 238
+          Top = 1
+          Width = 27
+          Height = 26
+        end
+      end
+      object seOstatok: TdxCurrencyEdit
+        Left = 689
+        Top = 14
+        Width = 211
+        Enabled = False
+        TabOrder = 9
+        Alignment = taRightJustify
+        OnChange = edPriceChange
+        DisplayFormat = ',0.00;-,0.00'
+        StoredValues = 1
+      end
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 663
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Left = 112
+    Top = 664
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Left = 144
+    Top = 664
+  end
+  inherited ActionList: TActionList
+    Left = 176
+    Top = 664
+    object aChooseTovar: TAction
+      Caption = #1042#1099#1073#1088#1072#1090#1100' (F8)'
+      ShortCut = 119
+    end
+    object aRefreshChd: TAction
+      Caption = 'aRefreshChd'
+      OnExecute = aRefreshChdExecute
+    end
+  end
+  inherited tranRead: TpFIBTransaction
+    Left = 104
+    Top = 515
+  end
+  inherited spGetData: TpFIBStoredProc
+    Left = 8
+    Top = 515
+  end
+  inherited tranWrite: TpFIBTransaction
+    Left = 136
+    Top = 515
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE INS_ZAKAZ_DETAILS_TMP_REAL (?G_PRODUCT_, ?AMOU' +
+        'NT_, ?PRICE_, ?SUMM_, ?DISCOUNT_PERC_, ?DISCOUNT_TENGE_, ?DISCOU' +
+        'NT_SUMM_, ?NDS_, ?NDS_SUMM_, ?COST_PRICE_, ?ZAKAZ_NA_REAL_)')
+    StoredProcName = 'INS_ZAKAZ_DETAILS_TMP_REAL'
+    Left = 40
+    Top = 515
+  end
+  inherited spUpd: TpFIBStoredProc
+    Left = 72
+    Top = 515
+  end
+  object dsReadProd: TDataSource
+    DataSet = spReadProd
+    Left = 320
+    Top = 152
+  end
+  object dsReadCategory: TDataSource
+    DataSet = spReadCategory
+    Left = 56
+    Top = 104
+  end
+  object spReadCategory: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM READ_PRODCAT_FOR_REAL_LIST(?G_CLIENT_)')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 24
+    Top = 104
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spReadProd: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT'
+      '        T.G_PRODUCT,'
+      '        T.G_PRODUCT_PAR,'
+      '        T.ARTICUL,'
+      '        T.NOMENCLATUR_NUM,'
+      '        T.BARCODE,'
+      '        T.NAME,'
+      
+        '        T.PRICE, --Z.PRICE + Z.DISCOUNT_TENGE,  -- '#1061#1047' '#1047#1040#1063#1045#1052' '#1058#1040#1050' ' +
+        #1057#1044#1045#1051#1040#1051', 23.05.2016'
+      '        T.VOLUME_PRICE,'
+      '        T.IS_CATEGORY,'
+      '        T.IS_ACTIVE,'
+      '        T.PLACE, '
+      
+        '        (Z.AMOUNT_ALL - COALESCE(Z.AMOUNT_PAYED, 0) - COALESCE(Z' +
+        '.AMOUNT_RETURNED, 0)) AMOUNT,'
+      '        Z.DISCOUNT_PERC SKIDKA_PROC,'
+      '        Z.DISCOUNT_TENGE SKIDKA_SUM,'
+      '        Z.ZAKAZ_NA_REAL,'
+      '        ZP.OSNOVANIE'
+      '    FROM G_PRODUCT T,'
+      '         ZAKAZ_REAL_PARENT ZP,'
+      '         ZAKAZ_NA_REAL Z,'
+      '         (SELECT DISTINCT(SS.G_PRODUCT)'
+      '          FROM (WITH RECURSIVE TREE'
+      '                AS (SELECT G.G_PRODUCT'
+      '                      FROM G_PRODUCT G'
+      
+        '                     WHERE G.G_PRODUCT = DECODE(:G_PRODUCT_PAR_,' +
+        ' -1, G.G_PRODUCT, :G_PRODUCT_PAR_)'
+      '                       AND G.IS_CATEGORY = 1'
+      '                    UNION ALL'
+      '                    SELECT G.G_PRODUCT'
+      
+        '                      FROM G_PRODUCT G INNER JOIN TREE PRIOR ON ' +
+        'PRIOR.G_PRODUCT = G.G_PRODUCT_PAR'
+      '                     WHERE G.IS_CATEGORY = 1'
+      '                  )'
+      '               SELECT * FROM TREE) SS) S1'
+      '    WHERE T.G_PRODUCT_PAR = S1.G_PRODUCT'
+      '    AND T.IS_CATEGORY = 0'
+      '    AND T.G_PRODUCT = Z.G_PRODUCT'
+      '    AND Z.IS_PAYED_ALL = 0   -- '#1058#1054#1051#1068#1050#1054' '#1053#1045#1054#1055#1051#1040#1063#1045#1053#1053#1067#1045
+      '    AND Z.ZAKAZ_REAL_PARENT = ZP.ZAKAZ_REAL_PARENT'
+      '    AND ZP.G_CLIENT = :G_CLIENT_'
+      '    AND ZP.G_TOCHKA = :G_tochka_'
+      '    ORDER BY T.NAME'
+      ' '
+      ' '
+      ' ')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 288
+    Top = 152
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spFindProduct: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_GET_G_PRODUCT_BY_BARCODE (?BARCODE_, ?ARTICU' +
+        'L_, ?NOMER_, ?NAME_)')
+    StoredProcName = 'G_GET_G_PRODUCT_BY_BARCODE'
+    Left = 432
+    Top = 16
+  end
+  object TimerSearch: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerSearchTimer
+    Left = 208
+    Top = 248
+  end
+  object GetLastPrice: TpFIBStoredProc
+    Transaction = tranWrite
+    Database = MainDM.dbMain
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE GET_LAST_SELF_PRICE (?G_PRODUCT_, ?G_TOCHKA_, ' +
+        '?MODE_)')
+    StoredProcName = 'GET_LAST_SELF_PRICE'
+    Left = 296
+    Top = 443
+  end
+end

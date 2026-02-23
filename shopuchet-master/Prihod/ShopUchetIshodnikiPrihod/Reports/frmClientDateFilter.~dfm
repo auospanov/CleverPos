@@ -1,0 +1,1614 @@
+inherited ClientDateFilterForm: TClientDateFilterForm
+  Left = 468
+  Top = 144
+  Caption = #1060#1080#1083#1100#1090#1088
+  ClientHeight = 644
+  ClientWidth = 815
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited btnOk: TBitBtn
+    Left = 603
+    Top = 603
+  end
+  inherited btnCancel: TBitBtn
+    Left = 708
+    Top = 603
+  end
+  inherited Panel1: TPanel
+    Width = 795
+    Height = 587
+    object PageControl: TcxPageControl
+      Left = 2
+      Top = 2
+      Width = 791
+      Height = 583
+      ActivePage = tsDates
+      Align = alClient
+      TabOrder = 0
+      OnChange = PageControlChange
+      ClientRectBottom = 583
+      ClientRectRight = 791
+      ClientRectTop = 28
+      object tsPredzakaz: TcxTabSheet
+        Caption = #1055#1088#1077#1076#1079#1072#1082#1072#1079' '#1090#1086#1074#1072#1088#1086#1074
+        ImageIndex = 3
+        DesignSize = (
+          791
+          555)
+        object sh21: TShape
+          Left = 19
+          Top = 46
+          Width = 306
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh19: TShape
+          Left = 19
+          Top = 143
+          Width = 305
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh17: TShape
+          Left = 19
+          Top = 111
+          Width = 305
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh14: TShape
+          Left = 19
+          Top = 78
+          Width = 305
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh13: TShape
+          Left = 19
+          Top = 14
+          Width = 306
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object lb7: TLabel
+          Left = 28
+          Top = 22
+          Width = 46
+          Height = 18
+          Caption = #1056#1077#1078#1080#1084
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object lb8: TLabel
+          Left = 28
+          Top = 86
+          Width = 236
+          Height = 18
+          Caption = #1055#1088#1080#1073#1072#1074#1080#1090#1100' '#1082#1086#1083'-'#1074#1086' '#1090#1086#1074#1072#1088#1086#1074' '#1089#1074#1077#1088#1093#1091
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh15: TShape
+          Left = 323
+          Top = 14
+          Width = 457
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object sh16: TShape
+          Left = 323
+          Top = 78
+          Width = 386
+          Height = 34
+          Anchors = [akLeft, akTop, akRight]
+          Pen.Color = clBtnShadow
+        end
+        object lb9: TLabel
+          Left = 28
+          Top = 118
+          Width = 225
+          Height = 18
+          Caption = #1054#1082#1088#1091#1075#1083#1080#1090#1100' '#1087#1086#1083#1091#1095#1080#1074#1096#1077#1077#1089#1103' '#1082#1086#1083'-'#1074#1086
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh18: TShape
+          Left = 323
+          Top = 111
+          Width = 175
+          Height = 33
+          Pen.Color = clBtnShadow
+        end
+        object lb10: TLabel
+          Left = 28
+          Top = 150
+          Width = 270
+          Height = 18
+          Caption = #1040#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080' '#1089#1086#1079#1076#1072#1090#1100' '#1087#1088#1080#1093#1086#1076' '#1090#1086#1074#1072#1088#1072
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh20: TShape
+          Left = 323
+          Top = 141
+          Width = 175
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object lbMode0: TLabel
+          Left = 21
+          Top = 195
+          Width = 684
+          Height = 36
+          Caption = 
+            #1056#1077#1078#1080#1084' "'#1047#1072#1082#1072#1079#1072#1090#1100' '#1076#1086' '#1084#1080#1085#1080#1084#1072#1083#1100#1085#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072'" - '#1076#1086#1079#1072#1082#1072#1079' '#1090#1086#1074#1072#1088#1072' '#1076#1086' '#1084#1080#1085 +
+            #1080#1084#1072#1083#1100#1085#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072', '#1082#1086#1090#1086#1088#1099#1081' '#1079#1072#1076#1072#1077#1090#1089#1103' '#1074' "'#1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1077' '#1090#1086#1074#1072#1088#1086#1074'".'
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          WordWrap = True
+        end
+        object lb12: TLabel
+          Left = 28
+          Top = 54
+          Width = 167
+          Height = 18
+          Caption = #1052#1077#1090#1086#1076' '#1074#1099#1073#1086#1088#1082#1080' '#1090#1086#1074#1072#1088#1086#1074
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh22: TShape
+          Left = 323
+          Top = 46
+          Width = 457
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object lb13: TLabel
+          Left = 21
+          Top = 366
+          Width = 697
+          Height = 126
+          Caption = 
+            #1055#1088#1080' '#1089#1086#1079#1076#1072#1085#1080#1080' '#1087#1088#1080#1093#1086#1076#1085#1086#1081' '#1085#1072#1082#1083#1072#1076#1085#1086#1081', '#1085#1072#1082#1083#1072#1076#1085#1072#1103' '#1089#1103#1076#1077#1090' '#1082#1072#1082' '#1085#1077#1086#1087#1083#1072#1095#1077#1085#1085 +
+            #1072#1103', '#1087#1086#1089#1083#1077' '#1092#1072#1082#1090#1080#1095#1077#1089#1082#1086#1075#1086' '#1086#1089#1091#1097#1077#1089#1090#1074#1083#1077#1085#1080#1103' '#1079#1072#1082#1091#1087#1072', '#1042#1072#1084' '#1085#1091#1078#1085#1086' '#1073#1091#1076#1077#1090' '#1085#1072#1081 +
+            #1090#1080' '#1077#1077' '#1080' '#1074#1099#1089#1090#1072#1074#1080#1090#1100' '#1086#1087#1083#1072#1095#1077#1085#1085#1091#1102' '#1089#1091#1084#1084#1091'.'#13#10#1055#1088#1080' '#1089#1086#1079#1076#1072#1085#1080#1080' '#1087#1088#1080#1093#1086#1076#1085#1086#1081' '#1085#1072#1082#1083 +
+            #1072#1076#1085#1086#1081', '#1087#1088#1086#1075#1088#1072#1084#1084#1072' '#1073#1091#1076#1077#1090' '#1086#1088#1080#1077#1085#1090#1080#1088#1086#1074#1072#1090#1100#1089#1103' '#1085#1072' '#1094#1077#1085#1091' '#1087#1086#1089#1083#1077#1076#1085#1077#1081' '#1079#1072#1082#1091#1087#1082#1080 +
+            '.'#13#10#13#10#13#10#1045#1089#1083#1080' '#1091' '#1042#1072#1089' '#1085#1077#1089#1082#1086#1083#1100#1082#1086' '#1090#1086#1095#1077#1082'/'#1089#1082#1083#1072#1076#1086#1074', '#1090#1086' '#1087#1088#1086#1094#1077#1089#1089' '#1073#1091#1076#1077#1090' '#1079#1072#1087#1091 +
+            #1097#1077#1085' '#1087#1086' '#1090#1077#1082#1091#1097#1077#1084#1091' '#1089#1082#1083#1072#1076#1091', '#1082#1086#1090#1086#1088#1099#1081' '#1074#1099#1073#1088#1072#1085' '#1074' '#1084#1077#1085#1102' "'#1057#1077#1088#1074#1080#1089' - '#1057#1082#1083#1072#1076#1099'".'
+          WordWrap = True
+        end
+        object lbVybor1: TLabel
+          Left = 21
+          Top = 305
+          Width = 701
+          Height = 18
+          Caption = 
+            #1055#1086#1083#1077' "'#1052#1077#1090#1086#1076' '#1074#1099#1073#1086#1088#1082#1080'" - '#1073#1091#1076#1091#1090' '#1074#1099#1073#1088#1072#1085#1099' '#1074#1089#1077' '#1090#1086#1074#1072#1088#1099', '#1082#1086#1090#1086#1088#1099#1077' '#1087#1086#1087#1072#1076#1072#1102 +
+            #1090' '#1087#1086' '#1091#1089#1083#1086#1074#1080#1102' '#1074' '#1087#1086#1083#1077' "'#1056#1077#1078#1080#1084'".'
+          WordWrap = True
+        end
+        object lbVybor2: TLabel
+          Left = 21
+          Top = 294
+          Width = 702
+          Height = 36
+          Caption = 
+            #1055#1086#1083#1077' "'#1052#1077#1090#1086#1076' '#1074#1099#1073#1086#1088#1082#1080'" - '#1073#1091#1076#1091#1090' '#1074#1099#1073#1088#1072#1085#1099' '#1090#1086#1074#1072#1088#1099', '#1087#1086#1083#1091#1095#1077#1085#1085#1099#1077' '#1086#1090' '#1082#1086#1085#1082#1088 +
+            #1077#1090#1085#1086#1075#1086' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072' '#1080' '#1082#1086#1090#1086#1088#1099#1077' '#1087#1086#1087#1072#1076#1072#1102#1090' '#1074' '#1091#1089#1083#1086#1074#1080#1077' '#1074' '#1087#1086#1083#1077' "'#1056#1077#1078#1080#1084'".'
+          Visible = False
+          WordWrap = True
+        end
+        object lbVybor3: TLabel
+          Left = 21
+          Top = 294
+          Width = 647
+          Height = 36
+          Caption = 
+            #1055#1086#1083#1077' "'#1052#1077#1090#1086#1076' '#1074#1099#1073#1086#1088#1082#1080'" - '#1073#1091#1076#1091#1090' '#1074#1099#1073#1088#1072#1085#1099' '#1090#1086#1074#1072#1088#1099', '#1087#1086#1083#1091#1095#1077#1085#1085#1099#1077' '#1086#1090' '#1082#1086#1085#1082#1088 +
+            #1077#1090#1085#1086#1075#1086' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072' '#1079#1072' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1087#1077#1088#1080#1086#1076' '#1074#1088#1077#1084#1077#1085#1080', '#1080' '#1082#1086#1090#1086#1088#1099#1077' '#1087#1086#1087#1072#1076#1072#1102 +
+            #1090' '#1074' '#1091#1089#1083#1086#1074#1080#1077' '#1074' '#1087#1086#1083#1077' "'#1056#1077#1078#1080#1084'".'
+          Visible = False
+          WordWrap = True
+        end
+        object lbMode1: TLabel
+          Left = 21
+          Top = 195
+          Width = 726
+          Height = 36
+          Caption = 
+            #1056#1077#1078#1080#1084' "'#1047#1072#1082#1072#1079#1072#1090#1100' '#1076#1086' '#1085#1091#1083#1077#1074#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072'" - '#1076#1086#1079#1072#1082#1072#1079' '#1090#1086#1074#1072#1088#1072' '#1076#1086' '#1085#1091#1083#1077#1074#1086#1075 +
+            #1086' '#1086#1089#1090#1072#1090#1082#1072' '#1085#1072' '#1089#1082#1083#1072#1076#1077'. '#1048#1084#1077#1077#1090' '#1089#1084#1099#1089#1083' '#1074' '#1090#1086#1084' '#1089#1083#1091#1095#1072#1077', '#1077#1089#1083#1080' '#1084#1072#1075#1072#1079#1080#1085' '#1087#1088#1086#1076 +
+            #1072#1077#1090' '#1090#1086#1074#1072#1088#1099' '#1074' '#1084#1080#1085#1091#1089' '#1080' '#1074' '#1073#1072#1079#1077' '#1080#1084#1077#1102#1090#1089#1103' '#1090#1086#1074#1072#1088#1099' '#1089' '#1084#1080#1085#1091#1089#1086#1074#1099#1084' '#1086#1089#1090#1072#1090#1082#1086#1084'.'
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Visible = False
+          WordWrap = True
+        end
+        object cbPredzakazMode: TComboBox
+          Left = 328
+          Top = 18
+          Width = 447
+          Height = 26
+          ItemHeight = 18
+          ItemIndex = 0
+          TabOrder = 0
+          Text = #1047#1072#1082#1072#1079#1072#1090#1100' '#1076#1086' '#1084#1080#1085#1080#1084#1072#1083#1100#1085#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072
+          OnChange = cbPredzakazModeChange
+          Items.Strings = (
+            #1047#1072#1082#1072#1079#1072#1090#1100' '#1076#1086' '#1084#1080#1085#1080#1084#1072#1083#1100#1085#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072
+            #1047#1072#1082#1072#1079#1072#1090#1100' '#1076#1086' '#1085#1091#1083#1077#1074#1086#1075#1086' '#1086#1089#1090#1072#1090#1082#1072)
+        end
+        object edAmountAdd: TdxCurrencyEdit
+          Left = 328
+          Top = 80
+          Width = 171
+          TabOrder = 1
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          StoredValues = 1
+        end
+        object cbDoSklad: TComboBox
+          Left = 328
+          Top = 145
+          Width = 164
+          Height = 26
+          ItemHeight = 18
+          ItemIndex = 0
+          TabOrder = 2
+          Text = #1053#1077#1090
+          OnChange = cbModeChange
+          Items.Strings = (
+            #1053#1077#1090
+            #1044#1072)
+        end
+        object rbUnit: TcxRadioButton
+          Left = 510
+          Top = 82
+          Width = 84
+          Height = 22
+          Caption = #1064#1090#1091#1082#1080
+          Checked = True
+          TabOrder = 3
+          TabStop = True
+          OnClick = rbUnitClick
+        end
+        object rbProcent: TcxRadioButton
+          Left = 604
+          Top = 82
+          Width = 104
+          Height = 22
+          Caption = #1055#1088#1086#1094#1077#1085#1090#1099
+          TabOrder = 4
+          OnClick = rbUnitClick
+        end
+        object cbbRound: TcxComboBox
+          Left = 328
+          Top = 113
+          Width = 164
+          Height = 26
+          Enabled = False
+          Properties.Items.Strings = (
+            #1044#1086' '#1094#1077#1083#1099#1093
+            #1044#1086' '#1076#1077#1089#1103#1090#1082#1086#1074
+            #1044#1086' '#1089#1086#1090#1077#1085
+            #1044#1086' '#1090#1099#1089#1103#1095)
+          Style.BorderStyle = ebsFlat
+          Style.PopupBorderStyle = epbsDefault
+          TabOrder = 5
+        end
+        object cbMetodVybora: TComboBox
+          Left = 328
+          Top = 49
+          Width = 447
+          Height = 26
+          ItemHeight = 18
+          ItemIndex = 0
+          TabOrder = 6
+          Text = #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1090#1086#1074#1072#1088#1099
+          OnChange = cbMetodVyboraChange
+          Items.Strings = (
+            #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1090#1086#1074#1072#1088#1099
+            #1042#1099#1073#1088#1072#1090#1100' '#1090#1086#1074#1072#1088#1099' '#1087#1086#1089#1090#1072#1074#1097#1080#1082#1072
+            #1042#1099#1073#1088#1072#1090#1100' '#1090#1086#1074#1072#1088#1099' '#1074#1093#1086#1076#1103#1097#1080#1093' '#1074' '#1087#1088#1080#1093#1086#1076#1085#1099#1077' '#1085#1072#1082#1083#1072#1076#1085#1099#1077' '#1079#1072' '#1087#1077#1088#1080#1086#1076' '#1076#1072#1090)
+        end
+      end
+      object tsDates: TcxTabSheet
+        Caption = #1044#1072#1090#1072
+        ImageIndex = 0
+        object pnContragent: TPanel
+          Left = 141
+          Top = 231
+          Width = 572
+          Height = 35
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 7
+          object Label9: TLabel
+            Left = 10
+            Top = 8
+            Width = 99
+            Height = 20
+            Caption = #1050#1086#1085#1090#1088#1072#1075#1077#1085#1090
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -18
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object rbClient: TRadioButton
+            Left = 147
+            Top = 10
+            Width = 96
+            Height = 17
+            Caption = #1082#1083#1080#1077#1085#1090
+            Checked = True
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -18
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            TabStop = True
+            OnClick = rbPostavshikClick
+          end
+          object rbPostavshik: TRadioButton
+            Left = 270
+            Top = 10
+            Width = 131
+            Height = 17
+            Caption = #1087#1086#1089#1090#1072#1074#1097#1080#1082
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -18
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+            OnClick = rbPostavshikClick
+          end
+        end
+        object pnOfficial: TPanel
+          Left = 144
+          Top = 305
+          Width = 482
+          Height = 40
+          BevelOuter = bvNone
+          ParentBackground = True
+          ParentColor = True
+          TabOrder = 0
+          object Shape6: TShape
+            Left = 3
+            Top = 4
+            Width = 137
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label4: TLabel
+            Left = 15
+            Top = 10
+            Width = 72
+            Height = 18
+            Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape5: TShape
+            Left = 139
+            Top = 4
+            Width = 275
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object leIspolnitel: TdxLookupEdit
+            Left = 144
+            Top = 6
+            Width = 264
+            Enabled = False
+            Style.BorderStyle = xbsFlat
+            TabOrder = 0
+            OnChange = leIspolnitelChange
+            ListFieldName = 'FIO_DOC'
+            KeyFieldName = 'G_OFFICIAL'
+            ListSource = dsIspolnitel
+            LookupKeyValue = Null
+          end
+          object cbOfficial: TCheckBox
+            Left = 420
+            Top = 10
+            Width = 53
+            Height = 22
+            Caption = #1042#1089#1077
+            Checked = True
+            State = cbChecked
+            TabOrder = 1
+            OnClick = cbOfficialClick
+          end
+        end
+        object pnClient: TPanel
+          Left = 144
+          Top = 269
+          Width = 482
+          Height = 39
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 1
+          object Shape17: TShape
+            Left = 3
+            Top = 3
+            Width = 137
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label3: TLabel
+            Left = 15
+            Top = 10
+            Width = 49
+            Height = 18
+            Caption = #1050#1083#1080#1077#1085#1090
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape18: TShape
+            Left = 139
+            Top = 3
+            Width = 275
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object cbClient: TCheckBox
+            Left = 420
+            Top = 10
+            Width = 53
+            Height = 22
+            Caption = #1042#1089#1077
+            Checked = True
+            State = cbChecked
+            TabOrder = 0
+            OnClick = cbClientClick
+          end
+          object peClient: TdxPopupEdit
+            Left = 144
+            Top = 5
+            Width = 264
+            Enabled = False
+            TabOrder = 1
+            OnKeyPress = peClientKeyPress
+            PopupControl = PopupListForm.pnlMain
+            OnCloseUp = peClientCloseUp
+            OnInitPopup = peClientInitPopup
+          end
+        end
+        object pnPayment: TPanel
+          Left = 144
+          Top = 232
+          Width = 482
+          Height = 37
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 2
+          object Shape13: TShape
+            Left = 3
+            Top = 3
+            Width = 137
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label7: TLabel
+            Left = 14
+            Top = 10
+            Width = 108
+            Height = 18
+            Caption = #1057#1087#1086#1089#1086#1073' '#1088#1072#1089#1095#1077#1090#1072
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape14: TShape
+            Left = 139
+            Top = 3
+            Width = 275
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object cbPayment: TCheckBox
+            Left = 420
+            Top = 5
+            Width = 53
+            Height = 32
+            Caption = #1042#1089#1077
+            Checked = True
+            State = cbChecked
+            TabOrder = 0
+            OnClick = cbPaymentClick
+          end
+          object cbxPayment: TComboBox
+            Left = 144
+            Top = 5
+            Width = 264
+            Height = 26
+            Enabled = False
+            ItemHeight = 18
+            TabOrder = 1
+            Items.Strings = (
+              #1053#1072#1083#1080#1095#1085#1099#1081
+              #1041#1077#1079#1085#1072#1083#1080#1095#1085#1099#1081)
+          end
+        end
+        object pnTime: TPanel
+          Left = 559
+          Top = 134
+          Width = 139
+          Height = 98
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 3
+          object ceTime: TCheckBox
+            Left = 3
+            Top = 4
+            Width = 131
+            Height = 22
+            Caption = #1059#1082#1072#1079#1072#1090#1100' '#1074#1088#1077#1084#1103
+            TabOrder = 0
+            OnClick = ceTimeClick
+          end
+          object edTimeBegin: TcxTimeEdit
+            Left = 3
+            Top = 31
+            Width = 97
+            Height = 26
+            EditValue = 0.375d
+            Enabled = False
+            Properties.TimeFormat = tfHourMin
+            Style.BorderStyle = ebs3D
+            TabOrder = 1
+          end
+          object edTimeEnd: TcxTimeEdit
+            Left = 3
+            Top = 66
+            Width = 97
+            Height = 26
+            EditValue = 0.75d
+            Enabled = False
+            Properties.TimeFormat = tfHourMin
+            Style.BorderStyle = ebs3D
+            TabOrder = 2
+          end
+        end
+        object pnDate: TPanel
+          Left = 145
+          Top = 86
+          Width = 414
+          Height = 146
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 4
+          object Shape2: TShape
+            Left = 1
+            Top = 111
+            Width = 138
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Shape1: TShape
+            Left = 1
+            Top = 78
+            Width = 138
+            Height = 34
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label1: TLabel
+            Left = 14
+            Top = 86
+            Width = 87
+            Height = 18
+            Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Label2: TLabel
+            Left = 14
+            Top = 118
+            Width = 79
+            Height = 18
+            Caption = #1044#1072#1090#1072' '#1082#1086#1085#1094#1072
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape3: TShape
+            Left = 138
+            Top = 78
+            Width = 275
+            Height = 34
+            Pen.Color = clBtnShadow
+          end
+          object Shape4: TShape
+            Left = 138
+            Top = 111
+            Width = 275
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object byDay: TRadioButton
+            Left = 1
+            Top = 14
+            Width = 128
+            Height = 22
+            Caption = #1047#1072' '#1076#1077#1085#1100
+            Checked = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -17
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            TabStop = True
+            OnClick = byDayClick
+          end
+          object byMonth: TRadioButton
+            Left = 1
+            Top = 45
+            Width = 128
+            Height = 22
+            Caption = #1047#1072' '#1084#1077#1089#1103#1094
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -17
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+            OnClick = byMonthClick
+          end
+          object edDate: TcxDateEdit
+            Left = 143
+            Top = 81
+            Width = 263
+            Height = 26
+            Properties.Alignment.Horz = taRightJustify
+            Properties.InputKind = ikMask
+            Properties.UseLeftAlignmentOnEditing = False
+            Style.BorderStyle = ebs3D
+            Style.ButtonStyle = bts3D
+            TabOrder = 2
+            OnExit = edDateExit
+          end
+          object edEndDate: TcxDateEdit
+            Left = 143
+            Top = 113
+            Width = 263
+            Height = 26
+            Enabled = False
+            Properties.Alignment.Horz = taRightJustify
+            Properties.InputKind = ikMask
+            Properties.UseLeftAlignmentOnEditing = False
+            Style.BorderStyle = ebs3D
+            Style.ButtonStyle = bts3D
+            TabOrder = 3
+          end
+          object byYear: TRadioButton
+            Left = 156
+            Top = 14
+            Width = 133
+            Height = 22
+            Caption = #1047#1072' '#1075#1086#1076
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -17
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 4
+            OnClick = byYearClick
+          end
+          object byPeriod: TRadioButton
+            Left = 156
+            Top = 45
+            Width = 195
+            Height = 22
+            Caption = #1047#1072' '#1083#1102#1073#1086#1081' '#1087#1077#1088#1080#1086#1076
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -17
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 5
+            OnClick = byPeriodClick
+          end
+        end
+        object pnReal: TPanel
+          Left = 140
+          Top = 382
+          Width = 431
+          Height = 43
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 5
+          object Shape7: TShape
+            Left = 6
+            Top = 3
+            Width = 170
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label5: TLabel
+            Left = 15
+            Top = 10
+            Width = 142
+            Height = 18
+            Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1085#1072#1082#1083#1072#1076#1085#1099#1077
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape8: TShape
+            Left = 175
+            Top = 3
+            Width = 243
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object ComboBox: TComboBox
+            Left = 180
+            Top = 5
+            Width = 231
+            Height = 26
+            ItemHeight = 18
+            ItemIndex = 0
+            TabOrder = 0
+            Text = #1053#1077#1086#1087#1083#1072#1095#1077#1085#1085#1099#1077
+            Items.Strings = (
+              #1053#1077#1086#1087#1083#1072#1095#1077#1085#1085#1099#1077
+              #1054#1087#1083#1072#1095#1077#1085#1085#1099#1077
+              #1042#1086#1079#1074#1088#1072#1097#1077#1085#1085#1099#1077
+              #1042#1089#1077)
+          end
+        end
+        object pnPostavshik: TPanel
+          Left = 144
+          Top = 344
+          Width = 482
+          Height = 38
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 6
+          object sh11: TShape
+            Left = 3
+            Top = 3
+            Width = 137
+            Height = 33
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object lb6: TLabel
+            Left = 15
+            Top = 10
+            Width = 77
+            Height = 18
+            Caption = #1055#1086#1089#1090#1072#1074#1097#1080#1082
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object sh12: TShape
+            Left = 139
+            Top = 3
+            Width = 275
+            Height = 33
+            Pen.Color = clBtnShadow
+          end
+          object cbPostavshikAll: TCheckBox
+            Left = 420
+            Top = 10
+            Width = 53
+            Height = 22
+            Caption = #1042#1089#1077
+            Checked = True
+            State = cbChecked
+            TabOrder = 0
+            Visible = False
+            OnClick = cbClientClick
+          end
+          object pePostavshik: TdxPopupEdit
+            Left = 144
+            Top = 5
+            Width = 264
+            TabOrder = 1
+            OnKeyPress = peClientKeyPress
+            PopupControl = PopupListForm.pnlMain
+            OnCloseUp = peClientCloseUp
+            OnInitPopup = pePostavshikInitPopup
+          end
+        end
+        object pnActSverki: TPanel
+          Left = 140
+          Top = 419
+          Width = 549
+          Height = 108
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 8
+          object Shape22: TShape
+            Left = 6
+            Top = 70
+            Width = 206
+            Height = 34
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Shape19: TShape
+            Left = 6
+            Top = 4
+            Width = 206
+            Height = 34
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label6: TLabel
+            Left = 18
+            Top = 12
+            Width = 185
+            Height = 18
+            Caption = #1056#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1100' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090#1072
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape21: TShape
+            Left = 6
+            Top = 37
+            Width = 206
+            Height = 34
+            Brush.Color = 16577773
+            Pen.Color = clBtnShadow
+          end
+          object Label11: TLabel
+            Left = 18
+            Top = 45
+            Width = 79
+            Height = 18
+            Caption = #1052#1086#1103' '#1092#1080#1088#1084#1072
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Label12: TLabel
+            Left = 18
+            Top = 78
+            Width = 131
+            Height = 18
+            Caption = #1060#1048#1054' '#1088#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1103
+            Font.Charset = RUSSIAN_CHARSET
+            Font.Color = 7492630
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Transparent = True
+          end
+          object Shape24: TShape
+            Left = 211
+            Top = 70
+            Width = 305
+            Height = 34
+            Pen.Color = clBtnShadow
+          end
+          object Shape23: TShape
+            Left = 211
+            Top = 37
+            Width = 305
+            Height = 34
+            Pen.Color = clBtnShadow
+          end
+          object Shape20: TShape
+            Left = 211
+            Top = 4
+            Width = 305
+            Height = 34
+            Pen.Color = clBtnShadow
+          end
+          object edRukovod: TEdit
+            Left = 217
+            Top = 74
+            Width = 293
+            Height = 26
+            Hint = #1042#1074#1077#1076#1080#1090#1077' '#1060#1048#1054' '#1088#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1103' '#1042#1072#1096#1077#1081' '#1082#1086#1084#1087#1072#1085#1080#1080
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+          end
+          object cbbFirm: TcxLookupComboBox
+            Left = 217
+            Top = 41
+            Width = 293
+            Height = 26
+            Properties.GridMode = True
+            Properties.KeyFieldNames = 'G_FIRM_REKVIZIT'
+            Properties.ListColumns = <
+              item
+                FieldName = 'NAME'
+              end>
+            Properties.ListOptions.ShowHeader = False
+            Properties.ListSource = dsFirm
+            Properties.OnChange = cbbFirmPropertiesChange
+            Style.BorderStyle = ebsFlat
+            TabOrder = 1
+          end
+          object edClientDir: TEdit
+            Left = 217
+            Top = 8
+            Width = 293
+            Height = 26
+            Hint = #1042#1074#1077#1076#1080#1090#1077' '#1060#1048#1054' '#1088#1091#1082#1086#1074#1086#1076#1080#1090#1077#1083#1103', '#1077#1089#1083#1080' '#1082#1086#1085#1090#1088#1072#1075#1077#1085#1090' - '#1102#1088'. '#1083#1080#1094#1086
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+          end
+        end
+      end
+      object tsSetNewPrices: TcxTabSheet
+        Caption = #1059#1089#1083#1086#1074#1080#1103' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' '#1094#1077#1085
+        ImageIndex = 2
+        object sh7: TShape
+          Left = 168
+          Top = 114
+          Width = 173
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh5: TShape
+          Left = 168
+          Top = 63
+          Width = 173
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh3: TShape
+          Left = 168
+          Top = 31
+          Width = 173
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object sh1: TShape
+          Left = 168
+          Top = 195
+          Width = 173
+          Height = 34
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object lb1: TLabel
+          Left = 177
+          Top = 203
+          Width = 112
+          Height = 18
+          Caption = #1054#1082#1088#1091#1075#1083#1080#1090#1100' '#1094#1077#1085#1099
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh2: TShape
+          Left = 339
+          Top = 195
+          Width = 283
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object lb2: TLabel
+          Left = 177
+          Top = 39
+          Width = 46
+          Height = 18
+          Caption = #1056#1077#1078#1080#1084
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh4: TShape
+          Left = 339
+          Top = 31
+          Width = 283
+          Height = 33
+          Pen.Color = clBtnShadow
+        end
+        object lb3: TLabel
+          Left = 177
+          Top = 71
+          Width = 64
+          Height = 18
+          Caption = #1047#1085#1072#1095#1077#1085#1080#1077
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh6: TShape
+          Left = 339
+          Top = 63
+          Width = 283
+          Height = 33
+          Pen.Color = clBtnShadow
+        end
+        object lb4: TLabel
+          Left = 177
+          Top = 122
+          Width = 144
+          Height = 18
+          Caption = #1057#1090#1072#1088#1099#1081' '#1082#1091#1088#1089' '#1074#1072#1083#1102#1090#1099
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh8: TShape
+          Left = 339
+          Top = 114
+          Width = 283
+          Height = 34
+          Pen.Color = clBtnShadow
+        end
+        object sh9: TShape
+          Left = 168
+          Top = 147
+          Width = 173
+          Height = 33
+          Brush.Color = 16577773
+          Pen.Color = clBtnShadow
+        end
+        object lb5: TLabel
+          Left = 177
+          Top = 154
+          Width = 137
+          Height = 18
+          Caption = #1053#1086#1074#1099#1081' '#1082#1091#1088#1089' '#1074#1072#1083#1102#1090#1099
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = 7492630
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+        end
+        object sh10: TShape
+          Left = 339
+          Top = 147
+          Width = 283
+          Height = 33
+          Pen.Color = clBtnShadow
+        end
+        object cbRoundMode: TComboBox
+          Left = 345
+          Top = 198
+          Width = 273
+          Height = 26
+          ItemHeight = 18
+          ItemIndex = 0
+          TabOrder = 2
+          Text = #1044#1086' '#1076#1077#1089#1103#1090#1099#1093
+          Items.Strings = (
+            #1044#1086' '#1076#1077#1089#1103#1090#1099#1093
+            #1044#1086' '#1094#1077#1083#1099#1093
+            #1044#1086' '#1076#1077#1089#1103#1090#1082#1086#1074
+            #1044#1086' '#1089#1086#1090#1077#1085
+            #1044#1086' '#1090#1099#1089#1103#1095)
+        end
+        object cbMode: TComboBox
+          Left = 345
+          Top = 33
+          Width = 272
+          Height = 26
+          ItemHeight = 18
+          ItemIndex = 0
+          TabOrder = 0
+          Text = #1059#1074#1077#1083#1080#1095#1080#1090#1100' '#1085#1072' %'
+          OnChange = cbModeChange
+          Items.Strings = (
+            #1059#1074#1077#1083#1080#1095#1080#1090#1100' '#1085#1072' %'
+            #1059#1074#1077#1083#1080#1095#1080#1090#1100' '#1085#1072' '#1079#1085#1072#1095#1077#1085#1080#1077
+            #1059#1084#1077#1085#1100#1096#1080#1090#1100' '#1085#1072' %'
+            #1059#1084#1077#1085#1100#1096#1080#1090#1100' '#1085#1072' '#1079#1085#1072#1095#1077#1085#1080#1077
+            #1048#1079#1084#1077#1085#1080#1090#1100' '#1089' '#1087#1088#1080#1074#1103#1079#1082#1086#1081' '#1082' '#1074#1072#1083#1102#1090#1077)
+        end
+        object edValue: TdxCurrencyEdit
+          Left = 345
+          Top = 66
+          Width = 272
+          TabOrder = 1
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00%;-,0.00%'
+          StoredValues = 1
+        end
+        object edOldCourse: TdxCurrencyEdit
+          Left = 345
+          Top = 117
+          Width = 273
+          Enabled = False
+          TabOrder = 3
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          StoredValues = 1
+        end
+        object edNewCourse: TdxCurrencyEdit
+          Left = 345
+          Top = 149
+          Width = 273
+          Enabled = False
+          TabOrder = 4
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          StoredValues = 1
+        end
+      end
+      object tsTovar: TcxTabSheet
+        Caption = #1058#1086#1074#1072#1088#1099'/'#1082#1072#1090#1077#1075#1086#1088#1080#1080
+        ImageIndex = 1
+        object Panel3: TPanel
+          Left = 0
+          Top = 0
+          Width = 791
+          Height = 555
+          Align = alClient
+          Caption = 'Panel3'
+          ParentColor = True
+          TabOrder = 0
+          object Panel4: TPanel
+            Left = 400
+            Top = 1
+            Width = 390
+            Height = 553
+            Align = alClient
+            BevelOuter = bvLowered
+            Caption = 'Panel4'
+            ParentColor = True
+            TabOrder = 0
+            object Panel6: TPanel
+              Left = 1
+              Top = 1
+              Width = 388
+              Height = 53
+              Align = alTop
+              TabOrder = 0
+              object Label10: TLabel
+                Left = 85
+                Top = 15
+                Width = 54
+                Height = 21
+                Caption = #1055#1086#1080#1089#1082
+                Font.Charset = RUSSIAN_CHARSET
+                Font.Color = clNavy
+                Font.Height = -17
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object cbTovAll: TCheckBox
+                Left = 12
+                Top = 15
+                Width = 51
+                Height = 22
+                Caption = #1042#1089#1077
+                Checked = True
+                Enabled = False
+                State = cbChecked
+                TabOrder = 0
+                OnClick = cbTovAllClick
+              end
+              object edSearchTovar: TEdit
+                Left = 140
+                Top = 13
+                Width = 237
+                Height = 26
+                CharCase = ecLowerCase
+                MaxLength = 13
+                TabOrder = 1
+                OnChange = edSearchTovarChange
+              end
+            end
+            inline TovaryFrame: TTreeFrame
+              Left = 1
+              Top = 54
+              Width = 388
+              Height = 498
+              Align = alClient
+              TabOrder = 1
+              inherited tlCommon: TdxTreeList
+                Width = 388
+                Height = 498
+                inherited TreeListCheck: TdxTreeListCheckColumn
+                  Width = 36
+                end
+                inherited TreeListEntityId: TdxTreeListColumn
+                  Width = 137
+                end
+                inherited TreeListEnabled: TdxTreeListCheckColumn
+                  Width = 87
+                end
+                inherited TreeListReturn: TdxTreeListCheckColumn
+                  Width = 87
+                end
+              end
+              inherited spReadFrame: TpFIBDataSet
+                SelectSQL.Strings = (
+                  'SELECT SS.G_PRODUCT ID,'
+                  '       SS.NAME,'
+                  '       SS.ARTICUL,'
+                  '       SS.BARCODE,'
+                  '       SS.PLACE'
+                  'FROM G_PRODUCT SS'
+                  'WHERE SS.IS_CATEGORY = 0'
+                  
+                    'AND (CAST(:G_CATEGORY_ AS VARCHAR(1000)) CONTAINING '#39'~'#39'||SS.G_PR' +
+                    'ODUCT_PAR||'#39'~'#39
+                  '     OR '
+                  '     CAST(:G_CATEGORY_ AS VARCHAR(1000)) = '#39#39')'
+                  'ORDER BY 2, 1')
+                Transaction = MainDM.tranMainRead
+                UpdateTransaction = MainDM.tranMainRead
+              end
+            end
+          end
+          object Panel5: TPanel
+            Left = 1
+            Top = 1
+            Width = 391
+            Height = 553
+            Align = alLeft
+            BevelOuter = bvLowered
+            Caption = 'Panel4'
+            ParentColor = True
+            TabOrder = 1
+            object Panel7: TPanel
+              Left = 1
+              Top = 1
+              Width = 389
+              Height = 53
+              Align = alTop
+              TabOrder = 0
+              object cbCatAll: TCheckBox
+                Left = 10
+                Top = 15
+                Width = 53
+                Height = 22
+                Caption = #1042#1089#1077
+                Checked = True
+                State = cbChecked
+                TabOrder = 0
+                OnClick = cbCatAllClick
+              end
+            end
+            inline TovCatFrame: TTreeFrame
+              Left = 1
+              Top = 54
+              Width = 389
+              Height = 498
+              Align = alClient
+              TabOrder = 1
+              inherited tlCommon: TdxTreeList
+                Width = 389
+                Height = 498
+                Options = [aoColumnSizing, aoColumnMoving, aoEditing, aoTabThrough, aoRowSelect, aoStoreToRegistry]
+                OnClick = TovCatFrametlCommonClick
+                inherited TreeListCheck: TdxTreeListCheckColumn
+                  Width = 37
+                end
+                inherited TreeListEntityId: TdxTreeListColumn
+                  Width = 138
+                end
+                inherited TreeListEnabled: TdxTreeListCheckColumn
+                  Width = 87
+                end
+                inherited TreeListReturn: TdxTreeListCheckColumn
+                  Width = 87
+                end
+              end
+              inherited spReadFrame: TpFIBDataSet
+                SelectSQL.Strings = (
+                  'SELECT * FROM ('
+                  'WITH RECURSIVE TREE'
+                  '  AS (SELECT T.G_PRODUCT ID,'
+                  '             replace(T.NAME, '#39' '#39', '#39#39') PATH,'
+                  '             T.NAME NAME,'
+                  '             CAST('#39#39' AS VARCHAR(255)) AS indent'
+                  '      FROM G_PRODUCT T'
+                  '     WHERE T.G_PRODUCT_PAR IS NULL'
+                  '    UNION ALL'
+                  '    SELECT T.G_PRODUCT ID,'
+                  '           GG.PATH||replace(T.NAME, '#39' '#39', '#39#39') PATH,'
+                  '           T.NAME NAME,'
+                  '           GG.indent || rpad('#39#39', 3) AS indent'
+                  
+                    '      FROM G_PRODUCT T INNER JOIN TREE GG ON GG.ID = T.G_PRODUCT' +
+                    '_PAR'
+                  '     WHERE T.IS_CATEGORY = 1'
+                  '    )'
+                  ' SELECT ID,'
+                  '        PATH,'
+                  '        Indent || NAME AS NAME FROM TREE)'
+                  'ORDER BY 2, 1'
+                  ' ')
+                Transaction = MainDM.tranMainRead
+                UpdateTransaction = MainDM.tranMainRead
+              end
+            end
+          end
+          object splMenu: TcxSplitter
+            Left = 392
+            Top = 1
+            Width = 8
+            Height = 553
+            HotZoneClassName = 'TcxSimpleStyle'
+            HotZone.SizePercent = 32
+            AutoPosition = False
+            PositionAfterOpen = 150
+            AutoSnap = True
+            ResizeUpdate = True
+            Control = Panel4
+            Color = clBtnFace
+            ParentColor = False
+          end
+        end
+      end
+      object tsSklad: TcxTabSheet
+        Caption = #1057#1082#1083#1072#1076#1099
+        ImageIndex = 1
+        TabVisible = False
+        object tlSklad: TdxDBTreeList
+          Left = 0
+          Top = 0
+          Width = 789
+          Height = 495
+          Bands = <
+            item
+            end>
+          DefaultLayout = True
+          HeaderPanelRowCount = 1
+          KeyField = 'G_TOCHKA'
+          ParentField = 'G_TOCHKA'
+          Align = alClient
+          TabOrder = 0
+          OnClick = tlSkladClick
+          DataSource = dsReadTochka
+          ShowHeader = False
+          TreeLineColor = clGrayText
+          object CheckCol: TdxDBTreeListCheckColumn
+            Width = 46
+            BandIndex = 0
+            RowIndex = 0
+            ValueChecked = '1'
+            ValueUnchecked = '0'
+          end
+          object tlSkladNAME: TdxDBTreeListMaskColumn
+            Width = 150
+            BandIndex = 0
+            RowIndex = 0
+            FieldName = 'NAME'
+          end
+          object G_TOCHKA: TdxDBTreeListColumn
+            Visible = False
+            BandIndex = 0
+            RowIndex = 0
+            FieldName = 'G_TOCHKA'
+          end
+        end
+        object Panel2: TPanel
+          Left = 0
+          Top = 495
+          Width = 789
+          Height = 53
+          Align = alBottom
+          BevelOuter = bvNone
+          TabOrder = 1
+          object btAll: TButton
+            Left = 21
+            Top = 10
+            Width = 124
+            Height = 32
+            Caption = #1054#1090#1084#1077#1090#1080#1090#1100' '#1074#1089#1077
+            TabOrder = 0
+            OnClick = btAllClick
+          end
+          object btNone: TButton
+            Left = 154
+            Top = 10
+            Width = 107
+            Height = 32
+            Caption = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077
+            TabOrder = 1
+            OnClick = btNoneClick
+          end
+        end
+      end
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 603
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Left = 144
+    Top = 608
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Left = 176
+    Top = 608
+  end
+  inherited ApplicationEvents1: TApplicationEvents
+    OnActivate = nil
+    Left = 120
+    Top = 608
+  end
+  inherited ActionList: TActionList
+    Left = 208
+    Top = 608
+  end
+  object tranRead: TpFIBTransaction
+    DefaultDatabase = MainDM.dbMain
+    TimeoutAction = TARollback
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 280
+    Top = 16
+  end
+  object spIspolnitel: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_OFFICIAL_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 272
+    Top = 304
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsIspolnitel: TDataSource
+    DataSet = spIspolnitel
+    Left = 304
+    Top = 303
+  end
+  object spReadTochka: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_TOCHKA_READ')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 312
+    Top = 16
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object dsReadTochka: TDataSource
+    DataSet = spReadTochka
+    Left = 343
+    Top = 16
+  end
+  object TimerTovar: TTimer
+    Enabled = False
+    Interval = 400
+    OnTimer = TimerTovarTimer
+    Left = 336
+    Top = 304
+  end
+  object dsFirm: TDataSource
+    DataSet = spFirm
+    Left = 576
+    Top = 536
+  end
+  object spFirm: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_FIRM_REKVIZIT')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 544
+    Top = 536
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+end

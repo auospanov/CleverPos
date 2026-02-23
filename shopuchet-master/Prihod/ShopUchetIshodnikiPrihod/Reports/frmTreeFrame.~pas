@@ -1,0 +1,234 @@
+unit frmTreeFrame;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
+  Dialogs, dxExEdtr, DB, FIBDataSet, pFIBDataSet, dxTL, dxTLClms, dxCntner;
+
+type
+  TExistRecArr = record
+    Id: array of Integer;
+    EntityId: array of Integer;
+    Return: array of string;
+    Enabled: array of string;
+    Code: array of string;
+    Name: array of string;
+  end;
+
+  TExistRec = record
+    EntityId: Integer;
+    Return: string;
+    Enabled: string;
+    Code: string;
+    Name: string;
+  end;
+
+  TExistArray = array of TExistRec;
+  TTreeFrame = class(TFrame)
+    tlCommon: TdxTreeList;
+    TreeListCheck: TdxTreeListCheckColumn;
+    TreeListEntityId: TdxTreeListColumn;
+    TreeListName: TdxTreeListColumn;
+    TreeListEnabled: TdxTreeListCheckColumn;
+    TreeListReturn: TdxTreeListCheckColumn;
+    spReadFrame: TpFIBDataSet;
+    dsReadFrame: TDataSource;
+    procedure tlCommonClick(Sender: TObject);
+    procedure tlCommonKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure tlCommonEditing(Sender: TObject; Node: TdxTreeListNode;
+      var Allow: Boolean);
+  private
+    FExistRec: TExistRecArr;
+    FNameField: string;
+    FEntityIdField: string;
+    Arr: TExistRecArr;
+    function IsExistInRec(EntityId: Integer; var Idx: Integer): Boolean;
+    function GetExistRec: TExistRecArr;
+    procedure ClearTreeListItems(Sender: TdxTreeList);
+    procedure SetExistRec(const Value: TExistRecArr);
+  public
+    procedure FillGrid;
+    function FillArr:String;
+  end;
+
+implementation
+
+{$R *.dfm}
+
+procedure TTreeFrame.FillGrid;
+begin
+  SetLength(Arr.Code, 0);
+  SetLength(Arr.Enabled, 0);
+  SetLength(Arr.EntityId, 0);
+  SetLength(Arr.Id, 0);
+  SetLength(Arr.Name, 0);
+  SetLength(Arr.Return, 0);
+
+  FEntityIdField := 'ID';
+  FNameField := 'NAME';
+  SetExistRec(Arr);
+end;
+
+function TTreeFrame.FillArr : String;
+var i : integer;
+begin
+  Arr  := GetExistRec;
+  IF LENGTH(Arr.EntityId) > 0 THEN BEGIN
+    Result := '~';
+    for i := 0 to High(Arr.EntityId) do
+      Result := Result + IntToStr(Arr.EntityId[i]) + '~';
+  END;
+end;
+
+//*****************************************************************************
+// Функции и процедуры по заполнению грида с ошибками
+//*****************************************************************************
+function TTreeFrame.GetExistRec: TExistRecArr;
+var
+  I, Cnt, Idx: Integer;
+begin
+  SetLength(Result.Id, 0);
+  SetLength(Result.EntityId, 0);
+  SetLength(Result.Name, 0);
+  SetLength(Result.Enabled, 0);
+  SetLength(Result.Return, 0);
+
+  Idx := 0;
+  with tlCommon do
+  begin
+    Cnt := Count;
+    for I := 0 to Cnt - 1 do
+    begin
+      if (Items[I].Values[ColumnByName('TreeListCheck').Index] = '1')
+         and (Items[I].Values[ColumnByName('TreeListReturn').Index] = '1') then
+      begin
+        Inc(Idx);
+        SetLength(Result.Id, Idx);
+        SetLength(Result.EntityId, Idx);
+        SetLength(Result.Code, Idx);
+        SetLength(Result.Name, Idx);
+        SetLength(Result.Enabled, Idx);
+        SetLength(Result.Return, Idx);
+        Result.EntityId[Idx - 1] := Items[I].Values[ColumnByName('TreeListEntityId').Index];
+        Result.Name[Idx - 1] := Items[I].Values[ColumnByName('TreeListName').Index];
+        Result.Enabled[Idx - 1] := Items[I].Values[ColumnByName('TreeListEnabled').Index];
+        Result.Return[Idx - 1] := Items[I].Values[ColumnByName('TreeListReturn').Index];
+      end;
+    end;
+  end;
+end;
+
+function TTreeFrame.IsExistInRec(EntityId: Integer;
+  var Idx: Integer): Boolean;
+var
+  Cnt, I: Integer;
+begin
+  Cnt := High(FExistRec.EntityId);
+  Result := False;
+  for I := 0 to Cnt do
+  begin
+    if FExistRec.EntityId[I] = EntityId then
+    begin
+      Result := True;
+      Idx := I;
+      Exit;
+    end;
+  end;
+  Idx := -1;
+end;
+
+procedure TTreeFrame.ClearTreeListItems(Sender: TdxTreeList);
+var
+  I, Cnt: Integer;
+begin
+  with Sender do
+  begin
+    Cnt := Count;
+    for I := 0 to Cnt - 1 do
+      Sender.Items[0].Destroy;
+  end;
+end;
+
+procedure TTreeFrame.SetExistRec(const Value: TExistRecArr);
+var
+  ANode: TdxTreeListNode;
+  Check: string;
+  I: Integer;
+begin
+  I := -1;
+  FExistRec := Value;
+  with spReadFrame, tlCommon do
+  begin
+    while not EOF do
+    begin
+      ANode := Add;
+      if FEntityIdField <> EmptyStr then
+        ANode.Values[ColumnByName('TreeListEntityId').Index] := FieldByName(FEntityIdField).Value;
+      if FNameField <> EmptyStr then
+        ANode.Values[ColumnByName('TreeListName').Index] := FieldByName(FNameField).Value;
+      if IsExistInRec(FieldByName(FEntityIdField).Value, I) then
+      begin
+        ANode.Values[ColumnByName('TreeListEnabled').Index] := FExistRec.Enabled[I];
+        ANode.Values[ColumnByName('TreeListReturn').Index] := FExistRec.Return[I];
+        Check := '1'
+      end
+      else begin
+        ANode.Values[ColumnByName('TreeListEnabled').Index] := '1';
+        ANode.Values[ColumnByName('TreeListReturn').Index] := '1';
+        Check := '0';
+      end;
+
+      ANode.Values[ColumnByName('TreeListCheck').Index] := Check;
+      Next;
+    end;
+  end;
+end;
+
+procedure TTreeFrame.tlCommonClick(Sender: TObject);
+begin
+  inherited;
+  with (Sender as TdxTreeList) do
+  begin
+    if Items[FocusedNumber].Values[ColumnByName('TreeListEnabled').Index] = '1' then
+    begin
+        if FocusedColumn = ColumnByName('TreeListCheck').Index then
+        begin
+           if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '1' then
+             Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '0'
+           else if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '0' then
+             Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '1';
+        end;
+    end;
+  end;
+end;
+
+procedure TTreeFrame.tlCommonKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  with (Sender as TdxTreeList) do
+  begin
+    if Key = 32 then
+    begin
+      if Items[FocusedNumber].Values[ColumnByName('TreeListEnabled').Index] = '1' then
+      begin
+          if FocusedColumn = ColumnByName('TreeListCheck').Index then
+          begin
+             if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '1' then
+               Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '0'
+             else if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '0' then
+               Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '1';
+          end;
+      end;
+    end;
+  end;
+end;
+
+procedure TTreeFrame.tlCommonEditing(Sender: TObject;
+  Node: TdxTreeListNode; var Allow: Boolean);
+begin
+  Allow := Node.Values[(Sender as TdxTreeList).ColumnByName('TreeListEnabled').Index] = '1';
+end;
+
+end.

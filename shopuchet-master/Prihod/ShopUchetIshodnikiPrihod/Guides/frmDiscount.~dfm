@@ -1,0 +1,453 @@
+inherited DiscountForm: TDiscountForm
+  Left = 480
+  Top = 212
+  Caption = #1056#1077#1082#1074#1080#1079#1080#1090#1099' '#1072#1082#1094#1080#1080'/'#1089#1082#1080#1076#1082#1080
+  ClientHeight = 381
+  ClientWidth = 764
+  OnCreate = FormCreate
+  PixelsPerInch = 120
+  TextHeight = 18
+  inherited btnOk: TBitBtn
+    Left = 548
+    Top = 339
+  end
+  inherited btnCancel: TBitBtn
+    Left = 652
+    Top = 339
+  end
+  inherited Panel1: TPanel
+    Width = 738
+    Height = 326
+    object Shape12: TShape
+      Left = 10
+      Top = 278
+      Width = 228
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape16: TShape
+      Left = 235
+      Top = 246
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Shape14: TShape
+      Left = 10
+      Top = 246
+      Width = 226
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape10: TShape
+      Left = 10
+      Top = 174
+      Width = 228
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape7: TShape
+      Left = 10
+      Top = 141
+      Width = 228
+      Height = 34
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape5: TShape
+      Left = 10
+      Top = 77
+      Width = 227
+      Height = 34
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape19: TShape
+      Left = 10
+      Top = 109
+      Width = 228
+      Height = 34
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape1: TShape
+      Left = 10
+      Top = 45
+      Width = 227
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape2: TShape
+      Left = 10
+      Top = 13
+      Width = 227
+      Height = 33
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label2: TLabel
+      Left = 23
+      Top = 21
+      Width = 110
+      Height = 18
+      Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1072#1082#1094#1080#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape4: TShape
+      Left = 235
+      Top = 13
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label1: TLabel
+      Left = 23
+      Top = 53
+      Width = 124
+      Height = 18
+      Caption = #1050#1072#1090#1077#1075#1086#1088#1080#1103' '#1090#1086#1074#1072#1088#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape3: TShape
+      Left = 235
+      Top = 45
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label10: TLabel
+      Left = 23
+      Top = 117
+      Width = 132
+      Height = 18
+      Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072' '#1072#1082#1094#1080#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape20: TShape
+      Left = 235
+      Top = 109
+      Width = 219
+      Height = 34
+      Pen.Color = clBtnShadow
+    end
+    object Label3: TLabel
+      Left = 23
+      Top = 85
+      Width = 42
+      Height = 18
+      Caption = #1058#1086#1074#1072#1088
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape6: TShape
+      Left = 235
+      Top = 77
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label4: TLabel
+      Left = 23
+      Top = 149
+      Width = 124
+      Height = 18
+      Caption = #1044#1072#1090#1072' '#1082#1086#1085#1094#1072' '#1072#1082#1094#1080#1080
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape8: TShape
+      Left = 235
+      Top = 142
+      Width = 219
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Shape9: TShape
+      Left = 453
+      Top = 109
+      Width = 145
+      Height = 66
+      Pen.Color = clBtnShadow
+    end
+    object Label8: TLabel
+      Left = 23
+      Top = 252
+      Width = 67
+      Height = 18
+      Caption = #1057#1082#1080#1076#1082#1072' %'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Label5: TLabel
+      Left = 23
+      Top = 181
+      Width = 87
+      Height = 18
+      Caption = #1062#1077#1085#1072' '#1090#1086#1074#1072#1088#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape11: TShape
+      Left = 235
+      Top = 174
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object Label6: TLabel
+      Left = 23
+      Top = 285
+      Width = 164
+      Height = 18
+      Caption = #1057#1082#1080#1076#1082#1072' '#1074' '#1076#1077#1085'. '#1077#1076#1080#1085#1080#1094#1072#1093
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape13: TShape
+      Left = 235
+      Top = 278
+      Width = 491
+      Height = 33
+      Pen.Color = clBtnShadow
+    end
+    object sbClear: TSpeedButton
+      Left = 687
+      Top = 80
+      Width = 33
+      Height = 28
+      Hint = #1054#1095#1080#1089#1090#1080#1090#1100
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF000000FF00FF00FF00FF00FF00FF00FF000000
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF000000FF000000FF000000FF00FF00FF000000FF000000
+        FF000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF000000FF000000FF000000FF000000FF000000
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF000000FF000000FF000000FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF000000FF000000FF000000FF000000FF000000
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF000000FF000000FF000000FF00FF00FF000000FF000000
+        FF000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF000000FF00FF00FF00FF00FF00FF00FF000000
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = sbClearClick
+    end
+    object seSkidka: TdxCurrencyEdit
+      Left = 246
+      Top = 248
+      Width = 475
+      TabOrder = 5
+      Alignment = taRightJustify
+      OnChange = seSkidkaChange
+      DisplayFormat = '0.00'
+      StoredValues = 1
+    end
+    object edName: TdxEdit
+      Left = 246
+      Top = 16
+      Width = 474
+      TabOrder = 0
+      MaxLength = 100
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object deBegin: TcxDateEdit
+      Left = 246
+      Top = 112
+      Width = 199
+      Height = 26
+      Enabled = False
+      Properties.InputKind = ikMask
+      Style.BorderStyle = ebs3D
+      Style.ButtonStyle = bts3D
+      TabOrder = 1
+    end
+    object leTovarCategory: TdxLookupEdit
+      Left = 246
+      Top = 48
+      Width = 475
+      TabOrder = 2
+      OnChange = leTovarCategoryChange
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_PRODUCT'
+      ListSource = dsRead
+      LookupKeyValue = Null
+    end
+    object deEnd: TcxDateEdit
+      Left = 246
+      Top = 144
+      Width = 199
+      Height = 26
+      Enabled = False
+      Properties.InputKind = ikMask
+      Style.BorderStyle = ebs3D
+      Style.ButtonStyle = bts3D
+      TabOrder = 3
+    end
+    object ceConst: TdxCheckEdit
+      Left = 463
+      Top = 118
+      Width = 114
+      TabOrder = 4
+      Caption = #1040#1082#1094#1080#1103' '#1087#1086#1089#1090#1086#1103#1085#1085#1072
+      OnChange = ceConstChange
+      MultiLine = True
+      State = cbsChecked
+    end
+    object edPrice: TdxCurrencyEdit
+      Left = 246
+      Top = 177
+      Width = 475
+      Enabled = False
+      TabOrder = 6
+      Alignment = taRightJustify
+      DisplayFormat = ',0.00;-,0.00'
+      StoredValues = 1
+    end
+    object edSkidkaSum: TdxCurrencyEdit
+      Left = 246
+      Top = 282
+      Width = 475
+      Enabled = False
+      TabOrder = 7
+      Alignment = taRightJustify
+      OnChange = edSkidkaSumChange
+      DisplayFormat = ',0.00;-,0.00'
+      UseThousandSeparator = True
+      StoredValues = 1
+    end
+    object ceProcOrTenge: TdxCheckEdit
+      Left = 8
+      Top = 215
+      Width = 271
+      TabOrder = 8
+      Caption = #1057#1082#1080#1076#1082#1072' '#1074' '#1076#1077#1085#1077#1078#1085#1086#1081' '#1077#1076#1080#1085#1080#1094#1077
+      OnChange = ceProcOrTengeChange
+      MultiLine = True
+    end
+    object peTovar: TdxPopupEdit
+      Left = 246
+      Top = 80
+      Width = 434
+      TabOrder = 9
+      OnKeyPress = peTovarKeyPress
+      PopupControl = PopupTovListForm.pnlMain
+      OnCloseUp = peTovarCloseUp
+      OnInitPopup = peTovarInitPopup
+    end
+  end
+  inherited btHelp: TBitBtn
+    Top = 339
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE G_GET_G_DISCOUNT (?G_DISCOUNT_)')
+    StoredProcName = 'G_GET_G_DISCOUNT'
+    Left = 14
+    Top = 262
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_INS_G_DISCOUNT (?G_PRODUCT_PAR_, ?G_PRODUCT_' +
+        ', ?DATE_BEGIN_, ?DATE_END_, ?NAME_, ?SKIDKA_PROC_, ?SKIDKA_SUM_)')
+    StoredProcName = 'G_INS_G_DISCOUNT'
+    Left = 46
+    Top = 262
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      
+        'EXECUTE PROCEDURE G_UPD_G_DISCOUNT (?G_DISCOUNT_, ?G_PRODUCT_, ?' +
+        'G_PRODUCT_PAR_, ?DATE_BEGIN_, ?DATE_END_, ?NAME_, ?PRICE_, ?SKID' +
+        'KA_PROC_, ?SKIDKA_SUM_)')
+    StoredProcName = 'G_UPD_G_DISCOUNT'
+    Left = 78
+    Top = 262
+  end
+  object dsRead: TDataSource
+    DataSet = spRead
+    Left = 535
+    Top = 31
+  end
+  object spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_PRODCAT_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 496
+    Top = 32
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+end

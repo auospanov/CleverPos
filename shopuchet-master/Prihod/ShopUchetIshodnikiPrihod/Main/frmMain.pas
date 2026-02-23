@@ -1,0 +1,2512 @@
+unit frmMain;
+
+interface
+
+{$I ShopUchet.inc}
+
+
+uses HTMLHelpViewer, Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
+  Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, 
+  ActnList, mmSystem, Registry,  dxBar, AppEvnts,
+  FIB, cxPC, cxControls, cxSplitter,
+  {JCLDebug, }frmDlg,
+  unCommonFunc, DB, FIBDataSet, pFIBDataSet, FIBDatabase,
+  FIBQuery, unBackup, cxDropDownEdit,
+  frmCopyProgress, frmUpgradeDB, Variants, IdBaseComponent,
+  IdCoder, IdCoder3to4, IdCoderMIME, ActiveX, Comobj, Inifiles, unExportOperDataThread,
+  StdCtrls, pFIBQuery, unGetLicenceThread, dxSkinsCore, dxSkinBlack,
+  dxSkinBlue, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide,
+  dxSkinFoggy, dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
+  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
+  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
+  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
+  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
+  dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
+  dxSkinsdxBarPainter, cxClasses, VLLogFile, VLWindowsPanel, DateUtils, StrUtils,
+  System.Actions, System.UITypes;
+
+type
+  TMainForm = class(TForm)
+    dxBarManager: TdxBarManager;
+    dxBarPopupMenu: TdxBarPopupMenu;
+    dxBarButtonConnect: TdxBarButton;
+    dxBarButtonDisconnect: TdxBarButton;
+    dxBarSubItemDatabase: TdxBarSubItem;
+    dxBarButtonExit: TdxBarButton;
+    dxBarSubItemSetup: TdxBarSubItem;
+    dxBarButtonMinimizeAll: TdxBarButton;
+    dxBarButtonArrange: TdxBarButton;
+    dxBarButtonRestoreAll: TdxBarButton;
+    dxBarButtonCloseAll: TdxBarButton;
+    dxBarSubItemWindow: TdxBarSubItem;
+    dxBarListWindows: TdxBarListItem;
+    dxBarButtonAbout: TdxBarButton;
+    dxBarSubItemHelp: TdxBarSubItem;
+    dxBarButtonSetupSetup: TdxBarButton;
+    StatusBar: TStatusBar;
+    WindowsPanel: TVLWindowsPanel;
+    ApplicationEvents: TApplicationEvents;
+    pnlBottom: TPanel;
+    pmMenu: TPopupMenu;
+    pmMenuExpandNode: TMenuItem;
+    pmMenuCollapseNode: TMenuItem;
+    pmMenuDivider1: TMenuItem;
+    pmMenuExpand: TMenuItem;
+    pmMenuCollapse: TMenuItem;
+
+    alMain: TActionList;
+    aConnect: TAction;
+    aDisconnect: TAction;
+    aExit: TAction;
+    aSetupSetup: TAction;
+    aWindowRestoreAll: TAction;
+    aWindowCloseAll: TAction;
+    aWindowMinimizeAll: TAction;
+    aWindowArrange: TAction;
+    aHelpAbout: TAction;
+    lfMain: TVLLogFile;
+    aDiscount: TAction;
+    dxBarButton20: TdxBarButton;
+    aSaleMode: TAction;
+    dxBarButton21: TdxBarButton;
+    aRepSales: TAction;
+    dxBarButton22: TdxBarButton;
+    aLicense: TAction;
+    dxBarButton23: TdxBarButton;
+    dxBarSubItemKassa: TdxBarSubItem;
+    dxBarSubItemTorg: TdxBarSubItem;
+    dxBarSubItemRep: TdxBarSubItem;
+    dxBarSubItemArch : TdxBarSubItem;
+    dxBarSubItemGuide: TdxBarSubItem;
+    aKassaPrihod: TAction;
+    aKassaRashod: TAction;
+    aOstatok: TAction;
+    aPrihod: TAction;
+    aSale: TAction;
+    aSpisanie: TAction;
+    aReturn: TAction;
+    aRepProfit: TAction;
+    aPriceListRep: TAction;
+    aTovarMove: TAction;
+    aInvoicePay: TAction;
+    aInvoice: TAction;
+    aMyFirm: TAction;
+    aPriceList: TAction;
+    aClient: TAction;
+    aPostavshik: TAction;
+    aGPrihodRashod: TAction;
+    aOfficialList: TAction;
+    aImport: TAction;
+    aHelp: TAction;
+    dxBarButton24: TdxBarButton;
+    aGUnit: TAction;
+    dxBarButton25: TdxBarButton;
+    aZakazNaReal: TAction;
+    dxBarButton26: TdxBarButton;
+    aRepZakazNaReal: TAction;
+    dxBarButton27: TdxBarButton;
+    aRepRashProfit: TAction;
+    dxBarButton28: TdxBarButton;
+    aRepPrihod: TAction;
+    dxBarButton29: TdxBarButton;
+    aRepZatraty: TAction;
+    dxBarButton30: TdxBarButton;
+    aDenejMassa: TAction;
+    dxBarButton31: TdxBarButton;
+    aOstatokDeneg: TAction;
+    dxBarButton32: TdxBarButton;
+    aRepOstatkiTovarov: TAction;
+    dxBarButton33: TdxBarButton;
+    aRevision: TAction;
+    dxBarButton34: TdxBarButton;
+    dxBarSubItemServ: TdxBarSubItem;
+    aWayBill: TAction;
+    dxBarButton35: TdxBarButton;
+    aSync: TAction;
+    dxBarButton36: TdxBarButton;
+    aRepDiscCard: TAction;
+    dxBarButton38: TdxBarButton;
+    aRepTovarHis: TAction;
+    dxBarButton37: TdxBarButton;
+    sbSklad: TdxBarSubItem;
+    dxBarButton41: TdxBarButton;
+    aUhodSklad: TAction;
+    dxBarButton50: TdxBarButton;
+    aPrihodSklad: TAction;
+    dxBarButton39: TdxBarButton;
+    aOstatokReal: TAction;
+    dxBarButton40: TdxBarButton;
+    aExportOperData: TAction;
+    dxbrbtn1: TdxBarButton;
+    aProduction: TAction;
+    dxbrbtn2: TdxBarButton;
+    aPkoList: TAction;
+    dxbrbtn3: TdxBarButton;
+    dxbrbtn4: TdxBarButton;
+    dxbrbtn5: TdxBarButton;
+    aAktList: TAction;
+    aDoverkaList: TAction;
+    aSetNewPrices: TAction;
+    dxbrbtn6: TdxBarButton;
+    aPredzakaz: TAction;
+    dxbrbtn7: TdxBarButton;
+    aReturnPostavshik: TAction;
+    dxbrbtn8: TdxBarButton;
+    aRepAktSverki: TAction;
+    dxbrbtn9: TdxBarButton;
+    aRepSalesCategory: TAction;
+    dxbrbtn10: TdxBarButton;
+    aRepSalesNakl: TAction;
+    dxbrbtn11: TdxBarButton;
+    aRepSalesTovary: TAction;
+    dxbrbtn12: TdxBarButton;
+    aRepProfitShort: TAction;
+    dxbrbtn13: TdxBarButton;
+    aImportData: TAction;
+    aRepKassir: TAction;
+    dxbrbtn14: TdxBarButton;
+    aSendSmsList: TAction;
+    dxbrbtn15: TdxBarButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dxBarListWindowsGetData(Sender: TObject);
+    procedure dxBarListWindowsClick(Sender: TObject);
+    procedure aWindowRestoreAllExecute(Sender: TObject);
+    procedure aWindowCloseAllExecute(Sender: TObject);
+    procedure aWindowMinimizeAllExecute(Sender: TObject);
+    procedure aWindowArrangeExecute(Sender: TObject);
+    procedure aHelpAboutExecute(Sender: TObject);
+    procedure aExitExecute(Sender: TObject);
+    procedure aConnectExecute(Sender: TObject);
+    procedure aDisconnectExecute(Sender: TObject);
+    procedure aWindowRestoreAllUpdate(Sender: TObject);
+    procedure aWindowCloseAllUpdate(Sender: TObject);
+    procedure aWindowMinimizeAllUpdate(Sender: TObject);
+    procedure aWindowArrangeUpdate(Sender: TObject);
+    procedure aSetupSetupExecute(Sender: TObject);
+
+    procedure aWindowTileHorizontalExecute(Sender: TObject);
+    procedure aPriceListExecute(Sender: TObject);
+    procedure aClientExecute(Sender: TObject);
+    procedure aPrihodExecute(Sender: TObject);
+    procedure aSaleExecute(Sender: TObject);
+    procedure aRepProfitExecute(Sender: TObject);
+    procedure aGPrihodRashodExecute(Sender: TObject);
+    procedure aKassaPrihodExecute(Sender: TObject);
+    procedure aKassaRashodExecute(Sender: TObject);
+    procedure aOstatokExecute(Sender: TObject);
+    procedure aImportExecute(Sender: TObject);
+    procedure aSpisanieExecute(Sender: TObject);
+    procedure aReturnExecute(Sender: TObject);
+    procedure aPostavshikExecute(Sender: TObject);
+    procedure aMyFirmExecute(Sender: TObject);
+    procedure aOfficialListExecute(Sender: TObject);
+    procedure aInvoicePayExecute(Sender: TObject);
+    procedure aInvoiceExecute(Sender: TObject);
+    procedure aPriceListRepExecute(Sender: TObject);
+    procedure aTovarMoveExecute(Sender: TObject);
+    procedure aDiscountExecute(Sender: TObject);
+    procedure aSaleModeExecute(Sender: TObject);
+    procedure aRepSalesExecute(Sender: TObject);
+    procedure aLicenseExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+    procedure aGUnitExecute(Sender: TObject);
+    procedure aZakazNaRealExecute(Sender: TObject);
+    procedure aRepZakazNaRealExecute(Sender: TObject);
+    procedure aOstatokDenegExecute(Sender: TObject);
+    procedure aRevisionExecute(Sender: TObject);
+    procedure aRepPrihodExecute(Sender: TObject);
+    procedure aWayBillExecute(Sender: TObject);
+    procedure aSyncExecute(Sender: TObject);
+    procedure aRepDiscCardExecute(Sender: TObject);
+    procedure aRepTovarHisExecute(Sender: TObject);
+    procedure SetSklad(Sender: TObject);
+    procedure aUhodSkladExecute(Sender: TObject);
+    procedure aPrihodSkladExecute(Sender: TObject);
+    procedure aOstatokRealExecute(Sender: TObject);
+    procedure aExportOperDataExecute(Sender: TObject);
+    procedure aProductionExecute(Sender: TObject);
+    procedure aPkoListExecute(Sender: TObject);
+    procedure aAktListExecute(Sender: TObject);
+    procedure aDoverkaListExecute(Sender: TObject);
+    procedure aSetNewPricesExecute(Sender: TObject);
+    procedure aPredzakazExecute(Sender: TObject);
+    procedure aReturnPostavshikExecute(Sender: TObject);
+    procedure aRepAktSverkiExecute(Sender: TObject);
+    procedure aRepSalesCategoryExecute(Sender: TObject);
+    procedure aRepSalesNaklExecute(Sender: TObject);
+    procedure aRepSalesTovaryExecute(Sender: TObject);
+    procedure aImportDataExecute(Sender: TObject);
+    procedure aRepKassirExecute(Sender: TObject);
+    procedure aSendSmsListExecute(Sender: TObject);
+  private
+    Backup : TBackup;
+    FBackupPeriod : Integer; // 0 - каждый день, 1 - каждую неделю, 2 - раз в месяц, 3 - никогда
+    FDoBackupOnStart : Integer; // 1 - при входе в программу, 0 - при выходе из нее
+    FLastBackpDate : TDate;
+    FSuccessUpd : Boolean;   // было ли обновление успешным
+    FHaveRightSetup : Integer;  // Меню Настройки, вкладка "Общее" содержит настроки, которые должен задавать только АДМИН, но воздействовать отсюда я на нее не могу потому, сделаю глобальную переменную, и если прав на нее нет, то 0
+    ExpThread: TExportDataThread;
+
+    function  DoUpgradeDB : boolean;
+    function  DoLogonActions : boolean;
+    procedure GetSetupParams;
+    procedure SetMDIClientSize(Child: TForm);
+    procedure SetConnectActions(Connected: Boolean);
+
+    procedure CloseAllDialogs;
+    procedure CloseAllDlgDialogs(Dlg: TDlgForm);
+
+    procedure WMConnect(var Message: TMessage); message WM_CONNECT;
+    procedure WMDisconnect(var Message: TMessage); message WM_DISCONNECT;
+    procedure WMCloseAllDialogs(var Message: TMessage); message WM_CLOSEALLDIALOGS;
+
+    procedure WMSetupChanged(var Message: TMessage); message WM_SETUPCHANGED;
+    procedure WMAutoSizeForm(var Message: TMessage); message WM_AUTOSIZEFORM;
+    procedure WMReportWorkBookClosed(var Message: TMessage); message WM_REPORTWORKBOOKCLOSED;
+  public
+    procedure ShowHint(Sender: TObject);
+  end;
+
+const
+  MinMenuPanelWidth = 20;
+
+var
+  MainForm: TMainForm;
+  UpgradeDBForm1: TUpgradeDBForm;
+
+implementation
+
+{$R *.DFM}
+
+uses
+  dmMain, unDBSupport, frmAbout, frmSetup, unInitApp,
+  frmDBEdit, frmMDIChild,
+  dmReports, frmPriceList, frmClientList, frmPrihodTovaraList, frmProdazhaTovaraList,
+  frmRashodPrihodList, frmKassaList, frmKassaOstatok,
+  frmFirmRekvizit,
+  frmOfficialList, frmInvoicePayList, frmInvoiceList,
+  frmPriceListRepFilter, frmDiscountList,
+  frmSaleMode, frmLicense, unSupport, frmGUnitList,
+  frmZakazNaRealList, frmRevision,
+  frmClientDateFilter, frmWayBillList, frmSync, unInfo, 
+  frmDBList, frmDBMultiPageList, frmDBMultiPageTreeList, frmDBTreeList,
+  frmImportB, frmExportOperData, frmProductionList, frmDocList, frmUpgradeDBLast, frmSendSms;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  Application.OnHint := ShowHint;
+  Application.HintHidePause := 5000;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  SetThreadLocale(1049);//ставлю русский локейл по умолчанию
+
+  Left := 0;
+  Top := 0;
+  Height := Screen.Height;
+  Width := Screen.Width;
+  WindowState := wsMaximized;
+  FSuccessUpd := True;
+
+  aDisconnect.Execute;
+  SetConnectActions(False);
+
+  {Загружаем параметры}
+  GetSetupParams;
+
+  {$IFDEF WRITELOG}
+  with MainDM.MainLogFile do begin
+    AppName := AppTitle;
+    LogFileName := ChangeFileExt(Application.ExeName, '.lg');
+    try
+      Open;
+      if Active then
+        WriteLog('Начало работы приложения', True);
+    except
+    end;
+  end;
+  {$ENDIF WRITELOG}
+
+  IsActivated := 1;     //почему-то на виртуалке процесс получения инфо о лицензии занимает определенное время, поэтому тут буду сразу ставить, а потом переопределять
+  with TGetLicenceThread.Create do begin
+    FreeOnTerminate := True;
+    Priority := tpLower;
+    //Resume;
+  end;
+
+  PostMessage(Self.Handle, WM_CONNECT, 0, 0);
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  {$IFDEF WRITELOG}
+  with MainDM.MainLogFile do
+    if Active then begin
+      WriteLog('Завершение работы приложения', True);
+      Close;
+    end;
+  {$ENDIF WRITELOG}
+end;
+
+procedure TMainForm.GetSetupParams;
+var
+  Reg: TRegistry;
+  ToolbarStyle: Integer;
+  MenuFontName: String;
+  MenuFontSize: Integer;
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  try
+    Reg := TRegistry.Create;
+    try
+      with Reg do begin
+        RootKey := RegSetupRoot;
+        LazyWrite := False;  {Сохраняем ключи до закрытия}
+        if OpenKey(RegSetupKey, True) then
+          try
+            {Внешний вид и поведение}
+            {----------------------------}
+            if ValueExists('ToolbarStyle') then
+              ToolbarStyle := ReadInteger('ToolbarStyle')
+            else begin
+              ToolbarStyle := integer(bmsEnhanced);
+              WriteInteger('ToolbarStyle', ToolbarStyle);
+            end;
+            dxBarManager.Style := TdxBarManagerStyle(ToolbarStyle);
+
+            {----------------------------}
+            if ValueExists('MenuFontName') then
+              MenuFontName := ReadString('MenuFontName')
+            else begin
+              MenuFontName := 'Tahoma';
+              WriteString('MenuFontName', MenuFontName);
+            end;
+            dxBarManager.Bars[0].Font.Name := MenuFontName;
+            {----------------------------}
+            if ValueExists('MenuFontSize') then
+              MenuFontSize := ReadInteger('MenuFontSize')
+            else begin
+              MenuFontSize := 9;
+              WriteInteger('MenuFontSize', MenuFontSize);
+            end;
+            dxBarManager.Bars[0].Font.Size := MenuFontSize;
+            {----------------------------}
+
+            {Папка для хранения ключа}
+            {if ValueExists('LicenseKeyPath') then
+              LicenseKeyPath := ReadString('LicenseKeyPath')
+            else begin}
+              LicenseKeyPath := ExtractFilePath(Application.exename) + 'License.dat';
+              WriteString('LicenseKeyPath', LicenseKeyPath);
+            //end;
+
+            {Папка для хранения копии БД}
+            if ValueExists('BackupDir') then
+              BackupDir := ReadString('BackupDir')
+            else begin
+              BackupDir := ExtractFilePath(Application.exename) + 'Backup\';
+              WriteString('BackupDir', BackupDir);
+            end;
+
+            {Периодичность создания копии БД}
+            if ValueExists('BackupPeriod') then
+              FBackupPeriod := ReadInteger('BackupPeriod')
+            else begin
+              FBackupPeriod := 0;
+              WriteInteger('BackupPeriod', FBackupPeriod);
+            end;
+
+            {Когда делать копию БД - при входе в программу (1), или при выходе (0)}
+            if ValueExists('DoBackupOnStart') then
+              FDoBackupOnStart := ReadInteger('DoBackupOnStart')
+            else begin
+              FDoBackupOnStart := 0;
+              WriteInteger('DoBackupOnStart', FDoBackupOnStart);
+            end;
+
+            {Когда была последняя копия БД}
+            if ValueExists('LastBackpDate') then
+              FLastBackpDate := StrtoDate(ReadString('LastBackpDate'))
+            else
+              FLastBackpDate := Date;
+
+            {Валюта }
+            if ValueExists('Currency') then
+              CurrencyVal := ReadInteger('Currency')
+            else begin
+              CurrencyVal := 0;
+              WriteInteger('Currency', CurrencyVal);
+            end;
+
+            {Продавать товары с нулевым остатком или нет 0 - нет, 1 - да}
+            if ValueExists('AllowSellAbsentGoods') then
+              AllowSellAbsGoods := ReadInteger('AllowSellAbsentGoods')
+            else begin
+              AllowSellAbsGoods := 0;
+              WriteInteger('AllowSellAbsentGoods', AllowSellAbsGoods);
+            end;
+
+            {Режим нескольких фирм 0 - нет, 1 - да}
+            if ValueExists('ManyFirm') then
+              ManyFirm := ReadInteger('ManyFirm')
+            else begin
+              ManyFirm := 0;
+              WriteInteger('ManyFirm', ManyFirm);
+            end;
+
+            {предупреждать о добавлении товара с нулевой ценой при продаже, 0 - нет, 1 - да}
+            if ValueExists('NotifyNol') then
+              NotifyNol := ReadInteger('NotifyNol')
+            else begin
+              NotifyNol := 1;
+              WriteInteger('NotifyNol', NotifyNol);
+            end;
+
+            {показывать предварительное окно с количеством товара в режиме кассира 0 - нет, 1 - да}
+            if ValueExists('ShowSaleDlg') then
+              ShowSaleDlg := ReadInteger('ShowSaleDlg')
+            else begin
+              ShowSaleDlg := 0;
+              WriteInteger('ShowSaleDlg', ShowSaleDlg);
+            end;
+
+            {показывать закупочные цены в режиме кассира 0 - нет, 1 - да}
+            if ValueExists('ShowCostPrice') then
+              ShowCostPrice := ReadBool('ShowCostPrice')
+            else begin
+              ShowCostPrice := False;
+              WriteBool('ShowCostPrice', ShowCostPrice);
+            end;
+
+            {не суммировать товары, а добавлять каждый товар новой строкой. 0 - нет, 1 - да}
+            if ValueExists('NewLineSale') then
+              NewLineSale := ReadInteger('NewLineSale')
+            else begin
+              NewLineSale := 0;
+              WriteInteger('NewLineSale', NewLineSale);
+            end;
+
+            {искать по полю "Место на складе" во всех режимах 0 - нет, 1 - да}
+            if ValueExists('UseTovarPlace') then
+              UseTovarPlace := ReadInteger('UseTovarPlace')
+            else begin
+              UseTovarPlace := 0;
+              WriteInteger('UseTovarPlace', UseTovarPlace);
+            end;
+
+            {использовать валюту в приходе 0 - нет, 1 - да}
+            if ValueExists('UseCurrency') then
+              UseCurrency := Readbool('UseCurrency')
+            else begin
+              UseCurrency := false;
+              WriteBool('UseCurrency', UseCurrency);
+            end;
+
+            {использовать весы со штрихкодом 0 - нет, 1 - да}
+            if ValueExists('UseScales') then
+              UseScales := ReadInteger('UseScales')
+            else begin
+              UseScales := 0;
+              WriteInteger('UseScales', UseScales);
+            end;
+
+            {префикс весового штрихкода}
+            if ValueExists('ScalesPrefix') then
+              ScalesPrefix := ReadString('ScalesPrefix')
+            else begin
+              ScalesPrefix := '29';
+              WriteString('ScalesPrefix', ScalesPrefix);
+            end;
+
+            {Принтер для печати чеков и ширина чековой ленты}
+            if ValueExists('BillPrinterName') then
+              BillPrinter := ReadString('BillPrinterName')
+            else begin
+              BillPrinter := '';
+              WriteString('BillPrinterName', BillPrinter);
+            end;
+            if ValueExists('BillWidth') then
+              BillWidth := ReadInteger('BillWidth')
+            else begin
+              BillWidth := 0;
+              WriteInteger('BillWidth', BillWidth);
+            end;
+            if ValueExists('BillSdvig') then
+              BillSdvig := ReadInteger('BillSdvig')
+            else begin
+              BillWidth := 0;
+              WriteInteger('BillSdvig', BillSdvig);
+            end;
+            if ValueExists('BillSlogan') then
+              BillSlogan := ReadString('BillSlogan')
+            else begin
+              BillSlogan := 'автоматизировано при помощи Shopuchet.kz';
+              WriteString('BillSlogan', BillSlogan);
+            end;
+
+            // конфигурация магазина
+            if ValueExists('Config') then begin
+              Config := ReadInteger('Config');
+            end else begin
+              Config := 0;
+              WriteInteger('Config', Config);
+            end;
+
+            {Сетевой режим}
+            if ValueExists('YesNetwork') then
+              YesNetwork := ReadInteger('YesNetwork')
+            else begin
+              YesNetwork := 0;
+            end;
+            if ValueExists('ServerName') then
+              ServerName := ReadString('ServerName')
+            else begin
+              ServerName := '';
+            end;
+            {----------------------------}
+          finally
+            CloseKey;
+          end;
+      end;
+    finally
+      Reg.Free;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message + #13#10'(occured in TMainForm.GetSetupParams)', mtError, [mbOk], 0);
+  end;
+
+  IsDebugHook := DebugHook;
+
+  //ЧИТАЮ ТО ЧТО НАХОДИТСЯ В INI-FILE
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    //Cетевой режим, т.к. раньше сетевой режим хранился в реестре, то вверху читаю сначала реестр
+    //а затем тут буду проверять, если не заполнено - то проверю здесь еще
+    if YesNetwork = 0 then begin
+      YesNetwork := Ini.ReadInteger('NetworkSettings', 'YesNetwork', 0);
+      ServerName := Ini.ReadString('NetworkSettings', 'ServerName', '');
+    end;
+
+    //выгрузка оперативных данных
+    ExportDataType := Ini.ReadString('ExportOperData', 'DataType', '0000');
+    if Length(ExportDataType) < 4 then   // для совместимости со старыми версиями
+      ExportDataType := '0000';
+
+    ExportPath     := Ini.ReadString('ExportOperData', 'ExportPath', '');
+    case Ini.ReadInteger('ExportOperData', 'cbTime', 0) of
+      0 : ExportInterval := 0;
+      1 : ExportInterval := 1;
+      2 : ExportInterval := 900000;  // 15 min
+      3 : ExportInterval := 1800000; // 30 min
+      4 : ExportInterval := 2700000; // 45 min
+      5 : ExportInterval := 3600000; // 60 min
+      6 : ExportInterval := 7200000; // 2 hour
+      7 : ExportInterval := 10800000; // 3 hour
+      8 : ExportInterval := 14400000; // 4 hour
+    end;
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TMainForm.FormResize(Sender: TObject);
+var
+ i: Integer;
+begin
+  //aWindowTileHorizontal.Execute; Не надо! Плохо получается с большим количеством окон обработчиков
+  ArrangeIcons;
+  SelfHeight := ClientHeight -
+    (dxBarManager.MainMenuControl.Height + dxBarManager.Bars.DockControls[dsTop].Height +
+     WindowsPanel.Height);
+  SelfWidth := ClientWidth - 5;
+
+  for i := MDIChildCount - 1 downto 0 do begin
+    if MDIChildren[i] is TMDIChildForm then
+      if (MDIChildren[i] as TMDIChildForm).AutoSizeEnabled then begin
+         MDIChildren[i].Left := 0;
+         MDIChildren[i].Top := 0;
+         MDIChildren[i].Height := SelfHeight;
+         MDIChildren[i].Width := SelfWidth;
+      end;
+  end;
+end;
+
+procedure TMainForm.ShowHint(Sender: TObject);
+begin
+  StatusBar.Panels[0].Text := Application.Hint;
+end;
+
+procedure TMainForm.SetMDIClientSize(Child: TForm);
+begin
+  SelfHeight := ClientHeight -
+    (dxBarManager.MainMenuControl.Height + dxBarManager.Bars.DockControls[dsTop].Height +
+     WindowsPanel.Height);
+  //SelfWidth := ClientWidth - 5 - (pnlMenu.Width + splMenu.Width);
+
+   if Child is TMDIChildForm then
+     if (Child as TMDIChildForm).AutoSizeEnabled then begin
+      Child.Left := 0;
+      Child.Top := 0;
+      Child.Height := SelfHeight;
+      Child.Width := SelfWidth;
+    end;
+end;
+
+procedure TMainForm.WMAutoSizeForm(var Message: TMessage);
+begin
+ SetMDIClientSize(self.ActiveMDIChild);
+end;
+
+procedure TMainForm.WMReportWorkBookClosed(var Message: TMessage);
+begin
+end;
+
+procedure TMainForm.WMConnect(var Message: TMessage);
+begin
+  aDisconnect.Execute;
+  aConnect.Execute;
+end;
+
+procedure TMainForm.WMDisconnect(var Message: TMessage);
+begin
+  aDisconnect.Execute;
+end;
+
+procedure TMainForm.WMCloseAllDialogs(var Message: TMessage);
+begin
+  CloseAllDialogs;
+end;
+
+procedure TMainForm.CloseAllDialogs;
+var
+  i : integer;
+  j : integer;
+begin
+  {Закрываем диалоги, непосредственно вызванные из MainForm}
+  for i := Self.ComponentCount - 1 downto 0 do
+    if Self.Components[i] is TDlgForm then
+      CloseAllDlgDialogs(Self.Components[i] as TDlgForm);
+
+  {Закрываем диалоги, вызванные из MDIChild-форм}
+  for i := MDIChildCount - 1 downto 0 do
+    for j := MDIChildren[i].ComponentCount - 1 downto 0 do
+      if MDIChildren[i].Components[j] is TDlgForm then
+        CloseAllDlgDialogs(MDIChildren[i].Components[j] as TDlgForm);
+end;
+
+procedure TMainForm.CloseAllDlgDialogs(Dlg: TDlgForm);
+var
+  i : integer;
+begin
+  {Рекурсивная процедура удаления всех диалогов, вызванных в данном}
+  for i := Dlg.ComponentCount - 1 downto 0 do
+    if Dlg.Components[i] is TDlgForm then
+      CloseAllDlgDialogs(Dlg.Components[i] as TDlgForm);
+
+  Dlg.Close;
+end;
+
+{==============================================================================}
+{                             Меню "База данных"                               }
+{==============================================================================}
+procedure TMainForm.aConnectExecute(Sender: TObject);
+var
+  Connected: Boolean;
+  DoBackup : integer;
+begin
+  if MainDM.dbMain.Connected then
+    {Уже подключены к БД}
+    Exit;
+
+  {Подключаемся к БД}
+  Connected := unDBSupport.ConnectToFB(MainDM.dbMain, '');
+
+  if not Connected then
+    Exit;
+
+  IF DoUpgradeDB THEN BEGIN
+    SetConnectActions(Connected);
+
+    if not DoLogonActions then begin
+      aDisconnect.Execute;
+      EXIT;
+    end;
+
+    //создаем бэкап базы, делаю в зависимости от настроек - при входе или при выходе
+    //И ТОЛЬКО ЕСЛИ НЕ СЕТЕВОЙ РЕЖИМ, ПРИ СЕТЕВОМ - БЭКАП ПУСТЬ ДЕЛАЕТ ПРОГРАММА НА КОМПЬЮТЕРЕ СЕРВЕРЕ, Т.К. У НЕГО ВСЕГДА БУДЕТ YESNETWORK = 0
+    DoBackup := 0;
+    IF (FDoBackupOnStart = 1) and (YesNetwork = 0) THEN BEGIN
+      // делаю ежедневно
+      if FBackupPeriod = 0 then
+        DoBackup := 1
+
+      // делаю раз в неделю, причем делать буду так - беру дату последней копии, если больше 7 дней прошло, значит надо делать
+      // также если копия была сделана сегодня - перезаписываю
+      else if FBackupPeriod = 1 then begin
+        if ((Date - FLastBackpDate) > 7) or (Date = FLastBackpDate) then
+          DoBackup := 1;
+
+      //делаю раз в месяц, причем делать буду так - беру дату последней копии, если больше 30 дней прошло, значит надо делать
+      // также если копия была сделана сегодня - перезаписываю
+      end else if FBackupPeriod = 2 then begin
+        if ((Date - FLastBackpDate) > 30) or (Date = FLastBackpDate) then
+          DoBackup := 1;
+      end;
+
+      if DoBackup = 1 then begin
+        Backup := TBackup.Create(BackupDir);
+        Backup.FreeOnTerminate := true;
+      end;
+    END;
+
+    {Играем "туш"}
+    PlaySound(PChar('Connect.wav'), 0, SND_FILENAME or SND_ASYNC);
+
+  	{Возвращает значения настроек БД, которые спрятаны в таблице G_Firm_Rekvizit, пока только значение НДС}
+  	GetBDSettings;
+
+    //если включена интервальная выгрузка данных, то запускаю поток
+    if ExportInterval > 1 then
+      ExpThread := TExportDataThread.Create;
+
+    if (IsDebugHook = 0) and (aSaleMode.Enabled) then
+      aSaleMode.Execute;  //сразу открываю режим продавца, только если это не отладка
+  END
+  ELSE BEGIN
+    if MainDM.dbMain.Connected then
+      DisconnectFromFB(MainDM.dbMain);
+    EXIT;
+  END;
+end;
+
+function TMainForm.DoUpgradeDB : boolean;
+var
+  VersCurr, LastUpgradeVers : integer;    // версия екзешника
+  LastUpgradeVersStr : string;
+  Connected : Boolean;
+  NeedToUpgrade : Integer;    //0 - не обновлять, 1 - обновлять и записать, 2 - записать версию
+  UpgradeDBLastForm: TUpgradeDBLastForm;
+begin
+  Result := true;
+
+  // Проверка новых версий ТОЛЬКО В ТОМ СЛУЧАЕ, ЕСЛИ ЗАПУЩЕНО НЕ ПОД IDE, т.е. при отладке,
+  //И ТОЛЬКО ЕСЛИ НЕ СЕТЕВОЙ РЕЖИМ, ПРИ СЕТЕВОМ - ОБНОВЛЯТЬСЯ БУДЕТ ТОЛЬКО ПРОГРАММА НА КОМПЬЮТЕРЕ СЕРВЕРЕ, Т.К. У НЕГО ВСЕГДА БУДЕТ YESNETWORK = 0
+  IF (IsDebugHook = 0) AND (YESNETWORK = 0) THEN BEGIN
+    NeedToUpgrade := 0;
+
+    VersCurr := CurrAppVers;
+
+    try
+      LastUpgradeVersStr := GetSystemSetup(3);
+    except
+      on E:Exception do begin
+        MessageDlg(E.Classname + ':' + E.Message, mtError, [mbOK], 0);
+        Result := False;
+      end;
+    end;
+
+    // раньше версия хранилась в реестре, теперь хранится в самой базе. Итого будет 4 случая:
+    // 2) Есть версия в базе, LastUpgradeVers <> 0, но при этом  LastUpgradeVers <  VersCurr - требуется обновление
+    // 3) Человек впервые скачал программу, LastUpgradeVers = 0, обновление не требуется, но нужно записать текущую версию
+    LastUpgradeVers := StrToInt(LastUpgradeVersStr);
+    if ((LastUpgradeVers < VersCurr) or (StrToInt(Copy(IntToStr(LastUpgradeVers), 1, 2)) < StrToInt(Copy(IntToStr(VersCurr), 1, 2)))) and (LastUpgradeVers <> 0) then
+      NeedToUpgrade := 1              // 2-ой случай
+
+    else if (LastUpgradeVers = 0) then
+      NeedToUpgrade := 2;             //3-ий случай
+
+    IF NeedToUpgrade = 1 THEN BEGIN
+      if LastUpgradeVers < 11022 then begin   // начиная с этой версии новый принцип обновления
+          DisconnectFromFB(MainDM.dbMain);      // придется тут отключиться от базы, после успешного завершения снова подключиться
+      
+          UpgradeDBForm1 := TUpgradeDBForm.Create(Self);
+          try
+            try
+              UpgradeDBForm1.FLastUpdateVers := LastUpgradeVers;
+              UpgradeDBForm1.ShowModal;
+              FSuccessUpd := UpgradeDBForm1.SuccessUpd;
+            except
+              Result := False;
+            end;
+          finally
+            UpgradeDBForm1.Free;
+          end;
+
+          if not FSuccessUpd then begin
+            MessageDlg('База данных не обновлена. Запуск приложения невозможен!', mtConfirmation, [mbOk], 0);
+            Result := False;
+          end else begin
+            Connected := unDBSupport.ConnectToFB(MainDM.dbMain, '');
+            if not Connected then begin
+              Result := False;
+              Exit;
+            end;
+          end;
+      end else  begin
+        DeleteFile('SALONUCHET_ETALON.FDB');
+        FSuccessUpd := True;
+      end;
+
+      // обновление по новому пути
+      if FSuccessUpd then begin
+        UpgradeDBLastForm := TUpgradeDBLastForm.Create(Self);
+        try
+          UpgradeDBLastForm.FLastVers := LastUpgradeVers;
+          UpgradeDBLastForm.ShowModal;
+          FSuccessUpd := UpgradeDBLastForm.SuccessUpd;
+        finally
+          UpgradeDBLastForm.Free;
+        end;
+
+        if not FSuccessUpd then begin
+          DisconnectFromFB(MainDM.dbMain);
+          MessageDlg('База данных не обновлена. Запуск приложения невозможен!', mtConfirmation, [mbOk], 0);
+          Result := False;
+        end;
+      end;
+    END ELSE
+      DeleteFile(DataBaseEtalonName);
+
+    if (NeedToUpgrade in [1,2]) and (MainDM.dbMain.Connected) and (Result = True) then
+      SetSystemSetup(3, IntToStr(VersCurr));
+  END;
+end;
+
+procedure TMainForm.SetConnectActions(Connected: Boolean);
+VAR I : Integer;
+begin
+  aConnect.Enabled := not Connected;
+  aDisconnect.Enabled := Connected;
+  aLicense.Enabled := Connected;
+  dxBarSubItemKassa.Enabled := False;
+  dxBarSubItemTorg.Enabled := False;
+  dxBarSubItemRep.Enabled := False;
+  dxBarSubItemArch.Enabled := False;
+  dxBarSubItemGuide.Enabled := False;
+  dxBarSubItemServ.Enabled := False;
+  dxBarSubItemKassa.Visible := ivNever;
+  dxBarSubItemTorg.Visible := ivNever;
+  dxBarSubItemRep.Visible := ivNever;
+  dxBarSubItemArch.Visible := ivNever;
+  dxBarSubItemGuide.Visible := ivNever;
+  dxBarSubItemServ.Visible := ivNever;
+  aUhodSklad.Tag := 0;
+  aPrihodSklad.Tag := 0;
+  aProduction.Tag := 0;
+  sbSklad.Tag := 0;
+  FHaveRightSetup := 0;
+
+  IF NOT Connected THEN BEGIN
+    FOR I := sbSklad.ItemLinks.Count - 1 DOWNTO 0 DO
+      sbSklad.ItemLinks[I].Item.Free;
+
+    SetLength(SkladArr,0);
+  END;
+end;
+
+function TMainForm.DoLogonActions : Boolean;
+var
+  RightsArr : TRightsArr;
+  Count : Integer;
+  unNewButton : TdxBarButton;
+  I, CurSkladIndex : Integer;
+begin
+  Result := False;
+
+  if not ShowLogonDlg(Count) then
+    Exit;
+
+  if Count > 1 then begin
+    FHaveRightSetup := 0;
+    //ПРАВА ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+    //Читаем список прав текущего должностного лица
+    ReadCurrOfficRights(RightsArr);
+
+    //какие права на редактирование накладных есть
+    HaveRightInsSale := IsHaveAnyRight([61], RightsArr);
+    HaveRightUpdSale := IsHaveAnyRight([62], RightsArr);
+    HaveRightDelSale := IsHaveAnyRight([63], RightsArr);
+    HaveRightInsPrihod := IsHaveAnyRight([57], RightsArr);
+    HaveRightUpdPrihod := IsHaveAnyRight([58], RightsArr);
+    HaveRightDelPrihod := IsHaveAnyRight([59], RightsArr);
+
+    HaveRightToSeeAmount := IsHaveAnyRight([103], RightsArr);
+    HaveRightToSeeOpt    := IsHaveAnyRight([104], RightsArr);
+    HaveRightToSeeCostPrice := IsHaveAnyRight([105], RightsArr);
+
+    // Меню Касса
+    if IsHaveAnyRight([8, 9, 10], RightsArr) then begin
+      dxBarSubItemKassa.Enabled := True;
+      dxBarSubItemKassa.Visible := ivAlways;
+      aKassaPrihod.Enabled   := IsHaveRight(8, RightsArr);
+      aKassaPrihod.Visible   := aKassaPrihod.Enabled;
+      aKassaRashod.Enabled   := IsHaveRight(9, RightsArr);
+      aKassaRashod.Visible   := aKassaRashod.Enabled;
+      aOstatok.Enabled   := IsHaveRight(10, RightsArr);
+      aOstatok.Visible   := aOstatok.Enabled;
+    end;
+
+    // Меню Торговля
+    if IsHaveAnyRight([11, 56, 60, 14, 15, 16, 44, 45, 50, 64], RightsArr) then begin
+      dxBarSubItemTorg.Enabled := True;
+      dxBarSubItemTorg.Visible := ivAlways;
+      aSaleMode.Enabled   := IsHaveRight(11, RightsArr);
+      aSaleMode.Visible   := aSaleMode.Enabled;
+      aPrihod.Enabled   := IsHaveRight(56, RightsArr);
+      aPrihod.Visible   := aPrihod.Enabled;
+      aSale.Enabled   := IsHaveRight(60, RightsArr);
+      aSale.Visible   := aSale.Enabled;
+      aSpisanie.Enabled   := IsHaveRight(14, RightsArr);
+      aSpisanie.Visible   := aSpisanie.Enabled;
+      aReturn.Enabled   := IsHaveRight(15, RightsArr);
+      aReturn.Visible   := aReturn.Enabled;
+      aZakazNaReal.Enabled   := IsHaveRight(16, RightsArr);
+      aZakazNaReal.Visible   := aZakazNaReal.Enabled;
+      aReturnPostavshik.Enabled   := IsHaveRight(64, RightsArr);
+      aReturnPostavshik.Visible   := aReturnPostavshik.Enabled;
+
+      if IsHaveRight(50, RightsArr) then
+        aProduction.Tag := 1;
+      aProduction.Enabled   := (aProduction.Tag = 1) and (Config = 3);
+      aProduction.Visible   := aProduction.Enabled;
+
+      if IsHaveRight(44, RightsArr) then
+        aUhodSklad.Tag := 1;  //знак того, что у юзера есть право на эту кнопку
+      aUhodSklad.Enabled   := aUhodSklad.Tag = 1;
+      aUhodSklad.Visible   := aUhodSklad.Enabled;
+
+      if IsHaveRight(45, RightsArr) then
+        aPrihodSklad.Tag := 1;  //знак того, что у юзера есть право на эту кнопку
+      aPrihodSklad.Enabled   := aPrihodSklad.Tag = 1;
+      aPrihodSklad.Visible   := aPrihodSklad.Enabled;
+    end;
+
+    // Меню Отчеты
+    if IsHaveAnyRight([17, 18, 19, 20, 21, 22, 23, 24, 25,
+    26, 27, 43, 47, 48, 65, 66, 67, 68, 69, 70], RightsArr) then begin
+      dxBarSubItemRep.Enabled := True;
+      dxBarSubItemRep.Visible := ivAlways;
+      aRepProfit.Enabled   := IsHaveRight(17, RightsArr);
+      aRepProfit.Visible   := aRepProfit.Enabled;
+      aPriceListRep.Enabled   := IsHaveRight(18, RightsArr);
+      aPriceListRep.Visible   := aPriceListRep.Enabled;
+      aTovarMove.Enabled   := IsHaveRight(19, RightsArr);
+      aTovarMove.Visible   := aTovarMove.Enabled;
+      aRepSales.Enabled   := IsHaveRight(20, RightsArr);
+      aRepSales.Visible   := aRepSales.Enabled;
+      aRepDiscCard.Enabled   := IsHaveRight(48, RightsArr);
+      aRepDiscCard.Visible   := aRepDiscCard.Enabled;
+      aRepZakazNaReal.Enabled   := IsHaveRight(21, RightsArr);
+      aRepZakazNaReal.Visible   := aRepZakazNaReal.Enabled;
+      aRepRashProfit.Enabled   := IsHaveRight(22, RightsArr);
+      aRepRashProfit.Visible   := aRepRashProfit.Enabled;
+      aRepPrihod.Enabled   := IsHaveRight(23, RightsArr);
+      aRepPrihod.Visible   := aRepPrihod.Enabled;
+      aRepZatraty.Enabled   := IsHaveRight(24, RightsArr);
+      aRepZatraty.Visible   := aRepZatraty.Enabled;
+      aDenejMassa.Enabled   := IsHaveRight(25, RightsArr);
+      aDenejMassa.Visible   := aDenejMassa.Enabled;
+      aRepOstatkiTovarov.Enabled   := IsHaveRight(26, RightsArr);
+      aRepOstatkiTovarov.Visible   := aRepOstatkiTovarov.Enabled;
+      aOstatokDeneg.Enabled   := IsHaveRight(27, RightsArr);
+      aOstatokDeneg.Visible   := aOstatokDeneg.Enabled;
+      aRepTovarHis.Enabled   := IsHaveRight(43, RightsArr);
+      aRepTovarHis.Visible   := aRepTovarHis.Enabled;
+      aOstatokReal.Enabled   := IsHaveRight(47, RightsArr);
+      aOstatokReal.Visible   := aOstatokReal.Enabled;
+      aRepAktSverki.Enabled   := IsHaveRight(65, RightsArr);
+      aRepAktSverki.Visible   := aRepAktSverki.Enabled;
+      aRepSalesCategory.Enabled   := IsHaveRight(66, RightsArr);
+      aRepSalesCategory.Visible   := aRepSalesCategory.Enabled;
+      aRepSalesNakl.Enabled   := IsHaveRight(67, RightsArr);
+      aRepSalesNakl.Visible   := aRepSalesNakl.Enabled;
+      aRepSalesTovary.Enabled   := IsHaveRight(68, RightsArr);
+      aRepSalesTovary.Visible   := aRepSalesTovary.Enabled;
+      aRepProfitShort.Enabled   := IsHaveRight(69, RightsArr);
+      aRepProfitShort.Visible   := aRepProfitShort.Enabled;
+      aRepKassir.Enabled   := IsHaveRight(70, RightsArr);
+      aRepKassir.Visible   := aRepKassir.Enabled;
+    end;
+
+    // Меню Архив
+    if IsHaveAnyRight([28, 29, 30, 51, 52, 53], RightsArr) then begin
+      dxBarSubItemArch.Enabled := True;
+      dxBarSubItemArch.Visible := ivAlways;
+      aInvoicePay.Enabled   := IsHaveRight(28, RightsArr);
+      aInvoicePay.Visible   := aInvoicePay.Enabled;
+      aInvoice.Enabled   := IsHaveRight(29, RightsArr);
+      aInvoice.Visible   := aInvoice.Enabled;
+      aWayBill.Enabled   := IsHaveRight(30, RightsArr);
+      aWayBill.Visible   := aWayBill.Enabled;
+      aPkoList.Enabled   := IsHaveRight(51, RightsArr);
+      aPkoList.Visible   := aPkoList.Enabled;
+      aAktList.Enabled   := IsHaveRight(52, RightsArr);
+      aAktList.Visible   := aAktList.Enabled;
+      aDoverkaList.Enabled   := IsHaveRight(53, RightsArr);
+      aDoverkaList.Visible   := aDoverkaList.Enabled;
+    end;
+
+    // Меню Справочники
+    if IsHaveAnyRight([31, 32, 33, 34, 35, 36, 37, 38], RightsArr) then begin
+      dxBarSubItemGuide.Enabled := True;
+      dxBarSubItemGuide.Visible := ivAlways;
+      aMyFirm.Enabled   := IsHaveRight(31, RightsArr);
+      aMyFirm.Visible   := aMyFirm.Enabled;
+      aGUnit.Enabled   := IsHaveRight(32, RightsArr);
+      aGUnit.Visible   := aGUnit.Enabled;
+      aPriceList.Enabled   := IsHaveRight(33, RightsArr);
+      aPriceList.Visible   := aPriceList.Enabled;
+      aClient.Enabled   := IsHaveRight(34, RightsArr);
+      aClient.Visible   := aClient.Enabled;
+      aPostavshik.Enabled   := IsHaveRight(35, RightsArr);
+      aPostavshik.Visible   := aPostavshik.Enabled;
+      aGPrihodRashod.Enabled   := IsHaveRight(36, RightsArr);
+      aGPrihodRashod.Visible   := aGPrihodRashod.Enabled;
+      aOfficialList.Enabled   := IsHaveRight(37, RightsArr);
+      aOfficialList.Visible   := aOfficialList.Enabled;
+      aDiscount.Enabled   := IsHaveRight(38, RightsArr);
+      aDiscount.Visible   := aDiscount.Enabled;
+    end;
+
+    // Меню Сервис
+    if IsHaveAnyRight([39, 40, 42, 46, 49, 54, 55, 71], RightsArr) then begin
+      dxBarSubItemServ.Enabled := True;
+      dxBarSubItemServ.Visible := ivAlways;
+      aImport.Enabled   := IsHaveRight(39, RightsArr);
+      aImport.Visible   := aImport.Enabled;
+      aRevision.Enabled   := IsHaveRight(40, RightsArr);
+      aRevision.Visible   := aRevision.Enabled;
+      aSync.Enabled   := IsHaveRight(42, RightsArr);
+      aSync.Visible   := aSync.Enabled;
+      aExportOperData.Enabled   := IsHaveRight(49, RightsArr);
+      aExportOperData.Visible   := aExportOperData.Enabled;
+      aSetNewPrices.Enabled   := IsHaveRight(54, RightsArr);
+      aSetNewPrices.Visible   := aSetNewPrices.Enabled;
+      aPredzakaz.Enabled   := IsHaveRight(55, RightsArr);
+      aPredzakaz.Visible   := aPredzakaz.Enabled;
+      aSendSmsList.Enabled   := IsHaveRight(71, RightsArr);
+      aSendSmsList.Visible   := aSendSmsList.Enabled;
+
+      //кнопка склад доступна только если складов больше 1
+      if IsHaveRight(46, RightsArr) then begin
+        sbSklad.Enabled   := True;
+        sbSklad.Visible   := ivAlways;
+        sbSklad.Tag       := 1; //знак того, что у юзера есть право на эту кнопку
+      end;
+    end;
+
+    // Меню Настройки, вкладка "Общее" содержит настроки, которые должен задавать только АДМИН, но
+    // воздействовать отсюда я на нее не могу потому, сделаю глобальную переменную, и если прав на нее нет, то 0
+    if IsHaveRight(41, RightsArr) then
+      FHaveRightSetup := 1;
+  end else begin
+    dxBarSubItemKassa.Enabled := True;
+    dxBarSubItemTorg.Enabled := True;
+    dxBarSubItemRep.Enabled := True;
+    dxBarSubItemArch.Enabled := True;
+    dxBarSubItemGuide.Enabled := True;
+    dxBarSubItemServ.Enabled := True;
+    dxBarSubItemKassa.Visible := ivAlways;
+    dxBarSubItemTorg.Visible := ivAlways;
+    dxBarSubItemRep.Visible := ivAlways;
+    dxBarSubItemArch.Visible := ivAlways;
+    dxBarSubItemGuide.Visible := ivAlways;
+    dxBarSubItemServ.Visible := ivAlways;
+    FHaveRightSetup  := 1;
+    sbSklad.Tag      := 1; //знак того, что у юзера есть право на эту кнопку, а т.к. юзеров нет, то кнопка доступна всегда
+    aUhodSklad.Tag   := 1;  //знак того, что у юзера есть право на эту кнопку, а т.к. юзеров нет, то кнопка доступна всегда
+    aPrihodSklad.Tag := 1;  //знак того, что у юзера есть право на эту кнопку, а т.к. юзеров нет, то кнопка доступна всегда
+    aProduction.Tag := 1;
+    aProduction.Visible := Config = 3;
+    HaveRightInsSale := true;
+    HaveRightUpdSale := true;
+    HaveRightDelSale := true;
+    HaveRightInsPrihod := true;
+    HaveRightUpdPrihod := true;
+    HaveRightDelPrihod := true;
+    HaveRightToSeeAmount := true;
+    HaveRightToSeeOpt := true;
+    HaveRightToSeeCostPrice := true;
+  end;
+
+  //СЧИТЫВАЮ КОЛИЧЕСТВО СКЛАДОВ
+  MainDM.spGetSysParamCount.ParamByName('MODE_').AsInteger := 1;
+  if ExecSPTR(MainDm.spGetSysParamCount) then begin
+    if MainDm.spGetSysParamCount.ParamByName('PARAM1_OUT_').AsInteger > 1 then begin
+      ReadSkladList;
+      CurSkladIndex := 0;
+      for i := 0 to High(SkladArr) do begin
+        with sbSklad.ItemLinks.Add do
+        begin
+          Index := I;
+          unNewButton := TdxBarButton.Create(Self);
+          unNewButton.Name := 'Sklad' + IntToStr(SkladArr[i].ID);
+          unNewButton.OnClick := SetSklad;
+          Item := unNewButton;
+          Item.Tag := SkladArr[i].ID;
+          UserCaption := SkladArr[i].name;
+        end;
+
+        if SkladArr[i].ID = MainDm.spGetSysParamCount.ParamByName('PARAM2_OUT_').AsInteger then  //запоминаю ID кнопки текущего склада
+          CurSkladIndex := I;
+      end;
+
+      if sbSklad.Tag = 1 then
+        sbSklad.Visible := ivAlways;
+
+      if aUhodSklad.Tag = 1 then
+        aUhodSklad.Visible := True;
+
+      if aPrihodSklad.Tag = 1 then
+        aPrihodSklad.Visible := True;
+
+      CurSklad := MainDm.spGetSysParamCount.ParamByName('PARAM2_OUT_').AsInteger;
+      (sbSklad.ItemLinks.Items[CurSkladIndex].Item as TdxBarButton).Lowered := True;
+      CurSkladName := sbSklad.ItemLinks[CurSkladIndex].UserCaption;
+      StatusBar.Panels[2].Text := 'Склад: ' + CurSkladName;
+    end
+    else begin
+      aUhodSklad.Visible := False;
+      aPrihodSklad.Visible := False;
+      sbSklad.Visible := ivNever;
+      CurSklad := 1;
+    end;
+  end;
+
+  Result := True;
+  FNeedBackup := 1;
+end;
+
+procedure TMainForm.aDisconnectExecute(Sender: TObject);
+var
+  Connected: Boolean;
+begin
+  Screen.Cursor := crHourGlass;
+  if ExportThreadExists then
+    ExpThread.Free;
+
+  //при выходе из программы делаю напоследок экспорт оперативных данных, если не стоит "Никогда"
+  if ExportInterval > 0 then
+    ExportOperData;
+
+  Screen.Cursor := crDefault;  
+
+  if not MainDM.dbMain.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  {Закрываем все активные окна}
+  aWindowCloseAll.Execute;
+
+  {Отключаемся от БД}
+  Connected := DisconnectFromFB(MainDM.dbMain);
+
+  if Connected then
+    Exit;
+
+  SetConnectActions(Connected);
+
+  {Играем "туш"}
+  PlaySound(PChar('Disconnect.wav'), 0, SND_FILENAME or SND_ASYNC);
+end;
+
+procedure TMainForm.aExitExecute(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var DoBackup : Integer;
+    CopyProgressForm : TCopyProgressForm;
+begin
+
+  {Отключаемся от БД (с закрытием всех активных окон)}
+  aDisconnect.Execute;
+
+  {Проверяем, отключились ли}
+  if MainDM.dbMain.Connected then begin
+    MessageDlg('Не выполнено отключение от базы данных.'#13#10 +
+               'Работа программы не завершена', mtWarning, [mbOk], 0);
+    CanClose := False;
+    Exit;
+  end;
+
+  //БЭКАП ДЕЛАЕТСЯ ТОЛЬКО ЕСЛИ НЕ СЕТЕВОЙ РЕЖИМ, ПРИ СЕТЕВОМ - БЭКАП ПУСТЬ ДЕЛАЕТ ПРОГРАММА НА КОМПЬЮТЕРЕ СЕРВЕРЕ, Т.К. У НЕГО ВСЕГДА БУДЕТ YESNETWORK = 0
+  IF (FNeedBackup = 1) and (IsDebugHook = 0) and (YesNetwork = 0) THEN BEGIN   // ПРИ ОТЛАДКЕ ПРОГРАММЫ РЕЗЕРВНАЯ КОПИЯ СОЗДАВАТЬСЯ НЕ БУДЕТ
+    DoBackup := 0;
+    IF (FDoBackupOnStart = 0) and (FSuccessUpd = true) THEN BEGIN  // вдруг было корявое обновление и база не обновилась, тогда БЭКАП запорет старую базу
+      // делаю ежедневно
+      if FBackupPeriod = 0 then
+        DoBackup := 1
+
+      // делаю раз в неделю, причем делать буду так - беру дату последней копии, если больше 7 дней прошло, значит надо делать
+      // также если копия была сделана сегодня - перезаписываю
+      else if FBackupPeriod = 1 then begin
+        if ((Date - FLastBackpDate) > 7) or (Date = FLastBackpDate) then
+          DoBackup := 1;
+
+      //делаю раз в месяц, причем делать буду так - беру дату последней копии, если больше 30 дней прошло, значит надо делать
+      // также если копия была сделана сегодня - перезаписываю
+      end else if FBackupPeriod = 2 then begin
+        if ((Date - FLastBackpDate) > 30) or (Date = FLastBackpDate) then
+          DoBackup := 1;
+      end;
+
+      if DoBackup = 1 then begin
+        CopyProgressForm := TCopyProgressForm.Create(Application);
+        CopyProgressForm.Param1 := BackupDir;
+        try
+          CopyProgressForm.ShowModal;
+          if CopyProgressForm.Param2 <> 0 then begin
+            if MessageDlg('Вы уверены, что хотите закрыть приложение?', mtInformation, [mbYes, mbNo], 0) <> mrYes then begin
+              Canclose := False;
+              aConnect.Execute;
+            end;
+          end;
+        finally
+          CopyProgressForm.Free;
+        end;
+      end;
+    END;
+  END;
+end;
+
+procedure TMainForm.WMSetupChanged(var Message: TMessage);
+var
+  i: Integer;
+begin
+  {Перезагружаем параметры в главной форме}
+  GetSetupParams;
+
+  {Перезагружаем параметры в дочерних формах}
+  for i := 0 to MDIChildCount - 1 do
+    PostMessage(MDIChildren[i].Handle, WM_SETUPCHANGED, 0, 0);
+end;
+
+{==============================================================================}
+{                                  Меню "Окно"                                 }
+{==============================================================================}
+procedure TMainForm.aWindowMinimizeAllExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i := MDIChildCount - 1 downto 0 do
+    MDIChildren[i].WindowState := wsMinimized;
+end;
+
+procedure TMainForm.aWindowMinimizeAllUpdate(Sender: TObject);
+begin
+  aWindowMinimizeAll.Enabled := MDIChildCount > 0;
+end;
+
+procedure TMainForm.aWindowArrangeExecute(Sender: TObject);
+begin
+  ArrangeIcons;
+end;
+
+procedure TMainForm.aWindowTileHorizontalExecute(Sender: TObject);
+begin
+  TileMode := tbHorizontal;
+  Tile;
+end;
+
+procedure TMainForm.aWindowArrangeUpdate(Sender: TObject);
+begin
+  aWindowArrange.Enabled := MDIChildCount > 0;
+end;
+
+procedure TMainForm.aWindowRestoreAllExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i := 0 to MDIChildCount - 1 do begin
+    MDIChildren[i].Left := 0;
+    MDIChildren[i].Top := 0;
+    MDIChildren[i].WindowState := wsNormal;
+  end;
+end;
+
+procedure TMainForm.aWindowRestoreAllUpdate(Sender: TObject);
+begin
+  aWindowRestoreAll.Enabled := MDIChildCount > 0;
+end;
+
+procedure TMainForm.aWindowCloseAllExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i := MDIChildCount - 1 downto 0 do
+    MDIChildren[i].Close;
+end;
+
+procedure TMainForm.aWindowCloseAllUpdate(Sender: TObject);
+begin
+  aWindowCloseAll.Enabled := MDIChildCount > 0;
+end;
+
+procedure TMainForm.dxBarListWindowsGetData(Sender: TObject);
+begin
+  with dxBarListWindows do
+    ItemIndex := Items.IndexOfObject(ActiveMDIChild);
+end;
+
+procedure TMainForm.dxBarListWindowsClick(Sender: TObject);
+begin
+  with dxBarListWindows do
+    TCustomForm(Items.Objects[ItemIndex]).Show;
+end;
+
+{==============================================================================}
+{                                 Меню "Справка"                               }
+{==============================================================================}
+procedure TMainForm.aHelpAboutExecute(Sender: TObject);
+begin
+  with TAboutForm.Create(Self) do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+{==============================================================================}
+{                                   Настройка                                  }
+{==============================================================================}
+procedure TMainForm.aSetupSetupExecute(Sender: TObject);
+var SetupForm : TSetupForm;
+begin
+  SetupForm := TSetupForm.Create(Self);
+  with SetupForm do
+    try
+      if FHaveRightSetup = 0 then begin
+        tsCommon.TabVisible := False;
+        //tsNetwork.TabVisible := False;   убрал т.к. вдруг если связь оборвалась с сервером, то эта вкладка никогда не будет доступна, т.к. FHaveRightSetup берется из базы
+      end;
+
+      // если вдруг посреди работы включили конфиг - Производство, то надо менюшку отразить
+      if ShowModal = mrOk then begin
+        if (Config = 3) and (aProduction.Tag = 1) then begin
+          aProduction.Visible := True;
+          aProduction.Enabled := True;
+        end else begin
+          aProduction.Visible := false;
+          aProduction.Enabled := false;
+        end;
+      end;
+    finally
+      Free;
+    end;
+end;
+
+{==============================================================================}
+{                              Справочники                               }
+{==============================================================================}
+// Моя фирма - реквизиты
+procedure TMainForm.aMyFirmExecute(Sender: TObject);
+var FirmRekvizitForm : TFirmRekvizitForm;
+    SkladCnt, I : integer;
+    unNewButton : TdxBarButton;
+begin
+  SkladCnt := High(SkladArr);
+
+  FirmRekvizitForm := TFirmRekvizitForm.Create(Self);
+  with FirmRekvizitForm do begin
+    OpenMode := omUpdate;
+    try
+      Showmodal;
+    finally
+      Free;
+    end;
+  end;
+
+  //если изменилось количество складов - то надо скрывать/отражать кнопки, связанные со складами
+  // не стал заморачиваться, какой склад появился, а какой удалился, просто - если количество складов изменилось, то удаляю все, а затем снова их создаю
+  if SkladCnt <> High(SkladArr) then begin
+    FOR I := sbSklad.ItemLinks.Count - 1 DOWNTO 0 DO
+      sbSklad.ItemLinks[I].Item.Free;
+
+    if High(SkladArr) > 0 then begin
+      for i := 0 to High(SkladArr) do begin
+        with sbSklad.ItemLinks.Add do begin
+          Index := I;
+          unNewButton := TdxBarButton.Create(Self);
+          unNewButton.Name := 'Sklad' + IntToStr(SkladArr[i].ID);
+          unNewButton.OnClick := SetSklad;
+          Item := unNewButton;
+          Item.Tag := SkladArr[i].ID;
+          UserCaption := SkladArr[i].name;
+        end;
+      end;
+      MainDM.spGetSysParamCount.ParamByName('MODE_').AsInteger := 1;
+      ExecSPTR(MainDm.spGetSysParamCount);
+      CurSklad := MainDm.spGetSysParamCount.ParamByName('PARAM2_OUT_').AsInteger;
+      (sbSklad.ItemLinks.Items[CurSklad-1].Item as TdxBarButton).Lowered := True;
+      CurSkladName := sbSklad.ItemLinks[0].UserCaption;
+      StatusBar.Panels[2].Text := 'Склад: ' + CurSkladName;
+
+      if sbSklad.Tag = 1 then
+        sbSklad.Visible := ivAlways;
+
+      if aUhodSklad.Tag = 1 then
+        aUhodSklad.Visible := True;
+
+      if aPrihodSklad.Tag = 1 then
+        aPrihodSklad.Visible := True;
+
+    end else begin
+      // если в массиве остался только один основной склад, то обнуляю все, в том числе и массив
+      SetLength(SkladArr, 0);
+      sbSklad.Visible := ivNever;
+      aUhodSklad.Visible := False;
+      aPrihodSklad.Visible := False;
+    end;
+  end;
+end;
+
+// Справочники - Единицы измерений
+procedure TMainForm.aGUnitExecute(Sender: TObject);
+begin
+  TGUnitListForm.Create(Self, '','aGUnit');
+end;
+
+// Справочники - прайс-лист
+procedure TMainForm.aPriceListExecute(Sender: TObject);
+begin
+  TPriceListForm.Create(Self, '','aPriceList');
+end;
+
+// Справочники - клиенты
+procedure TMainForm.aClientExecute(Sender: TObject);
+begin
+  TClientListForm.CreateIt(Self, 0, 'aClient');
+end;
+
+// Справочники - поставщики
+procedure TMainForm.aPostavshikExecute(Sender: TObject);
+begin
+  TClientListForm.CreateIt(Self, 1, 'aPostavshik');
+end;
+
+// Справочники - сотрудники
+procedure TMainForm.aOfficialListExecute(Sender: TObject);
+begin
+  TOfficialListForm.Create(Self, '','aOfficialList');
+end;
+
+// Справочники - СТАТЬИ ПРИХОДА/РАСХОДА
+procedure TMainForm.aGPrihodRashodExecute(Sender: TObject);
+begin
+  TRashodPrihodListForm.Create(Self, '','aGPrihodRashod');
+end;
+
+//Скидки на товары
+procedure TMainForm.aDiscountExecute(Sender: TObject);
+begin
+  TDiscountListForm.Create(Self, '', 'aDiscount');
+end;
+//*************************************************
+
+// ТОРГОВЛЯ
+//РЕЖИМ ПРОДАВЦА
+procedure TMainForm.aSaleModeExecute(Sender: TObject);
+begin
+  TSaleModeForm.CreateIt(Self, 0, 'aSaleMode');
+end;
+
+//Приход товара
+procedure TMainForm.aPrihodExecute(Sender: TObject);
+begin
+  TPrihodTovaraListForm.CreateIt(Self, 0, 'aPrihod');
+end;
+
+//Продажа товара
+procedure TMainForm.aSaleExecute(Sender: TObject);
+begin
+  TProdazhaTovaraListForm.CreateIt(Self, 0, 'aSale');
+end;
+
+//Списание товаров
+procedure TMainForm.aSpisanieExecute(Sender: TObject);
+begin
+  TProdazhaTovaraListForm.CreateIt(Self, 1, 'aSpisanie');
+end;
+
+//Возврат товара клиентом
+procedure TMainForm.aReturnExecute(Sender: TObject);
+begin
+  TPrihodTovaraListForm.CreateIt(Self, 1, 'aReturn');
+end;
+
+//Возврат товара поставщику
+procedure TMainForm.aReturnPostavshikExecute(Sender: TObject);
+begin
+  TProdazhaTovaraListForm.CreateIt(Self, 4, 'aReturnPostavshik');
+end;
+
+//Выдача товара под реализацию
+procedure TMainForm.aZakazNaRealExecute(Sender: TObject);
+begin
+  TZakazNaRealListForm.Create(Self, '', 'aZakazNaReal');
+end;
+
+//Перемещение товара на другой склад
+procedure TMainForm.aUhodSkladExecute(Sender: TObject);
+begin
+  TProdazhaTovaraListForm.CreateIt(Self, 3, 'aUhodSklad');
+end;
+
+//Приход товара на другой склад
+procedure TMainForm.aPrihodSkladExecute(Sender: TObject);
+begin
+  TPrihodTovaraListForm.CreateIt(Self, 3, 'aPrihodSklad');
+end;
+
+//Производство товара
+procedure TMainForm.aProductionExecute(Sender: TObject);
+begin
+  TProductionListForm.Create(Self, '', 'aProduction');
+end;
+
+//*****************************************************************
+//ОТЧЕТЫ - ПРИБЫЛЬ МАГАЗИНА, А ТАКЖЕ ОТЧЕТЫ - ПО РАСХОДУ И ПРИБЫЛЬ МАГАЗИНА
+procedure TMainForm.aRepProfitExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);   //ProfitFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 1;
+      if ((Sender as TAction).Name = 'aRepProfit') or ((Sender as TAction).Name = 'aRepProfitShort') then
+        Helpc := 23
+      else
+        Helpc := 30;
+
+      IF ShowModal = mrOK then BEGIN
+        if (Sender as TAction).Name = 'aRepProfit' then
+          ReportsDM.PrepareReport(6)
+        else if (Sender as TAction).Name = 'aRepProfitShort' then
+          ReportsDM.PrepareReport(46)
+        else
+          ReportsDM.PrepareReport(10);
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if Client > 0 then
+          ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := Client;
+
+        if cbPayment.Checked = False then
+          ReportsDM.spReport.ParamByName('G_PAYMENT_TYPE_').AsInteger := Payment;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+
+        ReportsDM.ShowReport;
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ПРАЙСЛИСТ
+procedure TMainForm.aPriceListRepExecute(Sender: TObject);
+var PriceListRepFilterForm: TPriceListRepFilterForm;
+begin
+  PriceListRepFilterForm := TPriceListRepFilterForm.Create(Self);
+  with PriceListRepFilterForm do begin
+    try
+
+      if (Sender as TAction).Name = 'aRepOstatkiTovarov' then begin
+        Mode := 1;
+        Helpc := 34;
+      end else
+        Helpc := 24;
+
+      if ShowModal = mrOk then begin
+        if (Sender as TAction).Name = 'aPriceListRep' then
+          ReportsDM.PrepareReport(3)
+        else
+          ReportsDM.PrepareReport(12);
+        ReportsDM.spReport.ParamByName('INCLUDE_NOL_').AsInteger := IncludeNol;
+        ReportsDM.spReport.ParamByName('INCLUDE_FEW_').AsInteger := IncludeFew;
+        ReportsDM.spReport.ParamByName('SORT_BY_NAME_').AsInteger := SortByName;
+        if length(G_CategoryArr) > 0 then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').AsString := G_CategoryArr
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').CLEAR;
+
+        ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := pePostavshik.Tag;
+
+        if (Sender as TAction).Name = 'aPriceListRep' then begin
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-';
+          ReportsDM.ShowReport(1, 'Прайслист от ' + DateToStr(Date));
+        end else begin
+          if (SkladsArr = '') then
+            ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+          else
+            ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+          
+          ReportsDM.ReportNameG := SkladsArrStr;
+          ReportsDM.ShowReport;
+        end;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+// ОТЧЕТ О ДВИЖЕНИИ ТОВАРА В МАГАЗИНЕ
+procedure TMainForm.aTovarMoveExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //TovarMoveRepFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 2;
+      Helpc := 25;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(8);
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := pePostavshik.Tag;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport(1, 'Отчет о движении товаров в магазине');
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - ПРОДАЖИ МАГАЗИНА
+procedure TMainForm.aRepSalesExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);
+  WITH ClientDateFilterForm DO BEGIN
+    TRY
+      ModeR := 3;
+      Helpc := 27;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(7);
+        if Client > 0 then
+          ReportsDM.spReport.ParamByName('g_client_').AsInteger := Client;
+        if ClientCategory <> 0 then
+          ReportsDM.spReport.ParamByName('g_client_cat_').AsInteger := ClientCategory;
+        if Sotrudnik > 0 then
+          ReportsDM.spReport.ParamByName('g_OFFICIAL_').AsInteger := Sotrudnik;
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+        if ceTime.Checked then begin
+          ReportsDM.spReport.ParamByName('time_begin_').AsTime := edTimeBegin.Time;
+          ReportsDM.spReport.ParamByName('time_end_').AsTime := edTimeEnd.Time;
+        end;
+
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    FINALLY
+      Free;
+    END;
+  END;
+END;
+
+//ОТЧЕТЫ - ПРОДАЖИ МАГАЗИНА ПО КАТЕГОРИЯМ
+procedure TMainForm.aRepSalesCategoryExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);
+  WITH ClientDateFilterForm DO BEGIN
+    TRY
+      ModeR := 31;
+      Helpc := 27;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(42);
+        if Client > 0 then
+          ReportsDM.spReport.ParamByName('g_client_').AsInteger := Client;
+        if ClientCategory <> 0 then
+          ReportsDM.spReport.ParamByName('g_client_cat_').AsInteger := ClientCategory;
+        if Sotrudnik > 0 then
+          ReportsDM.spReport.ParamByName('g_OFFICIAL_').AsInteger := Sotrudnik;
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+        if ceTime.Checked then begin
+          ReportsDM.spReport.ParamByName('time_begin_').AsTime := edTimeBegin.Time;
+          ReportsDM.spReport.ParamByName('time_end_').AsTime := edTimeEnd.Time;
+        end;
+
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    FINALLY
+      Free;
+    END;
+  END;
+end;
+
+//ОТЧЕТЫ - ПРОДАЖИ МАГАЗИНА ПО НАКЛАДНЫМ
+procedure TMainForm.aRepSalesNaklExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);
+  WITH ClientDateFilterForm DO BEGIN
+    TRY
+      ModeR := 32;
+      Helpc := 27;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(43);
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+        if ceTime.Checked then begin
+          ReportsDM.spReport.ParamByName('time_begin_').AsTime := edTimeBegin.Time;
+          ReportsDM.spReport.ParamByName('time_end_').AsTime := edTimeEnd.Time;
+        end;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    FINALLY
+      Free;
+    END;
+  END;
+end;
+
+//ОТЧЕТЫ - ПРОДАЖИ МАГАЗИНА ПО ТОВАРАМ/ДАТАМ
+procedure TMainForm.aRepSalesTovaryExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);
+  WITH ClientDateFilterForm DO BEGIN
+    TRY
+      ModeR := 3;
+      Helpc := 27;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(45);
+        if Client > 0 then
+          ReportsDM.spReport.ParamByName('g_client_').AsInteger := Client;
+        if ClientCategory <> 0 then
+          ReportsDM.spReport.ParamByName('g_client_cat_').AsInteger := ClientCategory;
+        if Sotrudnik > 0 then
+          ReportsDM.spReport.ParamByName('g_OFFICIAL_').AsInteger := Sotrudnik;
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+        if ceTime.Checked then begin
+          ReportsDM.spReport.ParamByName('time_begin_').AsTime := edTimeBegin.Time;
+          ReportsDM.spReport.ParamByName('time_end_').AsTime := edTimeEnd.Time;
+        end;
+
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    FINALLY
+      Free;
+    END;
+  END;
+end;
+
+//ОТЧЕТ ПО ПРИХОДУ ТОВАРА, ДЕНЕЖНОЙ МАССЕ И ЗАТРАТАМ
+procedure TMainForm.aRepPrihodExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //DATEFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 4;
+      if (Sender as TAction).Name = 'aRepPrihod' then
+        Helpc := 31
+      else if (Sender as TAction).Name = 'aRepZatraty' then
+        Helpc := 32
+      else if (Sender as TAction).Name = 'aDenejMassa' then
+        Helpc := 33;
+
+      IF ShowModal = mrOK then BEGIN
+        if (Sender as TAction).Name = 'aRepPrihod' then
+          ReportsDM.PrepareReport(11)
+        else if (Sender as TAction).Name = 'aRepZatraty' then
+          ReportsDM.PrepareReport(13)
+        else if (Sender as TAction).Name = 'aDenejMassa' then
+          ReportsDM.PrepareReport(14);
+
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - ТОВАР НА РЕАЛИЗАЦИИ
+procedure TMainForm.aRepZakazNaRealExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //ZakazNaRealRepFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 6;
+      HelpC := 28;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(9);
+        if Client > 0 then
+          ReportsDM.spReport.ParamByName('g_client_').AsInteger := Client;
+        if ClientCategory <> 0 then
+          ReportsDM.spReport.ParamByName('g_client_cat_').AsInteger := ClientCategory;
+
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        ReportsDM.spReport.ParamByName('mode_').AsInteger := ComboBox.ItemIndex;
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - ОСТАТОК ТОВАРА НА РЕАЛИЗАЦИИ, БЕЗ РАЗБИВКИ ПО КЛИЕНТАМ
+//тут нет никаких условий фильтра, но если есть склады, то придется выводить, чтобы пользователь выбрал склады
+procedure TMainForm.aOstatokRealExecute(Sender: TObject);
+var S : string;
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //ZakazNaRealRepFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 8;
+      HelpC := 66;
+      IF ShowModal = mrOK then begin
+        ReportsDM.PrepareReport(35);
+        if Category <> '' then
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').asString := Category
+        else
+          ReportsDM.spReport.ParamByName('G_CATEGORY_').Clear;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        if (SkladsArr = '') then
+          S := '-' + IntToStr(CurSklad) + '-'
+        else
+          S := SkladsArr;
+
+        ReportsDM.ReportNameG := SkladsArrStr;
+      end else
+        Exit;
+    Finally
+      Free;
+    end;
+  END;
+
+  ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := S;
+  ReportsDM.ShowReport;
+end;
+
+//ОТЧЕТЫ - ОСТАТОК ДЕНЕГ
+procedure TMainForm.aOstatokDenegExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //DATEFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 5;
+      Helpc := 35;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(15);
+        ReportsDM.spReport.ParamByName('date_').AsDate := DateBegin;
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else BEGIN
+          // выбрать можно только один склад, ведь общей кассы нет
+          if length(SkladsArr) > 3 then begin
+            MessageDlg('Выбрать можно только 1 склад!', mtWarning, [mbOk], 0);
+            Exit;
+          end;
+
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        END;
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - ДИСКОНТНЫЕ КАРТЫ
+procedure TMainForm.aRepDiscCardExecute(Sender: TObject);
+begin
+  ReportsDM.PrepareReport(31);
+  ReportsDM.ShowReport;
+end;
+
+
+procedure TMainForm.aRepKassirExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //DATEFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 4;
+      Helpc := 33;
+
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(51);
+
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_').AsInteger := CurSklad
+        else begin
+          // выбрать можно только один склад, ведь общей кассы нет
+          if length(SkladsArr) > 3 then begin
+            MessageDlg('Выбрать можно только 1 склад!', mtWarning, [mbOk], 0);
+            Exit;
+          end;
+
+          ReportsDM.spReport.ParamByName('G_TOCHKA_').AsInteger := StrToInt(copy(SkladsArr, 2, Posex('-', SkladsArr, 2)-2));
+        end;
+
+        ReportsDM.ReportNameG := SkladsArrStr;
+        ReportsDM.ShowReport;
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - ИСТОРИЯ ТОВАРА
+procedure TMainForm.aRepTovarHisExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //TovarMoveRepFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 7;
+      Helpc := 26;
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(32);
+        ReportsDM.spReport.ParamByName('date_begin_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('date_end_').AsDate := DateEnd;
+
+        if Tovar <> '' then
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').asString := Tovar
+        else
+          ReportsDM.spReport.ParamByName('G_PRODUCT_').Clear;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+        ReportsDM.Param1G := SkladsArrStr;
+        //ReportsDM.ReportNameG := 'История товара "' + TovarName + '"';
+        ReportsDM.ReportNameG := 'История товара';
+        ReportsDM.DatePeriodG := 'за период с ' + DateToStr(DateBegin) + ' по ' + DateToStr(DateEnd);
+
+        ReportsDM.ShowReport(1, 'История товара');
+      END;
+    Finally
+      Free;
+    end;
+  END;
+end;
+
+//ОТЧЕТЫ - АКТ СВЕРКИ
+procedure TMainForm.aRepAktSverkiExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);      //ZakazNaRealRepFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 9;
+      HelpC := 66;
+      IF ShowModal = mrOK then begin
+        ReportsDM.PrepareReport(41);
+
+        ReportsDM.spReport.ParamByName('DATE_BEGIN_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('DATE_END_').AsDate := DateEnd;
+        ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := Client;
+        ReportsDM.spReport.ParamByName('CLIENT_NAME_IN_').AsString := ContrAgentName;
+        ReportsDM.spReport.ParamByName('CLIENT_DIR_NAME_IN_').AsString := edClientDir.Text;
+        ReportsDM.spReport.ParamByName('FIRM_NAME_IN_').AsString := cbbFirm.Text;
+        ReportsDM.spReport.ParamByName('G_OFFICIAL_NAME_').AsString := edRukovod.Text;
+        ReportsDM.spReport.ParamByName('CURRENCY_').AsInteger := CurrencyVal;
+
+        if (SkladsArr = '') then
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := '-' + IntToStr(CurSklad) + '-'
+        else
+          ReportsDM.spReport.ParamByName('G_TOCHKA_ARR_').AsString := SkladsArr;
+      end else
+        Exit;
+    Finally
+      Free;
+    end;
+  END;
+  
+  ReportsDM.ShowReport;
+end;
+
+//*****************************************************************
+// СЕРВИС - Ревизия
+procedure TMainForm.aRevisionExecute(Sender: TObject);
+var R : Integer;
+begin
+  R := GetConnectionsCount;
+  if ExportThreadExists then //т.к. в потоке создается еще один коннект к базе, то нужно его игнорировать
+    R := R - 1;
+  //раньше был запрет на работу режима, если к базе подключены другие пользователи, теперь решил, что это бред и пусть просто выходит предупреждающее сообщение,
+  //а пользователь сам решает продолжать ему дальше или нет
+  if (R > 1) and (IsDebugHook = 0) then begin
+    if MessageDlg('Обратите внимание, что к базе в данный момент соединены другие пользователи!' + #10#13 +
+      'Все равно запустить режим "Ревизия"?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+  end;
+
+  TRevisionForm.Create(Self, '', 'aRevision');
+end;
+
+// СЕРВИС - ИМПОРТ ТОВАРОВ
+procedure TMainForm.aImportExecute(Sender: TObject);
+type
+  TLog = array of string;
+var
+  ImportTovarForm : TImportBForm;
+  R : Integer;
+begin
+  R := GetConnectionsCount;
+  if ExportThreadExists then   //т.к. в потоке создается еще один коннект к базе, то нужно его игнорировать
+    R := R - 1;
+  //раньше был запрет на работу режима, если к базе подключены другие пользователи, теперь решил, что это бред и пусть просто выходит предупреждающее сообщение,
+  //а пользователь сам решает продолжать ему дальше или нет
+  if (R > 1) and (IsDebugHook = 0) then begin
+    if MessageDlg('Обратите внимание, что к базе в данный момент соединены другие пользователи!' + #10#13 +
+      'Все равно запустить режим "Импорт товаров"?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+  end;
+
+  ImportTovarForm := TImportBForm.Create(Self);
+  try
+    ImportTovarForm.ShowModal;
+  finally
+    ImportTovarForm.Free;
+  end;
+end;
+
+// СЕРВИС - СИНХРОНИЗАЦИЯ
+procedure TMainForm.aSyncExecute(Sender: TObject);
+var
+  SyncForm : TSyncForm;
+  R : Integer;
+begin
+  R := GetConnectionsCount;
+  if ExportThreadExists then   //т.к. в потоке создается еще один коннект к базе, то нужно его игнорировать
+    R := R - 1;
+  //раньше был запрет на работу режима, если к базе подключены другие пользователи, теперь решил, что это бред и пусть просто выходит предупреждающее сообщение,
+  //а пользователь сам решает продолжать ему дальше или нет
+  if (R > 1) and (IsDebugHook = 0) then begin
+    if MessageDlg('Обратите внимание, что к базе в данный момент соединены другие пользователи!' + #10#13 +
+      'Все равно запустить режим "Синхронизация"?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
+      Exit;
+  end;
+
+  SyncForm := TSyncForm.Create(Self);
+  try
+    SyncForm.ShowModal;
+  finally
+    SyncForm.Free;
+  end;
+end;
+
+// СЕРВИС - МАССОВОЕ ИЗМЕНЕИЕ ЦЕН
+procedure TMainForm.aSendSmsListExecute(Sender: TObject);
+begin
+  with TSendSmsForm.Create(Self) do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+procedure TMainForm.aSetNewPricesExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);   //ProfitFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 100;
+      Helpc := 77;
+
+      IF ShowModal = mrOK then BEGIN
+        if (Integer(cbChangePrice.Checked) + Integer(cbChangeCategory.Checked) +
+        Integer(cbChangeMinOstatok.Checked)) > 0 then begin
+          if Category <> '' then
+            MainDM.spSetNewPrices.ParamByName('G_CATEGORY_').asString := Category
+          else
+            MainDM.spSetNewPrices.ParamByName('G_CATEGORY_').Clear;
+
+          if Tovar <> '' then
+            MainDM.spSetNewPrices.ParamByName('G_PRODUCT_').asString := Tovar
+          else
+            MainDM.spSetNewPrices.ParamByName('G_PRODUCT_').Clear;
+        end;
+
+        if cbChangePrice.Checked then begin
+          MainDM.spSetNewPrices.ParamByName('CHANGE_PRICE_').asiNTEGER := 1;
+          MainDM.spSetNewPrices.ParamByName('MODE_').AsInteger := cbMode.ItemIndex;
+          MainDM.spSetNewPrices.ParamByName('NEW_VAL_').AsFloat := edValue.Value;
+          MainDM.spSetNewPrices.ParamByName('COURSE_OLD_').AsFloat := edOldCourse.Value;
+          MainDM.spSetNewPrices.ParamByName('COURSE_NEW_').AsFloat := edNewCourse.Value;
+          MainDM.spSetNewPrices.ParamByName('ROUND_MODE_').AsInteger := cbRoundMode.ItemIndex;
+          MainDM.spSetNewPrices.ParamByName('WHAT_PRICE_').AsInteger := cbWhatPrice.ItemIndex;
+        end else
+          MainDM.spSetNewPrices.ParamByName('CHANGE_PRICE_').asiNTEGER := 0;
+
+        if cbChangeCategory.Checked then BEGIN
+          MainDM.spSetNewPrices.ParamByName('CHANGE_CATEGORY_').AsInteger := 1;
+          MainDM.spSetNewPrices.ParamByName('NEW_CATEGORY_').AsInteger := leCategory.EditValue;
+        END else
+          MainDM.spSetNewPrices.ParamByName('CHANGE_CATEGORY_').AsInteger := 0;
+
+        if cbChangeMinOstatok.Checked then BEGIN
+          MainDM.spSetNewPrices.ParamByName('CHANGE_MIN_AMOUNT_').AsInteger := 1;
+          MainDM.spSetNewPrices.ParamByName('NEW_MIN_AMOUNT_').AsInteger := Trunc(edMinAmount.Value);
+        END else
+          MainDM.spSetNewPrices.ParamByName('CHANGE_MIN_AMOUNT_').AsInteger := 0;
+
+        Screen.Cursor := crHourGlass;
+        if ExecSP(MainDM.spSetNewPrices) then
+          ShowMessage('Операции проведены успешно!');
+      END;
+    Finally
+      Screen.Cursor := crDefault;
+      Free;
+    end;
+  END;
+end;
+
+// СЕРВИС - ЗАЯВКА НА ЗАКАЗ ТОВАРА У ПОСТАВЩИКА
+procedure TMainForm.aPredzakazExecute(Sender: TObject);
+begin
+  ClientDateFilterForm := TClientDateFilterForm.Create(Self);   //ProfitFilterForm
+  with ClientDateFilterForm do begin
+    try
+      ModeR := 101;
+      Helpc := 78;
+
+      IF ShowModal = mrOK then BEGIN
+        ReportsDM.PrepareReport(39);
+        ReportsDM.spReport.ParamByName('BEGIN_DATE_').AsDate := DateBegin;
+        ReportsDM.spReport.ParamByName('END_DATE_').AsDate := DateEnd;
+        ReportsDM.spReport.ParamByName('G_CLIENT_').AsInteger := Postavshik;
+        ReportsDM.spReport.ParamByName('DO_SKLAD_').AsInteger := 0;
+        ReportsDM.spReport.ParamByName('MODE_').AsInteger := cbPredzakazMode.ItemIndex;
+        ReportsDM.spReport.ParamByName('MODE_VYBOR_').AsInteger := cbMetodVybora.ItemIndex;
+        If rbUnit.Checked then
+          ReportsDM.spReport.ParamByName('MODE_VAL_').AsInteger := 0
+        else
+          ReportsDM.spReport.ParamByName('MODE_VAL_').AsInteger := 1;
+        ReportsDM.spReport.ParamByName('NEW_VAL_').AsFloat := edAmountAdd.Value;
+        ReportsDM.spReport.ParamByName('ROUND_MODE_').AsInteger := cbbRound.ItemIndex;
+        ReportsDM.ReportNameG := CurSkladName;
+        ReportsDM.ShowReport(1, 'Заявка на закуп у поставщика');
+
+        if (cbDoSklad.ItemIndex = 1) then begin
+          MainDM.spPredzakazTovar.ParamByName('BEGIN_DATE_').AsDate := DateBegin;
+          MainDM.spPredzakazTovar.ParamByName('END_DATE_').AsDate := DateEnd;
+          MainDM.spPredzakazTovar.ParamByName('G_CLIENT_').AsInteger := Postavshik;
+          MainDM.spPredzakazTovar.ParamByName('DO_SKLAD_').AsInteger := 1;
+          MainDM.spPredzakazTovar.ParamByName('MODE_').AsInteger := cbPredzakazMode.ItemIndex;
+          MainDM.spPredzakazTovar.ParamByName('MODE_VYBOR_').AsInteger := cbMetodVybora.ItemIndex;
+          If rbUnit.Checked then
+            MainDM.spPredzakazTovar.ParamByName('MODE_VAL_').AsInteger := 0
+          else
+            MainDM.spPredzakazTovar.ParamByName('MODE_VAL_').AsInteger := 1;
+          MainDM.spPredzakazTovar.ParamByName('NEW_VAL_').AsFloat := edAmountAdd.Value;
+          MainDM.spPredzakazTovar.ParamByName('ROUND_MODE_').AsInteger := cbbRound.ItemIndex;
+          Screen.Cursor := crHourGlass;
+          ExecSP(MainDM.spPredzakazTovar);
+        end;
+      END;
+    Finally
+      Screen.Cursor := crDefault;
+      Free;
+    end;
+  END;
+end;
+
+// СЕРВИС - ПЕРЕКЛЮЧЕНИЕ ТЕКУЩЕГО СКЛАДА
+procedure TMainForm.SetSklad(Sender: TObject);
+var I : integer; //SName : String;
+begin
+  if SetCurSklad((Sender as TdxBarButton).tag) then begin
+    for i := 0 to sbSklad.ItemLinks.Count-1 do begin
+      (sbSklad.ItemLinks[i].Item as TdxBarButton).Lowered := false;   //все кнопки ставлю не Lowered
+      if (sbSklad.ItemLinks[i].Item as TdxBarButton).Tag = (Sender as TdxBarButton).tag then
+        CurSkladName := sbSklad.ItemLinks[i].UserCaption;
+    end;
+
+    CurSklad := (Sender as TdxBarButton).tag;
+    (Sender as TdxBarButton).Lowered := True;
+    StatusBar.Panels[2].Text := 'Склад: ' + CurSkladName;
+
+    // на всех формах делаю рефреш данных
+    for i := MDIChildCount - 1 downto 0 do begin
+      if MDIChildren[i].ClassParent = TDBListForm then
+        (MDIChildren[i] as TDBListForm).aRefresh.Execute
+
+      else if MDIChildren[i].ClassParent = TDBMultiPageListForm then
+        (MDIChildren[i] as TDBMultiPageListForm).aRefresh.Execute
+
+      else if MDIChildren[i].ClassParent = TDBTreeListForm then
+        (MDIChildren[i] as TDBTreeListForm).aRefresh.Execute
+
+      else if MDIChildren[i].ClassParent = TDBMultiPageTreeListForm then
+        (MDIChildren[i] as TDBMultiPageTreeListForm).aRefresh.Execute;
+    end;
+  end;
+end;
+
+//ВЫГРУЗКА ОПЕРАТИВНЫХ ДАННЫХ
+procedure TMainForm.aExportOperDataExecute(Sender: TObject);
+begin
+  ExportOperDataForm := TExportOperDataForm.Create(Self);
+  with ExportOperDataForm do begin
+    try
+      if ShowModal = mrOk then begin
+        ExportDataType := IntToStr(Integer(cbSales.checked)) + IntToStr(Integer(cbOstatok.checked)) +
+          IntToStr(Integer(cbOstatokXML.checked)) + IntToStr(Integer(cbProfit.checked));
+        ExportPath := bedtFileName.Text;
+        // задаю интервал выгрузки
+        case cbTime.ItemIndex of
+          0, 1 : ExportInterval := cbTime.ItemIndex;
+          2 : ExportInterval := 900000;  // 15 min
+          3 : ExportInterval := 1800000; // 30 min
+          4 : ExportInterval := 2700000; // 45 min
+          5 : ExportInterval := 3600000; // 60 min
+          6 : ExportInterval := 7200000; // 2 hour
+          7 : ExportInterval := 10800000; // 3 hour
+          8 : ExportInterval := 14400000; // 4 hour
+        end;
+
+        // вырубаю поток и создаю его заново, потому что вдруг поменяли интервал
+        if ExportThreadExists then
+          ExpThread.Free;
+
+        if ExportInterval > 1 then
+          ExpThread := TExportDataThread.Create;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TMainForm.aImportDataExecute(Sender: TObject);
+begin
+  ExportOperDataForm := TExportOperDataForm.Create(Self);
+  with ExportOperDataForm do begin
+    try
+      if ShowModal = mrOk then begin
+        ExportDataType := IntToStr(Integer(cbSales.checked)) + IntToStr(Integer(cbOstatok.checked)) +
+          IntToStr(Integer(cbOstatokXML.checked)) + IntToStr(Integer(cbProfit.checked));
+        ExportPath := bedtFileName.Text;
+        // задаю интервал выгрузки
+        case cbTime.ItemIndex of
+          0, 1 : ExportInterval := cbTime.ItemIndex;
+          2 : ExportInterval := 900000;  // 15 min
+          3 : ExportInterval := 1800000; // 30 min
+          4 : ExportInterval := 2700000; // 45 min
+          5 : ExportInterval := 3600000; // 60 min
+          6 : ExportInterval := 7200000; // 2 hour
+          7 : ExportInterval := 10800000; // 3 hour
+          8 : ExportInterval := 14400000; // 4 hour
+        end;
+
+        // вырубаю поток и создаю его заново, потому что вдруг поменяли интервал
+        if ExportThreadExists then
+          ExpThread.Free;
+
+        if ExportInterval > 1 then
+          ExpThread := TExportDataThread.Create;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+//*****************************************************************
+
+//*****************************************************************
+// КАССА - приход
+procedure TMainForm.aKassaPrihodExecute(Sender: TObject);
+begin
+  TKassaListForm.CreateIt(Self, 0, 'aKassaPrihod');
+end;
+
+// КАССА - расход
+procedure TMainForm.aKassaRashodExecute(Sender: TObject);
+begin
+  TKassaListForm.CreateIt(Self, 1, 'aKassaRashod');
+end;
+
+// КАССА - остаток
+procedure TMainForm.aOstatokExecute(Sender: TObject);
+var KassaOstatokForm : TKassaOstatokForm;
+begin
+  KassaOstatokForm := TKassaOstatokForm.Create(Self);
+  with KassaOstatokForm do begin
+    OpenMode := omInsert;
+    try
+      Showmodal;
+    finally
+      Free;
+    end;
+  end;
+end;
+//*****************************************************************
+
+//АРХИВ - СЧЕТА НА ОПЛАТУ
+procedure TMainForm.aInvoicePayExecute(Sender: TObject);
+begin
+  TInvoicePayListForm.Create(Self, '', 'aInvoicePay');
+end;
+
+//АРХИВ СЧЕТ-ФАКТУРЫ
+procedure TMainForm.aInvoiceExecute(Sender: TObject);
+begin
+  TInvoiceListForm.Create(Self, '', 'aInvoice');
+end;
+
+//АРХИВ НАКЛАДНЫЕ
+procedure TMainForm.aWayBillExecute(Sender: TObject);
+begin
+  TWayBillListForm.Create(Self, '', 'aWayBill');
+end;
+
+//АРХИВ ПКО
+procedure TMainForm.aPkoListExecute(Sender: TObject);
+begin
+  TDocListForm.CreateIt(Self, 0, 'aPkoList');
+end;
+
+//АРХИВ АКТЫ ВЫПОЛНЕННЫХ РАБОТ
+procedure TMainForm.aAktListExecute(Sender: TObject);
+begin
+  TDocListForm.CreateIt(Self, 1, 'aAktList');
+end;
+
+//АРХИВ ДОВЕРЕННОСТЕЙ
+procedure TMainForm.aDoverkaListExecute(Sender: TObject);
+begin
+  TDocListForm.CreateIt(Self, 2, 'aDoverkaList');
+end;
+
+//*****************************************************************
+//РЕГИСТРАЦИЯ ЛИЦЕНЗИИ
+procedure TMainForm.aLicenseExecute(Sender: TObject);
+var LicenseForm : TLicenseForm;
+begin
+  LicenseForm := TLicenseForm.Create(Self);
+  with LicenseForm do begin
+    OpenMode := omUpdate;
+    try
+      Showmodal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TMainForm.aHelpExecute(Sender: TObject);
+begin
+  Application.HelpContext(1);
+end;
+
+end.
+
+
+

@@ -1,0 +1,565 @@
+unit frmKassa;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
+  AppEvnts, cxGraphics, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore,
+  dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom,
+  dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
+  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
+  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
+  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
+  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
+  dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue, cxMemo,
+  cxCurrencyEdit, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox, System.UITypes,
+  Vcl.ComCtrls, dxCore, cxDateUtils, System.Actions, cxClasses, cxButtons, unCommonFunc,
+  cxEditRepositoryItems, cxStyles, cxCustomData, cxFilter, cxData,
+  cxDataStorage, cxNavigator, cxDBData, cxCheckBox, cxGridLevel,
+  cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGridCustomView,
+  cxGrid, Generics.Collections, dxSkinBlueprint, dxSkinDevExpressDarkStyle,
+  dxSkinDevExpressStyle, dxSkinHighContrast, dxSkinMetropolis,
+  dxSkinMetropolisDark, dxSkinOffice2013DarkGray, dxSkinOffice2013LightGray,
+  dxSkinOffice2013White, dxSkinSevenClassic, dxSkinSharpPlus,
+  dxSkinTheAsphaltWorld, dxSkinVS2010, dxSkinWhiteprint, dxSkinscxPCPainter, unLog;
+
+type
+  TKassaForm = class(TDBEditForm)
+    dsReadStatya: TDataSource;
+    spReadStatya: TpFIBDataSet;
+    spGetOstatok: TpFIBStoredProc;
+    spOfficial: TpFIBDataSet;
+    dsOfficial: TDataSource;
+    btnPrintOnFr: TcxButton;
+    Panel2: TPanel;
+    spClient: TpFIBDataSet;
+    dsClient: TDataSource;
+    pnlSpecial: TPanel;
+    pnlOplataDolga: TPanel;
+    Shape13: TShape;
+    Label7: TLabel;
+    Shape14: TShape;
+    leClient: TcxLookupComboBox;
+    grMain: TcxGrid;
+    tvMain: TcxGridDBTableView;
+    clmMainColumn1: TcxGridDBColumn;
+    clmMainColumn2: TcxGridDBColumn;
+    clmMainColumn3: TcxGridDBColumn;
+    clmMainColumn4: TcxGridDBColumn;
+    clmMainColumn5: TcxGridDBColumn;
+    clmMainColumn6: TcxGridDBColumn;
+    clmMainColumn7: TcxGridDBColumn;
+    lvMain: TcxGridLevel;
+    pnlOfficial: TPanel;
+    shpOffiical: TShape;
+    lbOffiical: TLabel;
+    shpOffiical1: TShape;
+    leOfficial: TcxLookupComboBox;
+    spReadDolg: TpFIBDataSet;
+    dsReadDolg: TDataSource;
+    pnlSumm: TPanel;
+    lb1: TLabel;
+    shp1: TShape;
+    shp2: TShape;
+    edSumm: TcxCurrencyEdit;
+    lb2: TLabel;
+    shp3: TShape;
+    shp4: TShape;
+    mMemo: TcxMemo;
+    lb3: TLabel;
+    shp5: TShape;
+    lb4: TLabel;
+    shp6: TShape;
+    shp7: TShape;
+    edBeginDate: TcxDateEdit;
+    shp8: TShape;
+    edEndDate: TcxDateEdit;
+    lb5: TLabel;
+    shp9: TShape;
+    shp10: TShape;
+    cbPeriod: TcxComboBox;
+    btnCalc: TcxButton;
+    btnRep: TcxButton;
+    pnlTop: TPanel;
+    lbStatyaName: TLabel;
+    shp11: TShape;
+    lbPayment: TLabel;
+    shpPayment: TShape;
+    shp13: TShape;
+    leStatya: TcxLookupComboBox;
+    shpPayment1: TShape;
+    cbPaymentType: TcxComboBox;
+    btnInsStatya: TSpeedButton;
+    lb7: TLabel;
+    shp12: TShape;
+    shp14: TShape;
+    edDate: TcxDateEdit;
+    pnl1: TPanel;
+    spGetSalary: TpFIBDataSet;
+    procedure FormShow(Sender: TObject);
+    procedure leStatyaPropertiesChange(Sender: TObject);
+    procedure btnPrintOnFrClick(Sender: TObject);
+    procedure cbPaymentTypePropertiesChange(Sender: TObject);
+    procedure tvMainCustomDrawCell(Sender: TcxCustomGridTableView;
+      ACanvas: TcxCanvas; AViewInfo: TcxGridTableDataCellViewInfo;
+      var ADone: Boolean);
+    procedure tvMainMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure leClientPropertiesChange(Sender: TObject);
+    procedure btnInsStatyaClick(Sender: TObject);
+    procedure btnCalcClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnRepClick(Sender: TObject);
+    procedure cbPeriodPropertiesChange(Sender: TObject);
+    procedure leOfficialPropertiesChange(Sender: TObject);
+  private
+    AList: TList<Int64>;
+    FActionStat : Integer;
+    FGPaymentType : Integer;
+    FSummOstatok  : Double;
+    FZakazCur : Int64;
+    FOldRec : TKassaRec;
+    FNewRec : TKassaRec;
+    FOstatokNal : Double;
+    FOstatokBeznal : Double;
+    procedure ReadDolg;
+    function CheckList(ARecord: TcxCustomGridRecord): Boolean;
+    function FillLog : string;
+    procedure SetDates;
+  public
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    property ActionStat : Integer read FActionStat write FActionStat;
+    property GPaymentType : Integer read FGPaymentType write FGPaymentType; //1 - наличный, 2 - безналичный
+    property ZakazCur : Int64 read FZakazCur write FZakazCur;
+  protected
+    procedure GetData; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  KassaForm: TKassaForm;
+
+implementation
+
+uses
+  frmRashodPrihod, dmReports, unFRPrinted;
+
+{$R *.dfm}
+
+procedure TKassaForm.btnPrintOnFrClick(Sender: TObject);
+var
+  s : string;
+begin
+  Screen.Cursor := crHourGlass;
+
+  try
+    if (VarisNull(leStatya.EditValue)) then begin
+      leStatya.SetFocus;
+      MessageDlg('Статья не выбрана', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+
+    if PrintOnFr then begin
+      if CheckPrintDeviceFr = 1 then begin
+        if not KKMPrinter.GetConnectionStatus then begin
+          ShowMessage('Фиск. регистратор не включен или нет связи с ним!');
+          Exit;
+        end;
+
+        if FActionStat = 0 then
+          s := KKMPrinter.CashIn(edSumm.Value)
+        else
+          s := KKMPrinter.CashOut(edSumm.Value);
+      end
+      else
+        if CheckPrintDeviceFr = 6 then
+        begin
+          s := ReplaceMoneyTis(FActionStat, edSumm.Value);
+        end
+        else
+          if CheckPrintDeviceFr = 5 then
+          begin
+            s := ReplaceMoneyReKassa(FActionStat, edSumm.Value);
+          end
+          else
+            if CheckPrintDeviceFr > 1 then
+            begin
+              if not KKMPrinterStrih.GetConnectionStatus then begin
+                ShowMessage('Фиск. регистратор не включен или нет связи с ним!');
+                Exit;
+              end;
+
+              if FActionStat = 0 then
+                s := KKMPrinterStrih.CashIn(edSumm.Value)
+              else
+                s := KKMPrinterStrih.CashOut(edSumm.Value);
+            end;
+      Screen.Cursor := crDefault;
+
+      if s <> '' then
+        MessageDlg(s, mtError, [mbOK], 0)
+      else
+        MessageDlg('Отправлено на печать успешно.', mtInformation, [mbOK], 0);
+    end;
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TKassaForm.btnRepClick(Sender: TObject);
+begin
+  ReportsDM.PrepareReport(55);
+  ReportsDM.spReport.ParamByName('DATE_BEGIN_').AsDate := edBeginDate.Date;
+  ReportsDM.spReport.ParamByName('DATE_END_').AsDate := edEndDate.Date;
+  ReportsDM.spReport.ParamByName('MODE_').AsInteger := 0;
+  ReportsDM.spReport.ParamByName('G_OFFICIAL_').AsInt64 := leOfficial.EditValue;
+  ReportsDM.ReportNameG := 'Сотрудник: ' + leOfficial.Text;
+  ReportsDM.ShowReport;
+end;
+
+procedure TKassaForm.cbPaymentTypePropertiesChange(Sender: TObject);
+begin
+  btnPrintOnFr.Enabled := cbPaymentType.ItemIndex = 0;
+
+  if cbPaymentType.ItemIndex = 0 then
+    edSumm.Value := FOstatokNal
+  else
+    edSumm.Value := FOstatokBeznal;
+end;
+
+procedure TKassaForm.cbPeriodPropertiesChange(Sender: TObject);
+begin
+  SetDates;
+  edSumm.Value := 0;
+end;
+
+function TKassaForm.CheckList(ARecord: TcxCustomGridRecord): Boolean;
+begin
+  Result := AList.IndexOf(StrToInt64(ARecord.Values[2])) <> - 1;
+end;
+
+function TKassaForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if {(leStatya.EditValue = 0) OR }(VarisNull(leStatya.EditValue)) then begin
+    ErrControl := leStatya;
+    MessageDlg('Статья не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if edDate.Text = '  .  .    ' then begin
+    ErrControl := edDate;
+    MessageDlg('Дата не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if edSumm.Value = 0 then begin
+    ErrControl := edSumm;
+    MessageDlg('Сумма не указана!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TKassaForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leStatya.EditValue := ParamByName('g_prihod_rashod_').AsInt64;
+      edDate.Date := ParamByName('action_date_').AsDate;
+      edSumm.Value := ParamByName('summ_').AsFloat;
+      mMemo.Text := ParamByName('note_').AsString;
+      cbPaymentType.ItemIndex := ParamByName('G_PAYMENT_TYPE_').AsInt64 - 1;
+      leOfficial.EditValue := ParamByName('G_OFFICIAL_').AsInt64;
+
+      if OpenMode <> omView then begin
+        FOldRec.StatyaName := leStatya.Text;
+        FOldRec.Kdate := edDate.date;
+        FOldRec.summa := ParamByName('summ_').AsFloat;
+        FOldRec.Note := ParamByName('note_').AsString;
+        FOldRec.PayTypeName := cbPaymentType.Text;
+        FOldRec.OfficialName := leOfficial.Text;
+      end;
+    end;
+  end;
+
+  //ПРОВЕРЯЮ ЕСТЬ ЛИ ПРАВО НА РЕДАКТИРОВАНИЕ ФИН.ОПЕРАЦИИ ЗА ПРОШЛЫЕ ДАТЫ
+  //НЕВАЖНО КАКАЯ ДАТА У ОПЕРАЦИИ, МНЕ ПРОЦЕДУРА УЖЕ ВОЗВРАЩАЕТ 1, ЕСЛИ ОПЕРАЦИЯ ЗА ТЕКУЩУЮ ДАТУ
+  if OpenMode = omUpdate then
+    IF (spGetData.ParamByName('HAVERIGHT_TO_CHANGE_OLD_').AsInteger = 0) THEN BEGIN
+      MessageDlg('Вы не обладаете правом для редактирования финансовых операций за прошлые даты!', mtWarning, [mbOk], 0);
+      edSumm.Enabled := False;
+      btnOk.Enabled := False;
+      EXIT;
+    END;
+end;
+
+procedure TKassaForm.leClientPropertiesChange(Sender: TObject);
+begin
+  ReadDolg;
+end;
+
+procedure TKassaForm.leOfficialPropertiesChange(Sender: TObject);
+begin
+  edSumm.Value := 0;
+  mMemo.Text := leOfficial.Text;
+end;
+
+procedure TKassaForm.leStatyaPropertiesChange(Sender: TObject);
+begin
+  if leStatya.EditValue = 0 then begin
+    spGetOstatok.ParamByName('date_').AsDate := Date;
+    if ExecSPTR(spGetOstatok) then begin
+      FOstatokNal := spGetOstatok.ParamByName('summ_').AsFloat;
+      FOstatokBeznal := spGetOstatok.ParamByName('SUMM_BZ_').AsFloat;
+      edSumm.Value := FOstatokNal;
+    end;
+  end else
+    edSumm.Value := 0;
+
+  pnlOfficial.Visible := false;
+  if spOfficial.active then
+    spOfficial.Close;
+
+  pnlOplataDolga.Visible := false;
+  if spClient.active then
+    spClient.Close;
+
+  if leStatya.EditValue = -1 then begin
+    Height := pnlTop.Height + pnlSumm.Height + pnlOfficial.Height + Round((pnlTop.Height + pnlSumm.Height + pnlOfficial.Height) * 0.2);
+    pnlOfficial.Visible := true;
+    OpenSP(spOfficial, False);
+    leOfficial.SetFocus;
+    edEndDate.Date := Date;
+    cbPeriod.ItemIndex := ReadIntSettingsIni('KassaForm', 'PeriodSelect', 0);
+    SetDates;
+
+  end else if leStatya.EditValue = -5 then begin
+    if not Assigned(AList) then
+      AList := TList<Int64>.Create;
+    pnlOplataDolga.Visible := true;
+    OpenSP(spClient, False);
+    leClient.SetFocus;
+    Height := pnlTop.Height + pnlSumm.Height + pnlOplataDolga.Height + Round((pnlTop.Height + pnlSumm.Height + pnlOplataDolga.Height) * 0.2);
+  end
+  else begin
+     Height := pnlTop.Height + pnlSumm.Height + Round((pnlTop.Height + pnlSumm.Height) * 0.4);
+  end;
+end;
+
+procedure TKassaForm.ReadDolg;
+var
+  i : integer;
+  AGridRecord: TcxCustomGridRecord;
+begin
+  spReadDolg.ParamByName('g_client_').AsInt64 := leClient.EditValue;
+  spReadDolg.ParamByName('zakaz_').AsInt64 := FZakazCur;
+  OpenSP(spReadDolg, False);
+
+  //ПОСТАВЛЮ ВСЕМ ЗАКАЗАМ ГАЛОЧКИ ПО УМОЛЧАНИЮ
+  AList.Count := 0;
+  FSummOstatok := 0;
+  tvMain.DataController.GotoFirst;
+  for i := 0 to tvMain.DataController.RecordCount - 1 do begin
+    AGridRecord := tvMain.ViewData.Records[i];
+    AList.Add(StrToInt64(AGridRecord.Values[2]));
+
+    FSummOstatok := FSummOstatok + AGridRecord.Values[6]; //StrToFloat(AGridRecord.Values[6]);
+    tvMain.DataController.GotoNext;
+  End;
+  tvMain.DataController.GotoFirst;
+  edSumm.Value := FSummOstatok;
+  mMemo.Text := leClient.Text;
+end;
+
+procedure TKassaForm.btnCalcClick(Sender: TObject);
+begin
+  if VarisNull(leOfficial.EditValue) then begin
+    MessageDlg('Выберите сотрудника для рассчета зарплаты!', mtWarning, [mbOk], 0);
+    leOfficial.SetFocus;
+    EXIT;
+  end;
+
+  spGetSalary.ParamByName('G_OFFICIAL_').AsInt64 := leOfficial.EditValue;
+  spGetSalary.ParamByName('DATE_BEGIN_').AsDate := edBeginDate.Date;
+  spGetSalary.ParamByName('DATE_END_').AsDate := edEndDate.Date;
+  OpenSp(spGetSalary, false);
+  edSumm.Value := spGetSalary.FieldByName('summa').AsFloat;
+end;
+
+procedure TKassaForm.btnInsStatyaClick(Sender: TObject);
+var RashodPrihodForm : TRashodPrihodForm;
+begin
+  RashodPrihodForm := TRashodPrihodForm.Create(Self);
+  try
+    // если значение не ВСЕ, то ставлю значение выбранной статьи, если "Все", то по умолчанию "Расход"
+    RashodPrihodForm.PrihodRashod := FActionStat;
+    RashodPrihodForm.OpenMode := omInsert;
+    if RashodPrihodForm.ShowModal = mrOk then begin
+      OpenSp(spReadStatya, False);
+      leStatya.EditValue := RashodPrihodForm.RecID;
+      leStatya.SetFocus;
+    end;
+  finally
+    RashodPrihodForm.Free;
+  end;
+end;
+
+procedure TKassaForm.SetDates;
+begin
+  if cbPeriod.ItemIndex = 0 then
+    edBeginDate.Date := edEndDate.Date
+  else if cbPeriod.ItemIndex = 1 then
+    edBeginDate.Date := edEndDate.Date - 7
+  else if cbPeriod.ItemIndex = 2 then
+    edBeginDate.Date := edEndDate.Date - 30;
+end;
+
+procedure TKassaForm.SetParams(SP: TpFIBStoredProc);
+var
+  i : integer;
+begin
+  inherited;
+
+  with SP do begin
+    ParamByName('G_Payment_Type_').AsInt64 := cbPaymentType.ItemIndex + 1;
+    ParamByName('g_prihod_rashod_').AsInt64 := leStatya.EditValue;
+    ParamByName('action_date_').AsDate := edDate.Date;
+    ParamByName('action_').AsInteger := FActionStat;
+    ParamByName('summ_').AsFloat := edSumm.Value;
+    ParamByName('note_').AsString := mMemo.Text;
+
+    if not VarIsNull(leOfficial.EditValue) and (leOfficial.EditValue > 0) then
+      ParamByName('G_OFFICIAL_').AsInt64 := leOfficial.EditValue;
+
+    if leStatya.EditValue = -5 then begin
+      ParamByName('ZAKAZ_ARR_').AsString := '~';
+      for i := 0 to AList.Count-1 do
+        ParamByName('ZAKAZ_ARR_').AsString := ParamByName('ZAKAZ_ARR_').AsString + IntToStr(Int64(AList[i])) + '~';
+    end;
+
+    ParamByName('USER_ID_').AsInt64 := CurrentOfficial;
+    ParamByName('LOG_BODY_').AsString := FillLog;
+    ParamByName('UPLOAD_TO_EXT_APP_').AsInteger := Integer(UploadToMobile);
+  end;
+end;
+
+procedure TKassaForm.tvMainCustomDrawCell(Sender: TcxCustomGridTableView;
+  ACanvas: TcxCanvas; AViewInfo: TcxGridTableDataCellViewInfo;
+  var ADone: Boolean);
+begin
+  if AViewInfo.EditViewInfo is TcxCustomCheckBoxViewInfo then
+    TcxCustomCheckBoxViewInfo(AViewInfo.EditViewInfo).State :=  TcxCheckBoxState(CheckList(AViewInfo.GridRecord));
+end;
+
+procedure TKassaForm.tvMainMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  AHitTest: TcxCustomGridHitTest;
+  AGridRecord: TcxCustomGridRecord;
+  val : string;
+begin
+  if Sender is TcxGridSite then
+  begin
+    with TcxGridSite(Sender).GridView do
+      AHitTest := ViewInfo.GetHitTest(X, Y);
+
+    if (AHitTest.HitTestCode = htCell) and  (TcxGridDBColumn(TcxGridRecordCellHitTest(AHitTest).Item).DataBinding.FieldName = '') then
+      AGridRecord := TcxGridRecordCellHitTest(AHitTest).GridRecord
+    else
+      Exit;
+  end;
+
+  if (AGridRecord <> nil) then begin
+    if CheckList(AGridRecord) then begin
+      AList.Remove(StrToInt64(AGridRecord.Values[2]));
+      val := StringReplace(AGridRecord.Values[6], ',', '.', [rfReplaceAll]);
+      FSummOstatok := FSummOstatok - StrToFloat(val);
+    end else begin
+      AList.Add(StrToInt64(AGridRecord.Values[2]));
+      val := StringReplace(AGridRecord.Values[6], ',', '.', [rfReplaceAll]);
+      FSummOstatok := FSummOstatok + StrToFloat(val);
+    end;
+    edSumm.Value := FSummOstatok;
+  end;
+end;
+
+function TKassaForm.FillLog: string;
+begin
+  Result := '';
+
+  FNewRec.StatyaName := leStatya.Text;
+  FNewRec.Kdate := edDate.date;
+  FNewRec.summa := edSumm.Value;
+  FNewRec.Note := mMemo.Text;
+  FNewRec.PayTypeName := cbPaymentType.Text;
+
+  Result := FillLogKassa(Integer(OpenMode), FActionStat, FOldRec, FNewRec);
+end;
+
+procedure TKassaForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+
+  if pnlOfficial.Visible then
+    SaveSettingsIni('KassaForm', 'PeriodSelect', cbPeriod.ItemIndex, '0');
+end;
+
+procedure TKassaForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  IF leStatya.EditValue = -5 THEN BEGIN
+    spIns.StoredProcName := 'K_PAY_DOLG';
+    spIns.SQL.Text := 'EXECUTE PROCEDURE K_PAY_DOLG (?ACTION_, ?G_PRIHOD_RASHOD_, ?SUMM_, '+
+      '?ACTION_DATE_, ?NOTE_, ?ZAKAZ_, ?SKLAD_, ?G_PAYMENT_TYPE_, ?G_TOCHKA_, ?ZAKAZ_ARR_, '+
+      '?USER_ID_, ?LOG_BODY_, ?UPLOAD_TO_EXT_APP_)';
+  END;
+
+  inherited;
+  if CanClose then
+    AList.Free;
+end;
+
+procedure TKassaForm.FormShow(Sender: TObject);
+begin
+  inherited;
+
+  Height := pnlTop.Height + pnlSumm.Height + Round((pnlTop.Height + pnlSumm.Height) * 0.4);
+
+//  lbOffiical.Visible := false;
+//  shpOffiical.Visible := false;
+//  shpOffiical1.Visible := false;
+//  leOfficial.Visible := false;
+//  lbNote.Visible := false;
+
+  spReadStatya.ParamByName('action_').AsInteger := FActionStat;
+  OpenSp(spReadStatya, False);
+  edDate.Date := Date;
+
+  if FGPaymentType > 0 then
+    cbPaymentType.ItemIndex := FGPaymentType-1;
+
+  if OpenMode = omUpdate then
+    cbPaymentType.Enabled := False;
+
+  if FActionStat = 0 then BEGIN
+    Self.Caption := 'Приход';
+    lbStatyaName.Caption := 'Статья прихода';
+    HelpC := 12;
+  END else begin
+    Self.Caption := 'Расход';
+    HelpC := 13;
+  end;
+
+  btnPrintOnFr.Visible := PrintOnFr;
+end;
+
+end.

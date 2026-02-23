@@ -1,0 +1,260 @@
+unit frmPrintEtiketSetup;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, dxCntner, dxEditor, dxEdLib, ExtCtrls, StdCtrls,
+  AppEvnts, dxExEdtr, Buttons, Printers, IniFiles, cxControls, cxContainer,
+  cxEdit, cxTextEdit, cxMaskEdit, cxSpinEdit;
+
+type
+  TPrintEtiketSetupForm = class(TDlgForm)
+    Label6: TLabel;
+    Shape11: TShape;
+    Label7: TLabel;
+    Shape13: TShape;
+    cbChooseLentWidth: TComboBox;
+    Shape14: TShape;
+    cbPrinters: TComboBox;
+    Shape12: TShape;
+    cbPrint: TRadioButton;
+    cbExport: TRadioButton;
+    Label2: TLabel;
+    Shape3: TShape;
+    edAmount: TdxEdit;
+    Shape4: TShape;
+    btHelp: TBitBtn;
+    grp1: TGroupBox;
+    cbPrintPrice: TCheckBox;
+    cbPriceBold: TCheckBox;
+    grp2: TGroupBox;
+    cbPrintSlogan: TCheckBox;
+    lbl1: TLabel;
+    shp1: TShape;
+    shp2: TShape;
+    edSlogan: TdxEdit;
+    cbSloganBold: TCheckBox;
+    lblCannot1: TLabel;
+    lbl2: TLabel;
+    spnPriceSize: TcxSpinEdit;
+    lbl3: TLabel;
+    spnSloganSize: TcxSpinEdit;
+    pnExport: TPanel;
+    lbl4: TLabel;
+    shp3: TShape;
+    shp5: TShape;
+    cbImportFile: TComboBox;
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure cbPrintClick(Sender: TObject);
+    procedure cbChooseLentWidthChange(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+    procedure cbPrintSloganClick(Sender: TObject);
+    procedure cbPrintPriceClick(Sender: TObject);
+    procedure ApplicationEvents1ActionExecute(Action: TBasicAction;
+      var Handled: Boolean);
+  private
+    procedure SetDefaultSize(PriceSize : Integer; SloganSize : Integer);
+  public
+    { Public declarations }
+  end;
+
+var
+  PrintEtiketSetupForm: TPrintEtiketSetupForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TPrintEtiketSetupForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+  SloganSize, PriceSize : integer;
+begin
+  inherited;
+  cbImportFile.ItemIndex := 0;
+  cbImportFile.Color := clBtnFace;
+
+  cbPrinters.Items.Assign(Printer.Printers);
+  cbPrinters.ItemIndex := Printer.PrinterIndex;
+
+  //открыли файл в директории программы
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    if Ini.ReadInteger('Printetiket', 'ExpToFile', -1) = -1 then
+      cbPrint.Checked := True
+    else
+      cbExport.Checked := True;
+
+    cbPrinters.ItemIndex := Ini.ReadInteger('Printetiket', 'PrinterIndex', 0);
+    cbChooseLentWidth.ItemIndex := Ini.ReadInteger('Printetiket', 'LentaWidth', 0);
+    edSlogan.Text := Ini.ReadString('Printetiket', 'Slogan', '');
+    edAmount.Text := IntToStr(Ini.ReadInteger('Printetiket', 'Amount', 1));
+    cbImportFile.ItemIndex := Ini.ReadInteger('Printetiket', 'ExpToFile', -1);
+    cbPrintPrice.Checked := Ini.ReadInteger('Printetiket', 'PrintPrice', 0) = 1;
+    cbPrintSlogan.Checked := Ini.ReadInteger('Printetiket', 'PrintSlogan', 0) = 1;
+    cbPriceBold.Checked := Ini.ReadInteger('Printetiket', 'PriceBold', 0) = 1;
+    cbSloganBold.Checked := Ini.ReadInteger('Printetiket', 'SloganBold', 0) = 1;
+    PriceSize := Ini.ReadInteger('Printetiket', 'PriceSize', 0);
+    SloganSize := Ini.ReadInteger('Printetiket', 'SloganSize', 0);
+    SetDefaultSize(PriceSize, SloganSize);
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TPrintEtiketSetupForm.SetDefaultSize(PriceSize : Integer; SloganSize : Integer);
+begin
+  // у этикеток есть размеры по умолчанию, при переключении, или если не заданы настройки, надо ставить эти значения
+  if cbChooseLentWidth.ItemIndex = 1 then begin     // 30*15
+    if PriceSize = 0 then
+      spnPriceSize.Value := 6
+    else
+      spnPriceSize.Value := PriceSize;
+
+    if SloganSize = 0 then
+      spnSloganSize.Value := 6
+    else
+      spnSloganSize.Value := SloganSize;
+  end
+  else if cbChooseLentWidth.ItemIndex in [0, 2, 3]  then begin     // 29*20, 47*25, 43*25
+    if PriceSize = 0 then
+      spnPriceSize.Value := 7
+    else
+      spnPriceSize.Value := PriceSize;
+
+    if SloganSize = 0 then
+      spnSloganSize.Value := 7
+    else
+      spnSloganSize.Value := SloganSize;
+  end
+  else if cbChooseLentWidth.ItemIndex = 5 then begin     // 58*30
+    if PriceSize = 0 then
+      spnPriceSize.Value := 9
+    else
+      spnPriceSize.Value := PriceSize;
+
+    if SloganSize = 0 then
+      spnSloganSize.Value := 9
+    else
+      spnSloganSize.Value := SloganSize;
+  end
+  else if cbChooseLentWidth.ItemIndex in [4, 6, 7, 8] then begin     // 58*40, 58*60, 58*100
+    if PriceSize = 0 then
+      spnPriceSize.Value := 10
+    else
+      spnPriceSize.Value := PriceSize;
+
+    if SloganSize = 0 then
+      spnSloganSize.Value := 10
+    else
+      spnSloganSize.Value := SloganSize;
+  end
+  else if cbChooseLentWidth.ItemIndex = 9 then begin     // 100*70
+    if PriceSize = 0 then
+      spnPriceSize.Value := 12
+    else
+      spnPriceSize.Value := PriceSize;
+
+    if SloganSize = 0 then
+      spnSloganSize.Value := 12
+    else
+      spnSloganSize.Value := SloganSize;
+  end
+end;
+
+procedure TPrintEtiketSetupForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+
+  //создали файл в директории программы
+  if ModalResult = mrOK then begin
+    if (cbExport.Checked) and (cbImportFile.ItemIndex < 0) then begin
+      MessageDlg('Формат файла не выбран!', mtWarning, [mbOK], 0);
+      cbImportFile.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+//    if (cbChooseLentWidth.ItemIndex in [0, 1, 2, 3]) and (cbSloganOrPrice.ItemIndex < 0) then begin
+//      MessageDlg('Выберите элемент для вывода на этикетке - слоган или цену, т.к. на этом размере два элемента одновременно невозможно уместить.', mtWarning, [mbOK], 0);
+//      cbSloganOrPrice.SetFocus;
+//      CanClose := False;
+//      Exit;
+//    end;
+
+    Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+    try
+      Ini.WriteInteger('Printetiket', 'PrinterIndex', cbPrinters.ItemIndex);
+      Ini.WriteInteger('Printetiket', 'LentaWidth', cbChooseLentWidth.ItemIndex);
+      Ini.WriteString('Printetiket', 'Slogan', edSlogan.Text);
+      Ini.WriteInteger('Printetiket', 'Amount', StrToInt(edAmount.Text));
+      Ini.WriteInteger('Printetiket', 'PrintPrice', Integer(cbPrintPrice.Checked));
+      Ini.WriteInteger('Printetiket', 'PrintSlogan', Integer(cbPrintSlogan.Checked));
+      Ini.WriteInteger('Printetiket', 'PriceBold', Integer(cbPriceBold.Checked));
+      Ini.WriteInteger('Printetiket', 'SloganBold', Integer(cbSloganBold.Checked));
+      Ini.WriteInteger('Printetiket', 'PriceSize', spnPriceSize.Value);
+      Ini.WriteInteger('Printetiket', 'SloganSize', spnSloganSize.Value);
+      if cbExport.Checked then
+        Ini.WriteInteger('Printetiket', 'ExpToFile', cbImportFile.ItemIndex)
+      else
+        Ini.WriteInteger('Printetiket', 'ExpToFile', -1);  // буду записывать сюда -1, если выбрано распечатать на принтере, чтобы потом при открытии формы, ставить галочк уна принтер при -1
+    finally
+      Ini.Free;
+    end
+  end;
+end;
+
+procedure TPrintEtiketSetupForm.cbPrintClick(Sender: TObject);
+begin
+  cbPrinters.Enabled := cbPrint.Checked;
+  edAmount.Enabled := cbPrint.Checked;
+
+  if cbExport.Checked then begin
+    pnExport.Visible := True;
+    cbPrinters.Color := clBtnFace;
+  end else begin
+    pnExport.Visible := False;
+    cbImportFile.ItemIndex := -1;
+    cbPrinters.Color := clWindow;
+  end
+end;
+
+procedure TPrintEtiketSetupForm.cbChooseLentWidthChange(Sender: TObject);
+begin
+  SetDefaultSize(0, 0);
+end;
+
+procedure TPrintEtiketSetupForm.btHelpClick(Sender: TObject);
+begin
+  Application.HelpContext(55);
+end;
+
+procedure TPrintEtiketSetupForm.cbPrintSloganClick(Sender: TObject);
+begin
+  edSlogan.Enabled := cbPrintSlogan.Checked;
+  cbSloganBold.Enabled := cbPrintSlogan.Checked;
+
+  if cbPrintSlogan.Checked = False then
+    cbSloganBold.Checked := False;
+end;
+
+procedure TPrintEtiketSetupForm.cbPrintPriceClick(Sender: TObject);
+begin
+  cbPriceBold.Enabled := cbPrintPrice.Checked;
+
+  if cbPrintPrice.Checked = False then
+    cbPriceBold.Checked := False;
+end;
+
+procedure TPrintEtiketSetupForm.ApplicationEvents1ActionExecute(
+  Action: TBasicAction; var Handled: Boolean);
+begin
+  //inherited;
+end;
+
+end.

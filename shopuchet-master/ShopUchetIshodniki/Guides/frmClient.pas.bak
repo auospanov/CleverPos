@@ -1,0 +1,167 @@
+unit frmClient;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons;
+
+type
+  TClientForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edName: TdxEdit;
+    Shape4: TShape;
+    Label13: TLabel;
+    Shape25: TShape;
+    Shape26: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    Shape3: TShape;
+    edRNN: TdxEdit;
+    Label3: TLabel;
+    Shape5: TShape;
+    Shape6: TShape;
+    edIDN: TdxEdit;
+    Label4: TLabel;
+    Shape7: TShape;
+    edKBE: TdxEdit;
+    Shape8: TShape;
+    leCategory: TdxLookupEdit;
+    Label8: TLabel;
+    Shape15: TShape;
+    leContrAgent: TdxLookupEdit;
+    Shape16: TShape;
+    ceByDefault: TdxCheckEdit;
+    SpeedButton2: TSpeedButton;
+    aInsContrAgentType: TAction;
+    Label5: TLabel;
+    Shape9: TShape;
+    Shape10: TShape;
+    seSkidka: TVLSummdxEdit;
+    ceIsBeznal: TdxCheckEdit;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape12: TShape;
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure aInsContrAgentTypeExecute(Sender: TObject);
+  private
+    FId_Category: Integer;
+    FIs_supplier: Integer; // 0 - Клиент, 1 - Поставщик
+  public
+    property Id_Category: Integer read FId_Category write FId_Category;
+    property Is_supplier: Integer read FIs_supplier write FIs_supplier;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TOracleQuery); override;
+  end;
+
+var
+  ClientForm: TClientForm;
+
+implementation
+
+uses frmContrAgentType;
+
+{$R *.dfm}
+
+procedure TClientForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  IF FIs_supplier = 0 THEN
+    CAPTION := 'Реквизиты клиента'
+  ELSE begin
+    CAPTION := 'Реквизиты поставщика';
+    seSkidka.Enabled := False;
+  end;
+
+  OpenSp(spClientCategory, False);
+  OpenSp(spReadContrAgent, False);
+end;
+
+function TClientForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(leCategory.Text) = EmptyStr then begin
+    ErrControl := leCategory;
+    MessageDlg('Категория не выбрана', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(leContrAgent.Text) = EmptyStr then begin
+    ErrControl := leContrAgent;
+    MessageDlg('Тип контрагента не выбран', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TClientForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leCategory.LookupKeyValue := GetVariable('G_CLIENT_PARENT_');
+      leContrAgent.LookupKeyValue := GetVariable('G_CONTRAGENT_');
+      edName.TEXT := GetVariable('NAME_');
+      edRNN.TEXT := GetVariable('RNN_');
+      edIDN.TEXT := GetVariable('IDN_');
+      edKBE.TEXT := GetVariable('KBE_');
+      seSkidka.SummValue := GetVariable('Skidka_');
+      ceIsBeznal.CHECKED := GetVariable('is_beznal_') = 1;
+      ceByDefault.CHECKED := GetVariable('by_default_') = 1;
+    end;
+  end;
+  if OpenMode = omInsert then
+    leCategory.LookupKeyValue := FId_Category;
+end;
+
+procedure TClientForm.SetParams(SP: TOracleQuery);
+begin
+  inherited;
+  with SP do begin
+    SetVariable('G_CLIENT_PARENT_', leCategory.LookupKeyValue);
+    SetVariable('G_CONTRAGENT_', leContrAgent.LookupKeyValue);
+    SetVariable('NAME_', edName.Text);
+    SetVariable('RNN_', edRnn.Text);
+    SetVariable('IDN_', edIdn.Text);
+    SetVariable('KBE_', edKbe.Text);
+    SetVariable('IS_SUPPLIER_', FIs_supplier);
+    SetVariable('by_default_', Integer(ceByDefault.Checked));
+    SetVariable('Skidka_', seSkidka.SummValue);
+    SetVariable('IS_category_', 0);
+    SetVariable('IS_beznal_', Integer(ceIsBeznal.Checked));
+  end;
+end;
+
+procedure TClientForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_client_';
+end;
+
+procedure TClientForm.aInsContrAgentTypeExecute(Sender: TObject);
+begin
+  inherited;
+  ContrAgentTypeForm := TContrAgentTypeForm.Create(Self);
+  try
+    ContrAgentTypeForm.OpenMode := omInsert;
+    if ContrAgentTypeForm.ShowModal = mrOk then
+      OpenSp(spReadContrAgent, False);
+  finally
+    ContrAgentTypeForm.Free;
+  end;
+end;
+
+end.

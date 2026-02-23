@@ -1,0 +1,36 @@
+unit frmKassaList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  ExtCtrls, Menus, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms;
+
+type
+  TKassaListForm = class(TDBListForm)
+    dxDBGridKASSA: TdxDBGridMaskColumn;
+    dxDBGridACTION: TdxDBGridMaskColumn;
+    dxDBGridG_PRIHOD_RASHOD: TdxDBGridMaskColumn;
+    dxDBGridSUMM: TdxDBGridCurrencyColumn;
+    dxDBGridACTION_DATE: TdxDBGridDateColumn;
+    dxDBGridNOTE: TdxDBGridMaskColumn;
+    dxDBGridZAKAZ: TdxDBGridMaskColumn;
+    dxDBGridSKLAD: TdxDBGridMaskColumn;
+    dxDBGridSTATYA_NAME: TdxDBGridMaskColumn;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  KassaListForm: TKassaListForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

@@ -1,0 +1,247 @@
+// JCL_DEBUG_EXPERT_GENERATEJDBG ON
+// JCL_DEBUG_EXPERT_INSERTJDBG ON
+// JCL_DEBUG_EXPERT_DELETEMAPFILE ON
+program ShopUchet;
+
+{$I ShopUchet.inc}
+//{$R 'Admpriv.res' 'Admpriv.RC'}
+
+uses
+  Forms,
+  SysUtils,
+  Winapi.Windows,
+  unInitApp in 'unInitApp.pas',
+  unCommonFunc in '..\Shared\unCommonFunc.pas',
+  unDBSupport in '..\Shared\unDBSupport.pas',
+  unDigConversions in '..\Shared\unDigConversions.pas',
+  unToWord in '..\Shared\unToWord.pas',
+  unErrorHandlers in '..\Shared\unErrorHandlers.pas',
+  unErrorParser in '..\Shared\unErrorParser.pas',
+  unFileInfo in '..\Shared\unFileInfo.pas',
+  dmMain in '..\Shared\dmMain.pas' {MainDM: TDataModule},
+  frmMain in 'frmMain.pas' {MainForm},
+  frmSetup in 'frmSetup.pas' {SetupForm},
+  frmAbout in 'frmAbout.pas' {AboutForm},
+  frmMDIChild in '..\Shared\frmMDIChild.pas' {MDIChildForm},
+  frmSelectDB in '..\Shared\frmSelectDB.pas' {SelectDBForm},
+  frmDBListRO in '..\Shared\frmDBListRO.pas' {DBListROForm},
+  frmDBList in '..\Shared\frmDBList.pas' {DBListFlogorm},
+  frmDBMultiPageListRO in '..\Shared\frmDBMultiPageListRO.pas' {DBMultiPageListROForm},
+  frmDBMultiPageList in '..\Shared\frmDBMultiPageList.pas' {DBMultiPageListForm},
+  frmDBTreeListRO in '..\Shared\frmDBTreeListRO.pas' {DBTreeListROForm},
+  frmDBTreeList in '..\Shared\frmDBTreeList.pas' {DBTreeListForm},
+  frmDBMultiPageTreeListRO in '..\Shared\frmDBMultiPageTreeListRO.pas' {DBMultiPageTreeListROForm},
+  frmDBMultiPageTreeList in '..\Shared\frmDBMultiPageTreeList.pas' {DBMultiPageTreeListForm},
+  frmPopupList in '..\Shared\frmPopupList.pas' {PopupListForm},
+  frmPopupMultipageList in '..\Shared\frmPopupMultipageList.pas' {PopupMultipageListForm},
+  frmPopupTreeList in '..\Shared\frmPopupTreeList.pas' {PopupTreeListForm},
+  frmDBDlg in '..\Shared\frmDBDlg.pas' {DBDlgForm},
+  frmDBEdit in '..\Shared\frmDBEdit.pas' {DBEditForm},
+  frmDBTreeEdit in '..\Shared\frmDBTreeEdit.pas' {DBTreeEditForm},
+  frmLogonDialog in '..\Shared\frmLogonDialog.pas' {LogonDlgForm},
+  frmAppErrorDlg in '..\Shared\frmAppErrorDlg.pas' {AppErrorDlgForm},
+  frmDBErrorDlg in '..\Shared\frmDBErrorDlg.pas' {DBErrorDlgForm},
+  frmKassaList in '..\Kernel\frmKassaList.pas' {KassaListForm},
+  dmReports in '..\Shared\dmReports.pas' {ReportsDM: TDataModule},
+  frmRashodPrihod in '..\Guides\frmRashodPrihod.pas' {RashodPrihodForm},
+  frmKassa in '..\Kernel\frmKassa.pas' {KassaForm},
+  frmPriceList in '..\Guides\frmPriceList.pas' {PriceListForm},
+  frmPriceListUn in '..\Guides\frmPriceListUn.pas' {PriceListUnForm},
+  frmCategory in '..\Guides\frmCategory.pas' {CategoryForm},
+  frmClientList in '..\Guides\frmClientList.pas' {ClientListForm},
+  frmClient in '..\Guides\frmClient.pas' {ClientForm},
+  frmContrAgentType in '..\Guides\frmContrAgentType.pas' {ContrAgentTypeForm},
+  frmClientCategory in '..\Guides\frmClientCategory.pas' {ClientCategoryForm},
+  frmClientBankRek in '..\Guides\frmClientBankRek.pas' {ClientBankRekForm},
+  frmClientAddress in '..\Guides\frmClientAddress.pas' {ClientAddressForm},
+  frmAddressType in '..\Guides\frmAddressType.pas' {AddressTypeForm},
+  frmRashodPrihodList in '..\Guides\frmRashodPrihodList.pas' {RashodPrihodListForm},
+  frmOfficialList in '..\Guides\frmOfficialList.pas' {OfficialListForm},
+  frmOfficial in '..\Guides\frmOfficial.pas' {OfficialForm},
+  frmAppointment in '..\Guides\frmAppointment.pas' {AppointmentForm},
+  frmFirmRekvizit in '..\Guides\frmFirmRekvizit.pas' {FirmRekvizitForm},
+  frmMyFirmAddress in '..\Guides\frmMyFirmAddress.pas' {MyFirmAddressForm},
+  frmMyAddressBankRek in '..\Guides\frmMyAddressBankRek.pas' {MyAddressBankRekForm},
+  frmKassaOstatok in '..\Kernel\frmKassaOstatok.pas' {KassaOstatokForm},
+  frmZakupkaTovara in '..\Kernel\frmZakupkaTovara.pas' {ZakupkaTovaraForm},
+  frmUpdZakupkaTovara in '..\Kernel\frmUpdZakupkaTovara.pas' {UpdZakupkaTovaraForm},
+  frmProdazhaTovaraList in '..\Kernel\frmProdazhaTovaraList.pas' {ProdazhaTovaraListForm},
+  frmUpdProdazhaTovara in '..\Kernel\frmUpdProdazhaTovara.pas' {UpdProdazhaTovaraForm},
+  frmProdazhaTovara in '..\Kernel\frmProdazhaTovara.pas' {ProdazhaTovaraForm},
+  frmInvoice in '..\Kernel\frmInvoice.pas' {InvoiceForm},
+  frmInvoicePay in '..\Kernel\frmInvoicePay.pas' {InvoicePayForm},
+  frmDBFilter in '..\Shared\frmDBFilter.pas' {DBFilterForm},
+  frmPriceListRepFilter in '..\Reports\frmPriceListRepFilter.pas' {PriceListRepFilterForm},
+  frmInvoicePayList in '..\Kernel\frmInvoicePayList.pas' {InvoicePayListForm},
+  frmInvoiceList in '..\Kernel\frmInvoiceList.pas' {InvoiceListForm},
+  frmDiscountList in '..\Guides\frmDiscountList.pas' {DiscountListForm},
+  frmDiscount in '..\Guides\frmDiscount.pas' {DiscountForm},
+  frmSaleMode in '..\Kernel\frmSaleMode.pas' {SaleModeForm},
+  frmBank in '..\Guides\frmBank.pas' {BankForm},
+  unSupport in '..\Shared\unSupport.pas',
+  unBackup in '..\Shared\unBackup.pas',
+  frmCopyProgress in '..\Shared\frmCopyProgress.pas' {CopyProgressForm},
+  frmDlg in '..\Shared\frmDlg.pas' {DlgForm},
+  frmGUnit in '..\Guides\frmGUnit.pas' {GUnitForm},
+  frmGUnitList in '..\Guides\frmGUnitList.pas' {GUnitListForm},
+  frmZakazNaRealList in '..\Kernel\frmZakazNaRealList.pas' {ZakazNaRealListForm},
+  frmZakazNaReal in '..\Kernel\frmZakazNaReal.pas' {ZakazNaRealForm},
+  frmPrihodTovaraList in '..\Kernel\frmPrihodTovaraList.pas' {PrihodTovaraListForm},
+  frmRevision in '..\Kernel\frmRevision.pas' {RevisionForm},
+  frmRevisionUnific in '..\Kernel\frmRevisionUnific.pas' {RevisionUnificForm},
+  frmTovarNaklForRevis in '..\Kernel\frmTovarNaklForRevis.pas' {TovarNaklForRevisForm},
+  frmPrintEtiketSetup in '..\Guides\frmPrintEtiketSetup.pas' {PrintEtiketSetupForm},
+  frmClientDateFilter in '..\Reports\frmClientDateFilter.pas' {ClientDateFilterForm},
+  frmOplataTovaraRealN_Old in '..\Kernel\frmOplataTovaraRealN_Old.pas' {OplataTovaraRealNForm_old},
+  frmOplataTovaraReal in '..\Kernel\frmOplataTovaraReal.pas' {OplataTovaraRealForm},
+  frmWayBillList in '..\Kernel\frmWayBillList.pas' {WayBillListForm},
+  frmWayBill in '..\Kernel\frmWayBill.pas' {WayBillForm},
+  frmZakazRealParent in '..\Kernel\frmZakazRealParent.pas' {ZakazRealParentForm},
+  frmPsevdLogon in '..\Shared\frmPsevdLogon.pas' {PsevdLogonForm},
+  frmGetDCard in '..\Kernel\frmGetDCard.pas' {GetDCardForm},
+  unInfo in '..\Shared\unInfo.pas',
+  frmMyCurrencyFrame in '..\Kernel\frmMyCurrencyFrame.pas' {MyCurrencyFrameForm: TFrame},
+  frmTochka in '..\Guides\frmTochka.pas' {TochkaForm},
+  frmPopupTovList in '..\Reports\frmPopupTovList.pas' {PopupTovListForm},
+  frmImportB in '..\Guides\frmImportB.pas' {ImportBForm},
+  frmTreeFrame in '..\Reports\frmTreeFrame.pas' {TreeFrame: TFrame},
+  frmExportOperData in '..\Kernel\frmExportOperData.pas' {ExportOperDataForm},
+  unExportOperDataThread in '..\Kernel\unExportOperDataThread.pas',
+  dmReportsThread in '..\Shared\dmReportsThread.pas' {ReportsThreadDM: TDataModule},
+  PriceListUnSostav in '..\Guides\PriceListUnSostav.pas' {PriceListUnSostavForm},
+  frmProductionList in '..\Kernel\frmProductionList.pas' {ProductionListForm},
+  frmDoc in '..\Kernel\frmDoc.pas' {DocForm},
+  frmDocList in '..\Kernel\frmDocList.pas' {DocListForm},
+  frmSaleDlg in '..\Kernel\frmSaleDlg.pas' {SaleDlgForm},
+  frmSalePayment in '..\Kernel\frmSalePayment.pas' {SalePaymentForm},
+  frmSearchTovarDlg in '..\Kernel\frmSearchTovarDlg.pas' {SearchTovarDlgForm},
+  frmOplata in '..\Kernel\frmOplata.pas' {OplataForm},
+  frmPayDetails in '..\Kernel\frmPayDetails.pas' {PayDetailsForm},
+  TurboActivateUnit in '..\Licence\TurboActivateUnit.pas',
+  frmLicense in '..\Licence\frmLicense.pas' {LicenseForm},
+  ReVerifyNow in '..\Licence\ReVerifyNow.pas' {frmReVerifyNow},
+  TrialExtension in '..\Licence\TrialExtension.pas' {frmTrialExtension},
+  unGetLicenceThread in '..\Licence\unGetLicenceThread.pas',
+  frmPrihodTovaraN in '..\Kernel\frmPrihodTovaraN.pas' {PrihodTovaraNForm},
+  frmProdazhaTovaraN in '..\Kernel\frmProdazhaTovaraN.pas' {ProdazhaTovaraNForm},
+  frmProductionTovaraN in '..\Kernel\frmProductionTovaraN.pas' {ProductionTovaraNForm},
+  frmOplataTovaraRealN in '..\Kernel\frmOplataTovaraRealN.pas' {OplataTovaraRealNForm},
+  frmPromotion in '..\Guides\frmPromotion.pas' {PromotionForm},
+  frmPromotionPopup in '..\Guides\frmPromotionPopup.pas' {PromotionPopupForm},
+  smsc_api in '..\Shared\smsc_api.pas',
+  frmPopupClientMultList in '..\Reports\frmPopupClientMultList.pas' {PopupClientMultListForm},
+  frmUpgradeDBLast in '..\Shared\frmUpgradeDBLast.pas' {UpgradeDBLastForm},
+  frmSmsRecips in '..\Kernel\frmSmsRecips.pas' {SmsRecipsForm},
+  frmSendSms in '..\Kernel\frmSendSms.pas' {SendSmsForm},
+  frmUpdSmsNotifyHistory in '..\Kernel\frmUpdSmsNotifyHistory.pas' {UpdSmsNotifyHistoryForm},
+  frmSendTimeAndDate in '..\Kernel\frmSendTimeAndDate.pas' {SendTimeAndDateForm},
+  frmDeliveryList in '..\Kernel\frmDeliveryList.pas' {DeliveryListForm},
+  frmDostavshikPopup in '..\Guides\frmDostavshikPopup.pas' {DostavshikPopupForm},
+  frmDelivery in '..\Kernel\frmDelivery.pas' {DeliveryForm},
+  UFlxFormats in 'C:\Dist\TMS.FlexCelVCL\Source\UFlxFormats.pas',
+  frmRevisionUpd in '..\Kernel\frmRevisionUpd.pas' {RevisionUpdForm},
+  unATOLKKM in '..\Kernel\unATOLKKM.pas',
+  unkkm in '..\Kernel\unkkm.pas',
+  frmGridFrame in '..\Reports\frmGridFrame.pas' {GridFrame: TFrame},
+  frmGridFrameDupl in '..\Reports\frmGridFrameDupl.pas' {GridFrameDupl: TFrame},
+  DrvFRLib_TLB in '..\Kernel\DrvFRLib_TLB.pas',
+  unShtrihDriver in '..\Kernel\unShtrihDriver.pas',
+  frmTovarAmountBySklad in '..\Guides\frmTovarAmountBySklad.pas' {TovarAmountBySkladForm},
+  frmSyncSetup in '..\Kernel\frmSyncSetup.pas' {SyncSetupForm},
+  frmFillData in '..\Shared\frmFillData.pas' {FillDataForm},
+  frmGetTovarAsideSpis in '..\Kernel\frmGetTovarAsideSpis.pas' {GetTovarAsideSpisForm},
+  frmCommonLog in '..\Kernel\frmCommonLog.pas' {CommonLogForm},
+  frmPopupOfficialList in '..\Reports\frmPopupOfficialList.pas' {PopupOfficialListForm},
+  unSyncDataThread in '..\Kernel\unSyncDataThread.pas',
+  frmSalesOstBySkladList in '..\Reports\frmSalesOstBySkladList.pas' {SalesOstBySkladListForm},
+  frmFastGoodsView in '..\Kernel\frmFastGoodsView.pas' {FastGoodsViewForm},
+  frmPopupClientListSaleMode in '..\Kernel\frmPopupClientListSaleMode.pas' {PopupClientListSaleModeForm},
+  frmPrintersSetup in '..\Reports\frmPrintersSetup.pas' {PrintersSetupForm},
+  frmNacenka in '..\Kernel\frmNacenka.pas' {NacenkaForm},
+  frmKassaStmtList in '..\Kernel\frmKassaStmtList.pas' {KassaStmtListForm},
+  frmTest in '..\Kernel\frmTest.pas' {TestForm},
+  frmAverageBillList in '..\Reports\frmAverageBillList.pas' {AverageBillListForm},
+  frmComplexBillList in '..\Reports\frmComplexBillList.pas' {ComplexBillListForm},
+  frmSalePinCode in '..\Kernel\frmSalePinCode.pas' {SalePinCodeForm},
+  frmSostavCalc in '..\Guides\frmSostavCalc.pas' {SostavCalcForm},
+  frmSaleMarkCodeInput in '..\Kernel\frmSaleMarkCodeInput.pas' {SaleMarkCodeInputForm},
+  unSendSmsThread in '..\Kernel\unSendSmsThread.pas',
+  unLog in '..\Kernel\unLog.pas',
+  frmLogList in '..\Kernel\frmLogList.pas' {LogListForm},
+  unMobileUploadRoutine in '..\Kernel\unMobileUploadRoutine.pas',
+  unExtPascalUtils in '..\Shared\unExtPascalUtils.pas',
+  frmLogCommonDlg in '..\Guides\frmLogCommonDlg.pas' {LogCommonDlgForm},
+  unDisplayDriver in '..\Kernel\unDisplayDriver.pas',
+  Vcl.Themes,
+  Vcl.Styles,
+  frmScalesSetup in '..\Kernel\frmScalesSetup.pas' {ScalesSetupForm},
+  frmRevisionImportFillDlg in '..\Kernel\frmRevisionImportFillDlg.pas' {RevisionImportFillDlgForm},
+  frmChooseFirmAndAddress in '..\Reports\frmChooseFirmAndAddress.pas' {ChooseFirmAndAddressForm},
+  frmGNonCashPayType in '..\Guides\frmGNonCashPayType.pas' {GNonCashPayTypeForm},
+  frmGNonCashPayTypeList in '..\Guides\frmGNonCashPayTypeList.pas' {GNonCashPayTypeListForm},
+  frmPosTerminalProcess in '..\Kernel\frmPosTerminalProcess.pas' {PosTerminalProcessForm},
+  frmSearchZakazDlg in '..\Kernel\frmSearchZakazDlg.pas' {SearchZakazDlgForm},
+  UnRekassa in '..\Kernel\UnRekassa.pas',
+  DelphiZXingQRCode in '..\Kernel\DelphiZXingQRCode.pas',
+  unFRPrinted in '..\Shared\unFRPrinted.pas',
+  QR_URL in '..\Kernel\QR_URL.pas',
+  QR_Win1251 in '..\Kernel\QR_Win1251.pas',
+  QRGraphics in '..\Kernel\QRGraphics.pas',
+  ExceptionJCLSupport in '..\Kernel\ExceptionJCLSupport.pas',
+  frmSaleCommonDilg in '..\Kernel\frmSaleCommonDilg.pas' {SaleCommonDilgForm},
+  uNews in '..\Kernel\uNews.pas' {FrmNews},
+  UnNews in '..\Shared\UnNews.pas',
+  UnKKMTIS in '..\Kernel\UnKKMTIS.pas',
+  UnECWID in '..\Kernel\UnECWID.pas',
+  frmTerminalSetup in '..\Kernel\frmTerminalSetup.pas' {TerminalSetupForm},
+  frmRevisionDlg in '..\Kernel\frmRevisionDlg.pas' {RevisionDlgForm},
+  frmRevisionList in '..\Kernel\frmRevisionList.pas' {RevisionListForm},
+  frmSetSkidka in '..\Kernel\frmSetSkidka.pas' {SetSkidkaForm};
+
+{$R *.RES}
+var
+  Semafor: THandle;
+
+procedure RestoreWindow(aFormName: string);
+var
+  Wnd,
+  App: HWND;
+begin
+  Wnd := FindWindow(PChar(aFormName), nil);
+  if (Wnd <> 0) then
+  begin { Set Window to foreground }
+    App := GetWindowLong(Wnd, GWL_HWNDPARENT);
+    if IsIconic(App) then
+      ShowWindow(App, SW_RESTORE);
+
+    SetForegroundwindow(App);
+  end;
+end;
+
+begin
+
+  { Don't start twice ... if already running bring this instance to front }
+  Semafor := CreateSemaphore(nil, 0, 1, 'MY_APPLICATION_IS_RUNNING');
+  if DebugHook = 0 then begin
+    if ((Semafor <> 0) and // application is already running
+       (GetLastError = ERROR_ALREADY_EXISTS)) then
+    begin
+      RestoreWindow('TMainForm');
+      CloseHandle(Semafor);
+      Halt;
+    end;
+  end;
+
+  Application.Initialize;
+  Application.Title := 'Учет магазина и склада';
+  Application.HelpFile := 'Help.chm';
+  InitializeApp;
+  Application.CreateForm(TMainDM, MainDM);
+  Application.CreateForm(TMainForm, MainForm);
+  Application.CreateForm(TReportsDM, ReportsDM);
+  Application.CreateForm(TReportsThreadDM, ReportsThreadDM);
+  Application.Run;
+
+  CloseHandle(Semafor);
+
+end.

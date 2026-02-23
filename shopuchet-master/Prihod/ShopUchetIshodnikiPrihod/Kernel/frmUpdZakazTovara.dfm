@@ -1,0 +1,314 @@
+inherited UpdZakazTovaraForm: TUpdZakazTovaraForm
+  Left = 405
+  Top = 191
+  Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' '#1079#1072#1082#1072#1079#1072
+  ClientHeight = 245
+  ClientWidth = 590
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited btnOk: TBitBtn
+    Left = 422
+    Top = 213
+  end
+  inherited btnCancel: TBitBtn
+    Left = 503
+    Top = 213
+  end
+  inherited Panel1: TPanel
+    Width = 570
+    Height = 198
+    object Shape1: TShape
+      Left = 8
+      Top = 148
+      Width = 176
+      Height = 42
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape17: TShape
+      Left = 8
+      Top = 98
+      Width = 177
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape14: TShape
+      Left = 8
+      Top = 73
+      Width = 176
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape12: TShape
+      Left = 8
+      Top = 48
+      Width = 176
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Shape25: TShape
+      Left = 8
+      Top = 123
+      Width = 177
+      Height = 26
+      Brush.Color = 16577773
+      Pen.Color = clBtnShadow
+    end
+    object Label13: TLabel
+      Left = 18
+      Top = 129
+      Width = 90
+      Height = 14
+      Caption = #1057#1087#1086#1089#1086#1073' '#1088#1072#1089#1095#1077#1090#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape26: TShape
+      Left = 183
+      Top = 123
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label7: TLabel
+      Left = 18
+      Top = 54
+      Width = 77
+      Height = 14
+      Caption = #1044#1072#1090#1072' '#1087#1088#1080#1093#1086#1076#1072
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape13: TShape
+      Left = 183
+      Top = 48
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label8: TLabel
+      Left = 18
+      Top = 79
+      Width = 119
+      Height = 14
+      Caption = #1044#1086#1082#1091#1084#1077#1085#1090'-'#1086#1089#1085#1086#1074#1072#1085#1080#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape16: TShape
+      Left = 183
+      Top = 73
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object Label9: TLabel
+      Left = 18
+      Top = 104
+      Width = 41
+      Height = 14
+      Caption = #1050#1083#1080#1077#1085#1090
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape18: TShape
+      Left = 183
+      Top = 98
+      Width = 382
+      Height = 26
+      Pen.Color = clBtnShadow
+    end
+    object lbZakazNum: TLabel
+      Left = 10
+      Top = 16
+      Width = 84
+      Height = 23
+      Caption = #1047#1072#1082#1072#1079' '#8470
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBackground
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 162
+      Width = 71
+      Height = 14
+      Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = 7492630
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
+    object Shape2: TShape
+      Left = 183
+      Top = 148
+      Width = 382
+      Height = 42
+      Pen.Color = clBtnShadow
+    end
+    object lePAYMENT_TYPE: TdxLookupEdit
+      Left = 188
+      Top = 125
+      Width = 373
+      TabOrder = 3
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_PAYMENT_TYPE'
+      ListSource = dsPaymentType
+      LookupKeyValue = Null
+    end
+    object edDate: TcxDateEdit
+      Left = 188
+      Top = 50
+      Width = 373
+      Height = 22
+      Properties.InputKind = ikMask
+      Style.BorderStyle = ebs3D
+      Style.ButtonStyle = bts3D
+      TabOrder = 0
+    end
+    object edOsnovanie: TdxEdit
+      Left = 188
+      Top = 75
+      Width = 373
+      TabOrder = 1
+      MaxLength = 150
+      StyleController = dxEditStyleController
+      StoredValues = 2
+    end
+    object lePostavshik: TdxLookupEdit
+      Left = 188
+      Top = 100
+      Width = 373
+      TabOrder = 2
+      ListFieldName = 'NAME'
+      KeyFieldName = 'G_CLIENT'
+      ListSource = dsPostavshik
+      LookupKeyValue = Null
+    end
+    object mNote: TMemo
+      Left = 188
+      Top = 153
+      Width = 373
+      Height = 34
+      TabOrder = 4
+    end
+  end
+  inherited dxEditStyleController: TdxEditStyleController
+    Top = 520
+  end
+  inherited dxCheckEditStyleController: TdxCheckEditStyleController
+    Top = 520
+  end
+  inherited ActionList: TActionList
+    Top = 520
+    object aIns: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1090#1086#1074#1072#1088
+    end
+    object aUpd: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+    end
+    object aDel: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+    end
+  end
+  inherited spGetData: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE GET_ZAKAZ (?ZAKAZ_)')
+    StoredProcName = 'GET_ZAKAZ'
+    Left = 8
+    Top = 208
+  end
+  inherited spIns: TpFIBStoredProc
+    SQL.Strings = (
+      'begin'
+      '  -- Call the procedure'
+      '  ins_sklad(date_receipt_ => :date_receipt_,'
+      '            g_client_ => :g_client_,'
+      '            g_payment_type_ => :g_payment_type_,'
+      '            osnovanie_ => :osnovanie_,'
+      '            sklad_ => :sklad_,'
+      '            err_code => :err_code,'
+      '            err_msg => :err_msg);'
+      'end;')
+    Left = 40
+    Top = 208
+  end
+  inherited spUpd: TpFIBStoredProc
+    SQL.Strings = (
+      'begin'
+      '  -- Call the procedure'
+      '  upd_zakaz(zakaz_ => :zakaz_,'
+      '            g_tochka_ => :g_tochka_,'
+      '            z_date_ => :z_date_,'
+      '            g_client_ => :g_client_,'
+      '            g_payment_type_ => :g_payment_type_,'
+      '            osnovanie_ => :osnovanie_,'
+      '            err_code => :err_code,'
+      '            err_msg => :err_msg);'
+      'end;')
+    Left = 72
+    Top = 208
+  end
+  object dsPaymentType: TDataSource
+    DataSet = spPaymentType
+    Left = 527
+    Top = 136
+  end
+  object dsPostavshik: TDataSource
+    DataSet = spPostavshik
+    Left = 527
+    Top = 104
+  end
+  object spPostavshik: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_CLIENT_LIST(?G_CLIENT_PARENT_)')
+    Filter = 'is_supplier = 0'
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Filtered = True
+    Left = 488
+    Top = 104
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+  object spPaymentType: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM G_READ_G_PAYMENT_TYPE_LIST')
+    Transaction = tranRead
+    Database = MainDM.dbMain
+    Left = 488
+    Top = 136
+    poSQLINT64ToBCD = True
+    poAskRecordCount = True
+  end
+end

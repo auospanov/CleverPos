@@ -1,0 +1,71 @@
+unit frmTochka;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls, StdCtrls,
+  Buttons, dxEditor, dxEdLib;
+
+type
+  TTochkaForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    Shape4: TShape;
+    edName: TdxEdit;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  TochkaForm: TTochkaForm;
+
+implementation
+
+{$R *.dfm}
+
+function TTochkaForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено!', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TTochkaForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do
+      edName.Text := ParamByName('Name_').AsString;
+  end;
+end;
+
+procedure TTochkaForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do
+    ParamByName('Name_').AsString := edName.Text;
+end;
+
+procedure TTochkaForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_tochka_';
+end;
+
+end.

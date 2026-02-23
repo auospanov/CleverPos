@@ -1,0 +1,131 @@
+unit frmDiscountList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TDiscountListForm = class(TDBListForm)
+    dxBarCombo: TdxBarCombo;
+    dxDBGridG_DISCOUNT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT: TdxDBGridMaskColumn;
+    dxDBGridG_PRODUCT_NAME: TdxDBGridMaskColumn;
+    dxDBGridDATE_BEGIN: TdxDBGridDateColumn;
+    dxDBGridDATE_END: TdxDBGridDateColumn;
+    dxDBGridNAME: TdxDBGridMaskColumn;
+    dxDBGridIS_CONST: TdxDBGridCheckColumn;
+    dxDBGridPRICE: TdxDBGridColumn;
+    dxDBGridSKIDKA_PROC: TdxDBGridColumn;
+    dxDBGridSKIDKA_SUM: TdxDBGridColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure dxBarComboChange(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    procedure InsData; override;
+    procedure InsLikeData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  DiscountListForm: TDiscountListForm;
+
+implementation
+
+uses frmDiscount, frmMain;
+
+{$R *.dfm}
+
+procedure TDiscountListForm.ReadList;
+begin
+  spRead.ParamByName('IS_ALL_').AsInteger := dxBarCombo.ItemIndex;
+  inherited;
+end;
+
+procedure TDiscountListForm.ViewData;
+begin
+  ClassForm := TDiscountForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDiscountListForm.InsData;
+begin
+  ClassForm := TDiscountForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDiscountListForm.InsLikeData;
+begin
+  ClassForm := TDiscountForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TDiscountForm).TovarName := spRead.FieldByName('G_PRODUCT_NAME').AsString;    
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDiscountListForm.UpdData;
+begin
+  ClassForm := TDiscountForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    (ClassForm as TDiscountForm).TovarName := spRead.FieldByName('G_PRODUCT_NAME').AsString;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TDiscountListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить акцию "%s" ?',
+    [spRead.FieldByName('Name').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+  inherited;
+  {spDel.SetVariable(KeyFieldList, spRead.FieldByName(KeyFieldClass).AsInteger);
+  if ExecSP(spDel) then
+    Readlist;}
+end;
+
+procedure TDiscountListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'g_Discount';
+  KeyFieldClass := 'g_Discount_';
+end;
+
+procedure TDiscountListForm.dxBarComboChange(Sender: TObject);
+begin
+  inherited;
+  ReadList;
+end;
+
+procedure TDiscountListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 10;
+  inherited;
+end;
+
+end.

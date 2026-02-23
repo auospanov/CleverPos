@@ -1,0 +1,485 @@
+unit frmProdazhaTovaraList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, DB, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, frmDBEdit, cxControls, cxSplitter, StdCtrls, Buttons,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet, pFIBDataSet,
+  FIBDatabase, pFIBDatabase, unCommonFunc, IniFiles;
+
+type
+  TProdazhaTovaraListForm = class(TDBListForm)
+    dxDBGridZAKAZ: TdxDBGridMaskColumn;
+    dxDBGridG_TOCHKA: TdxDBGridMaskColumn;
+    dxDBGridZ_DATE: TdxDBGridDateColumn;
+    dxDBGridG_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridG_PAYMENT_TYPE: TdxDBGridMaskColumn;
+    dxDBGridZ_NUM: TdxDBGridMaskColumn;
+    grZakazDetails: TdxDBGrid;
+    dxDBGridMaskColumn6: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn7: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn8: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn9: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn10: TdxDBGridMaskColumn;
+    dxDBGridMaskDISCOUNT_PERC: TdxDBGridMaskColumn;
+    dxDBGridDISCOUNT_SUMM: TdxDBGridColumn;
+    dxDBGridMaskColumn12: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn13: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn14: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn15: TdxDBGridMaskColumn;
+    dxDBGridMaskColumn16: TdxDBGridMaskColumn;
+    dxDBGridOSNOVANIE: TdxDBGridColumn;
+    dxDBGridCLIENT_NAME: TdxDBGridColumn;
+    dxDBGridPAYMENT_NAME: TdxDBGridColumn;
+    dsZakazDetails: TDataSource;
+    dxDBGridDETAILS_STR: TdxDBGridColumn;
+    aRefreshChild: TAction;
+    aUpdDetail: TAction;
+    aDelDetail: TAction;
+    splMenu: TcxSplitter;
+    dcBegin: TdxBarDateCombo;
+    dcEnd: TdxBarDateCombo;
+    dxBarSubItem: TdxBarSubItem;
+    aInvoicePay: TAction;
+    aInvoice: TAction;
+    dxBarButton2: TdxBarButton;
+    dxDBGridSUM_ZAKAZ: TdxDBGridColumn;
+    spZakazDetails: TpFIBDataSet;
+    Panel1: TPanel;
+    stDetailsCount: TStaticText;
+    dxDBGridNOTE: TdxDBGridColumn;
+    dxDBGridIS_PAYED_ALL: TdxDBGridCheckColumn;
+    aWayBill: TAction;
+    dxBarSubItem1: TdxBarSubItem;
+    dxBarButton3: TdxBarButton;
+    aBill: TAction;
+    dxBarButton4: TdxBarButton;
+    dxDBGridZ_TIME: TdxDBGridColumn;
+    dxDBGridSUMM_PAY_BONUS: TdxDBGridColumn;
+    dxDBGridSUM_FACT: TdxDBGridColumn;
+    aBillSpec: TAction;
+    dxBarButton5: TdxBarButton;
+    dxBarButton6: TdxBarButton;
+    dxDBGridBY_RECIPE: TdxDBGridCheckColumn;
+    fbntgrfldReadZAKAZ: TFIBIntegerField;
+    fbntgrfldReadZ_NUM: TFIBIntegerField;
+    fbntgrfldReadG_TOCHKA: TFIBIntegerField;
+    spReadZ_DATE: TFIBDateField;
+    spReadZ_TIME: TFIBTimeField;
+    fbntgrfldReadG_CLIENT: TFIBIntegerField;
+    fbntgrfldReadG_PAYMENT_TYPE: TFIBIntegerField;
+    spReadOSNOVANIE: TFIBStringField;
+    spReadNOTE: TFIBStringField;
+    spReadCLIENT_NAME: TFIBStringField;
+    spReadPAYMENT_NAME: TFIBStringField;
+    spReadDETAILS_STR: TFIBStringField;
+    fbntgrfldReadIS_SPISANIE: TFIBIntegerField;
+    fbntgrfldReadIS_PAYED_ALL: TFIBIntegerField;
+    fbntgrfldReadINVOICE_PAY: TFIBIntegerField;
+    fbntgrfldReadINVOICE: TFIBIntegerField;
+    fbntgrfldReadWAYBILL: TFIBIntegerField;
+    spReadSUM_ZAKAZ: TFIBBCDField;
+    spReadSUM_FACT: TFIBBCDField;
+    spReadSUMM_PAY_BONUS: TFIBBCDField;
+    fbntgrfldReadBY_RECIPE: TFIBIntegerField;
+    dxDBGridSUMM_BONUS_GOT: TdxDBGridColumn;
+    fbcdfldReadSUMM_BONUS_GOT: TFIBBCDField;
+    aPko: TAction;
+    aRko: TAction;
+    aAkt: TAction;
+    dxbrbtn1: TdxBarButton;
+    dxbrbtn2: TdxBarButton;
+    fbntgrfldReadIS_RESERVE: TFIBIntegerField;
+    chclmnIS_RESERVE: TdxDBGridCheckColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aRefreshChildExecute(Sender: TObject);
+    procedure dxDBGridChangeNode(Sender: TObject; OldNode,
+      Node: TdxTreeListNode);
+    procedure dcBeginChange(Sender: TObject);
+    procedure aInvoicePayExecute(Sender: TObject);
+    procedure aInvoiceExecute(Sender: TObject);
+    procedure dxDBGridCustomDrawCell(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; ANode: TdxTreeListNode; AColumn: TdxTreeListColumn;
+      ASelected, AFocused, ANewItemRow: Boolean; var AText: String;
+      var AColor: TColor; AFont: TFont; var AAlignment: TAlignment;
+      var ADone: Boolean);
+    procedure aWayBillExecute(Sender: TObject);
+    procedure grZakazDetailsMouseDown(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure dxDBGridMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure aBillExecute(Sender: TObject);
+    procedure aBillSpecExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure aPkoExecute(Sender: TObject);
+  private
+    FMode : Integer;
+  public
+    constructor CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String = '');
+    procedure InsData; override;
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  ProdazhaTovaraListForm: TProdazhaTovaraListForm;
+
+implementation
+
+uses frmProdazhaTovaraN, frmInvoicePay, frmInvoice, frmWayBill, dmReports, frmDoc;
+
+{$R *.dfm}
+
+constructor TProdazhaTovaraListForm.CreateIt(AOwner: TComponent; Prizn: Integer; ActionName : String);
+var Caption_ : String;
+  onChangeEvent : TdxDBGridFilterChangedEvent;
+begin
+  FMode := Prizn;
+
+  IF FMode = 0 THEN BEGIN
+    Caption_ := 'Реализация товара';
+    HELPC := 18;
+  END ELSE if FMode = 1 THEN BEGIN
+    Caption_ := 'Списание товара';
+    HELPC := 19;
+  END ELSE IF FMode = 3 THEN BEGIN
+    Caption_ := 'Перемещение товара на другой склад';
+    HELPC := 52;
+  END ELSE IF FMode = 4 THEN BEGIN
+    Caption_ := 'Возврат товара поставщику';
+    HELPC := 52;
+  END;
+
+  inherited Create(AOwner, Caption_, ActionName);
+
+  Self.Caption := Caption_;
+
+  IF FMode IN [1, 3, 4] THEN BEGIN
+    onChangeEvent := dxDBGrid.OnFilterChanged;
+    dxDBGrid.OnFilterChanged := nil;
+
+    if FMode = 3 then
+      dxDBGridCLIENT_NAME.Caption := 'Склад-получатель'
+    else if FMode = 4 then
+      dxDBGridCLIENT_NAME.Caption := 'Поставщик'
+    else
+      dxDBGridCLIENT_NAME.Destroy;  // если списание то колонка не нужна
+
+    if FMode IN [1, 4] THEN
+      dxBarSubItem.Visible := ivNever;
+
+    dxDBGridSUMM_PAY_BONUS.Destroy;
+    dxDBGridSUMM_BONUS_GOT.Destroy;
+    dxDBGridMaskDISCOUNT_PERC.Destroy;
+    dxDBGridDISCOUNT_SUMM.Destroy;
+
+    if FMode <> 4 then begin
+      dxDBGridPAYMENT_NAME.Destroy;
+      dxDBGridIS_PAYED_ALL.Destroy;
+      dxDBGridG_PAYMENT_TYPE.Destroy;
+      dxDBGridSUM_FACT.Destroy;
+    end;
+    
+    dxDBGrid.OnFilterChanged := onChangeEvent;
+  END;
+end;
+
+procedure TProdazhaTovaraListForm.ReadList;
+begin
+  spRead.PARAMByName('DATE_BEGIN_').AsDate := dcBegin.Date;
+  spRead.PARAMByName('DATE_END_').AsDate := dcEnd.Date;
+  spRead.PARAMByName('IS_SPISANIE_').AsInteger := FMode;
+
+  inherited;
+  aRefreshChild.Execute;
+  dxBarSubItem.Enabled := spRead.RecordCount > 0;
+end;
+
+procedure TProdazhaTovaraListForm.InsData;
+begin
+  if (HaveRightInsSale = False) and (FMode = 0) then begin
+    MessageDlg('У Вас нет прав на создание накладных!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  ProdazhaTovaraNForm := TProdazhaTovaraNForm.Create(Self);
+  try
+    ProdazhaTovaraNForm.OpenMode := omInsert;
+    ProdazhaTovaraNForm.Is_spisanie := FMode;
+    if ProdazhaTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('zakaz', ProdazhaTovaraNForm.RecID, []);
+      if dxDBGrid.FocusedNode <> Nil then
+      begin
+        if dxDBGrid.SelectedCount > 0 then
+          dxDBGrid.SelectedNodes[0].Selected := False;
+        dxDBGrid.FocusedNode.Selected := True;
+      end;
+    end;
+  finally
+    ProdazhaTovaraNForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.UpdData;
+begin
+  if spRead.FieldByName('is_spisanie').AsInteger = 2 then begin
+    MessageDlg('Данная продажа является оплатой за товар, выданный под реализацию.' + #10#13 +  'Доступно для редактирования в режиме "Выдача под реализацию"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+  
+  ProdazhaTovaraNForm := TProdazhaTovaraNForm.Create(Self);
+  try
+    ProdazhaTovaraNForm.OpenMode := omUpdate;
+    ProdazhaTovaraNForm.Is_spisanie := FMode;
+    ProdazhaTovaraNForm.RecId := spRead.FieldByName('zakaz').AsInteger;
+    if ProdazhaTovaraNForm.ShowModal = mrOK then begin
+      Readlist;
+      spRead.Locate('zakaz', ProdazhaTovaraNForm.RecID, []);
+    end;
+  finally
+    ProdazhaTovaraNForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.FormCreate(Sender: TObject);
+begin
+  KeyFieldList := 'zakaz';
+  KeyFieldClass := 'zakaz_';
+  inherited;
+end;
+
+procedure TProdazhaTovaraListForm.aDelExecute(Sender: TObject);
+begin
+  if (HaveRightDelSale = False) and (FMode = 0)  then begin
+    MessageDlg('У Вас нет прав на удаление накладных"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+
+  if spRead.FieldByName('is_spisanie').AsInteger = 2 then begin
+    MessageDlg('Данная продажа является оплатой за товар, выданный под реализацию.' + #10#13 +  'Доступно для редактирования в режиме "Выдача под реализацию"!', mtInformation, [mbOk], 0);
+    Exit;
+  end;
+  
+  if MessageDlg(Format('Удалить заказ № "%s" ?',
+    [spRead.FieldByName('z_num').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  spDEl.ParamByName('IS_SPISANIE_').AsInteger := spRead.FieldByName('is_spisanie').AsInteger;
+  inherited;
+end;
+
+procedure TProdazhaTovaraListForm.aRefreshChildExecute(Sender: TObject);
+begin
+  spZakazDetails.PARAMByName('zakaz_').AsInteger := spRead.FieldByName('zakaz').AsInteger;
+  spZakazDetails.PARAMByName('IS_SPISANIE_').AsInteger := FMode;
+
+  Screen.Cursor := crSQLWait;
+  OpenSp(spZakazDetails, False);
+  Screen.Cursor := crDefault;
+
+  stDetailsCount.Caption := Format('%.5d', [spZakazDetails.AllRecordCount]);
+end;
+
+procedure TProdazhaTovaraListForm.dxDBGridChangeNode(Sender: TObject; OldNode,
+  Node: TdxTreeListNode);
+begin
+  inherited;
+  aRefreshChild.Execute;
+end;
+
+procedure TProdazhaTovaraListForm.dcBeginChange(Sender: TObject);
+begin
+  inherited;
+  Readlist;
+end;
+
+procedure TProdazhaTovaraListForm.aInvoicePayExecute(Sender: TObject);
+begin
+  inherited;
+  ClassForm := TInvoicePayForm.Create(Self);
+  try
+    if spRead.FieldByName('INVOICE_PAY').AsString <> '' then
+      ClassForm.RecID := spRead.FieldByName('INVOICE_PAY').AsInteger
+    else
+      (ClassForm as TInvoicePayForm).NotSaved := 1;
+
+    (ClassForm as TInvoicePayForm).Zakaz := spRead.FieldByName('zakaz').AsInteger;
+    ClassForm.OpenMode := omUpdate;
+    ClassForm.ShowModal;
+    ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.aInvoiceExecute(Sender: TObject);
+begin
+  inherited;
+  ClassForm := TInvoiceForm.Create(Self);
+  try
+    if spRead.FieldByName('INVOICE').AsString <> '' then
+      ClassForm.RecID := spRead.FieldByName('INVOICE').AsInteger
+    else
+      (ClassForm as TInvoiceForm).NotSaved := 1;
+
+    (ClassForm as TInvoiceForm).Zakaz    := spRead.FieldByName('zakaz').AsInteger;
+    ClassForm.OpenMode := omUpdate;
+    ClassForm.ShowModal;
+    ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.aWayBillExecute(Sender: TObject);
+begin
+  ClassForm := TWayBillForm.Create(Self);
+  try
+    if spRead.FieldByName('WAYBILL').AsString <> '' then
+      ClassForm.RecID := spRead.FieldByName('WAYBILL').AsInteger
+    else
+      (ClassForm as TWayBillForm).NotSaved := 1;
+
+    (ClassForm as TWayBillForm).Zakaz := spRead.FieldByName('zakaz').AsInteger;
+    ClassForm.OpenMode := omUpdate;
+    ClassForm.ShowModal;
+    ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.aPkoExecute(Sender: TObject);
+begin
+  ClassForm := TDocForm.Create(Self);
+  try
+    (ClassForm as TDocForm).Zakaz := spRead.FieldByName('zakaz').AsInteger;
+    IF (Sender AS tAction).Name = 'aPko' then
+      (ClassForm as TDocForm).DocType := 0
+    else
+      (ClassForm as TDocForm).DocType := 1;
+    ClassForm.OpenMode := omUpdate;
+    ClassForm.ShowModal;
+    ReadList;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.dxDBGridCustomDrawCell(Sender: TObject;
+  ACanvas: TCanvas; ARect: TRect; ANode: TdxTreeListNode;
+  AColumn: TdxTreeListColumn; ASelected, AFocused, ANewItemRow: Boolean;
+  var AText: String; var AColor: TColor; AFont: TFont;
+  var AAlignment: TAlignment; var ADone: Boolean);
+var
+  Value1: Variant;
+begin
+  inherited;
+
+  try
+    ADone := False;  {Надо прорисовать ячейку после задания цвета}
+    IF FMode in [0, 2] then begin    // т.к. для списания и перемещения колонка уничтожается, то и нет смысла ее тут анализировать
+      Value1 := ANode.Values[TdxDBGrid(Sender).ColumnByFieldName('IS_PAYED_ALL').Index];
+      if ANode.Selected then
+      begin
+        // ОПЛАЧЕННЫЕ выделяются цветом
+        if Value1 = '0' then
+        begin
+          AColor := clWhite;
+          AFont.Color := clRed;
+        end;
+      end else begin
+        // ОПЛАЧЕННЫЕ выделяются цветом
+        if Value1 = '0' then
+        begin
+          AColor := clRed;
+          AFont.Color := clWhite;
+        end;
+      end;
+    end;
+  except
+    on e:Exception do begin
+      ShowMessage(e.Message);
+    end;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.grZakazDetailsMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  ActiveListControl := grZakazDetails;
+end;
+
+procedure TProdazhaTovaraListForm.dxDBGridMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  ActiveListControl := dxDBGrid;
+end;
+
+procedure TProdazhaTovaraListForm.aBillExecute(Sender: TObject);
+begin
+  if BillPrinter <> '' then
+    ReportsDM.PrintBill(spRead.FieldByName('zakaz').AsInteger, spRead.FieldByName('SUM_FACT').AsFloat, 0, 0)
+  else
+    MessageDlg('Чековый принтер не настроен! Укажите его в настройках программы! Печать чеков невоможна!', mtWarning, [mbOk], 0);
+end;
+
+procedure TProdazhaTovaraListForm.aBillSpecExecute(Sender: TObject);
+begin
+  if BillPrinter <> '' then
+  
+    ReportsDM.PrintBill(spRead.FieldByName('zakaz').AsInteger, 0, 0, 1)
+  else
+    MessageDlg('Чековый принтер не настроен! Укажите его в настройках программы! Печать чеков невоможна!', mtWarning, [mbOk], 0);
+end;
+
+procedure TProdazhaTovaraListForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+  // если конфигурация магазин, то эти колонки не нужны
+  if Config <> 1 then begin
+    dxDBGridBY_RECIPE.Destroy;
+  end;
+
+  // aBillSpec делался специально для Артема Тихомирова, поэтому он будет виден только для него, изначально выслал ему настройку в INI файл
+  // и только он его видит
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    //aBillSpec.Visible := Ini.ReadInteger('ProdazhaTovaraList', 'BillSpec', 0) = 1;
+    grZakazDetails.Height := Ini.ReadInteger('ProdazhaTovaraList', 'SplitterPos', 150);   //у сплиттера не работает положение из ИНИ, приходится выкручиваться высотой cxdvZakazDetails
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TProdazhaTovaraListForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  inherited;
+
+  // aBillSpec делался специально для Артема Тихомирова, поэтому он будет виден только для него, изначально выслал ему настройку в INI файл
+  // и только он его видит
+  //if aBillSpec.Visible then begin
+    Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+    try
+      //Ini.WriteInteger('ProdazhaTovaraList', 'BillSpec', 1);
+      Ini.WriteInteger('ProdazhaTovaraList', 'SplitterPos', grZakazDetails.Height);
+    finally
+      Ini.Free;
+    end
+  //end;
+end;
+
+end.

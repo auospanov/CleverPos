@@ -1,0 +1,967 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{E5A0C410-9A61-4288-9C9F-E9A50629EF9A}</ProjectGuid>
+        <MainSource>ShopUchet.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+        <ProjectVersion>16.1</ProjectVersion>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <SanitizedProjectName>ShopUchet</SanitizedProjectName>
+        <VerInfo_Keys>CompanyName=ИП Пандора;FileDescription=Программа учета торговли;FileVersion=1.1.0.28;InternalName=ShopUchet;LegalCopyright=ShopUchet.kz;LegalTrademarks=ShopUchet.kz;OriginalFilename=ShopUchet;ProductName=;ProductVersion=1.1.0.x;Comments=</VerInfo_Keys>
+        <VerInfo_Build>28</VerInfo_Build>
+        <VerInfo_Locale>1049</VerInfo_Locale>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_IOChecking>false</DCC_IOChecking>
+        <DCC_Define>EUREKALOG;EUREKALOG_VER6;$(DCC_Define)</DCC_Define>
+        <DCC_ExeOutput>C:\CVSWork\Work\ShopUchetFB\ShopuchetTest</DCC_ExeOutput>
+        <DCC_UsePackage>vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;dxComnD7;EQTLD7;dxEdtrD7;ECQDBCD7;EQDBTLD7;EQGridD7;dxGrEdD7;dxExELD7;dxELibD7;cxLibraryVCLD7;dxBarD7;dxBarDBNavD7;dxBarExtItemsD7;dxBarExtDBItemsD7;dxsbD7;dxDockingD7;cxPageControlVCLD7;cxSpreadSheetVCLD7;cxEditorsVCLD7;dxThemeD7;cxDataD7;cxExtEditorsVCLD7;cxGridVCLD7;cxGridUtilsVCLD7;dxDBEdD7;dxInsD7;dxExRwD7;dxObjInsD7;dxPSCoreD7;dxPsPrVwAdvD7;dxPSLnksD7;dxPSTLLnkD7;dxPSdxDBTLLnkD7;dxPSdxDBCtrlLnkD7;dxPSdxDBGrLnkD7;dxPSTeeChartD7;dxPSDBTeeChartD7;dxPSdxInsLnkD7;dxPSdxOILnkD7;dxPScxCommonD7;dxPScxExtCommonD7;dxPScxSSLnkD7;dxPScxGridLnkD7;dxPScxPCProdD7;FIBDBMidas7;VLFileComps;FR7;FRADO7;FRBDE7;FRDBX7;FRIBX7;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_K>false</DCC_K>
+        <DCC_N>true</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_E>false</DCC_E>
+        <DCC_F>false</DCC_F>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Icon_MainIcon>ShopUchet_Icon1.ico</Icon_MainIcon>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Icon_MainIcon>ShopUchet_Icon1.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_Optimize>true</DCC_Optimize>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>Admpriv.manifest</Manifest_File>
+        <VerInfo_Build>252</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=ИП &quot;Пандора&quot; (Shopuchet.kz);FileDescription=Программа учета торговли;FileVersion=1.1.0.252;InternalName=ShopUchet;LegalCopyright=ShopUchet.kz;LegalTrademarks=ShopUchet.kz;OriginalFilename=ShopUchet;ProductName=;ProductVersion=1.1.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="unInitApp.pas"/>
+        <DCCReference Include="..\Shared\unCommonFunc.pas"/>
+        <DCCReference Include="..\Shared\unDBSupport.pas"/>
+        <DCCReference Include="..\Shared\unDigConversions.pas"/>
+        <DCCReference Include="..\Shared\unToWord.pas"/>
+        <DCCReference Include="..\Shared\unErrorHandlers.pas"/>
+        <DCCReference Include="..\Shared\unErrorParser.pas"/>
+        <DCCReference Include="..\Shared\unFileInfo.pas"/>
+        <DCCReference Include="..\Shared\dmMain.pas">
+            <Form>MainDM</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frmMain.pas">
+            <Form>MainForm</Form>
+        </DCCReference>
+        <DCCReference Include="frmSetup.pas">
+            <Form>SetupForm</Form>
+        </DCCReference>
+        <DCCReference Include="frmAbout.pas">
+            <Form>AboutForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmMDIChild.pas">
+            <Form>MDIChildForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmSelectDB.pas">
+            <Form>SelectDBForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBListRO.pas">
+            <Form>DBListROForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBList.pas">
+            <Form>DBListFlogorm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBMultiPageListRO.pas">
+            <Form>DBMultiPageListROForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBMultiPageList.pas">
+            <Form>DBMultiPageListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBTreeListRO.pas">
+            <Form>DBTreeListROForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBTreeList.pas">
+            <Form>DBTreeListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBMultiPageTreeListRO.pas">
+            <Form>DBMultiPageTreeListROForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBMultiPageTreeList.pas">
+            <Form>DBMultiPageTreeListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmPopupList.pas">
+            <Form>PopupListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmPopupMultipageList.pas">
+            <Form>PopupMultipageListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmPopupTreeList.pas">
+            <Form>PopupTreeListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBDlg.pas">
+            <Form>DBDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBEdit.pas">
+            <Form>DBEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBTreeEdit.pas">
+            <Form>DBTreeEditForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmLogonDialog.pas">
+            <Form>LogonDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmAppErrorDlg.pas">
+            <Form>AppErrorDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBErrorDlg.pas">
+            <Form>DBErrorDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmKassaList.pas">
+            <Form>KassaListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\dmReports.pas">
+            <Form>ReportsDM</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmRashodPrihod.pas">
+            <Form>RashodPrihodForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmKassa.pas">
+            <Form>KassaForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmPriceList.pas">
+            <Form>PriceListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmPriceListUn.pas">
+            <Form>PriceListUnForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmCategory.pas">
+            <Form>CategoryForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmClientList.pas">
+            <Form>ClientListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmClient.pas">
+            <Form>ClientForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmContrAgentType.pas">
+            <Form>ContrAgentTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmClientCategory.pas">
+            <Form>ClientCategoryForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmClientBankRek.pas">
+            <Form>ClientBankRekForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmClientAddress.pas">
+            <Form>ClientAddressForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmAddressType.pas">
+            <Form>AddressTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmRashodPrihodList.pas">
+            <Form>RashodPrihodListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmOfficialList.pas">
+            <Form>OfficialListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmOfficial.pas">
+            <Form>OfficialForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmAppointment.pas">
+            <Form>AppointmentForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmFirmRekvizit.pas">
+            <Form>FirmRekvizitForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmMyFirmAddress.pas">
+            <Form>MyFirmAddressForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmMyAddressBankRek.pas">
+            <Form>MyAddressBankRekForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmKassaOstatok.pas">
+            <Form>KassaOstatokForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmZakupkaTovara.pas">
+            <Form>ZakupkaTovaraForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmUpdZakupkaTovara.pas">
+            <Form>UpdZakupkaTovaraForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmProdazhaTovaraList.pas">
+            <Form>ProdazhaTovaraListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmUpdProdazhaTovara.pas">
+            <Form>UpdProdazhaTovaraForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmProdazhaTovara.pas">
+            <Form>ProdazhaTovaraForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmInvoice.pas">
+            <Form>InvoiceForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmInvoicePay.pas">
+            <Form>InvoicePayForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDBFilter.pas">
+            <Form>DBFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmPriceListRepFilter.pas">
+            <Form>PriceListRepFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmInvoicePayList.pas">
+            <Form>InvoicePayListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmInvoiceList.pas">
+            <Form>InvoiceListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmDiscountList.pas">
+            <Form>DiscountListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmDiscount.pas">
+            <Form>DiscountForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSaleMode.pas">
+            <Form>SaleModeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmBank.pas">
+            <Form>BankForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\unSupport.pas"/>
+        <DCCReference Include="..\Shared\unBackup.pas"/>
+        <DCCReference Include="..\Shared\frmCopyProgress.pas">
+            <Form>CopyProgressForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmDlg.pas">
+            <Form>DlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmGUnit.pas">
+            <Form>GUnitForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmGUnitList.pas">
+            <Form>GUnitListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmZakazNaRealList.pas">
+            <Form>ZakazNaRealListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmZakazNaReal.pas">
+            <Form>ZakazNaRealForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmPrihodTovaraList.pas">
+            <Form>PrihodTovaraListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmRevision.pas">
+            <Form>RevisionForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmRevisionUnific.pas">
+            <Form>RevisionUnificForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmTovarNaklForRevis.pas">
+            <Form>TovarNaklForRevisForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmPrintEtiketSetup.pas">
+            <Form>PrintEtiketSetupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmClientDateFilter.pas">
+            <Form>ClientDateFilterForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmOplataTovaraRealN_Old.pas">
+            <Form>OplataTovaraRealNForm_old</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmOplataTovaraReal.pas">
+            <Form>OplataTovaraRealForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmWayBillList.pas">
+            <Form>WayBillListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmWayBill.pas">
+            <Form>WayBillForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmZakazRealParent.pas">
+            <Form>ZakazRealParentForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmPsevdLogon.pas">
+            <Form>PsevdLogonForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmGetDCard.pas">
+            <Form>GetDCardForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\unInfo.pas"/>
+        <DCCReference Include="..\Kernel\frmMyCurrencyFrame.pas">
+            <Form>MyCurrencyFrameForm</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmTochka.pas">
+            <Form>TochkaForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmPopupTovList.pas">
+            <Form>PopupTovListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmImportB.pas">
+            <Form>ImportBForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmTreeFrame.pas">
+            <Form>TreeFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmExportOperData.pas">
+            <Form>ExportOperDataForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unExportOperDataThread.pas"/>
+        <DCCReference Include="..\Shared\dmReportsThread.pas">
+            <Form>ReportsThreadDM</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Guides\PriceListUnSostav.pas">
+            <Form>PriceListUnSostavForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmProductionList.pas">
+            <Form>ProductionListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmDoc.pas">
+            <Form>DocForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmDocList.pas">
+            <Form>DocListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSaleDlg.pas">
+            <Form>SaleDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSalePayment.pas">
+            <Form>SalePaymentForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSearchTovarDlg.pas">
+            <Form>SearchTovarDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmOplata.pas">
+            <Form>OplataForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmPayDetails.pas">
+            <Form>PayDetailsForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Licence\TurboActivateUnit.pas"/>
+        <DCCReference Include="..\Licence\frmLicense.pas">
+            <Form>LicenseForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Licence\ReVerifyNow.pas">
+            <Form>frmReVerifyNow</Form>
+        </DCCReference>
+        <DCCReference Include="..\Licence\TrialExtension.pas">
+            <Form>frmTrialExtension</Form>
+        </DCCReference>
+        <DCCReference Include="..\Licence\unGetLicenceThread.pas"/>
+        <DCCReference Include="..\Kernel\frmPrihodTovaraN.pas">
+            <Form>PrihodTovaraNForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmProdazhaTovaraN.pas">
+            <Form>ProdazhaTovaraNForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmProductionTovaraN.pas">
+            <Form>ProductionTovaraNForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmOplataTovaraRealN.pas">
+            <Form>OplataTovaraRealNForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmPromotion.pas">
+            <Form>PromotionForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmPromotionPopup.pas">
+            <Form>PromotionPopupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\smsc_api.pas"/>
+        <DCCReference Include="..\Reports\frmPopupClientMultList.pas">
+            <Form>PopupClientMultListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmUpgradeDBLast.pas">
+            <Form>UpgradeDBLastForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSmsRecips.pas">
+            <Form>SmsRecipsForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSendSms.pas">
+            <Form>SendSmsForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmUpdSmsNotifyHistory.pas">
+            <Form>UpdSmsNotifyHistoryForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSendTimeAndDate.pas">
+            <Form>SendTimeAndDateForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmDeliveryList.pas">
+            <Form>DeliveryListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmDostavshikPopup.pas">
+            <Form>DostavshikPopupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmDelivery.pas">
+            <Form>DeliveryForm</Form>
+        </DCCReference>
+        <DCCReference Include="C:\Dist\TMS.FlexCelVCL\Source\UFlxFormats.pas"/>
+        <DCCReference Include="..\Kernel\frmRevisionUpd.pas">
+            <Form>RevisionUpdForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unATOLKKM.pas"/>
+        <DCCReference Include="..\Kernel\unkkm.pas"/>
+        <DCCReference Include="..\Reports\frmGridFrame.pas">
+            <Form>GridFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmGridFrameDupl.pas">
+            <Form>GridFrameDupl</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\DrvFRLib_TLB.pas"/>
+        <DCCReference Include="..\Kernel\unShtrihDriver.pas"/>
+        <DCCReference Include="..\Guides\frmTovarAmountBySklad.pas">
+            <Form>TovarAmountBySkladForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSyncSetup.pas">
+            <Form>SyncSetupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Shared\frmFillData.pas">
+            <Form>FillDataForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmGetTovarAsideSpis.pas">
+            <Form>GetTovarAsideSpisForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmCommonLog.pas">
+            <Form>CommonLogForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmPopupOfficialList.pas">
+            <Form>PopupOfficialListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unSyncDataThread.pas"/>
+        <DCCReference Include="..\Reports\frmSalesOstBySkladList.pas">
+            <Form>SalesOstBySkladListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmFastGoodsView.pas">
+            <Form>FastGoodsViewForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmPopupClientListSaleMode.pas">
+            <Form>PopupClientListSaleModeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmPrintersSetup.pas">
+            <Form>PrintersSetupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmNacenka.pas">
+            <Form>NacenkaForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmKassaStmtList.pas">
+            <Form>KassaStmtListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmTest.pas">
+            <Form>TestForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmAverageBillList.pas">
+            <Form>AverageBillListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmComplexBillList.pas">
+            <Form>ComplexBillListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSalePinCode.pas">
+            <Form>SalePinCodeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmSostavCalc.pas">
+            <Form>SostavCalcForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSaleMarkCodeInput.pas">
+            <Form>SaleMarkCodeInputForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unSendSmsThread.pas"/>
+        <DCCReference Include="..\Kernel\unLog.pas"/>
+        <DCCReference Include="..\Kernel\frmLogList.pas">
+            <Form>LogListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unMobileUploadRoutine.pas"/>
+        <DCCReference Include="..\Shared\unExtPascalUtils.pas"/>
+        <DCCReference Include="..\Guides\frmLogCommonDlg.pas">
+            <Form>LogCommonDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\unDisplayDriver.pas"/>
+        <DCCReference Include="..\Kernel\frmScalesSetup.pas">
+            <Form>ScalesSetupForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmRevisionImportFillDlg.pas">
+            <Form>RevisionImportFillDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Reports\frmChooseFirmAndAddress.pas">
+            <Form>ChooseFirmAndAddressForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmGNonCashPayType.pas">
+            <Form>GNonCashPayTypeForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Guides\frmGNonCashPayTypeList.pas">
+            <Form>GNonCashPayTypeListForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmPosTerminalProcess.pas">
+            <Form>PosTerminalProcessForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSearchZakazDlg.pas">
+            <Form>SearchZakazDlgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\UnRekassa.pas"/>
+        <DCCReference Include="..\Kernel\DelphiZXingQRCode.pas"/>
+        <DCCReference Include="..\Shared\unFRPrinted.pas"/>
+        <DCCReference Include="..\Kernel\QR_URL.pas"/>
+        <DCCReference Include="..\Kernel\QR_Win1251.pas"/>
+        <DCCReference Include="..\Kernel\QRGraphics.pas"/>
+        <DCCReference Include="..\Kernel\ExceptionJCLSupport.pas"/>
+        <DCCReference Include="..\Kernel\frmSaleCommonDilg.pas">
+            <Form>SaleCommonDilgForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\uNews.pas">
+            <Form>FrmNews</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Shared\UnNews.pas"/>
+        <DCCReference Include="..\Kernel\UnKKMTIS.pas"/>
+        <DCCReference Include="..\Kernel\UnECWID.pas"/>
+        <DCCReference Include="..\Kernel\frmTerminalSetup.pas">
+            <Form>TerminalSetupForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmRevisionDlg.pas">
+            <Form>RevisionDlgForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmRevisionList.pas">
+            <Form>RevisionListForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Kernel\frmSetSkidka.pas">
+            <Form>SetSkidkaForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <RcCompile Include="Admpriv.RC">
+            <Form>Admpriv.res</Form>
+        </RcCompile>
+        <None Include="ShopUchet.todo"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">ShopUchet.dpr</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">1</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">28</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1049</VersionInfo>
+                    <VersionInfo Name="CodePage">1251</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">ИП Пандора</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription">Программа учета торговли</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">1.1.0.28</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName">ShopUchet</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalCopyright">ShopUchet.kz</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks">ShopUchet.kz</VersionInfoKeys>
+                    <VersionInfoKeys Name="OriginalFilename">ShopUchet</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductName"/>
+                    <VersionInfoKeys Name="ProductVersion">1.1.0.x</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k210.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp210.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+            <ModelSupport>False</ModelSupport>
+            <Deployment>
+                <DeployFile LocalName="Admpriv.RC" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ShopUchet.todo" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\..\ShopuchetTest\ShopUchet.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>ShopUchet.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployClass Required="true" Name="DependencyPackage">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch2048">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList"/>
+                <DeployClass Name="ProjectiOSDeviceDebug">
+                    <Platform Name="iOSDevice">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage470">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-normal</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeX86File">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\x86</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSResource">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXEntitlements"/>
+                <DeployClass Name="AndroidGDBServer">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage960">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon96">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch320">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon144">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xxhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeMipsFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\mips</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashImageDef">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyFramework">
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage426">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-small</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSEntitlements"/>
+                <DeployClass Name="AdditionalDebugSymbols">
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClassesDexFile">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSInfoPList"/>
+                <DeployClass Name="iPad_Launch1024">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_DefaultAppIcon">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="iPad_Launch768">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="ProjectOutput">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeArmeabiFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage640">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-large</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="File">
+                    <Platform Name="iOSDevice">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Android">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640x1136">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon36">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-ldpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStyles">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1536">
+                    <Platform Name="iOSDevice">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon48">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-mdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon72">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-hdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectAndroidManifest">
+                    <Platform Name="Android">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+            </Deployment>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+</Project>

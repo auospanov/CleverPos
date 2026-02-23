@@ -1,0 +1,595 @@
+unit frmUpgradeDB;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons, ZipForge, Registry, unInitApp,
+  AppEvnts, ComCtrls, FIBQuery, pFIBQuery, vlFIBScript;
+
+type
+  TUpgradeDBForm = class(TDlgForm)
+    Panel2: TPanel;
+    Panel3: TPanel;
+    mLog: TMemo;
+    Label1: TLabel;
+    Timer: TTimer;
+    mScriptIBEBlock28: TMemo;
+    mScriptIBEBlock37: TMemo;
+    mScriptIBEBlock50: TMemo;
+    mScriptIBEBlock60: TMemo;
+    mScriptiBEBlock: TMemo;
+    mScriptCDisabled: TMemo;
+    mScriptCEnabled: TMemo;
+    Panel4: TPanel;
+    ProgressBar: TProgressBar;
+    mScriptIBEBlock104: TMemo;
+    mScriptIBEBlockUpdCost: TMemo;
+    mScriptIBEBlock136: TMemo;
+    mScriptIBEBlock137: TMemo;
+    mScriptIBEBlockUpdKassaId: TMemo;
+    mScriptIBEBlockUpdFirm: TMemo;
+    scUpdate: TvlFIBScript;
+    procedure FormCreate(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private
+    FCannotClose : Boolean;    // нельзя закрыть во время обновления
+  public
+    SuccessUpd : Boolean;
+    FGlobalUpd : Boolean;
+    FLastUpdateVers : Integer;
+  end;
+
+var
+  UpgradeDBForm: TUpgradeDBForm;
+
+type
+  TConnectErrorCallbackFunc = function (AErrorMessage : PChar) : integer;  stdcall;
+  TScriptErrorCallbackFunc = function (AStmtText, AErrMessage : PChar) : integer; stdcall;
+  TScriptBeforeExecStatementFunc = function (AStmtText, AText : PChar) : integer; stdcall;
+  TScriptAfterExecStatementFunc = function (AStmtText : PChar; Success : integer) : integer; stdcall;
+  TScriptIBEBlockProgressFunc = function (AProgressMessage : PChar) : integer; stdcall;
+
+  TExecuteScriptProc = procedure (AScriptFile : PChar;
+                                  AErrorCallbackFunc : TScriptErrorCallbackFunc;
+                                  ABeforeCallbackFunc : TScriptBeforeExecStatementFunc;
+                                  AAfterCallbackFunc : TScriptAfterExecStatementFunc); stdcall;
+
+  TExecuteScriptProc2 = procedure (AScriptFile : PChar;
+                                  AErrorCallbackFunc : TScriptErrorCallbackFunc;
+                                  ABeforeCallbackFunc : TScriptBeforeExecStatementFunc;
+                                  AAfterCallbackFunc : TScriptAfterExecStatementFunc;
+                                  AIBEBlockProgressFunc : TScriptIBEBlockProgressFunc); stdcall;
+
+  TConnectDBProc = function (AConnectParams : PChar;
+                             AConnectErrorCallbacFunc : TConnectErrorCallbackFunc) : integer; stdcall;
+
+  function HandleError(AStmtText, AErrMessage : PChar) : integer; stdcall;
+  function BeforeExec(AStmtText, AText : PChar) : integer; stdcall;
+  function AfterExec(AStmtText : PChar; Success : integer) : integer; stdcall;
+  function CEH(AErrorMessage : PChar) : integer;  stdcall;
+
+implementation
+
+uses frmMain, unCommonFunc, dmMain, unDBSupport;
+
+{$R *.dfm}
+
+function HandleError(AStmtText, AErrMessage : PChar) : integer; stdcall;
+begin
+  Result := 0;
+  UpgradeDBForm1.mLog.Lines.Add('------- STATEMENT --------');
+  UpgradeDBForm1.mLog.Lines.Add(AStmtText);
+  UpgradeDBForm1.mLog.Lines.Add('-------   ERROR   --------');
+  UpgradeDBForm1.mLog.Lines.Add(AErrMessage);
+end;
+
+function BeforeExec(AStmtText, AText : PChar) : integer; stdcall;
+begin
+  Result := 0;
+  if UpgradeDBForm1.FGlobalUpd then
+    UpgradeDBForm1.ProgressBar.Position := UpgradeDBForm1.ProgressBar.Position + 1;
+
+  //UpgradeDBForm1.mLog.Lines.Add(AText);   //ЗАЧЕМ ПОЛЬЗОВАТЕЛЮ ВИДЕТЬ ЛИШНЕЕ, ПУСТЬ ТОЛЬКО СООБЩЕНИЯ ОБ ОШИБКАХ ВИДИТ
+end;
+
+function AfterExec(AStmtText : PChar; Success : integer) : integer; stdcall;
+begin
+  Result := 0;
+  if Success = 1 then begin
+    UpgradeDBForm1.SuccessUpd := True;
+    if UpgradeDBForm1.FGlobalUpd then
+      UpgradeDBForm1.ProgressBar.Position := UpgradeDBForm1.ProgressBar.Position + 1
+    else
+      UpgradeDBForm1.mLog.Lines.Add('Altering successfull...');
+  end else begin
+    Result := 1; // Abort script execution
+    UpgradeDBForm1.SuccessUpd := False;
+  end;
+end;
+
+function CEH(AErrorMessage : PChar) : integer;  stdcall;
+begin
+  ShowMessage(AErrorMessage);
+end;
+
+procedure TUpgradeDBForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  SuccessUpd := False;
+  FCannotClose := False;
+end;
+
+procedure TUpgradeDBForm.TimerTimer(Sender: TObject);
+var
+  Hndl : THandle;
+  Reg: TRegistry;
+  ESP : TExecuteScriptProc;
+  CP : TConnectDBProc;
+  s : String;
+  Res: integer;
+  FZip: TZipForge;
+  FFileName, FFileNameEtalon, FFileZipName, ScrDis, ScrEn : string;
+  i : integer;
+  ConsDisSql, UpdSql, ConsEnSql: TStringList;
+  FileBD  : File;
+  fs: TFileStream;
+  SS : AnsiString;
+  R : Integer;
+  NeedScript : Boolean;
+begin
+  Timer.Enabled := False;
+  mLog.Lines.Clear;
+  btnOk.Enabled := False;
+  NeedScript := False;
+
+  // В САМОМ НАЧАЛЕ ПРОВЕРЮ, ЕСТЬ ЛИ ПОДКЛЮЧЕНИЯ К БАЗЕ, ЕСЛИ ЕСТЬ, ТО НИХУЯ ОБНОВЛЕНИЯ НЕ ЗАПУСКАЮ
+  //в общем надо проверять количество коннектов, а это делается только в базе, поэтому надо сначала сконнектится на этот период, и потом расконнектится тут же
+  //другого пути не нашел
+  if ConnectToFB(MainDM.dbMain, '') then begin
+    try
+      R := GetConnectionsCount;
+      if R > 1 then begin
+        mLog.Lines.Add('Невозможно запустить обновление!');
+        mLog.Lines.Add('К базе данных подключены другие пользователи. Попросите их отключиться от БД и перезапустите программу.');
+        DisconnectFromFB(MainDM.dbMain);
+        Exit;
+      end;
+    finally
+      DisconnectFromFB(MainDM.dbMain);
+      Sleep(200);   //дам время на отключение
+    end;
+  end;
+
+  FCannotClose := True;
+  FGlobalUpd := False;
+  btnCancel.Enabled := False;
+  Screen.Cursor := crHourGlass;
+
+  //============================================================
+  //СДЕЛАЮ БЭКАП
+  //на Win8 есть такой нюанс по поводу безопасности - надо запускать приложение от имени Администратора
+  //иначе просто файлы бэкапа не создаются, поэтому я проверяю - создался ли файл
+  // если не создался - значит прав нет, выдаю ошибку и ничего не делаю
+  //============================================================
+  mLog.Lines.Add('Запущено резервное копирование БД...');
+  IF DebugHook = 0 THEN BEGIN
+    try
+      FFileZipName := BackupDir;//ExtractFilePath(Application.exename) + 'Backup';
+      if not DirectoryExists(FFileZipName) then
+        CreateDir(FFileZipName);
+
+      GetDir(0, FFileName);
+      FFileNameEtalon := FFileName + '\Shopuchet_etalon.gdb';
+      FFileName := FFileName + '\Shopuchet.gdb';
+      // проверяю есть ли уже архивы за сегодня, если есть - СТАВЛЮ В КОНЦЕ ПОРЯДКОВЫЙ НОМЕР.
+      // ТО ЕСТЬ ПРИ ОБНОВЛЕНИИ СОХРАНЯЮ НА ВСЯКИЙ СЛУЧАЙ СТАРУЮ КОПИЮ БД ЗА СЕГОДНЯ И СОЗДАЮ НОВУЮ
+      // И СТАВЛЮ ПРЕФИКС UPD ЧТОБЫ БЫЛО ВИДНО ЧТО ЭТО КОПИЯ ПРИ ОБНОВЛЕНИИ СОЗДАЛАСЬ
+      I := 1;
+      FFileZipName := FFileZipName + '\UPD_' + FormatDateTime('YYYYMMDD', Date);
+      WHILE I > 0 DO BEGIN
+        if FileExists(FFileZipName + '.zip') then
+          FFileZipName := FFileZipName + '_' + IntToStr(I)
+        ELSE
+          break;
+        I := I + 1;
+      END;
+      FFileZipName := FFileZipName + '.zip';
+      FZip := TZipForge.Create(nil);
+      FZip.FileName := FFileZipName;
+      FZip.OpenArchive(fmCreate);
+      if (Length(FFileName) > 0) then
+        FZip.AddFiles(FFileName);
+      FZip.CloseArchive;
+
+      if not (FileExists(FFileZipName)) then begin
+          MessageDlg('Невозможно создать резервную копию!' + #10#13 +
+                     'Запустите приложение от имени Администратора или проверьте права'+ #10#13+
+                     'пользователя под которым Вы вошли в систему.', mtError, [mbOk], 0);
+          mLog.Lines.Add('------- НЕВОЗМОЖНО СОЗДАТЬ РЕЗЕРВНУЮ КОПИЮ БД --------');
+          FCannotClose := False;
+          btnOk.Enabled := False;
+          btnCancel.Enabled := True;
+          Screen.Cursor := crDefault;
+          Exit;
+      end;
+
+      //ставлю запись о дате последнего копирования
+      try
+        Reg := TRegistry.Create;
+        try
+          with Reg do begin
+            RootKey := RegSetupRoot;
+            LazyWrite := False;  {Сохраняем ключи до закрытия}
+            if OpenKey(RegSetupKey, True) then
+              try
+                WriteString('LastBackpDate', DateToStr(Date));
+
+                // до 135 версии в конце выбора папок не проставлялся обратный слэш, затем я это поставил, но если бы оставил в таком состоянии
+                // то перестанет создаваться резервная копия, т.к. там не было слэша, поэтому тут зайду в реестр и там поменяю, прибавлю слэш
+                if FLastUpdateVers < 100135 then begin
+                  if ValueExists('BackupDir') then
+                    WriteString('BackupDir', IncludeTrailingPathDelimiter(ReadString('BackupDir')));
+                end;
+              finally
+                CloseKey;
+              end;
+          end;
+        finally
+          Reg.Free;
+        end;
+      except
+        on E: Exception do
+          MessageDlg(E.Message + #13#10'(occured in unBackup.Execute)', mtError, [mbOk], 0);
+      end;
+      mLog.Lines.Add('Резервное копирование БД завершено успешно.');
+      mLog.Lines.Add('');
+    finally
+      FZip.Free;
+    end;
+  END;
+  //============================================================
+  //КОНЕЦ СДЕЛАЮ БЭКАП
+  //============================================================
+
+  //============================================================
+  // короче с обновлением целая жопа получилась.
+  // к примеру такая ситуация - клиент скачал версию 1, затем пропустил версии 2-4, и скачал версию 5
+  // необходимо обновить БД до актуального состояния, запускаю накопленный скрипт, который копился с 2-ой версии
+  // этот клиент с версией 1 обновится успешно. Но что делать, если клиент с версией 3 решил обновиться на 5, а
+  // в версии 2 было содание Генератора или столбца таблицы, в накопленном скрипте будет создание этих объектов.
+  // И так как клиент уже обновлялся на версию 2, у него данные объекты уже будут, и скрипт обругается и обновление прервется
+  // НАШЕЛ ТАКОЙ ВЫХОД: разделил на 2 скрипта - первая часть чисто создание процедур и функций, вторая часть - создание системных объектов.
+  // Если ниже определенной версии в которой было создание объектов, например 1.0.0.9, то запускаю вторую часть скрипта,
+  // если выше, то вторая часть скрипта не запускается. Если после версии 1.0.0.9 будут создаваться объекты, то придется прям
+  // отсчитывать строки в зависимости от версии. К примеру, для версии 1.0.0.9 и ниже запускать скрипт с 1-ой строки,
+  // а для версий 1.0.0.10 запускать с третьей строки.
+
+  // теперь обновление будет так. В комплекте идет эталонная база. В нее копируются данные из старой базы, затем она удаляется, а на ее место становится
+  // эталонная база. Если обновление БД не нужно, тогда эталонная база просто удаляется.
+  // опять же надо быть аккуратнее с ГЕНЕРАТОРАМИ, вдруг появились новые, придется от версии к версии брать разные скрипты сравнений.
+  //============================================================
+  if not (FileExists('Shopuchet_etalon.gdb')) then begin
+    mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО НЕУСПЕШНО --------');
+    mLog.Lines.Add('ЭТАЛОННАЯ БАЗА ОБНОВЛЕНИЯ НЕ НАЙДЕНА');
+    btnCancel.Enabled := True;
+    Screen.Cursor := crDefault;
+    FCannotClose := False;
+    Exit;
+  end;
+
+  mLog.Lines.Add('Процесс создания скрипта обновления...');
+  ProgressBar.Max := 0;
+  
+  ScrDis := mScriptCDisabled.Text;
+  try
+    Hndl := LoadLibrary(PChar('IBEScript.dll'));
+    if (Hndl > HINSTANCE_ERROR) then
+    begin
+      ESP := GetProcAddress(Hndl, 'ExecScriptText');
+      if @ESP <> nil then
+      begin
+        ESP(PChar(ScrDis), @HandleError, @BeforeExec, @AfterExec);
+      end;
+    end;
+  finally
+    if Hndl > HINSTANCE_ERROR then
+      FreeLibrary(Hndl);
+  end;
+
+  ScrEn  := mScriptCEnabled.Text;
+  try
+    Hndl := LoadLibrary(PChar('IBEScript.dll'));
+    if (Hndl > HINSTANCE_ERROR) then
+    begin
+      ESP := GetProcAddress(Hndl, 'ExecScriptText');
+      if @ESP <> nil then
+      begin
+        ESP(PChar(ScrEn), @HandleError, @BeforeExec, @AfterExec);
+      end;
+    end;
+  finally
+    if Hndl > HINSTANCE_ERROR then
+      FreeLibrary(Hndl);
+  end;
+
+  mLog.Lines.Add('Подготовка данных...');
+  if FLastUpdateVers < 10028 then   //в 28-ой версии появились некоторые изменения в структуре БД
+    S := mScriptiBEBlock.Text
+  else if FLastUpdateVers < 10037 then   //в 37-ой версии появились некоторые изменения в структуре БД
+    S := mScriptiBEBlock28.Text
+  else if FLastUpdateVers < 10050 then  //в 50-ой версии появился генератор
+    S := mScriptiBEBlock37.Text
+  else if FLastUpdateVers < 10060 then  //в 60-ой версии появилась таблица g_discont_card
+    S := mScriptiBEBlock50.Text
+  else if FLastUpdateVers < 100105 then  //в 105-ой версии появилось разбиение на склады
+    S := mScriptiBEBlock60.Text
+  else if FLastUpdateVers < 100136 then  //в 136-ой версии появилась таблица фотографий для товаров
+    S := mScriptiBEBlock104.Text
+  else if FLastUpdateVers < 100137 then  //в 137-ой версии появилось 5 таблиц для составных товаров
+    S := mScriptiBEBlock136.Text
+  else
+    S := mScriptiBEBlock137.Text;
+
+  try
+    Hndl := LoadLibrary(PChar('IBEScript.dll'));
+    if (Hndl > HINSTANCE_ERROR) then
+    begin
+      ESP := GetProcAddress(Hndl, 'ExecScriptText');
+      if @ESP <> nil then
+      begin
+        ESP(PChar(s), @HandleError, @BeforeExec, @AfterExec);
+      end;
+    end;
+  finally
+    if Hndl > HINSTANCE_ERROR then
+      FreeLibrary(Hndl);
+  end;
+
+  Sleep(1000);  // задержка на всякий случай, чтобы файлы успели появится
+
+  if not FileExists('1.sql') then begin
+    mLog.Lines.Add('------- СКРИПТ1 ОБНОВЛЕНИЯ НЕ СОЗДАН --------');
+    mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО НЕУСПЕШНО --------');
+    btnCancel.Enabled := True;
+    Screen.Cursor := crDefault;
+    FCannotClose := False;
+    SuccessUpd := False;
+    Exit;
+  end;
+
+  if not FileExists('2.sql') then begin
+    mLog.Lines.Add('------- СКРИПТ2 ОБНОВЛЕНИЯ НЕ СОЗДАН --------');
+    mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО НЕУСПЕШНО --------');
+    btnCancel.Enabled := True;
+    Screen.Cursor := crDefault;
+    FCannotClose := False;
+    SuccessUpd := False;
+    Exit;
+  end;
+
+  if not FileExists('ibe_comp.sql') then begin
+    mLog.Lines.Add('------- СКРИПТ ОБНОВЛЕНИЯ НЕ СОЗДАН --------');
+    mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО НЕУСПЕШНО --------');
+    btnCancel.Enabled := True;
+    Screen.Cursor := crDefault;
+    FCannotClose := False;
+    SuccessUpd := False;
+    Exit;
+  end;
+
+  // Парсю скрипты
+  ConsDisSql := TStringList.Create;
+  UpdSql     := TStringList.Create;
+  ConsEnSql  := TStringList.Create;
+  try
+    ConsDisSql.LoadFromFile('1.sql');
+    ProgressBar.Max := ConsDisSql.Count;
+
+    UpdSql.LoadFromFile('ibe_comp.sql');
+    ProgressBar.Max := ProgressBar.Max + UpdSql.Count - Round(UpdSql.Count/3);   //1/3 всех строк данного скрипта - пустые
+
+    ConsEnSql.LoadFromFile('2.sql');
+    ProgressBar.Max := ProgressBar.Max + ConsEnSql.Count;
+
+    S := ConsDisSql.Text + #10#13 + UpdSql.Text + #10#13 + ConsEnSql.Text;
+  finally
+    FreeAndNil(ConsDisSql);
+    FreeAndNil(UpdSql);
+    FreeAndNil(ConsEnSql);
+  end;
+
+  if FLastUpdateVers < 100105 then begin
+    S := S + 'UPDATE KASSA K SET K.G_TOCHKA = 1;' + #10#13 +
+         'UPDATE KASSA_BEZNAL SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE KASSA_STATE SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE LT_SKLAD_PRODUCT SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE REVISION SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE SKLAD SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE SKLAD_PARENT SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE ZAKAZ SET G_TOCHKA = 1;' + #10#13 +
+         'UPDATE ZAKAZ_REAL_PARENT SET G_TOCHKA = 1;' + #10#13 +
+         'COMMIT WORK;';
+  end;
+  // надо апдейтить новое поле IS_KIT в таблице товаров
+  if FLastUpdateVers < 100137 then
+    S := S + 'UPDATE G_PRODUCT SET IS_KIT = 0 WHERE IS_CATEGORY = 0;' + #10#13 +
+         'UPDATE G_FIRM_REKVIZIT SET IS_DEFAULT = 1;' + #10#13 +
+         'COMMIT WORK;';
+
+  // был косячок, G_TOCHKA при импорте был НУЛЛ, пришлось исправлять вот таким способом
+  if FLastUpdateVers <= 100140 then
+    S := S + 'UPDATE LT_SKLAD_PRODUCT SET G_TOCHKA = 1 WHERE G_TOCHKA IS NULL;' + #10#13 +
+         'COMMIT WORK;';
+  
+  mLog.Lines.Add('Создание скрипта завершено успешно...');
+  //============================================================
+  // конец создания скрипта
+  //============================================================
+  ProgressBar.Position := 0;
+  ProgressBar.Max := ProgressBar.Max + 300;  // ВДРУГ ЧТО-ТО НЕ УЧЕЛ, КАКИЕ-ТО СТРОКИ МИМО ПРОШЛИ, РЕШИЛ ЧУТЬ БОЛЬШЕ ПОСТАВИТЬ
+
+  if Trim(s) = '' then
+  begin
+    ShowMessage('Скрипт обновления не заполнен!');
+    Exit;
+  end;
+
+  mLog.Lines.Add('Загрузка данных...');
+  FGlobalUpd := True;
+  try
+    Hndl := LoadLibrary(PChar('IBEScript.dll'));
+    if (Hndl > HINSTANCE_ERROR) then
+    begin
+      ESP := GetProcAddress(Hndl, 'ExecScriptText');
+      CP := GetProcAddress(Hndl, 'Connect');
+      if (@ESP <> nil) and (@CP <> nil) then
+      begin
+       Res := CP(PChar('db_name='+ FFileNameEtalon + '; password=masterkey; user_name=sysdba;'+
+                       'lc_ctype=win1251; sql_role_name=RDB$ADMIN; sql_dialect=3;' +
+                       'clientlib="fbclient.dll"'), @CEH);
+       if Res = 0 then
+         ESP(PChar(s), @HandleError, @BeforeExec, @AfterExec);
+      end;
+    end;
+  finally
+    if Hndl > HINSTANCE_ERROR then
+      FreeLibrary(Hndl);
+  end;
+
+
+  S := 'EXECUTE IBEBLOCK' + #13#10 +
+       'AS' + #13#10 +
+       'BEGIN' + #13#10;
+  //ЕСЛИ ТЕКУЩАЯ ВЕРСИЯ МЕНЬШЕ 114, ТО НАДО ПРОАПДЕЙТИТЬ НОВЫЕ ПОЛЯ COST_PRICE
+  if FLastUpdateVers < 100114 then begin
+    NeedScript := True;
+    S := S + mScriptIBEBlockUpdCost.Text + #13#10;
+  end;
+
+  // ОБНОВЛЯЮ ID KASSA_BEZNAL_STATE И KASSA_BEZNAL, Т.К. БЫЛ УДАЛЕН ИХ ГЕНЕРАТОР
+  if FLastUpdateVers < 100155 then begin
+    NeedScript := True;
+    S := S + mScriptIBEBlockUpdKassaId.Text + #13#10;
+  end;
+
+  if FLastUpdateVers < 100160 then begin
+    NeedScript := True;
+    S := S + mScriptIBEBlockUpdFirm.Text + #13#10;
+  end;
+
+  S := S + 'COMMIT;' + #13#10 + 'END;';
+
+  if NeedScript then begin
+    mLog.Lines.Add('Обновление данных...');
+    try
+      Hndl := LoadLibrary(PChar('IBEScript.dll'));
+      if (Hndl > HINSTANCE_ERROR) then
+      begin
+        ESP := GetProcAddress(Hndl, 'ExecScriptText');
+        CP := GetProcAddress(Hndl, 'Connect');
+        if (@ESP <> nil) and (@CP <> nil) then
+        begin
+         Res := CP(PChar('db_name='+ FFileNameEtalon + '; password=masterkey; user_name=sysdba;'+
+                         'lc_ctype=win1251; sql_role_name=RDB$ADMIN; sql_dialect=3;' +
+                         'clientlib="fbclient.dll"'), @CEH);
+         if Res = 0 then
+           ESP(PChar(s), @HandleError, @BeforeExec, @AfterExec);
+        end;
+      end;
+    finally
+      if Hndl > HINSTANCE_ERROR then
+        FreeLibrary(Hndl);
+    end;
+  end;
+  // КОНЕЦ АПДЕЙТ
+
+  FCannotClose := False;
+  Screen.Cursor := crDefault;
+  IF SuccessUpd then BEGIN
+    //удаляю старую базу
+    if not (DeleteFile(FFileName)) then begin
+      MessageDlg('Старую БД не удалось удалить!', mtError, [mbOk], 0);
+      mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО НЕУСПЕШНО --------');
+      mLog.Lines.Add('НОВАЯ БАЗА ОБНОВЛЕНА И НАХОДИТСЯ В ' + FFileNameEtalon);
+      mLog.Lines.Add('СТАРУЮ БАЗУ УДАЛИТЬ НЕ УДАЛОСЬ, МОЖЕТЕ ЗАМЕНИТЬ ВРУЧНУЮ.');
+      btnCancel.Enabled := True;
+      Exit;
+    end;
+
+    //МЕНЯЮ НОВУЮ БАЗУ НА МЕСТО СТАРОЙ
+    RenameFile(FFileNameEtalon, 'SHOPUCHET.GDB');
+    DeleteFile('1.sql');
+    DeleteFile('2.sql');
+    DeleteFile('ibe_comp.sql');
+
+    mLog.Lines.Add('------- ОБНОВЛЕНИЕ ЗАВЕРШЕНО УСПЕШНО --------');
+    ProgressBar.Position := ProgressBar.Max;
+
+    // ЗАПИСЫВАЮ В БАЗУ ДАТУ ПОСЛЕДНЕГО ОБНОВЛЕНИЯ
+    {теперь это делаю в frmMain
+    try
+      Reg := TRegistry.Create;
+      try
+        with Reg do begin
+          RootKey := RegSetupRoot;
+          LazyWrite := False;  //Сохраняем ключи до закрытия
+          if OpenKey(RegSetupKey, True) then
+            try
+              WriteInteger('LastUpgradeVers', CurrAppVers);
+            finally
+              CloseKey;
+            end;
+        end;
+      finally
+        Reg.Free;
+      end;
+    except
+      on E: Exception do
+        MessageDlg(E.Message + #13#10'(occured in TUpgradeDBForm.TimerTimer)', mtError, [mbOk], 0);
+    end;}
+
+
+    btnOk.Enabled := True;
+    btnCancel.Enabled := True;
+    Sleep(400);
+    Close;
+  END ELSE BEGIN
+    btnCancel.Enabled := True;
+    // ПИШУ В ЛОГ ОШИБКУ ОБНОВЛЕНИЯ, Т.К. ДО MAINLOGFILE ЕЩЕ ДЕЛО НЕ ДОШЛО, ПРИДЕТСЯ ЕГО ВСКРЫВАТЬ И ТУДА ПИСАТЬ
+    fs := TFileStream.Create('UpgradeErr.log', fmCreate or fmOpenWrite);
+    try
+      SS := mLog.TEXT;
+      fs.WriteBuffer(SS[1], Length(SS));
+    finally
+      fs.Free;
+    end;
+  END;
+end;
+
+procedure TUpgradeDBForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  Timer.Enabled := True;
+end;
+
+procedure TUpgradeDBForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  if FCannotClose = True then
+    CanClose := False
+  else
+    CanClose := True;
+
+  if FileExists('1.sql') then
+    DeleteFile('1.sql');
+  if FileExists('2.sql') then
+    DeleteFile('2.sql');
+  if FileExists('ibe_comp.sql') then
+    DeleteFile('ibe_comp.sql');
+end;
+
+end.

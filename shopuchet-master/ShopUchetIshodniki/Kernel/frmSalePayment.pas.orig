@@ -1,0 +1,467 @@
+unit frmSalePayment;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, AppEvnts, ExtCtrls,
+  StdCtrls, Buttons, DB, FIBDataSet,
+  pFIBDataSet, Math, FIBDatabase, pFIBDatabase, cxGraphics, cxControls,
+  cxLookAndFeels, cxLookAndFeelPainters, cxContainer, cxEdit, dxSkinsCore,
+  dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom,
+  dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
+  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
+  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
+  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
+  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
+  dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue, cxMaskEdit,
+  cxDropDownEdit, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox, cxMemo,
+  cxCheckBox, cxTextEdit, cxCurrencyEdit, Vcl.Menus, System.Actions, cxClasses,
+  cxButtons, cxEditRepositoryItems;
+
+type
+  TSalePaymentForm = class(TDBDlgForm)
+    tranRead: TpFIBTransaction;
+    mNote: TcxMemo;
+    pnlButton: TPanel;
+    btn7: TcxButton;
+    btn8: TcxButton;
+    btn9: TcxButton;
+    btn4: TcxButton;
+    btn5: TcxButton;
+    btn6: TcxButton;
+    btn1: TcxButton;
+    btn2: TcxButton;
+    btn3: TcxButton;
+    btn0: TcxButton;
+    btnBcksp: TcxButton;
+    cbShowButtonPanel: TcxCheckBox;
+    Panel3: TPanel;
+    lb1: TLabel;
+    lb3: TLabel;
+    lb2: TLabel;
+    lbBonus: TLabel;
+    lb4: TLabel;
+    lbSummSelf: TLabel;
+    cbPayBonus: TcxCheckBox;
+    ceDoNotCreditBonus: TcxCheckBox;
+    edBonusAll: TcxCurrencyEdit;
+    edBonus: TcxCurrencyEdit;
+    edSdacha: TcxCurrencyEdit;
+    edSummNoncash: TcxCurrencyEdit;
+    edSummCash: TcxCurrencyEdit;
+    btnOstatokCash: TBitBtn;
+    btnEqualCash: TBitBtn;
+    btnEqualNonCash: TBitBtn;
+    btnOstatokNonCash: TBitBtn;
+    Panel2: TPanel;
+    Label1: TLabel;
+    btn500: TcxButton;
+    btn1k: TcxButton;
+    btn2k: TcxButton;
+    btn5k: TcxButton;
+    btn20k: TcxButton;
+    btn10k: TcxButton;
+    btnPnt: TcxButton;
+    procedure FormShow(Sender: TObject);
+    procedure cbPayBonusClick(Sender: TObject);
+    procedure btnEqualCashClick(Sender: TObject);
+    procedure edSummFactPropertiesChange(Sender: TObject);
+    procedure ce1PropertiesChange(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+    procedure btnEqualNonCashClick(Sender: TObject);
+    procedure btnOstatokCashClick(Sender: TObject);
+    procedure btnOstatokNonCashClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure btn500Click(Sender: TObject);
+    procedure btn1kClick(Sender: TObject);
+    procedure btn2kClick(Sender: TObject);
+    procedure btn5kClick(Sender: TObject);
+    procedure btn10kClick(Sender: TObject);
+    procedure btn20kClick(Sender: TObject);
+    procedure cbShowButtonPanelPropertiesChange(Sender: TObject);
+    procedure edSummCashEnter(Sender: TObject);
+    procedure edSummNoncashEnter(Sender: TObject);
+    procedure btn0Click(Sender: TObject);
+    procedure btnBckspClick(Sender: TObject);
+    procedure edSummCashExit(Sender: TObject);
+    procedure edSummNoncashExit(Sender: TObject);
+  private
+    FPaymentType : Integer;
+    FSummBonus : Double;
+    FSummBonusLocal : Double;
+    FSummBonusPay   : Double;       // сумма бонуса, оплачеваемого за данный заказ
+    FMaxBonusPaySumm : Double;
+    FSummZakaz : Double;
+    FBonusPercent : Double;
+    FSdacha : Double;
+    FNotFirst : Boolean;
+    FEdSummCashFocused    : Boolean;
+    FEdSummNonCashFocused : Boolean;
+    procedure PrintButtonNum(Num : string);
+  public
+    property PaymentType : Integer read FPaymentType write FPaymentType;
+    property SummBonus : Double read FSummBonus write FSummBonus;
+    property MaxBonusPaySumm : Double read FMaxBonusPaySumm write FMaxBonusPaySumm;
+    property SummZakaz : Double read FSummZakaz write FSummZakaz;
+    property BonusPercent : Double read FBonusPercent write FBonusPercent;
+    property Sdacha : Double read FSdacha write FSdacha;
+  end;
+
+var
+  SalePaymentForm: TSalePaymentForm;
+
+implementation
+
+uses
+  unCommonFunc;
+
+{$R *.dfm}
+
+procedure TSalePaymentForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  FSdacha := Max((edSummCash.Value + edSummNonCash.Value) - FSummZakaz, 0);
+
+  if edSummNonCash.Value <> 0 then
+    edSummCash.Value := MAX(edSummCash.Value - Max(edSummCash.Value + edSummNonCash.Value - FSummZakaz, 0), 0)
+  else
+    edSummCash.Value := edSummCash.Value - FSdacha;
+
+  edSummNonCash.Value := Min(edSummNonCash.Value, FSummZakaz);
+
+  // сделал так, потому что в TSaleModeForm используется FSummBonus при закрытии формы TSalePaymentForm
+  FSummBonus := FSummBonusLocal;
+<<<<<<< HEAD
+=======
+
+  SaveSettingsIni('Salemode', 'ShowButtonPanel', Integer(cbShowButtonPanel.Checked) ,'');
+>>>>>>> master
+end;
+
+procedure TSalePaymentForm.FormShow(Sender: TObject);
+begin
+  if FPaymentType = 1 then     // С ГЛАВНОЙ ФОРМЫ 1 - ЭТО БЕЗНАЛИЧНЫЙ РАСЧЕТ
+    edSummNonCash.Value := FSummZakaz
+  else
+    edSummCash.Value := FSummZakaz;
+
+  edBonus.Value := FSummZakaz * FBonusPercent;
+  edBonusAll.Value := FSummBonus;
+  cbPayBonus.Enabled := edBonusAll.Value > 0;
+  ceDoNotCreditBonus.Enabled := edBonus.Value > 0;
+  edSummcash.SetFocus;
+
+  cbShowButtonPanel.Checked := ReadIntSettingsIni('Salemode', 'ShowButtonPanel', 1) = 1;
+end;
+
+procedure TSalePaymentForm.edSummCashEnter(Sender: TObject);
+begin
+  FEdSummCashFocused := True;
+  FEdSummNonCashFocused := False;
+end;
+
+procedure TSalePaymentForm.edSummCashExit(Sender: TObject);
+begin
+  inherited;
+  if edSummCash.Text = '' then
+    edSummCash.Value := 0;
+end;
+
+procedure TSalePaymentForm.edSummNoncashEnter(Sender: TObject);
+begin
+  FEdSummCashFocused := False;
+  FEdSummNonCashFocused := True;
+end;
+
+procedure TSalePaymentForm.edSummNoncashExit(Sender: TObject);
+begin
+  inherited;
+  if edSummNonCash.Text = '' then
+    edSummNonCash.Value := 0;
+end;
+
+procedure TSalePaymentForm.edSummFactPropertiesChange(Sender: TObject);
+begin
+  // если обнуляют сумму, то нажатия кнопки будут ставить значения сначала
+  if edSummCash.Value = 0 then
+    FNotFirst := False;
+
+  if edSummNonCash.Value >= FSummZakaz then
+    edSdacha.Value := edSummCash.Value
+  else
+    edSdacha.Value := (edSummCash.Value + edSummNonCash.Value) - FSummZakaz + FSummBonusLocal;
+end;
+
+procedure TSalePaymentForm.cbPayBonusClick(Sender: TObject);
+begin
+  IF cbPayBonus.Checked THEN BEGIN
+    if FMaxBonusPaySumm <> 100 then begin
+      FSummBonusLocal := Min(Round(FSummZakaz * FMaxBonusPaySumm / 100), FSummBonus);
+      edBonusAll.Value   := FSummBonus - FSummBonusLocal;
+    end else begin
+      FSummBonusLocal := Min(FSummBonus, FSummZakaz);
+      edBonusAll.Value := MAX(FSummBonus - FSummZakaz, 0);
+    end;
+
+    // решил сделать так - если заполнено только "Безналичные", то редактирую "Безналичные",
+    // во всех остальных случаях редактирую поле "Наличные", а поле "Безнал" - обнуляю
+    if (edSummNonCash.Value > 0) and (edSummCash.Value = 0) then
+      edSummNonCash.Value := Max(FSummZakaz - FSummBonusLocal, 0)
+
+    else begin
+      edSummCash.Value := Max(FSummZakaz - FSummBonusLocal, 0);
+      edSummNonCash.Value := 0;
+    end;
+
+  END ELSE BEGIN
+    FSummBonusLocal := 0;
+    edBonusAll.Value := FSummBonus;
+
+    // решил сделать так - если заполнено только "Безналичные", то редактирую "Безналичные",
+    // во всех остальных случаях редактирую поле "Наличные", а поле "Безнал" - обнуляю
+    if (edSummNonCash.Value > 0) and (edSummCash.Value = 0) then
+      edSummNoncash.Value := FSummZakaz
+
+    else begin
+      edSummCash.Value := FSummZakaz;
+      edSummNonCash.Value := 0;
+    end;
+
+  END;
+end;
+
+procedure TSalePaymentForm.cbShowButtonPanelPropertiesChange(Sender: TObject);
+begin
+  pnlButton.Visible := cbShowButtonPanel.Checked;
+end;
+
+procedure TSalePaymentForm.ce1PropertiesChange(Sender: TObject);
+begin
+  if ceDoNotCreditBonus.Checked then
+    edBonus.Value := 0
+  else
+    edBonus.Value := FSummZakaz * FBonusPercent;
+end;
+
+procedure TSalePaymentForm.btHelpClick(Sender: TObject);
+begin
+  Helpc := 16;
+  inherited;
+end;
+
+procedure TSalePaymentForm.btnOstatokCashClick(Sender: TObject);
+begin
+  if cbPayBonus.Checked then
+    edSummCash.Value := Max(FSummZakaz - FSummBonus - edSummNonCash.Value, 0)
+  else
+    edSummCash.Value := Max(FSummZakaz - edSummNonCash.Value, 0)
+end;
+
+procedure TSalePaymentForm.btnOstatokNonCashClick(Sender: TObject);
+begin
+  if cbPayBonus.Checked then
+    edSummNonCash.Value := Max(FSummZakaz - FSummBonus - edSummCash.Value, 0)
+  else
+    edSummNonCash.Value := Max(FSummZakaz - edSummCash.Value, 0);
+end;
+
+procedure TSalePaymentForm.btn0Click(Sender: TObject);
+begin
+  if (Sender as TcxButton).Name = 'btn0' then
+    PrintButtonNum('0')
+
+  else if (Sender as TcxButton).Name = 'btn1' then
+    PrintButtonNum('1')
+
+  else if (Sender as TcxButton).Name = 'btn2' then
+    PrintButtonNum('2')
+
+  else if (Sender as TcxButton).Name = 'btn3' then
+    PrintButtonNum('3')
+
+  else if (Sender as TcxButton).Name = 'btn4' then
+    PrintButtonNum('4')
+
+  else if (Sender as TcxButton).Name = 'btn5' then
+    PrintButtonNum('5')
+
+  else if (Sender as TcxButton).Name = 'btn6' then
+    PrintButtonNum('6')
+
+  else if (Sender as TcxButton).Name = 'btn7' then
+    PrintButtonNum('7')
+
+  else if (Sender as TcxButton).Name = 'btn8' then
+    PrintButtonNum('8')
+
+  else if (Sender as TcxButton).Name = 'btn9' then
+    PrintButtonNum('9')
+
+  else if (Sender as TcxButton).Name = 'btnPnt' then
+    PrintButtonNum('.');
+end;
+
+procedure TSalePaymentForm.PrintButtonNum(Num : string);
+  procedure setVal(editSum : TcxCurrencyEdit);
+    var s : integer;
+  begin
+    try
+      s := editSum.SelStart;
+      if s = Length(editSum.Text) then  // если курсор стоит в самом конце, то ничего не делаю и выхожу
+        Exit;
+
+      editSum.SelText := '';
+
+      if editSum.Value = 0 then begin
+        if Num = '0' then
+          editSum.Value := 0
+        else
+          editSum.Value := StrToFloat(Num);
+
+        Exit;
+      end;
+
+      if Num = '.' then begin
+        // если след. символ и так точка, то просто перешагиваю через него
+        // или если символ точки уже позади курсора
+        if (Copy(editSum.Text, s+1, 1) = '.') or (Copy(editSum.Text, s+1, 1) = ',') or
+        (Pos('.', editSum.Text) <= s) then
+          Exit
+        // если же нет, то сначала вырезаю точку, а затем вставляю свою
+        else
+          editSum.Text := Copy(editSum.Text, 1, Pos('.', editSum.Text)-1) +
+            Copy(editSum.Text, Pos('.', editSum.Text)+1, Length(editSum.Text));
+      end;
+
+      editSum.Value := StrToFloat(Copy(editSum.Text, 1, s) + Num + Copy(editSum.Text, s + 1, Length(editSum.Text)));
+    finally
+      // снова выделяю editSum, иначе фокус убегает, т.к. юзер нажимает кнопку
+      editSum.SetFocus;
+      if ((Copy(editSum.Text, s+1, 1) = '.') or (Copy(editSum.Text, s+1, 1) = ',')) and
+      (Num <> '.') then
+        editSum.SelStart := s
+      else
+        editSum.SelStart := s + 1;
+    end;
+  end;
+begin
+  if FEdSummCashFocused then
+    setVal(edSummCash)
+  else if FEdSummNonCashFocused then
+    setVal(edSummNonCash);
+end;
+
+procedure TSalePaymentForm.btnBckspClick(Sender: TObject);
+  procedure delSymb(editSum : TcxCurrencyEdit);
+    var s : integer;
+  begin
+    try
+      editSum.SelText := '';
+      s := editSum.SelStart;
+
+      if (s = 0) and (editSum.SelText <> '') then
+        Exit;
+
+      if (Copy(editSum.Text, s, 1) = '.') or (Copy(editSum.Text, s, 1) = ',') then
+        Exit;
+
+      if editSum.Text <> '' then
+        editSum.Value := StrToFloat(Copy(editSum.Text, 1, s-1) +
+        Copy(editSum.Text, s+1, Length(editSum.Text)));
+
+    finally
+      editSum.SetFocus;
+      editSum.SelStart := s-1;
+    end;
+  end;
+begin
+  if FEdSummCashFocused then
+    delSymb(edSummCash)
+  else
+    delSymb(edSummNonCash);
+end;
+
+procedure TSalePaymentForm.btn10kClick(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 10000;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 10000;
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btn1kClick(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 1000;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 1000;
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btn20kClick(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 20000;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 20000;
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btn2kClick(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 2000;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 2000;
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btn500Click(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 500;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 500;
+
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btn5kClick(Sender: TObject);
+begin
+  if FNotFirst = False then begin
+    edSummCash.Value := 5000;
+    FNotFirst := True;
+  end else
+    edSummCash.Value := edSummCash.Value + 5000;
+  edSummCash.SelStart := Length(edSummCash.text) - 3;
+end;
+
+procedure TSalePaymentForm.btnEqualCashClick(Sender: TObject);
+begin
+  if cbPayBonus.Checked then
+    edSummCash.Value := Max(FSummZakaz - FSummBonus, 0)
+  else
+    edSummCash.Value := FSummZakaz;
+
+  edSummNonCash.Value := 0;
+end;
+
+procedure TSalePaymentForm.btnEqualNonCashClick(Sender: TObject);
+begin
+  if cbPayBonus.Checked then
+    edSummNonCash.Value := Max(FSummZakaz - FSummBonus, 0)
+  else
+    edSummNonCash.Value := FSummZakaz;
+
+  edSummCash.Value := 0;
+end;
+
+end.

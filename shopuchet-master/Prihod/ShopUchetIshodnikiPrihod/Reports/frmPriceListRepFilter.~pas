@@ -1,0 +1,416 @@
+unit frmPriceListRepFilter;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBFilter, Menus, ActnList, dxExEdtr, dxCntner, ExtCtrls,
+  StdCtrls, Buttons, cxControls, cxContainer, cxEdit, cxGroupBox,
+  cxRadioGroup, dxTL, dxTLClms, DB, FIBDataSet, pFIBDataSet,
+  FIBDatabase, pFIBDatabase, AppEvnts, cxPC, dxDBCtrl, dxDBTLCl, dxDBTL;
+
+type
+  TExistRecArr = record
+    Id: array of Integer;
+    EntityId: array of Integer;
+    Return: array of string;
+    Enabled: array of string;
+    Code: array of string;
+    Name: array of string;
+  end;
+
+  TExistRec = record
+    EntityId: Integer;
+    Return: string;
+    Enabled: string;
+    Code: string;
+    Name: string;
+  end;
+
+  TExistArray = array of TExistRec;
+  
+  TPriceListRepFilterForm = class(TDBFilterForm)
+    dsReadErr: TDataSource;
+    tranRead: TpFIBTransaction;
+    spRead: TpFIBDataSet;
+    pcMain: TcxPageControl;
+    tsCommon: TcxTabSheet;
+    tlError: TdxTreeList;
+    TreeListCheck: TdxTreeListCheckColumn;
+    TreeListEntityId: TdxTreeListColumn;
+    TreeListName: TdxTreeListColumn;
+    TreeListEnabled: TdxTreeListCheckColumn;
+    TreeListReturn: TdxTreeListCheckColumn;
+    rgCategory: TcxRadioGroup;
+    cbSortByName: TCheckBox;
+    cbIncludeNol: TCheckBox;
+    cbIncludeFew: TCheckBox;
+    tsSklad: TcxTabSheet;
+    tlSklad: TdxDBTreeList;
+    CheckCol: TdxDBTreeListCheckColumn;
+    tlSkladNAME: TdxDBTreeListMaskColumn;
+    G_TOCHKA: TdxDBTreeListColumn;
+    Panel2: TPanel;
+    btAll: TButton;
+    btNone: TButton;
+    spReadTochka: TpFIBDataSet;
+    dsReadTochka: TDataSource;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure tlErrorClick(Sender: TObject);
+    procedure tlErrorKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure tlErrorEditing(Sender: TObject; Node: TdxTreeListNode;
+      var Allow: Boolean);
+    procedure rgCategoryClick(Sender: TObject);
+    procedure ApplicationEvents1Activate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btAllClick(Sender: TObject);
+    procedure btNoneClick(Sender: TObject);
+    procedure tlSkladClick(Sender: TObject);
+  private
+    FG_Category: TExistRecArr;
+    FG_CategoryArr: String;
+    FExistRec: TExistRecArr;
+    FNameField: string;
+    FEntityIdField: string;
+    FIncludeNol: Integer;
+    FIncludeFew: Integer;
+    FSortByName: Integer;
+    FSkladsArr    : String;
+    FSkladsArrStr : String;
+    FMode : Integer;
+    procedure ClearTreeListItems(Sender: TdxTreeList);
+    procedure SetExistRec(const Value: TExistRecArr);
+    function IsExistInRec(EntityId: Integer; var Idx: Integer): Boolean;
+    function GetExistRec: TExistRecArr;
+  public
+    property G_Category: TExistRecArr read FG_Category write FG_Category;
+    property G_CategoryArr: string read FG_CategoryArr write FG_CategoryArr;
+    property IncludeNol: Integer read FIncludeNol write FIncludeNol;
+    property IncludeFew: Integer read FIncludeFew write FIncludeFew;
+    property SortByName: Integer read FSortByName write FSortByName;
+    property SkladsArr  : String read FSkladsArr write FSkladsArr;
+    property SkladsArrStr  : String read FSkladsArrStr write FSkladsArrStr;
+    property Mode: Integer read FMode write FMode;
+  end;
+
+var
+  PriceListRepFilterForm: TPriceListRepFilterForm;
+
+implementation
+
+uses unCommonFunc;
+
+{$R *.dfm}
+
+
+procedure TPriceListRepFilterForm.rgCategoryClick(Sender: TObject);
+begin
+  inherited;
+  if rgCategory.ItemIndex = 1 then begin
+    tlError.Enabled := True;
+    OpenSp(spRead, False);
+
+    // Заполняем грид ошибок
+    FEntityIdField := 'g_product';
+    FNameField := 'NAME';
+    SetExistRec(G_Category);
+  end else begin
+    spRead.Close;
+    tlError.ClearNodes;
+    tlError.Enabled := True;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var i : integer;
+    ANode: TdxTreeListNode;
+begin
+  IF ModalResult = mrOK then BEGIN
+    FG_Category  := GetExistRec;
+    IF LENGTH(FG_Category.EntityId) > 0 THEN BEGIN
+      FG_CategoryArr := '~';
+      for i := 0 to High(FG_Category.EntityId) do
+        FG_CategoryArr := FG_CategoryArr + IntToStr(FG_Category.EntityId[i]) + '~';
+    END;
+
+    FIncludeNol := Integer(cbIncludeNol.Checked);
+    FIncludeFew := Integer(cbIncludeFew.Checked);
+    FSortByName := Integer(cbSortByName.Checked);
+
+    //ЗАПОЛНЯЮ МАССИВ СКЛАДОВ
+    IF spReadTochka.RecordCount > 1 THEN BEGIN
+      FSkladsArrStr := 'Склады: ';
+      FSkladsArr := '-';
+      tlSklad.FullExpand;
+      tlSklad.GotoFirst;
+      ANode := tlSklad.FocusedNode;
+      while ANode <> nil do begin
+        if ANode.Values[0] = '1' then BEGIN
+          FSkladsArr := FSkladsArr + IntToStr(ANode.Values[2]) + '-';
+          FSkladsArrStr := FSkladsArrStr + ANode.Values[1] + ', ';
+        END;
+
+        ANode := ANode.GetNextNode;
+        if ANode = nil then BEGIN
+          FSkladsArrStr := copy(FSkladsArrStr, 1, LastDelimiter(',', FSkladsArrStr)-1);
+          Break;
+        END;
+      end;
+    END;
+  END;
+END;
+
+//*****************************************************************************
+// Функции и процедуры по заполнению грида с ошибками
+//*****************************************************************************
+function TPriceListRepFilterForm.GetExistRec: TExistRecArr;
+var
+  I, Cnt, Idx: Integer;
+begin
+  SetLength(Result.Id, 0);
+  SetLength(Result.EntityId, 0);
+  SetLength(Result.Name, 0);
+  SetLength(Result.Enabled, 0);
+  SetLength(Result.Return, 0);
+
+  Idx := 0;
+  with tlError do
+  begin
+    Cnt := Count;
+    for I := 0 to Cnt - 1 do
+    begin
+      if (Items[I].Values[ColumnByName('TreeListCheck').Index] = '1')
+         and (Items[I].Values[ColumnByName('TreeListReturn').Index] = '1') then
+      begin
+        Inc(Idx);
+        SetLength(Result.Id, Idx);
+        SetLength(Result.EntityId, Idx);
+        SetLength(Result.Code, Idx);
+        SetLength(Result.Name, Idx);
+        SetLength(Result.Enabled, Idx);
+        SetLength(Result.Return, Idx);
+        Result.EntityId[Idx - 1] := Items[I].Values[ColumnByName('TreeListEntityId').Index];
+        Result.Name[Idx - 1] := Items[I].Values[ColumnByName('TreeListName').Index];
+        Result.Enabled[Idx - 1] := Items[I].Values[ColumnByName('TreeListEnabled').Index];
+        Result.Return[Idx - 1] := Items[I].Values[ColumnByName('TreeListReturn').Index];
+      end;
+    end;
+  end;
+end;
+
+function TPriceListRepFilterForm.IsExistInRec(EntityId: Integer;
+  var Idx: Integer): Boolean;
+var
+  Cnt, I: Integer;
+begin
+  Cnt := High(FExistRec.EntityId);
+  Result := False;
+  for I := 0 to Cnt do
+  begin
+    if FExistRec.EntityId[I] = EntityId then
+    begin
+      Result := True;
+      Idx := I;
+      Exit;
+    end;
+  end;
+  Idx := -1;
+end;
+
+procedure TPriceListRepFilterForm.ClearTreeListItems(Sender: TdxTreeList);
+var
+  I, Cnt: Integer;
+begin
+  with Sender do
+  begin
+    Cnt := Count;
+    for I := 0 to Cnt - 1 do
+      Sender.Items[0].Destroy;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.SetExistRec(const Value: TExistRecArr);
+var
+  ANode: TdxTreeListNode;
+  Check: string;
+  I: Integer;
+begin
+  I := -1;
+  FExistRec := Value;
+  with spRead, tlError do
+  begin
+    while not EOF do
+    begin
+      ANode := Add;
+      if FEntityIdField <> EmptyStr then
+        ANode.Values[ColumnByName('TreeListEntityId').Index] := FieldByName(FEntityIdField).Value;
+      if FNameField <> EmptyStr then
+        ANode.Values[ColumnByName('TreeListName').Index] := FieldByName(FNameField).Value;
+      if IsExistInRec(FieldByName(FEntityIdField).Value, I) then
+      begin
+        ANode.Values[ColumnByName('TreeListEnabled').Index] := FExistRec.Enabled[I];
+        ANode.Values[ColumnByName('TreeListReturn').Index] := FExistRec.Return[I];
+        Check := '1'
+      end
+      else begin
+        ANode.Values[ColumnByName('TreeListEnabled').Index] := '1';
+        ANode.Values[ColumnByName('TreeListReturn').Index] := '1';
+        Check := '0';
+      end;
+
+      ANode.Values[ColumnByName('TreeListCheck').Index] := Check;
+      Next;
+    end;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.tlErrorClick(Sender: TObject);
+begin
+  inherited;
+  with (Sender as TdxTreeList) do
+  begin
+    if Items[FocusedNumber].Values[ColumnByName('TreeListEnabled').Index] = '1' then
+    begin
+        if FocusedColumn = ColumnByName('TreeListCheck').Index then
+        begin
+           if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '1' then
+             Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '0'
+           else if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '0' then
+             Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '1';
+        end;
+    end;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.tlErrorKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  with (Sender as TdxTreeList) do
+  begin
+    if Key = 32 then
+    begin
+      if Items[FocusedNumber].Values[ColumnByName('TreeListEnabled').Index] = '1' then
+      begin
+          if FocusedColumn = ColumnByName('TreeListCheck').Index then
+          begin
+             if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '1' then
+               Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '0'
+             else if Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] = '0' then
+               Items[FocusedNumber].Values[ColumnByName('TreeListCheck').Index] := '1';
+          end;
+      end;
+    end;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.tlErrorEditing(Sender: TObject;
+  Node: TdxTreeListNode; var Allow: Boolean);
+begin
+  Allow := Node.Values[(Sender as TdxTreeList).ColumnByName('TreeListEnabled').Index] = '1';
+end;
+
+procedure TPriceListRepFilterForm.ApplicationEvents1Activate(
+  Sender: TObject);
+begin
+  //inherited;
+end;
+
+procedure TPriceListRepFilterForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  G_CategoryArr := '';
+  FillChar(FG_Category, SizeOf(FG_Category), 0);
+
+  // открываю склады, и если больше 1, то делаю вкладку видимой и ставлю галочку на текущий склад, и если вызывается в отчете Остаток товаров
+  OpenSP(spReadTochka, False);
+  IF (spReadTochka.RecordCount > 1) and (FMode = 1) THEN BEGIN
+    tsSklad.TabVisible := True;
+    spReadTochka.Locate('g_tochka', CurSklad, []);
+    tlSklad.FocusedNode.Values[0] := '1';
+    tlSklad.FullCollapse;  //иначе почему-то весь раскрывается
+  END;
+
+  rgCategory.Style.Font.Size := 9;
+
+  //если программа не активирована, то буду давать формировать только за сегодня
+  if IsActivated = 0 then begin
+    MessageDlg('Программа не активирована! Включены ограничения!', mtWarning, [mbOK], 0);
+    rgCategory.Properties.Items.Delete(1);
+  end;
+end;
+
+procedure TPriceListRepFilterForm.btAllClick(Sender: TObject);
+var ANode: TdxTreeListNode;
+begin
+  spReadTochka.First;
+  ANode := tlSklad.FocusedNode;
+  while ANode <> nil do begin
+    ANode.Values[0] := '1';
+    if ANode.HasChildren then ANode.Expand(False);
+    ANode := ANode.GetNextNode;
+    if ANode = nil then Break;
+  end;
+end;
+
+procedure TPriceListRepFilterForm.btNoneClick(Sender: TObject);
+var ANode: TdxTreeListNode;
+begin
+  spReadTochka.First;
+  ANode := tlSklad.FocusedNode;
+  while ANode <> nil do begin
+    ANode.Values[0] := '0';
+    if ANode.HasChildren then ANode.Expand(False);
+    ANode := ANode.GetNextNode;
+    if ANode = nil then Break;
+  end;
+  tlSklad.FullCollapse;  //иначе почему-то весь раскрывается
+end;
+
+procedure TPriceListRepFilterForm.tlSkladClick(Sender: TObject);
+var
+  AnItem: TdxTreeListNode;
+  ANode: TdxTreeListNode;
+  i : Integer;
+  Cnt : integer;
+begin
+  with (Sender as TdxDBTreeList) do begin
+    AnItem := FocusedNode;
+    if AnItem <> nil then begin
+      if AnItem.Values[0] = '1' then
+       AnItem.Values[0] := '0'
+      else if (AnItem.Values[0] = '0') or (AnItem.Values[0] = '') then
+       AnItem.Values[0] := '1';
+
+      // если есть детки, то проставляю им всем галочки
+      if AnItem.HasChildren then begin
+        AnItem.Expand(False);
+        ANode := AnItem.GetFirstChild;
+        for i := 0 to AnItem.Count - 1 do begin
+          ANode.Values[0] := AnItem.Values[0];
+          ANode := ANode.GetNextNode;
+        end;
+
+      // если это дочка, и галочка ставится, то надо родителю тоже поставить
+      end else if (AnItem.Parent <> nil) and (AnItem.Values[0] = '1') then
+        AnItem.Parent.Values[0] := '1'
+
+      // если это дочка, и галочка убирается, то надо проверить а у всех ли дочек убрана галочка, если у всех, то галочку у родителя надо тоже убрать
+      else if (AnItem.Parent <> nil) and (AnItem.Values[0] = '0') then begin
+        ANode := AnItem.Parent.GetFirstChild;
+        Cnt := 0;
+        for i := 0 to AnItem.Parent.Count - 1 do begin
+          if ANode.Values[0] = '1' then
+           Cnt := Cnt + 1;
+          ANode := ANode.GetNextNode;
+        end;
+        if Cnt = 0 then
+          AnItem.Parent.Values[ColumnByName('CheckCol').Index] := '0';  //везде поставил 0, а тут оставил такой вызов просто так
+      end
+    end;
+  end;
+end;
+
+end.

@@ -1,0 +1,130 @@
+unit frmUpdZakupkaTovara;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, DB, dxEditor, dxExEdtr, dxDBEdtr,
+  dxDBELib, dxCntner, dxEdLib, ExtCtrls, StdCtrls, Menus, ActnList,
+  Buttons, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxDropDownEdit, cxCalendar, dxDBGrid, dxTL, dxDBCtrl,
+  FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase, AppEvnts, unCommonFunc,
+  frmMyCurrencyFrame;
+
+type
+  TUpdZakupkaTovaraForm = class(TDBEditForm)
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    Label1: TLabel;
+    Shape1: TShape;
+    Label3: TLabel;
+    Shape5: TShape;
+    Label4: TLabel;
+    Shape7: TShape;
+    GroupBox1: TGroupBox;
+    Shape10: TShape;
+    Shape9: TShape;
+    Label5: TLabel;
+    Shape15: TShape;
+    Label6: TLabel;
+    Shape11: TShape;
+    Shape8: TShape;
+    Shape6: TShape;
+    Shape3: TShape;
+    Label2: TLabel;
+    Shape2: TShape;
+    edTovar: TdxEdit;
+    Shape4: TShape;
+    MyCurrencyFrameForm: TMyCurrencyFrameForm;
+    edNDS: TdxCurrencyEdit;
+    edNDSSumm: TdxCurrencyEdit;
+    edPrice: TdxCurrencyEdit;
+    edSumm: TdxCurrencyEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure edNDSChange(Sender: TObject);
+    procedure edPriceChange(Sender: TObject);
+    procedure MyCurrencyFrameForm1edAmountChange(Sender: TObject);
+  private
+    FG_product: Integer;
+    FPName: String;
+  public
+    property G_product: Integer read FG_product write FG_product;
+    property PName: String read FPName write FPName;
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  UpdZakupkaTovaraForm: TUpdZakupkaTovaraForm;
+
+implementation
+
+uses frmZakupkaTovara;
+
+{$R *.dfm}
+
+function TUpdZakupkaTovaraForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  Result := True;
+end;
+
+procedure TUpdZakupkaTovaraForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'sklad_';
+end;
+
+procedure TUpdZakupkaTovaraForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+  with SP do begin
+    ParamByName('PRICE_').AsFloat := edPrice.Value;
+    ParamByName('AMOUNT_').AsFloat := MyCurrencyFrameForm.Value;
+    ParamByName('SUMM_').AsFloat := edSumm.Value;
+    ParamByName('NDS_').AsFloat := edNDS.Value;
+    ParamByName('NDS_SUMM_').AsFloat := edNDSSumm.Value;
+    ParamByName('ALLOW_SELL_ABSENT_GOODS_').AsInteger := AllowSellAbsGoods;
+  end;
+end;
+
+procedure TUpdZakupkaTovaraForm.GetData;
+begin
+  inherited;
+
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      edTovar.Text := ParamByName('G_PROD_NAME_').AsString;
+      edPrice.Value := ParamByName('PRICE_').AsFloat;
+      MyCurrencyFrameForm.edAmount.Text := ParamByName('AMOUNT_').AsString;
+      edSumm.Value := ParamByName('SUMM_').AsFloat;
+      edNDS.Value := ParamByName('NDS_').AsFloat;
+      edNDSSumm.Value := ParamByName('NDS_SUMM_').AsFloat;
+    end;
+  end;
+end;
+
+procedure TUpdZakupkaTovaraForm.edNDSChange(Sender: TObject);
+begin
+  edNDSSumm.Value := edSumm.Value * edNDS.Value / 100;
+end;
+
+procedure TUpdZakupkaTovaraForm.edPriceChange(Sender: TObject);
+begin
+  edSumm.Value := MyCurrencyFrameForm.Value * edPrice.Value;
+end;
+
+procedure TUpdZakupkaTovaraForm.MyCurrencyFrameForm1edAmountChange(
+  Sender: TObject);
+begin
+  inherited;
+  MyCurrencyFrameForm.edAmountChange(Sender);
+  edSumm.Value := MyCurrencyFrameForm.Value * edPrice.Value;
+  edPrice.Modified := True;
+end;
+
+end.

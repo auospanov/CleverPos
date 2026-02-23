@@ -1,0 +1,101 @@
+object DBErrorDlgForm: TDBErrorDlgForm
+  Left = 252
+  Top = 178
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = #1054#1096#1080#1073#1082#1072' FireBird'
+  ClientHeight = 267
+  ClientWidth = 377
+  Color = clBtnFace
+  Font.Charset = RUSSIAN_CHARSET
+  Font.Color = clNavy
+  Font.Height = -12
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = True
+  Position = poScreenCenter
+  OnKeyUp = FormKeyUp
+  PixelsPerInch = 96
+  TextHeight = 14
+  object Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 76
+    Height = 16
+    Caption = #1054#1096#1080#1073#1082#1072' '#8470':'
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clRed
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object lbErrCode: TLabel
+    Left = 88
+    Top = 8
+    Width = 65
+    Height = 16
+    Caption = 'ErrorCode'
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clRed
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Bevel1: TBevel
+    Left = 0
+    Top = 117
+    Width = 377
+    Height = 2
+  end
+  object Bevel2: TBevel
+    Left = 0
+    Top = 221
+    Width = 377
+    Height = 2
+  end
+  object stErrTrace: TMemo
+    Left = 1
+    Top = 224
+    Width = 376
+    Height = 81
+    Color = clBtnFace
+    Lines.Strings = (
+      #1057#1090#1088#1086#1082#1072' '#1090#1088#1072#1089#1089#1080#1088#1086#1074#1082#1080':')
+    TabOrder = 3
+    Visible = False
+  end
+  object OkButton: TBitBtn
+    Left = 152
+    Top = 236
+    Width = 75
+    Height = 25
+    Hint = #1055#1088#1080#1085#1103#1090#1100'|'#1047#1072#1082#1088#1099#1090#1080#1077' '#1086#1082#1085#1072
+    TabOrder = 0
+    Kind = bkOK
+  end
+  object lbErrMsgRus: TMemo
+    Left = 8
+    Top = 32
+    Width = 362
+    Height = 83
+    BorderStyle = bsNone
+    Color = clBtnFace
+    Lines.Strings = (
+      #1057#1086#1086#1073#1097#1077#1085#1080#1077' '#1086#1073' '#1086#1096#1080#1073#1082#1077' '#1085#1072' '#1088#1091#1089#1089#1082#1086#1084' '#1103#1079#1099#1082#1077':')
+    TabOrder = 1
+  end
+  object lbErrMsgEng: TMemo
+    Left = 8
+    Top = 120
+    Width = 361
+    Height = 99
+    BorderStyle = bsNone
+    Color = clBtnFace
+    Lines.Strings = (
+      #1057#1086#1086#1073#1097#1077#1085#1080#1077' '#1086#1073' '#1086#1096#1080#1073#1082#1077' '#1085#1072' '#1072#1085#1075#1083#1080#1081#1089#1082#1086#1084' '#1103#1079#1099#1082#1077':')
+    TabOrder = 2
+  end
+end

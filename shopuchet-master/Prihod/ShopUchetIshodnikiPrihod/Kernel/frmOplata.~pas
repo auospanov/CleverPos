@@ -1,0 +1,187 @@
+unit frmOplata;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBDlg, ActnList, AppEvnts, dxExEdtr, dxCntner, ExtCtrls,
+  StdCtrls, Buttons, DB, dxmdaset, dxEditor, dxEdLib, cxDropDownEdit,
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxCalendar,
+  dxTL, dxDBCtrl, dxDBGrid, dxDBTLCl, dxGrClms;
+
+type
+  TRecOplata = record
+    Id: Integer;
+    Date: TDate;
+    Summ  : Currency;
+    Payment: Integer;
+  end;
+
+  TArrOplata = Array of TRecOplata;
+
+  TOplataForm = class(TDBDlgForm)
+    pn2: TPanel;
+    btnIns: TBitBtn;
+    btnUpd: TBitBtn;
+    btnDel: TBitBtn;
+    pnRowCnt: TPanel;
+    mdRead: TdxMemData;
+    dsRead: TDataSource;
+    intgrfldReadid: TIntegerField;
+    dtfldReadDatePay: TDateField;
+    fltfldReadSummPay: TFloatField;
+    intgrfldReadPaymentType: TIntegerField;
+    aIns: TAction;
+    aUpd: TAction;
+    aDel: TAction;
+    strngfldReadPayment_type_str: TStringField;
+    grOplata: TdxDBGrid;
+    dxdbgrdclmnProductRecId: TdxDBGridColumn;
+    grOplataid: TdxDBGridMaskColumn;
+    grOplataDate_Pay: TdxDBGridDateColumn;
+    grOplataSumm_Pay: TdxDBGridMaskColumn;
+    grOplataPayment_Type: TdxDBGridMaskColumn;
+    grOplataPayment_type_str: TdxDBGridMaskColumn;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure aInsExecute(Sender: TObject);
+    procedure aUpdExecute(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure ReadList;
+    procedure FormShow(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
+  private
+    FArrOplata : TArrOplata;
+    FSummZakaz : Currency;
+    FPaymentType : Integer;
+    FHelpcc : integer;
+  public
+    property ArrOplata : TArrOplata read FArrOplata write FArrOplata;
+    property SummZakaz : Currency read FSummZakaz write FSummZakaz;
+    property PaymentType : Integer read FPaymentType write FPaymentType;
+    property Helpcc : Integer read FHelpcc write FHelpcc;
+  end;
+
+var
+  OplataForm: TOplataForm;
+
+implementation
+
+uses
+  frmPayDetails;
+
+{$R *.dfm}
+
+procedure TOplataForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var i : integer;
+begin
+  inherited;
+
+  if ModalResult = mrOk then begin
+    if StrToFloat(grOplata.ColumnByFieldName('summ_pay').SummaryFooterText) > FSummZakaz then begin
+      MessageDlg('Сумма платежей не может быть больше суммы заказа! Продолжение невозможно!', mtWarning, [mbOK], 0);
+      CanClose := False;
+      Exit;
+    end;
+  end;  
+
+  {SetLength(FArrOplata, 0);
+  i := 0;
+  mdRead.First;
+  while not mdRead.Eof do begin
+    FArrOplata[i].Id := mdRead.FieldByName('id').asInteger;
+    FArrOplata[i].Date := mdRead.FieldByName('Date_Pay').AsDateTime;
+    FArrOplata[i].Payment := mdRead.FieldByName('payment_type').asInteger;
+    FArrOplata[i].Summ := mdRead.FieldByName('summ_pay').AsFloat;
+
+    i := i + 1;
+  end; }
+end;
+
+procedure TOplataForm.aInsExecute(Sender: TObject);
+var PayDetailsForm: TPayDetailsForm;
+begin
+  PayDetailsForm := TPayDetailsForm.Create(Self);
+  with PayDetailsForm do begin
+    try
+      deDate.Date := Date;
+      PaymentType := FPaymentType;
+      SummZakaz  := FSummZakaz;
+      SummPayments := StrToFloat(grOplata.ColumnByFieldName('summ_pay').SummaryFooterText);
+      if ShowModal = mrOk then begin
+        mdRead.Insert;
+        mdRead.FieldByName('Date_Pay').AsDateTime := deDate.Date;
+        mdRead.FieldByName('Summ_Pay').AsFloat := edSumm.Value;
+        mdRead.FieldByName('Payment_Type').asFloat := cbPayment.ItemIndex + 1;
+        if cbPayment.ItemIndex = 0 then
+          mdRead.FieldByName('Payment_type_str').AsString := 'Наличный'
+        else
+          mdRead.FieldByName('Payment_type_str').AsString := 'Безналичный';
+
+        ReadList;  
+      end;
+    finally
+      Free;
+    end;
+  end
+end;
+
+procedure TOplataForm.aUpdExecute(Sender: TObject);
+var PayDetailsForm: TPayDetailsForm;
+begin
+  PayDetailsForm := TPayDetailsForm.Create(Self);
+  with PayDetailsForm do begin
+    try
+      deDate.Date := mdRead.FieldByName('Date_Pay').AsDateTime;
+      edSumm.Value := mdRead.FieldByName('Summ_pay').asFloat;
+      cbPayment.ItemIndex := mdRead.FieldByName('Payment_type').asInteger - 1;
+      SummZakaz  := FSummZakaz;
+      SummPayments := StrToFloat(grOplata.ColumnByFieldName('summ_pay').SummaryFooterText) - edSumm.Value;  // ЧТОБЫ НЕ УЧИТЫВАТЬ САМОГО СЕБЯ
+      if ShowModal = mrOk then begin
+        mdRead.Edit;
+        mdRead.FieldByName('Date_Pay').AsDateTime := deDate.Date;
+        mdRead.FieldByName('Summ_pay').asFloat := edSumm.Value;
+        mdRead.FieldByName('Payment_type').asInteger := cbPayment.ItemIndex + 1;
+        if cbPayment.ItemIndex = 0 then
+          mdRead.FieldByName('Payment_type_str').AsString := 'Наличный'
+        else
+          mdRead.FieldByName('Payment_type_str').AsString := 'Безналичный';
+
+        ReadList;
+      end;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TOplataForm.aDelExecute(Sender: TObject);
+begin
+  if mdRead.RecordCount = 1 then begin
+    MessageDlg('Нельзя удалить единственный платеж!', mtError, [mbOk], 0);
+    Exit;
+  end;
+  mdRead.Delete;
+  ReadList;
+end;
+
+procedure TOplataForm.ReadList;
+begin
+  mdRead.Refresh;
+  aUpd.Enabled := mdRead.RecordCount > 0;
+  aDel.Enabled := mdRead.RecordCount > 0;
+  pnRowCnt.Caption := IntToStr(mdRead.RecordCount);
+end;
+
+procedure TOplataForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  ReadList;
+end;
+
+procedure TOplataForm.btHelpClick(Sender: TObject);
+begin
+  Application.HelpContext(FHelpcc);
+end;
+
+end.

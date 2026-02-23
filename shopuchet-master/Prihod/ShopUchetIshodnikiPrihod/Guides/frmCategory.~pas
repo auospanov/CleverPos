@@ -1,0 +1,90 @@
+unit frmCategory;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBEdit, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase,
+  pFIBDatabase, ActnList, dxExEdtr, dxCntner, ExtCtrls, StdCtrls, Buttons,
+  DB, FIBDataSet, pFIBDataSet, dxEditor, dxDBEdtr, dxDBELib, dxEdLib,
+  AppEvnts;
+
+type
+  TCategoryForm = class(TDBEditForm)
+    Label2: TLabel;
+    Shape2: TShape;
+    edName: TdxEdit;
+    Shape4: TShape;
+    Label13: TLabel;
+    Shape25: TShape;
+    leCategory: TdxLookupEdit;
+    Shape26: TShape;
+    spProductCategory: TpFIBDataSet;
+    dsProductCategory: TDataSource;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  protected
+    procedure GetData; override;
+    function  CheckParams(var ErrControl: TWinControl): Boolean; override;
+    procedure SetParams(SP: TpFIBStoredProc); override;
+  end;
+
+var
+  CategoryForm: TCategoryForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TCategoryForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  KeyField := 'g_product_';
+  spProductCategory.ParamByName('G_PRODUCT_').AsInteger := RecID;
+  OpenSp(spProductCategory, False);
+end;
+
+function TCategoryForm.CheckParams(var ErrControl: TWinControl): Boolean;
+begin
+  Result := inherited CheckParams(ErrControl);
+
+  if Trim(edName.Text) = EmptyStr then begin
+    ErrControl := edName;
+    MessageDlg('Наименование не введено', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+procedure TCategoryForm.GetData;
+begin
+  inherited;
+  if OpenMode in [omView, omUpdate, omInsertLike] then begin
+    with spGetData do begin
+      leCategory.LookupKeyValue := ParamByName('G_PRODUCT_PAR_').AsInteger;
+      edName.Text    := ParamByName('NAME_').AsString;
+    end;
+    spProductCategory.Filter := 'g_product <> ' + IntToStr(ReciD);
+    spProductCategory.Filtered := True;
+  end;
+end;
+
+procedure TCategoryForm.SetParams(SP: TpFIBStoredProc);
+begin
+  inherited;
+
+  with SP do begin
+    if leCategory.LookupKeyValue > 0 then
+      ParamByName('G_PRODUCT_PAR_').AsInteger := leCategory.LookupKeyValue;
+    ParamByName('NAME_').AsString := edName.Text;
+    IF SP.Name = 'spIns' then
+      ParamByName('IS_CATEGORY_').AsInteger := 1;
+    ParamByName('IS_kit_').AsInteger := 0;
+  end;
+end;
+
+end.

@@ -1,0 +1,111 @@
+inherited InvoiceListForm: TInvoiceListForm
+  Caption = #1046#1091#1088#1085#1072#1083' '#1089#1095#1077#1090'-'#1092#1072#1082#1090#1091#1088
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited dxDBGrid: TdxDBGrid
+    KeyField = 'INVOICE'
+    Filter.Criteria = {00000000}
+    RegistryPath = '\Software\ShopUchet\InvoiceList'
+    object dxDBGridINVOICE_PAY: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'INVOICE'
+    end
+    object dxDBGridNUM: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1053#1086#1084#1077#1088
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'NUM'
+    end
+    object dxDBGridINIT_DATE: TdxDBGridDateColumn
+      Alignment = taCenter
+      Caption = #1044#1072#1090#1072' '#1074#1099#1076#1072#1095#1080
+      HeaderAlignment = taCenter
+      Width = 94
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'INIT_DATE'
+    end
+    object dxDBGridG_CLIENT: TdxDBGridMaskColumn
+      Alignment = taCenter
+      HeaderAlignment = taCenter
+      Visible = False
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'G_CLIENT'
+    end
+    object dxDBGridAGREEMENT: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1044#1086#1075#1086#1074#1086#1088
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'AGREEMENT'
+    end
+    object dxDBGridCLIENT_NAME: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1050#1083#1080#1077#1085#1090
+      HeaderAlignment = taCenter
+      Width = 75
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'CLIENT_NAME'
+    end
+    object dxDBGridIDN_CLIENT: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1048#1048#1053'/'#1041#1048#1053' '#1082#1083#1080#1077#1085#1090#1072
+      HeaderAlignment = taCenter
+      Width = 125
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'IDN_CLIENT'
+    end
+    object dxDBGridADDRESS_STR: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1040#1076#1088#1077#1089' '#1082#1083#1080#1077#1085#1090#1072
+      HeaderAlignment = taCenter
+      Width = 108
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'ADDRESS_POKUPATEL'
+    end
+    object dxDBGridFIO_DOC: TdxDBGridMaskColumn
+      Alignment = taCenter
+      Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+      HeaderAlignment = taCenter
+      Width = 98
+      BandIndex = 0
+      RowIndex = 0
+      FieldName = 'FIO_DOC'
+    end
+  end
+  inherited dxBarManagerChild: TdxBarManager
+    Categories.ItemsVisibles = (
+      2)
+    Categories.Visibles = (
+      True)
+    DockControlHeights = (
+      0
+      0
+      26
+      0)
+  end
+  inherited spRead: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT * FROM INV_READ_INVOICE_LIST')
+  end
+  inherited spDel: TpFIBStoredProc
+    SQL.Strings = (
+      'EXECUTE PROCEDURE INV_DEL_INVOICE (?INVOICE_)')
+    StoredProcName = 'INV_DEL_INVOICE'
+  end
+end

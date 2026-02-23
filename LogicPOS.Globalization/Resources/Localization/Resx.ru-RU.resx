@@ -1,0 +1,3905 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="app_error_application_unlicenced_function_disabled" xml:space="preserve">
+    <value>{0}
+    
+Приложение не зарегистрировано</value>
+  </data>
+  <data name="app_error_contact_support" xml:space="preserve">
+    <value>Ошибка приложения! Пожалуйста, обратитесь в техническую поддержку</value>
+  </data>
+  <data name="app_error_rendering_theme" xml:space="preserve">
+    <value>Ошибка приложения! Ошибка отображения темы:
+    
+{0}
+
+{1}</value>
+  </data>
+  <data name="app_error_unsupported_resolution_detected" xml:space="preserve">
+    <value>Разрешение экрана '{0}x{1}' не поддерживается!
+Переопределите его через файл настроек LogicPOS, ключ [appScreenSize], и попробуйте снова.
+
+Или выберите '{2}' для запуска POS в режиме по умолчанию '1024x768'.</value>
+  </data>
+  <data name="app_info_show_ignored_cancelled_documents" xml:space="preserve">
+    <value>Следующие документы не отменены, поскольку они ранее были отменены, связаны с другими документами, дата дня в прошлом, или пользователь нажал отмену в диалоге причины.
+{0}</value>
+  </data>
+  <data name="articlesubfamily_edit_dialog_tab1_label" xml:space="preserve">
+    <value>Детали 1</value>
+  </data>
+  <data name="articlesubfamily_edit_dialog_tab2_label" xml:space="preserve">
+    <value>Детали 2</value>
+  </data>
+  <data name="article_edit_dialog_tab1_label" xml:space="preserve">
+    <value>Детали 1</value>
+  </data>
+  <data name="article_edit_dialog_tab2_label" xml:space="preserve">
+    <value>Детали 2</value>
+  </data>
+  <data name="article_edit_dialog_tab3_label" xml:space="preserve">
+    <value>Детали 3</value>
+  </data>
+  <data name="article_normal_price" xml:space="preserve">
+    <value>Обычная цена</value>
+  </data>
+  <data name="article_price1" xml:space="preserve">
+    <value>Цена 1</value>
+  </data>
+  <data name="article_price2" xml:space="preserve">
+    <value>Цена 2</value>
+  </data>
+  <data name="article_price3" xml:space="preserve">
+    <value>Цена 3</value>
+  </data>
+  <data name="article_price4" xml:space="preserve">
+    <value>Цена 4</value>
+  </data>
+  <data name="article_price5" xml:space="preserve">
+    <value>Цена 5</value>
+  </data>
+  <data name="article_promotion_price" xml:space="preserve">
+    <value>Акционная цена</value>
+  </data>
+  <data name="article_use_promotion_price" xml:space="preserve">
+    <value>Использовать акцию</value>
+  </data>
+  <data name="audit_message_app_close" xml:space="preserve">
+    <value>Приложение закрыто</value>
+  </data>
+  <data name="audit_message_app_start" xml:space="preserve">
+    <value>Приложение запущено</value>
+  </data>
+  <data name="audit_message_cashdrawer_in" xml:space="preserve">
+    <value>Кассовый ящик в: {0} - {1}</value>
+  </data>
+  <data name="audit_message_cashdrawer_open" xml:space="preserve">
+    <value>Ящик открыт</value>
+  </data>
+  <data name="audit_message_cashdrawer_out" xml:space="preserve">
+    <value>Кассовый ящик из: {0} - {1}</value>
+  </data>
+  <data name="audit_message_database_backup" xml:space="preserve">
+    <value>Резервное копирование базы данных: {0}</value>
+  </data>
+  <data name="audit_message_database_restore" xml:space="preserve">
+    <value>Восстановление базы данных: {0}</value>
+  </data>
+  <data name="audit_message_export_saft" xml:space="preserve">
+    <value>SAF-T экспортирован: {0} с {1} по {2}</value>
+  </data>
+  <data name="audit_message_finance_series_created" xml:space="preserve">
+    <value>Финансовая серия [{0}] для терминала: [{1}] создана пользователем: {2}</value>
+  </data>
+  <data name="audit_message_order_article_removed" xml:space="preserve">
+    <value>Статья заказа {0} - Количество: {1}/{2} удалена пользователем: {3}</value>
+  </data>
+  <data name="audit_message_stock_movement_in" xml:space="preserve">
+    <value>Приход товара: Статья: {0} - Количество: {1}</value>
+  </data>
+  <data name="audit_message_stock_movement_out" xml:space="preserve">
+    <value>Расход товара: Товар: {0} - Количество: {1}</value>
+  </data>
+  <data name="audit_message_table_close" xml:space="preserve">
+    <value>Столик закрыт: {0}</value>
+  </data>
+  <data name="audit_message_table_open" xml:space="preserve">
+    <value>Столик открыт: {0}</value>
+  </data>
+  <data name="audit_message_table_reserved" xml:space="preserve">
+    <value>Столик зарезервирован: {0}</value>
+  </data>
+  <data name="audit_message_table_unreserved" xml:space="preserve">
+    <value>Столик разрезервирован: {0}</value>
+  </data>
+  <data name="audit_message_used_forced_loggerout" xml:space="preserve">
+    <value>Приложение закрыто, принудительный выход пользователя: {0}</value>
+  </data>
+  <data name="audit_message_user_change" xml:space="preserve">
+    <value>Пользователь изменен: {0}</value>
+  </data>
+  <data name="audit_message_user_change_password" xml:space="preserve">
+    <value>Пользователь изменил пароль: {0}</value>
+  </data>
+  <data name="audit_message_user_loggerin" xml:space="preserve">
+    <value>Пользователь вошел в систему: {0}</value>
+  </data>
+  <data name="audit_message_user_loggerin_error" xml:space="preserve">
+    <value>Ошибка входа пользователя: {0}</value>
+  </data>
+  <data name="audit_message_user_loggerout" xml:space="preserve">
+    <value>Пользователь вышел из системы: {0}</value>
+  </data>
+  <data name="backoffice_datetime_format_status_bar" xml:space="preserve">
+    <value>dddd, dd MMMM yyyy' || 'HH:mm:ss tt</value>
+    <comment>Dateformat must have literal chars between single quotes</comment>
+  </data>
+  <data name="dialog_button_label_new_finance_documents" xml:space="preserve">
+    <value>Новый документ</value>
+  </data>
+  <data name="dialog_button_label_select_finance_documents_cc" xml:space="preserve">
+    <value>Текущий счет</value>
+  </data>
+  <data name="dialog_button_label_select_finance_documents_ft_unpaid" xml:space="preserve">
+    <value>Документы оплаты</value>
+  </data>
+  <data name="dialog_button_label_select_merchandise_entry" xml:space="preserve">
+    <value>Поступление товара</value>
+  </data>
+  <data name="dialog_button_label_select_payments" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="dialog_button_label_select_record_finance_documents" xml:space="preserve">
+    <value>Документы</value>
+  </data>
+  <data name="dialog_button_label_select_record_finance_documents_small" xml:space="preserve">
+    <value>Док.</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="dialog_button_label_select_worksession_period" xml:space="preserve">
+    <value>Рабочая сессия</value>
+  </data>
+  <data name="dialog_edit_articlesubfamily_tab1_label" xml:space="preserve">
+    <value>Детали 1</value>
+  </data>
+  <data name="dialog_edit_articlesubfamily_tab2_label" xml:space="preserve">
+    <value>Детали 2</value>
+  </data>
+  <data name="dialog_edit_article_tab2_label" xml:space="preserve">
+    <value>Финансовые детали</value>
+  </data>
+  <data name="dialog_edit_article_tab3_label" xml:space="preserve">
+    <value>Прочие детали</value>
+  </data>
+  <data name="dialog_edit_ConfigurationCashRegister_tab1_label" xml:space="preserve">
+    <value>Кассовый аппарат</value>
+  </data>
+  <data name="dialog_edit_ConfigurationCurrency_tab1_label" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
+  <data name="dialog_edit_ConfigurationDevice_tab1_label" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="dialog_edit_ConfigurationKeyboard_tab1_label" xml:space="preserve">
+    <value>Клавиатуры</value>
+  </data>
+  <data name="dialog_edit_ConfigurationMaintenance_tab1_label" xml:space="preserve">
+    <value>Управление обслуживанием</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPaymentCondition_tab1_label" xml:space="preserve">
+    <value>Условия оплаты</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPaymentMethod_tab1_label" xml:space="preserve">
+    <value>Способы оплаты</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPlaceMovementType_tab1_label" xml:space="preserve">
+    <value>Типы обслуживания</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPlaceTable_tab1_label" xml:space="preserve">
+    <value>Столы</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPlaceTerminal_tab1_label" xml:space="preserve">
+    <value>Терминалы</value>
+  </data>
+  <data name="dialog_edit_ConfigurationPriceType_tab1_label" xml:space="preserve">
+    <value>Тип цены</value>
+  </data>
+  <data name="dialog_edit_ConfigurationUnitMeasure_tab1_label" xml:space="preserve">
+    <value>Единицы измерения</value>
+  </data>
+  <data name="dialog_edit_ConfigurationUnitSize_tab1_label" xml:space="preserve">
+    <value>Единицы размера</value>
+  </data>
+  <data name="dialog_edit_configurationvatrate_tab1_label" xml:space="preserve">
+    <value>Налоговая ставка</value>
+  </data>
+  <data name="dialog_edit_CustomerDiscountGroup_tab1_label" xml:space="preserve">
+    <value>Группы скидок</value>
+  </data>
+  <data name="dialog_edit_CustomerType_tab1_label" xml:space="preserve">
+    <value>Клиент</value>
+  </data>
+  <data name="dialog_edit_DialogConfigurationPrintersType_tab1_label" xml:space="preserve">
+    <value>Тип принтера</value>
+  </data>
+  <data name="dialog_edit_DialogConfigurationPrinters_tab1_label" xml:space="preserve">
+    <value>Принтер</value>
+  </data>
+  <data name="dialog_edit_DocumentFinanceSeries_tab1_label" xml:space="preserve">
+    <value>Серии финансовых документов</value>
+  </data>
+  <data name="dialog_message_article_already_paid" xml:space="preserve">
+    <value>Билет, который вы пытаетесь оплатить, уже был оплачен.</value>
+  </data>
+  <data name="dialog_message_article_already_exited" xml:space="preserve">
+    <value>Билет, который вы пытаетесь оплатить, уже был оплачен и покинул заведение.</value>
+  </data>
+  <data name="dialog_message_article_without_vat_exception_reason_detected" xml:space="preserve">
+    <value>Для создания финансовых документов, содержащих товары, освобожденные от НДС, назначьте причину исключения НДС по умолчанию в BackOffice.</value>
+  </data>
+  <data name="dialog_message_cant_create_cc_document_with_default_entity" xml:space="preserve">
+    <value>Не удается создать документы-счета с конечным потребителем или без клиента с именем и налоговым номером!
+Пожалуйста, используйте действительного клиента и попробуйте снова.</value>
+  </data>
+  <data name="dialog_message_cashdrawer_money_out_error" xml:space="preserve">
+    <value>Не удается извлечь введенную сумму [{0}] из кассового ящика, она превышает сумму [{1}] в кассовом ящике! 
+Пожалуйста, введите действительную сумму.</value>
+  </data>
+  <data name="dialog_message_cashdrawer_open_close_total_enter_diferent_from_total_in_cashdrawer" xml:space="preserve">
+    <value>Введенная сумма не соответствует сумме в кассовом ящике, проверьте существующую сумму еще раз.
+Чтобы продолжить, вы можете ввести сумму, отображаемую выше (Общая сумма кассового ящика), но не забудьте сделать движение денежных средств (приход/расход), соответствующее разнице после открытия кассового ящика в следующий раз.
+
+Общая сумма кассового ящика: {0}
+Введенная сумма: {1}
+Разница: {2}</value>
+  </data>
+  <data name="dialog_message_cashdrawer_open_successfully" xml:space="preserve">
+    <value>Кассовый ящик успешно открыт!</value>
+  </data>
+  <data name="dialog_message_customer_fiscal_number_exists" xml:space="preserve">
+    <value>Налоговый номер уже зарегистрирован в системе!
+Пожалуйста, введите другой номер и попробуйте снова.</value>
+    <comment>Message for existent Fiscal Number, when registering/editing a customer</comment>
+  </data>
+  <data name="dialog_message_customer_updated_save_changes" xml:space="preserve">
+    <value>Клиент обновлен!
+
+Хотите обновить изменения клиента?</value>
+  </data>
+  <data name="dialog_message_database_backup_error" xml:space="preserve">
+    <value>Ошибка при резервном копировании базы данных:
+'{0}'</value>
+  </data>
+  <data name="dialog_message_database_backup_error_when_secure_compacting" xml:space="preserve">
+    <value>Резервное копирование базы данных: '{0}' завершено успешно, но не удалось сжать файл.</value>
+  </data>
+  <data name="dialog_message_database_backup_successfully" xml:space="preserve">
+    <value>Резервное копирование базы данных: '{0}'
+Завершено успешно!</value>
+  </data>
+  <data name="dialog_message_database_restore_error" xml:space="preserve">
+    <value>Ошибка восстановления базы данных
+{0}!</value>
+  </data>
+  <data name="dialog_message_database_restore_error_invalid_backup_file" xml:space="preserve">
+    <value>Ошибка восстановления базы данных
+{0}!
+Неверный файл резервной копии. Файл кажется поврежденным или измененным пользователем.</value>
+  </data>
+  <data name="dialog_message_database_restore_missing_file" xml:space="preserve">
+    <value>Не удается найти файл резервной копии!
+Пожалуйста, подтвердите, что файл резервной копии существует
+{0}</value>
+  </data>
+  <data name="dialog_message_database_restore_successfully" xml:space="preserve">
+    <value>Восстановление базы данных
+{0}
+выполнено успешно!
+
+Приложение будет закрыто, пожалуйста, запустите его вручную после закрытия!</value>
+  </data>
+  <data name="dialog_message_datepicker_existing_date_error" xml:space="preserve">
+    <value>Ошибка! Эта дата уже существует!</value>
+  </data>
+  <data name="dialog_message_datepicker_existing_date_error_outside_range" xml:space="preserve">
+    <value>Неверная дата! Допустимые даты в диапазоне от {0} до {1}</value>
+  </data>
+  <data name="dialog_message_delete_record" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить выбранную запись?</value>
+  </data>
+  <data name="dialog_message_delete_record_constraint_violation_exception" xml:space="preserve">
+    <value>Эта запись имеет ссылки в базе данных и не может быть удалена.</value>
+  </data>
+  <data name="dialog_message_delete_record_show_protected_record" xml:space="preserve">
+    <value>Не удается удалить выбранную запись!
+Эта запись необходима для корректной работы приложения!</value>
+  </data>
+  <data name="dialog_message_delete_record_show_referenced_record_message" xml:space="preserve">
+    <value>Эта запись имеет ссылки в базе данных и не может быть удалена ({0}: {1}).</value>
+    <comment>Message for Delete() operation when register has constraint not defined in DB but it has correlated business rule</comment>
+  </data>
+  <data name="dialog_message_error_create_directory" xml:space="preserve">
+    <value>Ошибка! Не удалось создать директорию
+{0}</value>
+  </data>
+  <data name="dialog_message_error_create_directory_backups" xml:space="preserve">
+    <value>Ошибка! Не удалось создать директорию резервных копий:
+{0}
+
+Система резервного копирования отключена, продолжить?</value>
+  </data>
+  <data name="dialog_message_error_creating_financial_document" xml:space="preserve">
+    <value>Ошибка! Не удалось создать финансовый документ!
+
+{0}</value>
+  </data>
+  <data name="dialog_message_error_creating_financial_document_bad_hash_detected" xml:space="preserve">
+    <value>Обнаружена недействительная подпись Hash документа!
+
+Не удалось извлечь 4 символа печати из Hash документа.
+Эта ошибка возникает, когда документ не подписан действительным плагином SoftwareVendor! 
+
+Пожалуйста, установите плагин SoftwareVendor!</value>
+  </data>
+  <data name="dialog_message_error_creating_financial_document_commit_session" xml:space="preserve">
+    <value>Проблемы при сохранении документа.</value>
+  </data>
+  <data name="dialog_message_error_creating_financial_document_invalid_documentnumber" xml:space="preserve">
+    <value>Неверный номер документа</value>
+  </data>
+  <data name="dialog_message_error_creating_financial_document_missing_series" xml:space="preserve">
+    <value>Отсутствуют серии для этого движения, чтобы создать финансовые документы, сначала вы должны сделать следующее:
+
+- Начать открытие фискального года (если вы еще не начали)
+- Создать фискальные серии для соответствующего терминала</value>
+  </data>
+  <data name="dialog_message_error_duplicated_key" xml:space="preserve">
+    <value>Регистрационный ключ, который вы пытаетесь ввести ({0}), уже существует в базе данных. Пожалуйста, измените его.</value>
+  </data>
+  <data name="dialog_message_error_initializing_weighing_balance" xml:space="preserve">
+    <value>Ошибка при инициализации весов
+{0}!
+
+{1}</value>
+  </data>
+  <data name="dialog_message_error_in_at_webservice" xml:space="preserve">
+    <value>Ошибка связи с ATWebService!
+
+Код возврата: {0}
+Сообщение: {1}
+
+Попробовать снова?</value>
+  </data>
+  <data name="dialog_message_error_in_at_ws_call_status" xml:space="preserve">
+    <value>Вызов веб-сервиса не удался</value>
+    <comment>Status message for when sending documents to tax authority and user opts to do not retry</comment>
+  </data>
+  <data name="dialog_message_error_plugin_softwarevendor_not_registered" xml:space="preserve">
+    <value>Обнаружено отсутствие обязательного плагина типа SoftwareVendor или неверный секретный ключ!
+
+Этот плагин необходим, без него некоторые функции будут отключены!
+
+Пожалуйста, установите действительный плагин SoftwareVendor, который работает с зарегистрированной LogicposFinantialLibrary!</value>
+  </data>
+  <data name="dialog_message_error_printing_ticket" xml:space="preserve">
+    <value>Ошибка печати чека!
+
+Имя принтера: {0}
+Имя сети: {1}
+
+Ошибка: {2}</value>
+  </data>
+  <data name="dialog_message_error_protected_files_invalid_files_detected" xml:space="preserve">
+    <value>Ошибка! Обнаружены отсутствующие, поврежденные или измененные файлы приложения:
+
+{0}</value>
+  </data>
+  <data name="dialog_message_error_protected_files_invalid_files_detected_print_document_ignored" xml:space="preserve">
+    <value>Фискальный документ [{0}] обработан, но печать документа была проигнорирована.
+Пожалуйста, распечатайте документ позже!</value>
+  </data>
+  <data name="dialog_message_error_register_new_terminal" xml:space="preserve">
+    <value>Не удалось создать новый терминал с HardwareId: [{0}].
+Убедитесь, что терминал с этим HardwareId не существует или не отключен.</value>
+  </data>
+  <data name="dialog_message_error_try_to_issue_a_credit_note_exceeding_source_document_article_quantities" xml:space="preserve">
+    <value>Ошибка! Вы пытаетесь кредитовать товар(ы), который превышает количество, выданное в исходном документе, или сумма всех кредитованных товаров в связанных кредитных нотах превышает сумму исходного документа!
+
+Количество: {0}
+Допустимое количество: {1}</value>
+  </data>
+  <data name="dialog_message_export_error" xml:space="preserve">
+    <value>Ошибка при экспорте</value>
+  </data>
+  <data name="dialog_message_exported_successfully" xml:space="preserve">
+    <value>Экспорт выполнен успешно</value>
+  </data>
+  <data name="dialog_message_field_validation_error" xml:space="preserve">
+    <value>Ошибка валидации/Отсутствует обязательное поле!
+Пожалуйста, исправьте/заполните ваши записи и попробуйте снова.
+
+Неверные поля: {0}</value>
+  </data>
+  <data name="dialog_message_field_validation_error_keyboardpad" xml:space="preserve">
+    <value>Ошибка! Неверный ввод!
+Пожалуйста, исправьте и попробуйте снова.</value>
+  </data>
+  <data name="dialog_message_filepicker_existing_file_error" xml:space="preserve">
+    <value>Ошибка! Этот файл уже существует!</value>
+  </data>
+  <data name="dialog_message_finance_dialog_confirm_cancel" xml:space="preserve">
+    <value>Хотите продолжить и потерять текущий документ?</value>
+  </data>
+  <data name="dialog_message_info_all_lines_from_this_document_was_already_credited" xml:space="preserve">
+    <value>Нельзя выдать "{0}" для этого {1}!
+Все товары из этого документа уже были зачтены в следующих документах:
+{2}</value>
+  </data>
+  <data name="dialog_message_import_error" xml:space="preserve">
+    <value>Ошибка при импорте!</value>
+  </data>
+  <data name="dialog_message_import_successfully" xml:space="preserve">
+    <value>Файл успешно импортирован!</value>
+  </data>
+  <data name="dialog_message_invalid_customer_card_detected" xml:space="preserve">
+    <value>Неверный клиент!
+
+Обнаружена статья пополнения карты клиента без действительного клиента, для пополнения карты клиента необходимо выбрать клиента с действительной картой клиента!</value>
+  </data>
+  <data name="dialog_message_invalid_or_missing_printer_template" xml:space="preserve">
+    <value>Ошибка! Неверный или отсутствующий шаблон принтера {0}. </value>
+  </data>
+  <data name="dialog_message_license_aplication_registered" xml:space="preserve">
+    <value>Регистрация программного обеспечения прошла успешно!
+
+Спасибо за ваш вклад.</value>
+  </data>
+  <data name="dialog_message_license_blocked" xml:space="preserve">
+    <value>Ваша лицензия заблокирована! Обратитесь в техническую поддержку.</value>
+  </data>
+  <data name="dialog_message_license_updated" xml:space="preserve">
+    <value>Ваша лицензия была обновлена!
+
+Необходимо перезапустить приложение.</value>
+  </data>
+  <data name="dialog_message_license_ws_connection_error" xml:space="preserve">
+    <value>Не удалось установить связь для регистрации!
+
+Обратитесь в техническую поддержку!</value>
+  </data>
+  <data name="dialog_message_license_ws_connection_timeout" xml:space="preserve">
+    <value>Сервер слишком долго отвечает.</value>
+  </data>
+  <data name="dialog_message_license_ws_save_license_error" xml:space="preserve">
+    <value>Не удалось сохранить файл лицензии.
+
+Попробуйте позже!</value>
+  </data>
+  <data name="dialog_message_low_resolution_detected" xml:space="preserve">
+    <value>Ошибка! Обнаружено низкое разрешение!
+
+Это приложение работает только на мониторах с разрешением {0} x {1} или выше!
+POS будет закрыт.</value>
+    <comment>Error message for when a low screen resolution is detected</comment>
+  </data>
+  <data name="dialog_message_mail_sent_successfully" xml:space="preserve">
+    <value>Ваше письмо успешно отправлено!</value>
+  </data>
+  <data name="dialog_message_no_notification" xml:space="preserve">
+    <value>Нет уведомлений за последние {0} дней.</value>
+    <comment>Message for when there are no notifications to be shown on "System - Notifications" BackOffice option</comment>
+  </data>
+  <data name="dialog_message_operation_successfully" xml:space="preserve">
+    <value>Операция выполнена успешно!</value>
+  </data>
+  <data name="dialog_message_partial_import" xml:space="preserve">
+    <value>Файл частично импортирован</value>
+  </data>
+  <data name="dialog_message_pos_instance_already_running" xml:space="preserve">
+    <value>Другой экземпляр POS уже запущен!</value>
+    <comment>Message for when user tries to run a new POS instance</comment>
+  </data>
+  <data name="dialog_message_report_filter_no_records_with_criteria" xml:space="preserve">
+    <value>Текущий фильтр не содержит записей, пожалуйста, переформулируйте критерии и попробуйте снова!</value>
+  </data>
+  <data name="dialog_message_request_backup" xml:space="preserve">
+    <value>Хотите создать резервную копию базы данных?</value>
+  </data>
+  <data name="dialog_message_request_close_open_ticket" xml:space="preserve">
+    <value>В настоящее время есть открытый билет!
+
+Хотите закрыть его и продолжить?</value>
+  </data>
+  <data name="dialog_message_request_print_document_confirmation" xml:space="preserve">
+    <value>Хотите распечатать документ?</value>
+  </data>
+  <data name="dialog_message_required_valid_printer" xml:space="preserve">
+    <value>Для использования этой функции у вас должен быть действительный принтер, связанный с вашим терминалом!</value>
+  </data>
+  <data name="dialog_message_required_valid_printer_and_template" xml:space="preserve">
+    <value>Для использования этой функции у вас должен быть принтер и рабочий шаблон, связанные с вашим терминалом!</value>
+  </data>
+  <data name="dialog_message_saftpt_exported_error" xml:space="preserve">
+    <value>Ошибка экспорта файла SAF-T!</value>
+  </data>
+  <data name="dialog_message_saftpt_exported_successfully" xml:space="preserve">
+    <value>SAF-T Exported to 
+{0}</value>
+  </data>
+  <data name="dialog_message_series_create_confirmation_text" xml:space="preserve">
+    <value>Хотите продолжить и создать новые финансовые серии?
+
+Все серии, связанные с выбранными терминалами, будут удалены и созданы новые!
+
+Принимая условия, вы несете ответственность за создание серий. Напоминаем, что согласно применимому законодательству нельзя использовать серии, которые использовались в прошлом.</value>
+  </data>
+  <data name="dialog_message_series_create_document_type_series" xml:space="preserve">
+    <value>Создать фискальные серии для всех типов финансовых документов/терминалов?</value>
+  </data>
+  <data name="dialog_message_series_create_document_type_series_already_exist" xml:space="preserve">
+    <value>Уже есть активные фискальные серии, чтобы создать новые фискальные серии, вы должны отключить текущие серии и создать новые.
+Продолжить и отключить текущие серии и создать новые?</value>
+  </data>
+  <data name="dialog_message_series_create_document_type_series_miss_year" xml:space="preserve">
+    <value>Для создания серий документов сначала создайте финансовый год.</value>
+  </data>
+  <data name="dialog_message_series_create_error" xml:space="preserve">
+    <value>Ошибка создания налоговых серий с аббревиатурой [{0}]!
+Некоторые серии уже использовались в прошлом, используйте другую аббревиатуру для создания новых серий.</value>
+  </data>
+  <data name="dialog_message_series_fiscal_year_close_current" xml:space="preserve">
+    <value>В настоящее время активен финансовый год [{0}].
+Для продолжения и начала нового финансового года необходимо закрыть активный финансовый год.
+Примечание: Эта операция закроет активный финансовый год и не может быть отменена!
+Вы уверены, что хотите закрыть активный финансовый год и создать новый?</value>
+  </data>
+  <data name="dialog_message_show_printer_undefined_on_print" xml:space="preserve">
+    <value>Can't print document {0}!
+
+Current terminal dont have associated printer.
+
+Show this message next time?</value>
+  </data>
+  <data name="dialog_message_systementry_is_less_than_last_finance_document" xml:space="preserve">
+    <value>Дата системы меньше даты последнего выданного фискального документа!
+
+Хотите продолжить и выдать налоговый документ?</value>
+  </data>
+  <data name="dialog_message_systementry_is_less_than_last_finance_document_series" xml:space="preserve">
+    <value>Дата системы меньше даты последнего выданного фискального документа!
+
+Вы не можете выдавать финансовые документы с датами меньше системной даты!</value>
+  </data>
+  <data name="dialog_message_table_is_not_free" xml:space="preserve">
+    <value>Выбранный стол занят!</value>
+  </data>
+  <data name="dialog_message_under_construction_function" xml:space="preserve">
+    <value>В разработке! Эта функция не реализована!</value>
+  </data>
+  <data name="dialog_message_update_record_show_protected_record" xml:space="preserve">
+    <value>Невозможно обновить выбранную запись!
+
+Эта запись необходима для корректной работы приложения!</value>
+  </data>
+  <data name="dialog_message_user_profile_changed_request_loggeroff" xml:space="preserve">
+    <value>Текущий профиль пользователя был изменен!
+
+Чтобы применить изменения, выйдите и войдите снова, чтобы применить привилегии профиля!</value>
+  </data>
+  <data name="dialog_message_user_request_change_password" xml:space="preserve">
+    <value>Пароль пользователя [{0}] необходимо изменить в целях безопасности!
+
+Чтобы изменить пароль, введите стандартный пароль "{1}", затем новый пароль и его подтверждение.</value>
+  </data>
+  <data name="dialog_message_validate_all_fields_to_proceed" xml:space="preserve">
+    <value>Обязательные поля не заполнены.
+
+Пожалуйста, проверьте все поля перед продолжением!</value>
+  </data>
+  <data name="dialog_message_value_exceed_customer_card_credit" xml:space="preserve">
+    <value>Карта клиента недействительна или недостаточно средств для этой операции.
+Пополните счет и попробуйте снова.
+
+Текущий баланс: {0}
+Операция: {1}</value>
+  </data>
+  <data name="dialog_message_value_exceed_simplified_invoice_for_final_or_annonymous_consumer" xml:space="preserve">
+    <value>Итоговая сумма превышает максимальное значение, определенное для счетов-фактур для конечного потребителя или клиента без необходимых заполненных данных.
+
+{0}
+{1}
+
+Чтобы продолжить, выберите другого клиента или заполните обязательные поля.</value>
+  </data>
+  <data name="dialog_message_value_exceed_simplified_invoice_max_value" xml:space="preserve">
+    <value>Итоговая сумма превышает максимальное значение, установленное для упрощенных счетов.
+
+{0}
+
+{1}</value>
+  </data>
+  <data name="dialog_message_value_exceed_simplified_invoice_max_value_mode_paymentdialog" xml:space="preserve">
+    <value>Хотите оформить счет с оплатой, чтобы обойти лимит упрощенных счетов?</value>
+  </data>
+  <data name="dialog_message_value_exceed_simplified_invoice_max_value_mode_paymentdialog_documentfinancedialog" xml:space="preserve">
+    <value>Чтобы продолжить, выберите другой тип документа.</value>
+  </data>
+  <data name="dialog_message_worksession_day_close_successfully" xml:space="preserve">
+    <value>Сеанс рабочего дня успешно закрыт!
+
+{0}</value>
+  </data>
+  <data name="dialog_message_worksession_period_warning_open_orders_tables" xml:space="preserve">
+    <value>Внимание! У вас {0} открытых заказ(ов)! Перед продолжением закройте заказы за столами: {1}</value>
+  </data>
+  <data name="dialog_message_worksession_period_warning_open_terminals" xml:space="preserve">
+    <value>Внимание! У вас {0} открытых терминал(ов)!
+
+Чтобы продолжить, нажмите Да для закрытия всех терминалов, или Нет и закройте их вручную, затем попробуйте снова: {1}</value>
+  </data>
+  <data name="dialog_message_worksession_terminal_close_successfully" xml:space="preserve">
+    <value>Сеанс кассового ящика успешно закрыт!
+
+{0}</value>
+  </data>
+  <data name="dialog_orders_button_label_print_order" xml:space="preserve">
+    <value>Печать заказа</value>
+  </data>
+  <data name="dialog_orders_button_label_tables_all" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="dialog_orders_button_label_tables_free" xml:space="preserve">
+    <value>Свободные</value>
+  </data>
+  <data name="dialog_orders_button_label_tables_open" xml:space="preserve">
+    <value>Открытые</value>
+  </data>
+  <data name="dialog_orders_button_label_tables_reserved" xml:space="preserve">
+    <value>Зарезервированные</value>
+  </data>
+  <data name="dialog_orders_button_label_table_consult" xml:space="preserve">
+    <value>Просмотр стола</value>
+  </data>
+  <data name="dialog_orders_button_label_view_orders" xml:space="preserve">
+    <value>Просмотр заказов</value>
+  </data>
+  <data name="dialog_orders_button_label_view_tables" xml:space="preserve">
+    <value>Просмотр столов</value>
+  </data>
+  <data name="frontoffice_datetime_format_status_bar" xml:space="preserve">
+    <value>dddd, dd MMMM yyyy' || 'HH:mm:ss tt</value>
+    <comment>Dateformat must have literal chars between single quotes</comment>
+  </data>
+  <data name="global_accesspassword" xml:space="preserve">
+    <value>Может менять пароль</value>
+  </data>
+  <data name="global_access_card_number" xml:space="preserve">
+    <value>Номер карты доступа</value>
+  </data>
+  <data name="global_access_pin" xml:space="preserve">
+    <value>ПИН-код доступа</value>
+  </data>
+  <data name="global_accounting" xml:space="preserve">
+    <value>Бухгалтерия</value>
+  </data>
+  <data name="global_acronym" xml:space="preserve">
+    <value>Аббревиатура/Идентификатор</value>
+  </data>
+  <data name="global_add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="global_address" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="global_application_close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="global_application_loggerout_user" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="global_application_main_menu" xml:space="preserve">
+    <value>Меню</value>
+  </data>
+  <data name="global_application_setup" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="global_article" xml:space="preserve">
+    <value>Товар</value>
+  </data>
+  <data name="global_articles" xml:space="preserve">
+    <value>Товары</value>
+  </data>
+  <data name="global_articletype_haveprice" xml:space="preserve">
+    <value>Есть цена</value>
+  </data>
+  <data name="global_article_acronym" xml:space="preserve">
+    <value>Art.</value>
+  </data>
+  <data name="global_article_article" xml:space="preserve">
+    <value>Товар</value>
+  </data>
+  <data name="global_article_class" xml:space="preserve">
+    <value>Класс товара</value>
+  </data>
+  <data name="global_article_code" xml:space="preserve">
+    <value>Код</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_article_default_quantity" xml:space="preserve">
+    <value>Количество по умолчанию</value>
+  </data>
+  <data name="global_article_family" xml:space="preserve">
+    <value>Семейство</value>
+  </data>
+  <data name="global_article_haveprice" xml:space="preserve">
+    <value>Есть цена</value>
+  </data>
+  <data name="global_article_subfamily" xml:space="preserve">
+    <value>Подсемейство</value>
+  </data>
+  <data name="global_article_type" xml:space="preserve">
+    <value>Тип товара</value>
+  </data>
+  <data name="global_article_types" xml:space="preserve">
+    <value>Типы товара</value>
+  </data>
+  <data name="global_assigned_seating" xml:space="preserve">
+    <value>Фиксированные места</value>
+  </data>
+  <data name="global_attended_by" xml:space="preserve">
+    <value>Обслуживает</value>
+  </data>
+  <data name="global_at_atdoccodeid" xml:space="preserve">
+    <value>Идентификация кода документа</value>
+  </data>
+  <data name="global_audit" xml:space="preserve">
+    <value>Аудит</value>
+  </data>
+  <data name="global_audit_type" xml:space="preserve">
+    <value>Тип аудита</value>
+  </data>
+  <data name="global_backoffice" xml:space="preserve">
+    <value>Бэк-офис</value>
+  </data>
+  <data name="global_barcode" xml:space="preserve">
+    <value>Штрихкод</value>
+  </data>
+  <data name="global_barcode_small" xml:space="preserve">
+    <value>Штрихкод/Код товара</value>
+  </data>
+  <data name="global_cardcode_small" xml:space="preserve">
+    <value>Код билета/карты</value>
+  </data>
+  <data name="global_base_consumption" xml:space="preserve">
+    <value>База потребления</value>
+  </data>
+  <data name="global_base_offers" xml:space="preserve">
+    <value>База предложений</value>
+  </data>
+  <data name="global_button_icon" xml:space="preserve">
+    <value>Иконка кнопки</value>
+  </data>
+  <data name="global_button_image" xml:space="preserve">
+    <value>Изображение кнопки</value>
+  </data>
+  <data name="global_button_label_more" xml:space="preserve">
+    <value>Показать больше</value>
+    <comment>Load more registers</comment>
+  </data>
+  <data name="global_button_label_cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="global_button_label_cancel_document" xml:space="preserve">
+    <value>Отменить документ</value>
+  </data>
+  <data name="global_button_label_clone_document" xml:space="preserve">
+    <value>Клонировать</value>
+  </data>
+  <data name="global_button_label_close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="global_button_label_export" xml:space="preserve">
+    <value>Экспорт XML</value>
+  </data>
+  <data name="global_button_label_export_pdf" xml:space="preserve">
+    <value>Экспорт PDF</value>
+  </data>
+  <data name="global_button_label_export_xls" xml:space="preserve">
+    <value>Экспорт XLS</value>
+  </data>
+  <data name="global_button_label_filter" xml:space="preserve">
+    <value>Фильтр</value>
+    <comment>Filter registers</comment>
+  </data>
+  <data name="global_button_label_filter_clear" xml:space="preserve">
+    <value>Очистить</value>
+    <comment>Clean filter</comment>
+  </data>
+  <data name="global_button_label_help" xml:space="preserve">
+    <value>Помощь</value>
+  </data>
+  <data name="global_button_label_new_financial_document" xml:space="preserve">
+    <value>Новый</value>
+  </data>
+  <data name="global_button_label_no" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="global_button_label_ok" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="global_button_label_open_document" xml:space="preserve">
+    <value>Открыть документ</value>
+  </data>
+  <data name="global_button_label_pay" xml:space="preserve">
+    <value>Оплатить</value>
+  </data>
+  <data name="global_button_label_payment_dialog_clear_client" xml:space="preserve">
+    <value>Очистить клиента</value>
+  </data>
+  <data name="global_button_label_payment_dialog_full_payment" xml:space="preserve">
+    <value>Полная оплата</value>
+  </data>
+  <data name="global_button_label_payment_dialog_partial_payment" xml:space="preserve">
+    <value>Частичная оплата</value>
+  </data>
+  <data name="global_button_label_payment_dialog_split_payment" xml:space="preserve">
+    <value>Разделить оплату</value>
+  </data>
+  <data name="global_button_label_pay_invoice" xml:space="preserve">
+    <value>Оплатить счет</value>
+  </data>
+  <data name="global_button_label_print" xml:space="preserve">
+    <value>Печать</value>
+  </data>
+  <data name="global_button_label_print_as" xml:space="preserve">
+    <value>Печать как</value>
+  </data>
+  <data name="global_button_label_readcard" xml:space="preserve">
+    <value>Читать карту</value>
+  </data>
+  <data name="global_button_label_send_email_document" xml:space="preserve">
+    <value>Отправить по email</value>
+  </data>
+  <data name="global_button_label_yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="global_button_name" xml:space="preserve">
+    <value>Название кнопки</value>
+  </data>
+  <data name="global_callposcomposer" xml:space="preserve">
+    <value>Открыть POS_Composer</value>
+  </data>
+  <data name="global_cancel_document_input_text_label" xml:space="preserve">
+    <value>Причина отмены документа: {0}</value>
+  </data>
+  <data name="global_card_credit_amount" xml:space="preserve">
+    <value>Сумма кредита</value>
+  </data>
+  <data name="global_card_number" xml:space="preserve">
+    <value>Номер карты клиента</value>
+  </data>
+  <data name="global_cashdrawer_money_in" xml:space="preserve">
+    <value>Внесение в кассу</value>
+  </data>
+  <data name="global_cashdrawer_money_out" xml:space="preserve">
+    <value>Изъятие из кассы</value>
+  </data>
+  <data name="global_cashdrawer_without_movements" xml:space="preserve">
+    <value>Без движений...</value>
+  </data>
+  <data name="global_cash_registers" xml:space="preserve">
+    <value>Кассовые аппараты</value>
+  </data>
+  <data name="global_change_user" xml:space="preserve">
+    <value>Сменить пользователя</value>
+  </data>
+  <data name="global_characters" xml:space="preserve">
+    <value>Длина</value>
+  </data>
+  <data name="global_city" xml:space="preserve">
+    <value>Город</value>
+  </data>
+  <data name="global_commission" xml:space="preserve">
+    <value>Комиссия</value>
+  </data>
+  <data name="global_commission_group" xml:space="preserve">
+    <value>Группа комиссий</value>
+  </data>
+  <data name="global_company" xml:space="preserve">
+    <value>Компания</value>
+  </data>
+  <data name="global_configuration" xml:space="preserve">
+    <value>Конфигурация</value>
+  </data>
+  <data name="global_ConfigurationCashRegister" xml:space="preserve">
+    <value>Кассовый аппарат</value>
+  </data>
+  <data name="global_ConfigurationCashRegister_ActiveSales" xml:space="preserve">
+    <value>Активные продажи</value>
+  </data>
+  <data name="global_ConfigurationCashRegister_AllowChargeBacks" xml:space="preserve">
+    <value>Разрешить возвраты средств</value>
+  </data>
+  <data name="global_ConfigurationCashRegister_AutomaticDrawer" xml:space="preserve">
+    <value>Автоматическое открытие ящика</value>
+  </data>
+  <data name="global_ConfigurationCashRegister_Drawer" xml:space="preserve">
+    <value>Ящик</value>
+  </data>
+  <data name="global_ConfigurationCashRegister_Printer" xml:space="preserve">
+    <value>Принтер</value>
+  </data>
+  <data name="global_ConfigurationCurrency" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
+  <data name="global_ConfigurationCurrency_Acronym" xml:space="preserve">
+    <value>Аббревиатура</value>
+  </data>
+  <data name="global_ConfigurationCurrency_Entity" xml:space="preserve">
+    <value>Сущность</value>
+  </data>
+  <data name="global_ConfigurationDevice_PlaceTerminal" xml:space="preserve">
+    <value>Расположение</value>
+  </data>
+  <data name="global_ConfigurationDevice_Type" xml:space="preserve">
+    <value>Тип устройства</value>
+  </data>
+  <data name="global_ConfigurationInputReader" xml:space="preserve">
+    <value>Считыватель ввода</value>
+  </data>
+  <data name="global_ConfigurationKeyboard_Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="global_ConfigurationKeyboard_VirtualKeyboard" xml:space="preserve">
+    <value>Виртуальная клавиатура</value>
+  </data>
+  <data name="global_ConfigurationMaintenance_Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="global_ConfigurationMaintenance_PasswordAccess" xml:space="preserve">
+    <value>Доступ по паролю</value>
+  </data>
+  <data name="global_ConfigurationMaintenance_Remarks" xml:space="preserve">
+    <value>Примечания</value>
+  </data>
+  <data name="global_ConfigurationMaintenance_Time" xml:space="preserve">
+    <value>Время</value>
+  </data>
+  <data name="global_ConfigurationPaymentCondition_Acronym" xml:space="preserve">
+    <value>Аббревиатура</value>
+  </data>
+  <data name="global_ConfigurationPaymentMethod_Acronym" xml:space="preserve">
+    <value>Аббревиатура</value>
+  </data>
+  <data name="global_ConfigurationPaymentMethod_Symbol" xml:space="preserve">
+    <value>Символ</value>
+  </data>
+  <data name="global_ConfigurationPaymentMethod_Token" xml:space="preserve">
+    <value>Токен</value>
+  </data>
+  <data name="global_ConfigurationPlaceTablePlace" xml:space="preserve">
+    <value>Место</value>
+  </data>
+  <data name="global_configurationplaceterminal" xml:space="preserve">
+    <value>Терминал</value>
+  </data>
+  <data name="global_ConfigurationPlace_MovementType" xml:space="preserve">
+    <value>Тип обслуживания</value>
+  </data>
+  <data name="global_ConfigurationPlace_PriceType" xml:space="preserve">
+    <value>Тип цены</value>
+  </data>
+  <data name="global_ConfigurationPoleDisplay" xml:space="preserve">
+    <value>Дисплей покупателя</value>
+  </data>
+  <data name="global_ConfigurationPriceType_IndexPos" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="global_configurationprinter" xml:space="preserve">
+    <value>Принтер</value>
+  </data>
+  <data name="global_ConfigurationPrinters" xml:space="preserve">
+    <value>Принтеры</value>
+  </data>
+  <data name="global_configurationprintersTemplate" xml:space="preserve">
+    <value>Шаблон принтера</value>
+  </data>
+  <data name="global_ConfigurationPrintersTemplates" xml:space="preserve">
+    <value>Шаблоны принтера</value>
+  </data>
+  <data name="global_ConfigurationPrintersBarCodeTemplates" xml:space="preserve">
+    <value>Шаблоны штрихкода принтера</value>
+  </data>
+  <data name="global_ConfigurationPrintersType" xml:space="preserve">
+    <value>Типы принтеров</value>
+  </data>
+  <data name="global_configurationprinters_template_table_consult" xml:space="preserve">
+    <value>Просмотр стола</value>
+  </data>
+  <data name="global_configurationprinters_template_ticket" xml:space="preserve">
+    <value>Талон</value>
+  </data>
+  <data name="global_ConfigurationUnitMeasure_Acronym" xml:space="preserve">
+    <value>Аббревиатура</value>
+  </data>
+  <data name="global_ConfigurationWeighingMachine" xml:space="preserve">
+    <value>Весы</value>
+  </data>
+  <data name="global_contacts" xml:space="preserve">
+    <value>Контакты</value>
+  </data>
+  <data name="global_contract_date" xml:space="preserve">
+    <value>Дата договора</value>
+  </data>
+  <data name="global_copy_finance_document" xml:space="preserve">
+    <value>Копировать документ</value>
+  </data>
+  <data name="global_copyright" xml:space="preserve">
+    <value>Авторские права</value>
+    <comment>Copyright text label</comment>
+  </data>
+  <data name="global_country" xml:space="preserve">
+    <value>Страна</value>
+  </data>
+  <data name="global_country_capital" xml:space="preserve">
+    <value>Столица</value>
+  </data>
+  <data name="global_country_code2" xml:space="preserve">
+    <value>Код страны (2 символа)</value>
+  </data>
+  <data name="global_country_code3" xml:space="preserve">
+    <value>Код страны (3 символа)</value>
+  </data>
+  <data name="global_country_global_capital" xml:space="preserve">
+    <value>Столица</value>
+  </data>
+  <data name="global_credit" xml:space="preserve">
+    <value>Кредит</value>
+  </data>
+  <data name="global_currency" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
+  <data name="global_currency_acronym" xml:space="preserve">
+    <value>Аббревиатура</value>
+    <comment>Acronym label for currency</comment>
+  </data>
+  <data name="global_currency_field" xml:space="preserve">
+    <value>Значения указаны в:</value>
+    <comment>Label for Currency of Payment, used on thermal-printings layout for Simplified Invoices</comment>
+  </data>
+  <data name="global_currency_code" xml:space="preserve">
+    <value>Код валюты</value>
+  </data>
+  <data name="global_current_account" xml:space="preserve">
+    <value>Текущий счет</value>
+  </data>
+  <data name="global_customer" xml:space="preserve">
+    <value>Клиент</value>
+  </data>
+  <data name="global_customers" xml:space="preserve">
+    <value>Клиенты</value>
+  </data>
+  <data name="global_customer_code" xml:space="preserve">
+    <value>ID клиента</value>
+  </data>
+  <data name="global_customer_discount_groups" xml:space="preserve">
+    <value>Группы скидок</value>
+  </data>
+  <data name="global_customer_fiscal_number" xml:space="preserve">
+    <value>Налоговый номер клиента</value>
+  </data>
+  <data name="global_customer_types" xml:space="preserve">
+    <value>Тип клиента</value>
+  </data>
+  <data name="global_database_backup" xml:space="preserve">
+    <value>Резервное копирование</value>
+  </data>
+  <data name="global_database_restore" xml:space="preserve">
+    <value>Восстановление БД</value>
+  </data>
+  <data name="global_database_restore_from_file" xml:space="preserve">
+    <value>Восстановление БД (файл)</value>
+  </data>
+  <data name="global_date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="global_datepicker_add_date" xml:space="preserve">
+    <value>Добавить дату</value>
+  </data>
+  <data name="global_date_end" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="global_date_start" xml:space="preserve">
+    <value>Дата начала</value>
+  </data>
+  <data name="global_day" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="global_day_days" xml:space="preserve">
+    <value>День(дни)</value>
+  </data>
+  <data name="global_debit" xml:space="preserve">
+    <value>Дебет</value>
+  </data>
+  <data name="global_description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="global_designation" xml:space="preserve">
+    <value>Наименование</value>
+  </data>
+  <data name="global_designation_Drawer" xml:space="preserve">
+    <value>Ящик</value>
+  </data>
+  <data name="global_details" xml:space="preserve">
+    <value>Детали</value>
+  </data>
+  <data name="global_devices" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="global_device_printer" xml:space="preserve">
+    <value>Устройство принтера</value>
+  </data>
+  <data name="global_DialogConfigurationPrintersTypetoken" xml:space="preserve">
+    <value>Токен</value>
+  </data>
+  <data name="global_discount" xml:space="preserve">
+    <value>Скидка</value>
+  </data>
+  <data name="global_discount_acronym" xml:space="preserve">
+    <value>Скид.</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_discount_group" xml:space="preserve">
+    <value>Группа скидок</value>
+  </data>
+  <data name="global_dob" xml:space="preserve">
+    <value>Дата рождения ("yyyy/mm/dd")</value>
+    <comment>Based on RegEx defined for this field, it accepts "yyyy-mm-dd" and separators "/, -, ."</comment>
+  </data>
+  <data name="global_documentfinanceseries_DocumentNumberRangeBegin" xml:space="preserve">
+    <value>Нижняя граница</value>
+  </data>
+  <data name="global_documentfinanceseries_DocumentNumberRangeEnd" xml:space="preserve">
+    <value>Верхняя граница</value>
+  </data>
+  <data name="global_documentfinanceseries_documenttype" xml:space="preserve">
+    <value>Тип документа</value>
+  </data>
+  <data name="global_documentfinanceseries_NextDocumentNumber" xml:space="preserve">
+    <value>Следующий номер</value>
+  </data>
+  <data name="global_documentfinanceseries_NumberOfCopies" xml:space="preserve">
+    <value>Количество копий</value>
+  </data>
+  <data name="global_documentfinance_canceled_document" xml:space="preserve">
+    <value>Отменен</value>
+  </data>
+  <data name="global_documentfinance_discount_customer" xml:space="preserve">
+    <value>Скидка клиента</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_discount_payment_conditions" xml:space="preserve">
+    <value>Скидка по усл. оплаты</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_series" xml:space="preserve">
+    <value>Серии</value>
+  </data>
+  <data name="global_documentfinance_total_discount" xml:space="preserve">
+    <value>Итого скидок</value>
+    <comment>Total of discounts label</comment>
+  </data>
+  <data name="global_documentfinance_totalfinal" xml:space="preserve">
+    <value>Итого</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_totalgross" xml:space="preserve">
+    <value>Итого без скидок</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_totaltax" xml:space="preserve">
+    <value>Итого налог</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_totaltax_acronym" xml:space="preserve">
+    <value>Налог</value>
+    <comment>Used in documents tax area</comment>
+  </data>
+  <data name="global_documentfinance_type" xml:space="preserve">
+    <value>Тип документа</value>
+  </data>
+  <data name="global_documentfinance_types" xml:space="preserve">
+    <value>Типы документов</value>
+  </data>
+  <data name="global_documentfinance_type_report_invoice_footer_at" xml:space="preserve">
+    <value>Отгруженные товары были представлены клиенту на эту дату — пункт f) п.5 ст. 36 Кодекса НДС</value>
+  </data>
+  <data name="global_documentfinance_type_report_non_invoice_footer_at" xml:space="preserve">
+    <value>Этот документ не является счетом-фактурой</value>
+  </data>
+  <data name="global_documentfinance_type_title_cc" xml:space="preserve">
+    <value>Оплата в кредит</value>
+  </data>
+  <data name="global_documentfinance_type_title_dc" xml:space="preserve">
+    <value>Счет</value>
+  </data>
+  <data name="global_documentfinance_type_title_fc" xml:space="preserve">
+    <value>Консигнационный счет-фактура</value>
+  </data>
+  <data name="global_documentfinance_type_title_fp" xml:space="preserve">
+    <value>Проформа-счет</value>
+  </data>
+  <data name="global_documentfinance_type_title_fr" xml:space="preserve">
+    <value>Квитанция</value>
+  </data>
+  <data name="global_documentfinance_type_title_fs" xml:space="preserve">
+    <value>Квитанция (упрощенная)</value>
+  </data>
+  <data name="global_documentfinance_type_title_ft" xml:space="preserve">
+    <value>Счет-фактура</value>
+  </data>
+  <data name="global_documentfinance_type_title_ga" xml:space="preserve">
+    <value>Учет основных средств</value>
+  </data>
+  <data name="global_documentfinance_type_title_gc" xml:space="preserve">
+    <value>Консигнационная накладная</value>
+  </data>
+  <data name="global_documentfinance_type_title_gd" xml:space="preserve">
+    <value>Возвратная накладная</value>
+  </data>
+  <data name="global_documentfinance_type_title_gr" xml:space="preserve">
+    <value>Товарная накладная</value>
+  </data>
+  <data name="global_documentfinance_type_title_gt" xml:space="preserve">
+    <value>Транспортная накладная</value>
+  </data>
+  <data name="global_documentfinance_type_title_nc" xml:space="preserve">
+    <value>Кредит-нота</value>
+  </data>
+  <data name="global_documentfinance_type_title_nd" xml:space="preserve">
+    <value>Поручение на списание</value>
+  </data>
+  <data name="global_documentfinance_type_title_or" xml:space="preserve">
+    <value>Запрос котировки/предложения</value>
+  </data>
+  <data name="global_documentfinance_type_title_rc" xml:space="preserve">
+    <value>Товарный чек</value>
+  </data>
+  <data name="global_documentfinance_waybill_comments" xml:space="preserve">
+    <value>Комментарии</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_waybill_data_load" xml:space="preserve">
+    <value>Загрузка данных</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_waybill_date_download" xml:space="preserve">
+    <value>Дата выгрузки</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_waybill_expedition" xml:space="preserve">
+    <value>Отгрузка</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_waybill_local_download" xml:space="preserve">
+    <value>Локальная выгрузка</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_waybill_local_load" xml:space="preserve">
+    <value>Локальная загрузка</value>
+    <comment>Used in Report Label</comment>
+  </data>
+  <data name="global_documentfinance_years" xml:space="preserve">
+    <value>Открытие фискального года</value>
+  </data>
+  <data name="global_documentfinance_yearsseriesterminal" xml:space="preserve">
+    <value>Серии/Терминал </value>
+  </data>
+  <data name="global_documents" xml:space="preserve">
+    <value>Фискальная информация</value>
+  </data>
+  <data name="global_documents_status_document_invoiced" xml:space="preserve">
+    <value>Документ выставлен счетом: {0}</value>
+  </data>
+  <data name="global_documentticket_type_title_ar" xml:space="preserve">
+    <value>Заявка на товар</value>
+  </data>
+  <data name="global_documentticket_type_title_cs" xml:space="preserve">
+    <value>Внесение/изъятие из кассы</value>
+  </data>
+  <data name="global_documentticket_type_title_tt" xml:space="preserve">
+    <value>Чек стола</value>
+  </data>
+  <data name="global_documentticket_type_title_ws" xml:space="preserve">
+    <value>Движение рабочей смены</value>
+  </data>
+  <data name="global_document_cancelled" xml:space="preserve">
+    <value>Отменен</value>
+  </data>
+  <data name="global_document_created" xml:space="preserve">
+    <value>Документ создан</value>
+  </data>
+  <data name="global_document_date" xml:space="preserve">
+    <value>Дата документа</value>
+  </data>
+  <data name="global_document_number" xml:space="preserve">
+    <value>Номер документа</value>
+  </data>
+  <data name="global_document_number_acronym" xml:space="preserve">
+    <value>№ док.</value>
+  </data>
+  <data name="global_document_payed" xml:space="preserve">
+    <value>Оплачен</value>
+    <comment>Used on Payment Documents check symbol</comment>
+  </data>
+  <data name="global_document_series" xml:space="preserve">
+    <value>Финансовые серии</value>
+  </data>
+  <data name="global_document_status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="global_document_total" xml:space="preserve">
+    <value>Итого по документу</value>
+  </data>
+  <data name="global_email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="global_email_bcc" xml:space="preserve">
+    <value>Скрытая копия</value>
+  </data>
+  <data name="global_email_body" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="global_email_cc" xml:space="preserve">
+    <value>Копия</value>
+  </data>
+  <data name="global_email_subject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="global_email_to" xml:space="preserve">
+    <value>Кому (для нескольких адресов используйте запятую. Пример: 123@123.com,test@test.pt))</value>
+  </data>
+  <data name="global_entity" xml:space="preserve">
+    <value>Сущность</value>
+  </data>
+  <data name="global_error" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="global_exchangerate" xml:space="preserve">
+    <value>Курс обмена</value>
+  </data>
+  <data name="global_export" xml:space="preserve">
+    <value>Экспорт</value>
+  </data>
+  <data name="global_export_articles" xml:space="preserve">
+    <value>Экспорт товаров</value>
+  </data>
+  <data name="global_export_costumers" xml:space="preserve">
+    <value>Экспорт клиентов</value>
+  </data>
+  <data name="global_export_saftpt" xml:space="preserve">
+    <value>Экспорт SAF-T</value>
+  </data>
+  <data name="global_export_saftpt_custom" xml:space="preserve">
+    <value>Пользовательский SAF-T</value>
+  </data>
+  <data name="global_export_saftpt_last_month" xml:space="preserve">
+    <value>SAF-T за прошлый месяц</value>
+  </data>
+  <data name="global_export_saftpt_whole_year" xml:space="preserve">
+    <value>SAF-T за весь год</value>
+  </data>
+  <data name="global_families" xml:space="preserve">
+    <value>Семейства</value>
+  </data>
+  <data name="global_family" xml:space="preserve">
+    <value>Семейство</value>
+  </data>
+  <data name="global_favorite" xml:space="preserve">
+    <value>Избранное</value>
+  </data>
+  <data name="global_favorites" xml:space="preserve">
+    <value>Избранные</value>
+  </data>
+  <data name="global_fax" xml:space="preserve">
+    <value>Факс</value>
+  </data>
+  <data name="global_file" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="global_files" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="global_filesize" xml:space="preserve">
+    <value>Размер файла</value>
+  </data>
+  <data name="global_file_image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="global_filter" xml:space="preserve">
+    <value>Фильтр</value>
+  </data>
+  <data name="global_finance_document" xml:space="preserve">
+    <value>Финансовый документ</value>
+  </data>
+  <data name="global_final_consumer" xml:space="preserve">
+    <value>Конечный потребитель</value>
+    <comment>Label for Final Consumer, used on thermal-printings layout for Simplified Invoices</comment>
+  </data>
+  <data name="global_financialtemplate" xml:space="preserve">
+    <value>Финансовый шаблон</value>
+  </data>
+  <data name="global_fiscal_number" xml:space="preserve">
+    <value>Налоговый номер</value>
+  </data>
+  <data name="global_fiscal_number_acronym" xml:space="preserve">
+    <value>NUIT</value>
+  </data>
+  <data name="global_fiscal_year" xml:space="preserve">
+    <value>Фискальный год</value>
+  </data>
+  <data name="global_frontoffice" xml:space="preserve">
+    <value>Фронт-офис</value>
+  </data>
+  <data name="global_gifts" xml:space="preserve">
+    <value>Подарки</value>
+  </data>
+  <data name="global_groups" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+  <data name="global_hardware_com_baudrate" xml:space="preserve">
+    <value>Скорость (baud)</value>
+  </data>
+  <data name="global_hardware_com_databits" xml:space="preserve">
+    <value>Биты данных</value>
+  </data>
+  <data name="global_hardware_com_parity" xml:space="preserve">
+    <value>Четность</value>
+  </data>
+  <data name="global_hardware_com_portname" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="global_hardware_com_stopbits" xml:space="preserve">
+    <value>Стоп-биты</value>
+  </data>
+  <data name="global_hardware_id" xml:space="preserve">
+    <value>Идентификатор оборудования</value>
+  </data>
+  <data name="global_holidays" xml:space="preserve">
+    <value>Праздники</value>
+  </data>
+  <data name="global_hour" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="global_import" xml:space="preserve">
+    <value>Импорт</value>
+  </data>
+  <data name="global_import_articles" xml:space="preserve">
+    <value>Импорт товаров</value>
+  </data>
+  <data name="global_import_costumers" xml:space="preserve">
+    <value>Импорт клиентов</value>
+  </data>
+  <data name="global_information" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="global_input_barcode_reader" xml:space="preserve">
+    <value>Сканер штрихкода</value>
+  </data>
+  <data name="global_input_reader_card_reader" xml:space="preserve">
+    <value>Карт-ридер</value>
+  </data>
+  <data name="global_input_reader_card_reader_sizes" xml:space="preserve">
+    <value>Допустимые размеры ввода ридера</value>
+  </data>
+  <data name="global_input_reader_timer_interval" xml:space="preserve">
+    <value>Интервал таймера (мс)</value>
+  </data>
+  <data name="global_internal_document_footer1" xml:space="preserve">
+    <value>Внутренний документ — исключительно для целей оформления</value>
+  </data>
+  <data name="global_internal_document_footer2" xml:space="preserve">
+    <value>Для исключительно внутреннего использования</value>
+  </data>
+  <data name="global_internal_document_footer3" xml:space="preserve">
+    <value>Этот документ не может использоваться как счет-фактура</value>
+  </data>
+  <data name="global_in_progress" xml:space="preserve">
+    <value>В процессе...</value>
+  </data>
+  <data name="global_issue_date" xml:space="preserve">
+    <value>Дата выдачи</value>
+  </data>
+  <data name="global_keyboard" xml:space="preserve">
+    <value>Клавиатура</value>
+  </data>
+  <data name="global_keyboards" xml:space="preserve">
+    <value>Клавиатуры</value>
+  </data>
+  <data name="global_language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="global_licensed_to" xml:space="preserve">
+    <value>Лицензировано для {0}</value>
+  </data>
+  <data name="global_locality" xml:space="preserve">
+    <value>Населенный пункт</value>
+  </data>
+  <data name="global_load" xml:space="preserve">
+    <value>Загрузка POS...</value>
+  </data>
+  <data name="global_load_first_time" xml:space="preserve">
+    <value>Создание базы данных POS...</value>
+  </data>
+  <data name="global_loggerin" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="global_maintenance" xml:space="preserve">
+    <value>Обслуживание</value>
+  </data>
+  <data name="global_maximum" xml:space="preserve">
+    <value>Максимум</value>
+  </data>
+  <data name="global_messages" xml:space="preserve">
+    <value>Сообщения</value>
+  </data>
+  <data name="global_messages_small" xml:space="preserve">
+    <value>Сообщ.</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="global_mobile_phone" xml:space="preserve">
+    <value>Мобильный телефон</value>
+  </data>
+  <data name="global_money" xml:space="preserve">
+    <value>Деньги</value>
+  </data>
+  <data name="global_month" xml:space="preserve">
+    <value>Месяц</value>
+  </data>
+  <data name="global_movement_amount" xml:space="preserve">
+    <value>Сумма движения</value>
+  </data>
+  <data name="global_movement_type" xml:space="preserve">
+    <value>Тип движения</value>
+  </data>
+  <data name="global_name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="global_networkname" xml:space="preserve">
+    <value>Параметры сетевого ресурса или USB порта</value>
+  </data>
+  <data name="global_notes" xml:space="preserve">
+    <value>Заметки</value>
+  </data>
+  <data name="global_open_drawer" xml:space="preserve">
+    <value>Открыть ящик</value>
+  </data>
+  <data name="global_order_request" xml:space="preserve">
+    <value>Запрос заказа</value>
+  </data>
+  <data name="global_others" xml:space="preserve">
+    <value>Прочее</value>
+  </data>
+  <data name="global_other_payments" xml:space="preserve">
+    <value>Прочие платежи</value>
+  </data>
+  <data name="global_other_tables" xml:space="preserve">
+    <value>Другие столы</value>
+  </data>
+  <data name="global_password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="global_payment_condition" xml:space="preserve">
+    <value>Условие оплаты</value>
+  </data>
+  <data name="global_payment_conditions" xml:space="preserve">
+    <value>Условия оплаты</value>
+  </data>
+  <data name="global_payment_date" xml:space="preserve">
+    <value>Дата платежа</value>
+  </data>
+  <data name="global_payment_document" xml:space="preserve">
+    <value>Платежный документ</value>
+  </data>
+  <data name="global_payment_document_info" xml:space="preserve">
+    <value>Номер счета</value>
+  </data>
+  <data name="global_payment_method" xml:space="preserve">
+    <value>Способ оплаты</value>
+  </data>
+  <data name="global_payment_method_field" xml:space="preserve">
+    <value>Способ оплаты:</value>
+    <comment>Label for Payment Method, used on thermal-printings layout for Simplified Invoices</comment>
+  </data>
+  <data name="global_payment_methods" xml:space="preserve">
+    <value>Способы оплаты</value>
+  </data>
+  <data name="global_personal_data" xml:space="preserve">
+    <value>Персональные данные</value>
+  </data>
+  <data name="global_phone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="global_place" xml:space="preserve">
+    <value>Место</value>
+  </data>
+  <data name="global_places" xml:space="preserve">
+    <value>Места</value>
+  </data>
+  <data name="global_places_movement_type" xml:space="preserve">
+    <value>Тип обслуживания</value>
+  </data>
+  <data name="global_places_terminals" xml:space="preserve">
+    <value>Терминалы</value>
+  </data>
+  <data name="global_placetable_dateclosed" xml:space="preserve">
+    <value>Дата закрытия</value>
+  </data>
+  <data name="global_placetable_dateopen" xml:space="preserve">
+    <value>Дата открытия</value>
+  </data>
+  <data name="global_placetable_MovementType" xml:space="preserve">
+    <value>Тип обслуживания</value>
+  </data>
+  <data name="global_placetable_place" xml:space="preserve">
+    <value>Место</value>
+  </data>
+  <data name="global_placetable_PriceType" xml:space="preserve">
+    <value>Тип цены</value>
+  </data>
+  <data name="global_placetable_status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="global_placetable_totalopen" xml:space="preserve">
+    <value>Итого открыто</value>
+  </data>
+  <data name="global_place_table" xml:space="preserve">
+    <value>Стол</value>
+  </data>
+  <data name="global_place_tables" xml:space="preserve">
+    <value>Столы</value>
+  </data>
+  <data name="global_pole_display_codetable" xml:space="preserve">
+    <value>Код стола</value>
+  </data>
+  <data name="global_pole_display_endpoint" xml:space="preserve">
+    <value>Конечная точка</value>
+  </data>
+  <data name="global_pole_display_goto_stand_by_in_seconds" xml:space="preserve">
+    <value>Режим ожидания (сек)</value>
+  </data>
+  <data name="global_pole_display_number_of_characters_per_line" xml:space="preserve">
+    <value>Символов в строке</value>
+  </data>
+  <data name="global_pole_display_pid" xml:space="preserve">
+    <value>Идентификатор продукта (PID)</value>
+  </data>
+  <data name="global_pole_display_stand_by_line_no" xml:space="preserve">
+    <value>Строка ожидания №{0}</value>
+  </data>
+  <data name="global_pole_display_vid" xml:space="preserve">
+    <value>Идентификатор производителя (VID)</value>
+  </data>
+  <data name="global_pos" xml:space="preserve">
+    <value>POS</value>
+  </data>
+  <data name="global_pos_update" xml:space="preserve">
+    <value>Обновить POS? Приложение будет автоматически завершено в процессе обновления!</value>
+  </data>
+  <data name="global_postal_code" xml:space="preserve">
+    <value>Почтовый индекс</value>
+  </data>
+  <data name="global_preferenceparameter_company" xml:space="preserve">
+    <value>Настройки компании</value>
+  </data>
+  <data name="global_preferenceparameter_system" xml:space="preserve">
+    <value>Настройки системы</value>
+  </data>
+  <data name="global_prefparam_value_tip_format" xml:space="preserve">
+    <value>Пример допустимых значений: [{0}]</value>
+  </data>
+  <data name="global_preview" xml:space="preserve">
+    <value>Предпросмотр</value>
+  </data>
+  <data name="global_price" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="global_price_offers" xml:space="preserve">
+    <value>Ценовые предложения</value>
+  </data>
+  <data name="global_price_type" xml:space="preserve">
+    <value>Тип цены</value>
+  </data>
+  <data name="global_price_with_vat" xml:space="preserve">
+    <value>Цена с НДС</value>
+  </data>
+  <data name="global_printed" xml:space="preserve">
+    <value>Напечатано</value>
+  </data>
+  <data name="global_printed_on_date" xml:space="preserve">
+    <value>Напечатано</value>
+  </data>
+  <data name="global_printers" xml:space="preserve">
+    <value>Принтеры</value>
+  </data>
+  <data name="global_printer_thermal_cut_command" xml:space="preserve">
+    <value>Команда резки</value>
+  </data>
+  <data name="global_printer_thermal_encoding" xml:space="preserve">
+    <value>Кодировка</value>
+  </data>
+  <data name="global_printer_thermal_image_company_loggero" xml:space="preserve">
+    <value>Файл логотипа компании</value>
+  </data>
+  <data name="global_printer_thermal_max_chars_per_line_normal" xml:space="preserve">
+    <value>Макс. символов в строке (обычный)</value>
+  </data>
+  <data name="global_printer_thermal_max_chars_per_line_normal_bold" xml:space="preserve">
+    <value>Макс. символов в строке (жирный)</value>
+  </data>
+  <data name="global_printer_thermal_max_chars_per_line_small" xml:space="preserve">
+    <value>Макс. символов в строке (малый)</value>
+  </data>
+  <data name="global_printer_thermal_open_drawer_value_m" xml:space="preserve">
+    <value>Открыть ящик Ком. M</value>
+  </data>
+  <data name="global_printer_thermal_open_drawer_value_t1" xml:space="preserve">
+    <value>Открыть ящик Ком. T1</value>
+  </data>
+  <data name="global_printer_thermal_open_drawer_value_t2" xml:space="preserve">
+    <value>Открыть ящик Ком. T2</value>
+  </data>
+  <data name="global_printer_thermal_printer" xml:space="preserve">
+    <value>Термопринтер</value>
+  </data>
+  <data name="global_printer_thermal_total_default_currency" xml:space="preserve">
+    <value>Итого в {0}</value>
+    <comment>When printing the invoice total thermal-printer printed, this shows the default currency and total amount already converted, for the countries where this is required (Mozambique, for example).</comment>
+  </data>
+  <data name="global_printer_thermal_print_loggero" xml:space="preserve">
+    <value>Печатать логотип компании</value>
+  </data>
+  <data name="global_printer_type" xml:space="preserve">
+    <value>Тип принтера</value>
+  </data>
+  <data name="global_printing_function_disabled" xml:space="preserve">
+    <value>Функция печати отключена.</value>
+  </data>
+  <data name="global_print_copies" xml:space="preserve">
+    <value>Копии</value>
+  </data>
+  <data name="global_print_copy_title1" xml:space="preserve">
+    <value>Оригинал</value>
+  </data>
+  <data name="global_print_copy_title2" xml:space="preserve">
+    <value>Дубликат</value>
+  </data>
+  <data name="global_print_copy_title3" xml:space="preserve">
+    <value>Трипликат</value>
+  </data>
+  <data name="global_print_copy_title4" xml:space="preserve">
+    <value>Квадрипликат</value>
+  </data>
+  <data name="global_print_copy_title5" xml:space="preserve">
+    <value>Квинтипликат</value>
+  </data>
+  <data name="global_print_copy_title6" xml:space="preserve">
+    <value>Секстипликат</value>
+  </data>
+  <data name="global_print_request_confirmation" xml:space="preserve">
+    <value>Запрос подтверждения печати</value>
+  </data>
+  <data name="global_print_second_print" xml:space="preserve">
+    <value>Повторная печать</value>
+  </data>
+  <data name="global_privilege_active" xml:space="preserve">
+    <value>Активен</value>
+  </data>
+  <data name="global_privilege_property" xml:space="preserve">
+    <value>Свойство</value>
+  </data>
+  <data name="global_profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="global_quantity" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="global_quantity_acronym" xml:space="preserve">
+    <value>Кол-во</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_question" xml:space="preserve">
+    <value>Вопрос</value>
+  </data>
+  <data name="global_quit" xml:space="preserve">
+    <value>Выйти из приложения</value>
+  </data>
+  <data name="global_quit_message" xml:space="preserve">
+    <value>Вы действительно хотите выйти из приложения?</value>
+  </data>
+  <data name="global_quit_title" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="global_read_card" xml:space="preserve">
+    <value>Читать карту</value>
+  </data>
+  <data name="global_reason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="global_record_code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="global_record_code_dealer" xml:space="preserve">
+    <value>Код дилера</value>
+  </data>
+  <data name="global_record_count" xml:space="preserve">
+    <value>Всего записей</value>
+  </data>
+  <data name="global_record_date_created" xml:space="preserve">
+    <value>Создано:</value>
+  </data>
+  <data name="global_record_date_updated" xml:space="preserve">
+    <value>Обновлено</value>
+  </data>
+  <data name="global_record_date_updated_for_base_dialog" xml:space="preserve">
+    <value>Обновлено:</value>
+    <comment>Value for "Update At" data in details dialog</comment>
+  </data>
+  <data name="global_record_disabled" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="global_record_enabled" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="global_record_main_detail" xml:space="preserve">
+    <value>Детали</value>
+  </data>
+  <data name="global_record_main_properties" xml:space="preserve">
+    <value>Свойства</value>
+  </data>
+  <data name="global_record_modified" xml:space="preserve">
+    <value>Измененная запись</value>
+  </data>
+  <data name="global_record_order" xml:space="preserve">
+    <value>Заказ</value>
+  </data>
+  <data name="global_record_user_update" xml:space="preserve">
+    <value>Последнее обновление пользователем:</value>
+  </data>
+  <data name="global_regex_fiscal_number" xml:space="preserve">
+    <value>Регулярное выражение налогового номера</value>
+  </data>
+  <data name="global_regex_postal_code" xml:space="preserve">
+    <value>Регулярное выражение почтового индекса</value>
+  </data>
+  <data name="global_region" xml:space="preserve">
+    <value>Регион</value>
+  </data>
+  <data name="global_remarks" xml:space="preserve">
+    <value>Примечания</value>
+  </data>
+  <data name="global_remote_connection_start" xml:space="preserve">
+    <value>Начать удаленное подключение</value>
+  </data>
+  <data name="global_remote_connection_stop" xml:space="preserve">
+    <value>Остановить удаленное подключение</value>
+  </data>
+  <data name="global_remove" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="global_report" xml:space="preserve">
+    <value>Отчет</value>
+  </data>
+  <data name="global_reports" xml:space="preserve">
+    <value>Отчеты</value>
+  </data>
+  <data name="global_report_overlay_software_certification" xml:space="preserve">
+    <value>{0} by certificate program No {1}/AT</value>
+    <comment>This key is used for software certification label in invoices and the value for this key has specific purposes in different countries. Please pay attention on changes</comment>
+  </data>
+  <data name="global_report_overlay_software_certification_emitted" xml:space="preserve">
+    <value>Выпущено</value>
+    <comment>This key is used for software certification label in invoices and the value for this key has specific purposes in different countries. Please pay attention on changes</comment>
+  </data>
+  <data name="global_report_overlay_software_certification_moz_tax_authority_cert_number" xml:space="preserve">
+    <value>DAFM1 - 0198/2018</value>
+    <comment>This key is used for software certification label in invoices and the value for this key has specific purposes in different countries. Please pay attention on changes</comment>
+  </data>
+  <data name="global_report_overlay_software_certification_processed" xml:space="preserve">
+    <value>Документ обработан компьютером</value>
+    <comment>This key is used for software certification label in invoices and the value for this key has specific purposes in different countries. Please pay attention on changes</comment>
+  </data>
+  <data name="global_report_overlay_software_certification_short" xml:space="preserve">
+    <value>Авторизация налогового органа: {0}</value>
+    <comment>This key is used for software certification label in invoices and the value for this key has specific purposes in different countries. Please pay attention on changes</comment>
+  </data>
+  <data name="global_report_page" xml:space="preserve">
+    <value>Страница</value>
+    <comment>In use when printing page number on Documents footer</comment>
+  </data>
+  <data name="global_report_page_acronym" xml:space="preserve">
+    <value>Страница</value>
+    <comment>Acronym for page</comment>
+  </data>
+  <data name="global_reprint_original_motive" xml:space="preserve">
+    <value>Причина повторной печати оригинала</value>
+  </data>
+  <data name="global_reserved_table" xml:space="preserve">
+    <value>Зарезервированный стол</value>
+  </data>
+  <data name="global_reset_password" xml:space="preserve">
+    <value>Сброс пароля</value>
+  </data>
+  <data name="global_second_copy" xml:space="preserve">
+    <value>Вторая копия</value>
+  </data>
+  <data name="global_seriesforeachterminal" xml:space="preserve">
+    <value>Независимые серии для каждого терминала</value>
+  </data>
+  <data name="global_services" xml:space="preserve">
+    <value>Услуги</value>
+  </data>
+  <data name="global_ship_from_delivery_date" xml:space="preserve">
+    <value>Дата отгрузки</value>
+  </data>
+  <data name="global_ship_from_delivery_date_report" xml:space="preserve">
+    <value>Дата отгрузки</value>
+    <comment>Expedition Date</comment>
+  </data>
+  <data name="global_ship_from_delivery_id" xml:space="preserve">
+    <value>Номерной знак</value>
+    <comment>Delivery Identifier / Plate Name</comment>
+  </data>
+  <data name="global_ship_from_delivery_id_report" xml:space="preserve">
+    <value>Номерной знак</value>
+    <comment>Delivery Identifier / Plate Name</comment>
+  </data>
+  <data name="global_ship_from_location_id" xml:space="preserve">
+    <value>Местоположение собственности на складе отправления</value>
+  </data>
+  <data name="global_ship_from_location_id_report" xml:space="preserve">
+    <value>Мест.Соб.Скл.Отпр.</value>
+    <comment>Location of property in departure warehouse</comment>
+  </data>
+  <data name="global_ship_from_warehouse_id" xml:space="preserve">
+    <value>Идентификатор склада отправления</value>
+  </data>
+  <data name="global_ship_from_warehouse_id_report" xml:space="preserve">
+    <value>Ид.Скл.Отпр.</value>
+    <comment>Departure warehouse identifier</comment>
+  </data>
+  <data name="global_ship_to_delivery_date" xml:space="preserve">
+    <value>Дата доставки</value>
+  </data>
+  <data name="global_ship_to_delivery_date_report" xml:space="preserve">
+    <value>Дата доставки</value>
+    <comment>Delivery Date</comment>
+  </data>
+  <data name="global_ship_to_delivery_id" xml:space="preserve">
+    <value>Идентификатор доставки</value>
+  </data>
+  <data name="global_ship_to_delivery_id_report" xml:space="preserve">
+    <value>Идентификатор доставки</value>
+    <comment>Delivery Identifier</comment>
+  </data>
+  <data name="global_ship_to_location_id" xml:space="preserve">
+    <value>Местоположение собственности на складе назначения</value>
+  </data>
+  <data name="global_ship_to_location_id_report" xml:space="preserve">
+    <value>Мест.Соб.Скл.Назнач.</value>
+    <comment>Location of property in the destination warehouse</comment>
+  </data>
+  <data name="global_ship_to_warehouse_id" xml:space="preserve">
+    <value>Идентификатор целевого склада</value>
+  </data>
+  <data name="global_ship_to_warehouse_id_report" xml:space="preserve">
+    <value>WH Target Ident.</value>
+    <comment>Warehouse target  identifier</comment>
+  </data>
+  <data name="global_short_quantity" xml:space="preserve">
+    <value>Кол-во</value>
+  </data>
+  <data name="global_short_subtotal" xml:space="preserve">
+    <value>Промеж.</value>
+  </data>
+  <data name="global_source_document" xml:space="preserve">
+    <value>Исходный документ</value>
+  </data>
+  <data name="global_source_finance_document" xml:space="preserve">
+    <value>Исходный документ</value>
+  </data>
+  <data name="global_split_account" xml:space="preserve">
+    <value>Разделить счет</value>
+  </data>
+  <data name="global_split_account_small" xml:space="preserve">
+    <value>Разд. сч.</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="global_statusbar" xml:space="preserve">
+    <value>Строка состояния</value>
+  </data>
+  <data name="global_stock_capital" xml:space="preserve">
+    <value>Капитал склада</value>
+  </data>
+  <data name="global_stock_movement" xml:space="preserve">
+    <value>Движение</value>
+  </data>
+  <data name="global_stock_movements" xml:space="preserve">
+    <value>Движения склада</value>
+  </data>
+  <data name="global_stock_movement_in" xml:space="preserve">
+    <value>Приход</value>
+  </data>
+  <data name="global_stock_movement_out" xml:space="preserve">
+    <value>Расход</value>
+  </data>
+  <data name="global_subfamilies" xml:space="preserve">
+    <value>Подсемейства</value>
+  </data>
+  <data name="global_subfamily" xml:space="preserve">
+    <value>Подсемейство</value>
+  </data>
+  <data name="global_supplier" xml:space="preserve">
+    <value>Поставщик</value>
+  </data>
+  <data name="global_system" xml:space="preserve">
+    <value>Система</value>
+  </data>
+  <data name="global_table_appmode_default" xml:space="preserve">
+    <value>Стол</value>
+  </data>
+  <data name="global_table_appmode_retail" xml:space="preserve">
+    <value>Заказ</value>
+  </data>
+  <data name="global_tare" xml:space="preserve">
+    <value>Тара</value>
+  </data>
+  <data name="global_tax" xml:space="preserve">
+    <value>Налог</value>
+  </data>
+  <data name="global_terminal" xml:space="preserve">
+    <value>Терминал</value>
+  </data>
+  <data name="global_terminal_name" xml:space="preserve">
+    <value>Имя терминала</value>
+  </data>
+  <data name="global_ticket_number" xml:space="preserve">
+    <value>Номер билета</value>
+  </data>
+  <data name="global_title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="global_token" xml:space="preserve">
+    <value>Токен</value>
+  </data>
+  <data name="global_total" xml:space="preserve">
+    <value>Итого</value>
+  </data>
+  <data name="global_total_article_tab" xml:space="preserve">
+    <value>Итого</value>
+    <comment>When issuing documents, shows articles total label in Article tab</comment>
+  </data>
+  <data name="global_totalfinal_acronym" xml:space="preserve">
+    <value>Итог</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_totalnet" xml:space="preserve">
+    <value>Итого нетто</value>
+  </data>
+  <data name="global_totalnet_acronym" xml:space="preserve">
+    <value>Нетто</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_total_by_type_of_payment" xml:space="preserve">
+    <value>Итого по типам оплаты</value>
+  </data>
+  <data name="global_total_cashdrawer" xml:space="preserve">
+    <value>Итого в кассе</value>
+  </data>
+  <data name="global_total_cashdrawer_on_open" xml:space="preserve">
+    <value>Итого при открытии</value>
+  </data>
+  <data name="global_total_change" xml:space="preserve">
+    <value>Сдача</value>
+  </data>
+  <data name="global_total_commission_day" xml:space="preserve">
+    <value>Итого комиссий за день</value>
+  </data>
+  <data name="global_total_commission_user" xml:space="preserve">
+    <value>Итого комиссий по пользователю</value>
+  </data>
+  <data name="global_total_credit" xml:space="preserve">
+    <value>Итого кредит</value>
+  </data>
+  <data name="global_total_debit" xml:space="preserve">
+    <value>Итого дебет</value>
+  </data>
+  <data name="global_total_deliver" xml:space="preserve">
+    <value>Итого доставлено</value>
+  </data>
+  <data name="global_total_discount_acronym" xml:space="preserve">
+    <value>Скид.</value>
+  </data>
+  <data name="global_total_extended_label" xml:space="preserve">
+    <value>Получено сумма:</value>
+  </data>
+  <data name="global_total_final" xml:space="preserve">
+    <value>Итоговая сумма</value>
+    <comment>Total of document</comment>
+  </data>
+  <data name="global_total_payed_acronym" xml:space="preserve">
+    <value>Оплачено</value>
+  </data>
+  <data name="global_total_per_item" xml:space="preserve">
+    <value>Итого</value>
+    <comment>Item total label for documents</comment>
+  </data>
+  <data name="global_total_per_item_vat" xml:space="preserve">
+    <value>Итого с налогом</value>
+    <comment>"Item total with tax" label for documents</comment>
+  </data>
+  <data name="global_total_price_to_pay" xml:space="preserve">
+    <value>Итого к оплате</value>
+  </data>
+  <data name="global_total_stock" xml:space="preserve">
+    <value>Итого склад</value>
+  </data>
+  <data name="global_total_table_tickets" xml:space="preserve">
+    <value>Итого по столу</value>
+  </data>
+  <data name="global_total_tax_acronym" xml:space="preserve">
+    <value>НДС</value>
+  </data>
+  <data name="global_total_tax_base" xml:space="preserve">
+    <value>Налоговая база</value>
+  </data>
+  <data name="global_total_ticket" xml:space="preserve">
+    <value>Итого по билету</value>
+  </data>
+  <data name="global_treeview_false" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="global_treeview_true" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="global_type_of_payment" xml:space="preserve">
+    <value>Тип оплаты</value>
+  </data>
+  <data name="global_units_amount" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="global_units_measure" xml:space="preserve">
+    <value>Единицы измерения</value>
+  </data>
+  <data name="global_units_size" xml:space="preserve">
+    <value>Единицы размера</value>
+  </data>
+  <data name="global_unit_measure" xml:space="preserve">
+    <value>Ед. измерения</value>
+  </data>
+  <data name="global_unit_measure_acronym" xml:space="preserve">
+    <value>Ед.</value>
+    <comment>Used in Report Columns</comment>
+  </data>
+  <data name="global_unit_size" xml:space="preserve">
+    <value>Ед. размера</value>
+  </data>
+  <data name="global_user" xml:space="preserve">
+    <value>Пользователь</value>
+  </data>
+  <data name="global_users" xml:space="preserve">
+    <value>Пользователи</value>
+  </data>
+  <data name="global_user_access_card_number" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="global_user_apply_privileges" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="global_user_assigned_seating" xml:space="preserve">
+    <value>Закрепленные столы</value>
+  </data>
+  <data name="global_user_base_consumption" xml:space="preserve">
+    <value>База потребления</value>
+  </data>
+  <data name="global_user_base_offers" xml:space="preserve">
+    <value>База предложений</value>
+  </data>
+  <data name="global_user_city" xml:space="preserve">
+    <value>Город</value>
+  </data>
+  <data name="global_user_commission_groups" xml:space="preserve">
+    <value>Группы комиссий</value>
+  </data>
+  <data name="global_user_contract" xml:space="preserve">
+    <value>Дата договора</value>
+  </data>
+  <data name="global_user_email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="global_user_fiscal_number" xml:space="preserve">
+    <value>Налоговый номер</value>
+  </data>
+  <data name="global_user_locality" xml:space="preserve">
+    <value>Населенный пункт</value>
+  </data>
+  <data name="global_user_mobile" xml:space="preserve">
+    <value>Мобильный</value>
+  </data>
+  <data name="global_user_name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="global_user_password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="global_user_permissions" xml:space="preserve">
+    <value>Права</value>
+  </data>
+  <data name="global_user_personal" xml:space="preserve">
+    <value>Персональные данные</value>
+  </data>
+  <data name="global_user_phone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="global_user_postal_code" xml:space="preserve">
+    <value>Почтовый индекс</value>
+  </data>
+  <data name="global_user_profiles" xml:space="preserve">
+    <value>Профили пользователей</value>
+  </data>
+  <data name="global_user_pvp_offers" xml:space="preserve">
+    <value>Предложения PVP</value>
+  </data>
+  <data name="global_user_residence" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="global_use_weighing_balance" xml:space="preserve">
+    <value>Использовать весы</value>
+  </data>
+  <data name="global_value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="global_variable_price" xml:space="preserve">
+    <value>Переменная цена</value>
+  </data>
+  <data name="global_vat_direct_selling" xml:space="preserve">
+    <value>НДС прямой продажи</value>
+  </data>
+  <data name="global_vat_exemption_reason" xml:space="preserve">
+    <value>Причина освобождения от НДС</value>
+  </data>
+  <data name="global_vat_on_table" xml:space="preserve">
+    <value>НДС на столе</value>
+  </data>
+  <data name="global_vat_rate" xml:space="preserve">
+    <value>Ставка</value>
+  </data>
+  <data name="global_vat_rates" xml:space="preserve">
+    <value>Налоговые ставки</value>
+  </data>
+  <data name="global_vat_rate_description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="global_vat_rate_reasoncode" xml:space="preserve">
+    <value>Код причины</value>
+  </data>
+  <data name="global_vat_rate_tax_code" xml:space="preserve">
+    <value>Код налога</value>
+  </data>
+  <data name="global_vat_rate_tax_country_region" xml:space="preserve">
+    <value>Код региона страны</value>
+  </data>
+  <data name="global_vat_rate_tax_type" xml:space="preserve">
+    <value>Тип налога</value>
+  </data>
+  <data name="global_vat_rate_value" xml:space="preserve">
+    <value>Значение ставки</value>
+  </data>
+  <data name="global_version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="global_warning" xml:space="preserve">
+    <value>Предупреждение</value>
+  </data>
+  <data name="global_warning_open_fiscal_year" xml:space="preserve">
+    <value>Для правильного использования POS, пожалуйста, начните фискальный год в BackOffice и перезапустите приложение.</value>
+  </data>
+  <data name="global_website" xml:space="preserve">
+    <value>Веб-сайт</value>
+  </data>
+  <data name="global_weight" xml:space="preserve">
+    <value>Вес</value>
+  </data>
+  <data name="global_without_current_acount" xml:space="preserve">
+    <value>Без текущего счета</value>
+  </data>
+  <data name="global_words" xml:space="preserve">
+    <value>Слова</value>
+  </data>
+  <data name="global_worksession_close_datetime" xml:space="preserve">
+    <value>Дата закрытия</value>
+  </data>
+  <data name="global_worksession_close_day" xml:space="preserve">
+    <value>Закрытие дня</value>
+  </data>
+  <data name="global_worksession_close_total_cashdrawer" xml:space="preserve">
+    <value>Итого Касса(ы)</value>
+  </data>
+  <data name="global_worksession_open_datetime" xml:space="preserve">
+    <value>Дата открытия</value>
+  </data>
+  <data name="global_worksession_open_day" xml:space="preserve">
+    <value>Открытие дня</value>
+  </data>
+  <data name="global_worksession_open_total_cashdrawer" xml:space="preserve">
+    <value>Итого при открытии</value>
+  </data>
+  <data name="global_worksession_resume_finance_documents" xml:space="preserve">
+    <value>Финансовые документы</value>
+  </data>
+  <data name="global_worksession_resume_paymens_documents" xml:space="preserve">
+    <value>Платежные документы</value>
+  </data>
+  <data name="global_worksession_total_money_in" xml:space="preserve">
+    <value>Итого Приход Кассы</value>
+  </data>
+  <data name="global_worksession_total_money_out" xml:space="preserve">
+    <value>Итого Расход Кассы</value>
+  </data>
+  <data name="global_work_in_stock" xml:space="preserve">
+    <value>Работает со складами</value>
+  </data>
+  <data name="global_year" xml:space="preserve">
+    <value>Год</value>
+  </data>
+  <data name="global_zipcode" xml:space="preserve">
+    <value>Почтовый индекс</value>
+  </data>
+  <data name="numbers_to_words_1" xml:space="preserve">
+    <value>One</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_10" xml:space="preserve">
+    <value>Ten</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_100" xml:space="preserve">
+    <value>Hundred</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_11" xml:space="preserve">
+    <value>Eleven</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_12" xml:space="preserve">
+    <value>Twelve</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_13" xml:space="preserve">
+    <value>Thirteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_14" xml:space="preserve">
+    <value>Fourteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_15" xml:space="preserve">
+    <value>Fifteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_16" xml:space="preserve">
+    <value>Sixteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_17" xml:space="preserve">
+    <value>Seventeen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_18" xml:space="preserve">
+    <value>Eighteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_19" xml:space="preserve">
+    <value>Nineteen</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_2" xml:space="preserve">
+    <value>Two</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_20" xml:space="preserve">
+    <value>Twenty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_200" xml:space="preserve">
+    <value>Двести</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_3" xml:space="preserve">
+    <value>Three</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_30" xml:space="preserve">
+    <value>Thirty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_300" xml:space="preserve">
+    <value>Триста</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_4" xml:space="preserve">
+    <value>Four</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_40" xml:space="preserve">
+    <value>Forty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_400" xml:space="preserve">
+    <value>Четыреста</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_5" xml:space="preserve">
+    <value>Five</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_50" xml:space="preserve">
+    <value>Fifty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_500" xml:space="preserve">
+    <value>Пятьсот</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_6" xml:space="preserve">
+    <value>Six</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_60" xml:space="preserve">
+    <value>Sixty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_600" xml:space="preserve">
+    <value>Шестьсот</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_7" xml:space="preserve">
+    <value>Seven</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_70" xml:space="preserve">
+    <value>Seventy</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_700" xml:space="preserve">
+    <value>Семьсот</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_8" xml:space="preserve">
+    <value>Eight</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_80" xml:space="preserve">
+    <value>Eighty</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_800" xml:space="preserve">
+    <value>Восемьсот</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_9" xml:space="preserve">
+    <value>Nine</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_90" xml:space="preserve">
+    <value>Ninety</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_900" xml:space="preserve">
+    <value>Девятьсот</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_cent" xml:space="preserve">
+    <value>Penny</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_cents" xml:space="preserve">
+    <value>Копейки</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_and" xml:space="preserve">
+    <value> и</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_and_space" xml:space="preserve">
+    <value> и </value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_billions_and" xml:space="preserve">
+    <value> миллиард(а/ов) и</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_billion_and" xml:space="preserve">
+    <value> миллиард и</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_hundred_and_space" xml:space="preserve">
+    <value> сто и </value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_million" xml:space="preserve">
+    <value>Миллион</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_millions" xml:space="preserve">
+    <value>Миллионов</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="numbers_to_words_space_thousand" xml:space="preserve">
+    <value>Тысяч</value>
+    <comment>Used for writing out the document values into words</comment>
+  </data>
+  <data name="pos_button_create_series" xml:space="preserve">
+    <value>Серии</value>
+  </data>
+  <data name="pos_button_label_cashdrawer" xml:space="preserve">
+    <value>Смена</value>
+  </data>
+  <data name="pos_button_label_cashdrawer_close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="pos_button_label_cashdrawer_in" xml:space="preserve">
+    <value>Внести</value>
+  </data>
+  <data name="pos_button_label_cashdrawer_money_out" xml:space="preserve">
+    <value>Изъять</value>
+  </data>
+  <data name="pos_button_label_cashdrawer_open" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="pos_button_label_cashdrawer_out" xml:space="preserve">
+    <value>Извлечь</value>
+  </data>
+  <data name="pos_button_label_cash_register" xml:space="preserve">
+    <value>Кассовый аппарат</value>
+  </data>
+  <data name="pos_button_label_change_price" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="pos_button_label_change_quantity" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="pos_button_label_change_quantity_small" xml:space="preserve">
+    <value>Кол-во</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="pos_button_label_change_table" xml:space="preserve">
+    <value>Сменить стол</value>
+  </data>
+  <data name="pos_button_label_change_table_small" xml:space="preserve">
+    <value>См. стол</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="pos_button_label_decrease" xml:space="preserve">
+    <value>Уменьшить</value>
+  </data>
+  <data name="pos_button_label_delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="pos_button_label_finish_order" xml:space="preserve">
+    <value>Завершить заказ</value>
+  </data>
+  <data name="pos_button_label_finish_order_small" xml:space="preserve">
+    <value>Завершить</value>
+    <comment>Used in 800x600 Theme</comment>
+  </data>
+  <data name="pos_button_label_increase" xml:space="preserve">
+    <value>Увеличить</value>
+  </data>
+  <data name="pos_button_label_licence_continue" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="pos_button_label_licence_register" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="pos_button_label_list_mode" xml:space="preserve">
+    <value>Режим списка</value>
+  </data>
+  <data name="pos_button_label_next" xml:space="preserve">
+    <value>Следующий</value>
+  </data>
+  <data name="pos_button_label_next_pages_toolbar" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="pos_button_label_orders" xml:space="preserve">
+    <value>Заказы</value>
+  </data>
+  <data name="pos_button_label_payments" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="pos_button_label_payment_type_bank_check" xml:space="preserve">
+    <value>Банковский чек</value>
+  </data>
+  <data name="pos_button_label_payment_type_cash_machine" xml:space="preserve">
+    <value>МБ</value>
+  </data>
+  <data name="pos_button_label_payment_type_credit_card" xml:space="preserve">
+    <value>Кредитная карта</value>
+  </data>
+  <data name="pos_button_label_payment_type_current_account" xml:space="preserve">
+    <value>Оплата в кредит</value>
+  </data>
+  <data name="pos_button_label_payment_type_customer_card" xml:space="preserve">
+    <value>Карта клиента</value>
+  </data>
+  <data name="pos_button_label_payment_type_debit_card" xml:space="preserve">
+    <value>Дебетовая карта</value>
+    <comment>Label for POS Payment Method button</comment>
+  </data>
+  <data name="pos_button_label_payment_type_money" xml:space="preserve">
+    <value>Наличные</value>
+  </data>
+  <data name="pos_button_label_payment_type_visa" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="pos_button_label_prev" xml:space="preserve">
+    <value>Предыдущий</value>
+  </data>
+  <data name="pos_button_label_prev_pages_toolbar" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="pos_button_label_report_average_placing" xml:space="preserve">
+    <value>Средняя посадка</value>
+  </data>
+  <data name="pos_button_label_report_costumer_balance" xml:space="preserve">
+    <value>Сальдо клиентов</value>
+  </data>
+  <data name="pos_button_label_report_day" xml:space="preserve">
+    <value>Итого за день</value>
+  </data>
+  <data name="pos_button_label_report_employees_activity" xml:space="preserve">
+    <value>Активность сотрудников</value>
+  </data>
+  <data name="pos_button_label_report_employees_closure" xml:space="preserve">
+    <value>Топ закрытий смен сотрудниками</value>
+  </data>
+  <data name="pos_button_label_report_employees_register" xml:space="preserve">
+    <value>Топ регистраций сотрудниками</value>
+  </data>
+  <data name="pos_button_label_report_family" xml:space="preserve">
+    <value>Итого по семейству</value>
+  </data>
+  <data name="pos_button_label_report_offers" xml:space="preserve">
+    <value>Итого по предложениям</value>
+  </data>
+  <data name="pos_button_label_report_terminal" xml:space="preserve">
+    <value>Итого по терминалу</value>
+  </data>
+  <data name="pos_button_label_report_top_closure" xml:space="preserve">
+    <value>Пик по закрытиям</value>
+  </data>
+  <data name="pos_button_label_report_top_register" xml:space="preserve">
+    <value>Пик по регистрациям</value>
+  </data>
+  <data name="pos_button_label_report_zone" xml:space="preserve">
+    <value>Итого по зоне</value>
+  </data>
+  <data name="pos_button_label_report_zone_table" xml:space="preserve">
+    <value>Итого по зоне/столу</value>
+  </data>
+  <data name="pos_button_label_tables_appmode_default" xml:space="preserve">
+    <value>Столы</value>
+  </data>
+  <data name="pos_button_label_tables_appmode_retail" xml:space="preserve">
+    <value>Заказы</value>
+  </data>
+  <data name="pos_button_label_table_open_at" xml:space="preserve">
+    <value>Открыт в: {0}</value>
+  </data>
+  <data name="pos_button_label_table_reservation" xml:space="preserve">
+    <value>Бронирование</value>
+  </data>
+  <data name="pos_pinpad_message_password_changed" xml:space="preserve">
+    <value>Пароль успешно изменен!</value>
+  </data>
+  <data name="pos_pinpad_message_password_confirmation_error" xml:space="preserve">
+    <value>Подтверждение пароля не совпадает, введите новый пароль и подтверждение еще раз!</value>
+  </data>
+  <data name="pos_pinpad_message_password_equal_error" xml:space="preserve">
+    <value>Новый пароль совпадает со старым. Введите другой пароль!</value>
+  </data>
+  <data name="pos_pinpad_message_password_request_change_password" xml:space="preserve">
+    <value>Выбранный пользователь ни разу не входил в систему.
+Чтобы продолжить, смените старый пароль!</value>
+  </data>
+  <data name="pos_pinpad_message_type_new_password" xml:space="preserve">
+    <value>Введите новый пароль</value>
+  </data>
+  <data name="pos_pinpad_message_type_new_password_confirm" xml:space="preserve">
+    <value>Подтвердите новый пароль</value>
+  </data>
+  <data name="pos_pinpad_message_type_old_password" xml:space="preserve">
+    <value>Введите старый пароль</value>
+  </data>
+  <data name="pos_pinpad_message_type_password" xml:space="preserve">
+    <value>Введите пароль пользователя</value>
+  </data>
+  <data name="pos_ticketlist_label_designation" xml:space="preserve">
+    <value>Наименование</value>
+  </data>
+  <data name="pos_ticketlist_label_discount" xml:space="preserve">
+    <value>Скидка</value>
+  </data>
+  <data name="pos_ticketlist_label_price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="pos_ticketlist_label_quantity" xml:space="preserve">
+    <value>Qtd.</value>
+  </data>
+  <data name="pos_ticketlist_label_total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="pos_ticketlist_label_vat" xml:space="preserve">
+    <value>VAT</value>
+  </data>
+  <data name="prefparam_app_screen_size" xml:space="preserve">
+    <value>Application :: Screen Resolution</value>
+  </data>
+  <data name="prefparam_app_theme" xml:space="preserve">
+    <value>Application :: Theme [ Default | Retail ]</value>
+  </data>
+  <data name="prefparam_company_address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="prefparam_company_business_name" xml:space="preserve">
+    <value>Коммерческое название (слоган)</value>
+  </data>
+  <data name="prefparam_company_cae" xml:space="preserve">
+    <value>Код хозяйственной деятельности</value>
+  </data>
+  <data name="prefparam_company_city" xml:space="preserve">
+    <value>Город</value>
+  </data>
+  <data name="prefparam_company_civil_registration" xml:space="preserve">
+    <value>Регистрационная палата</value>
+  </data>
+  <data name="prefparam_company_civil_registration_id" xml:space="preserve">
+    <value>Регистрационный номер</value>
+  </data>
+  <data name="prefparam_company_country" xml:space="preserve">
+    <value>Страна</value>
+  </data>
+  <data name="prefparam_company_country_code2" xml:space="preserve">
+    <value>Код страны (2 символа)</value>
+  </data>
+  <data name="prefparam_company_email" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="prefparam_company_fax" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="prefparam_company_fiscalnumber" xml:space="preserve">
+    <value>Налоговый номер</value>
+  </data>
+  <data name="prefparam_company_mobilephone" xml:space="preserve">
+    <value>Мобильный телефон</value>
+  </data>
+  <data name="prefparam_company_name" xml:space="preserve">
+    <value>Название компании</value>
+  </data>
+  <data name="prefparam_company_postalcode" xml:space="preserve">
+    <value>Почтовый индекс</value>
+  </data>
+  <data name="prefparam_company_region" xml:space="preserve">
+    <value>Locality</value>
+  </data>
+  <data name="prefparam_company_stock_capital" xml:space="preserve">
+    <value>Уставный капитал</value>
+  </data>
+  <data name="prefparam_company_tax_entity" xml:space="preserve">
+    <value>Идентификация учреждения</value>
+  </data>
+  <data name="prefparam_company_telephone" xml:space="preserve">
+    <value>Telephone</value>
+  </data>
+  <data name="prefparam_company_website" xml:space="preserve">
+    <value>Веб-сайт</value>
+  </data>
+  <data name="prefparam_culture" xml:space="preserve">
+    <value>Application :: Language</value>
+  </data>
+  <data name="prefparam_database_backup_automatic_enabled" xml:space="preserve">
+    <value>Database :: Automatic Backup Enabled</value>
+    <comment>System parameter option for Backup Automatic Flow</comment>
+  </data>
+  <data name="prefparam_database_backup_timespan" xml:space="preserve">
+    <value>Database :: Backup Timespan</value>
+  </data>
+  <data name="prefparam_database_backup_time_span_range_end" xml:space="preserve">
+    <value>Database :: Backup Time Span Range End</value>
+  </data>
+  <data name="prefparam_database_backup_time_span_range_start" xml:space="preserve">
+    <value>Database :: Backup Time Span Range Start</value>
+  </data>
+  <data name="prefparam_notification_documents_to_invoice_ignore_after_show_number_of_times" xml:space="preserve">
+    <value>Notifications :: Documents to Invoice :: Ignore notifications after has been notificated a determined number of times</value>
+  </data>
+  <data name="prefparam_path_backups" xml:space="preserve">
+    <value>Path :: Backups</value>
+  </data>
+  <data name="prefparam_path_saftpt" xml:space="preserve">
+    <value>Path :: Saft Export</value>
+  </data>
+  <data name="prefparam_report_filename_loggero" xml:space="preserve">
+    <value>Report :: Logo FileName</value>
+  </data>
+  <data name="prefparam_report_filename_loggero_small" xml:space="preserve">
+    <value>Report :: Logo FileName Small</value>
+  </data>
+  <data name="prefparam_report_footer_line1" xml:space="preserve">
+    <value>Report :: Footer Line 1</value>
+  </data>
+  <data name="prefparam_report_footer_line2" xml:space="preserve">
+    <value>Report :: Footer Line 2</value>
+  </data>
+  <data name="prefparam_report_footer_line3" xml:space="preserve">
+    <value>Report :: Footer Line 3</value>
+  </data>
+  <data name="prefparam_report_footer_line4" xml:space="preserve">
+    <value>Report :: Footer Line 4</value>
+  </data>
+  <data name="prefparam_report_footer_line5" xml:space="preserve">
+    <value>Report :: Footer Line 5</value>
+  </data>
+  <data name="prefparam_report_footer_line6" xml:space="preserve">
+    <value>Report :: Footer Line 6</value>
+  </data>
+  <data name="prefparam_send_mail_finance_documents_body" xml:space="preserve">
+    <value>E-Mail :: Body</value>
+  </data>
+  <data name="prefparam_send_mail_finance_documents_html_body" xml:space="preserve">
+    <value>E-Mail :: HTML Body</value>
+  </data>
+  <data name="prefparam_send_mail_finance_documents_subject" xml:space="preserve">
+    <value>E-Mail :: Subject</value>
+  </data>
+  <data name="prefparam_send_mail_smtp_enable_ssl" xml:space="preserve">
+    <value>E-Mail :: SMTP :: SSL Enabled</value>
+  </data>
+  <data name="prefparam_send_mail_smtp_password" xml:space="preserve">
+    <value>E-Mail :: SMTP :: Password</value>
+  </data>
+  <data name="prefparam_send_mail_smtp_port" xml:space="preserve">
+    <value>E-Mail :: SMTP :: Port</value>
+  </data>
+  <data name="prefparam_send_mail_smtp_server" xml:space="preserve">
+    <value>E-Mail :: SMTP :: Server</value>
+  </data>
+  <data name="prefparam_send_mail_smtp_username" xml:space="preserve">
+    <value>E-Mail :: SMTP :: Username</value>
+  </data>
+  <data name="prefparam_service_at_production_account_fiscal_number" xml:space="preserve">
+    <value>Служба налоговых органов :: Налоговый номер счета</value>
+  </data>
+  <data name="prefparam_service_at_production_account_password" xml:space="preserve">
+    <value>Служба налоговых органов :: Пароль счета</value>
+  </data>
+  <data name="prefparam_service_at_production_mode_enabled" xml:space="preserve">
+    <value>Служба налоговых органов :: Режим производства включен</value>
+  </data>
+  <data name="prefparam_service_at_send_documents" xml:space="preserve">
+    <value>Служба налоговых органов :: Отправленные финансовые документы</value>
+  </data>
+  <data name="prefparam_service_at_send_documents_waybill" xml:space="preserve">
+    <value>Служба налоговых органов :: Отправленные накладные</value>
+  </data>
+  <data name="prefparam_service_at_waybill_agricultural_mode_enabled" xml:space="preserve">
+    <value>Служба налоговых органов :: Финансовые накладные в сельскохозяйственном режиме включены</value>
+  </data>
+  <data name="prefparam_split_payment_max_clients" xml:space="preserve">
+    <value>Раздельный счет :: Максимальное количество раздельных клиентов</value>
+  </data>
+  <data name="prefparam_split_payment_min_clients" xml:space="preserve">
+    <value>Раздельный счет :: Минимальное количество раздельных клиентов</value>
+  </data>
+  <data name="prefparam_split_payment_start_clients" xml:space="preserve">
+    <value>Раздельный счет :: Начальный номер раздельных клиентов</value>
+  </data>
+  <data name="prefparam_system_currency" xml:space="preserve">
+    <value>Currency :: System Currency</value>
+  </data>
+  <data name="prefparam_ticket_filename_loggero" xml:space="preserve">
+    <value>Ticket :: Logo FileName</value>
+  </data>
+  <data name="prefparam_ticket_footer_line1" xml:space="preserve">
+    <value>Ticket :: Footer Line 1</value>
+  </data>
+  <data name="prefparam_ticket_footer_line2" xml:space="preserve">
+    <value>Ticket :: Footer Line 2</value>
+  </data>
+  <data name="prefparam_ticket_print_ticket" xml:space="preserve">
+    <value>Ticket :: Print Ticket</value>
+  </data>
+  <data name="prefparam_print_qrcode" xml:space="preserve">
+    <value>Documents :: Print QRCode</value>
+  </data>
+  <data name="prefparam_use_cached_images" xml:space="preserve">
+    <value>Application :: Use Cached Images</value>
+  </data>
+  <data name="prefparam_use_pdfviewer" xml:space="preserve">
+    <value>Application :: Use POS PDF Viewer to open PDF Files</value>
+  </data>
+  <data name="prefparam_use_vat_autocomplete" xml:space="preserve">
+    <value>Application :: Use Vat to Auto-complete fields</value>
+  </data>
+  <data name="reporttype_label_type1" xml:space="preserve">
+    <value>Финансовые отчеты (Сводка)</value>
+  </data>
+  <data name="reporttype_label_type2" xml:space="preserve">
+    <value>Финансовые отчеты (Детальные)</value>
+  </data>
+  <data name="reporttype_label_type3" xml:space="preserve">
+    <value>Финансовые отчеты (Детальные/Группированные)</value>
+  </data>
+  <data name="reporttype_label_type4" xml:space="preserve">
+    <value>Вспомогательные таблицы</value>
+  </data>
+  <data name="reporttype_label_type5" xml:space="preserve">
+    <value>Прочие отчеты</value>
+  </data>
+  <data name="reporttype_label_type6" xml:space="preserve">
+    <value>Отчеты по складу</value>
+  </data>
+  <data name="report_account_balance" xml:space="preserve">
+    <value>Баланс счета</value>
+  </data>
+  <data name="report_balance_sheet" xml:space="preserve">
+    <value>Балансовый отчет</value>
+  </data>
+  <data name="report_canceled_articles_per_employee" xml:space="preserve">
+    <value>Отмененные товары по сотруднику</value>
+  </data>
+  <data name="report_cash_total" xml:space="preserve">
+    <value>Общая сумма наличных</value>
+  </data>
+  <data name="report_close_peak_hour" xml:space="preserve">
+    <value>Закрыть пиковый час</value>
+  </data>
+  <data name="report_close_worksession" xml:space="preserve">
+    <value>Закрыть рабочие сессии</value>
+  </data>
+  <data name="report_company_billing" xml:space="preserve">
+    <value>Отчет по выставлению счетов компании</value>
+    <comment>Title for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_column_billing" xml:space="preserve">
+    <value>Сумма к оплате</value>
+    <comment>Billing column label for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_column_doc_associated" xml:space="preserve">
+    <value>Связанный документ</value>
+    <comment>Associated Document column label for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_column_tax" xml:space="preserve">
+    <value>Taxes</value>
+    <comment>Taxes column label for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_label_total_billing" xml:space="preserve">
+    <value>Общая сумма к оплате за период</value>
+    <comment>Billing Total label for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_label_total_net" xml:space="preserve">
+    <value>Чистая стоимость за период</value>
+    <comment>Total Net label for Company Billing report</comment>
+  </data>
+  <data name="report_company_billing_label_total_tax" xml:space="preserve">
+    <value>Общая сумма налогов за период</value>
+    <comment>Total Tax label for Company Billing report</comment>
+  </data>
+  <data name="report_courier_deliver" xml:space="preserve">
+    <value>Курьерская доставка</value>
+  </data>
+  <data name="report_customer_balance_details" xml:space="preserve">
+    <value>Детали баланса счета клиента</value>
+    <comment>Related to Customer Balance Details report</comment>
+  </data>
+  <data name="report_customer_balance_details_consolidated_balance" xml:space="preserve">
+    <value>Консолидированный баланс</value>
+    <comment>Related to Customer Balance Details report. Label for 'Consolidated Balance'.</comment>
+  </data>
+  <data name="report_customer_balance_details_customer_since" xml:space="preserve">
+    <value>Клиент с</value>
+    <comment>Related to Customer Balance Details report. Label for 'Customer Since'.</comment>
+  </data>
+  <data name="report_customer_balance_details_reference_document" xml:space="preserve">
+    <value>Номер справочного документа</value>
+    <comment>Related to Customer Balance Details report. Label for column 'Reference Document Number'.</comment>
+  </data>
+  <data name="report_customer_balance_summary" xml:space="preserve">
+    <value>Сводка баланса клиента</value>
+    <comment>Customer Balance Summary report</comment>
+  </data>
+  <data name="report_detailed_grouped_pending_payment" xml:space="preserve">
+    <value>Ожидающий оплаты</value>
+    <comment>Related to Payment Method and Terms of Payment related reports. Label created for the cases we have no payment method/terms: 'NC', 'FT' and 'FS'.</comment>
+  </data>
+  <data name="report_discounts_per_user" xml:space="preserve">
+    <value>Скидки по пользователю</value>
+  </data>
+  <data name="report_employee_movements" xml:space="preserve">
+    <value>Движения по сотруднику</value>
+  </data>
+  <data name="report_empty_value" xml:space="preserve">
+    <value> - - - - </value>
+  </data>
+  <data name="report_final_balance" xml:space="preserve">
+    <value>Итоговый баланс за период</value>
+    <comment>Final balance filter based</comment>
+  </data>
+  <data name="report_inventory" xml:space="preserve">
+    <value>Инвентаризация</value>
+  </data>
+  <data name="report_label_totals" xml:space="preserve">
+    <value>Итого</value>
+    <comment>"Totals" label for reports, when showing the total of registers and values</comment>
+  </data>
+  <data name="report_label_totals_sub" xml:space="preserve">
+    <value>Промежуточный итог</value>
+    <comment>"Subtotals" label for reports, when showing the subtotal of registers and values</comment>
+  </data>
+  <data name="report_list_audit_table" xml:space="preserve">
+    <value>Таблица аудита</value>
+  </data>
+  <data name="report_list_close_worksession" xml:space="preserve">
+    <value>Список закрытых рабочих сессий</value>
+  </data>
+  <data name="report_list_consumption_per_user" xml:space="preserve">
+    <value>Потребление по пользователю</value>
+  </data>
+  <data name="report_list_current_account" xml:space="preserve">
+    <value>Продажи в кредит</value>
+  </data>
+  <data name="report_list_customers" xml:space="preserve">
+    <value>Клиенты</value>
+  </data>
+  <data name="report_list_family_subfamily_articles" xml:space="preserve">
+    <value>Семейства, Подсемейства и Товары</value>
+  </data>
+  <data name="report_list_stock_movements" xml:space="preserve">
+    <value>Движения склада</value>
+  </data>
+  <data name="report_list_stock_warehouse" xml:space="preserve">
+    <value>Запасы на складе</value>
+  </data>
+  <data name="report_list_stock_article" xml:space="preserve">
+    <value>Запасы по товару</value>
+  </data>
+  <data name="report_list_stock_supplier" xml:space="preserve">
+    <value>Запасы по поставщику</value>
+  </data>
+  <data name="report_list_user_commission" xml:space="preserve">
+    <value>Комиссии</value>
+  </data>
+  <data name="report_list_worksession" xml:space="preserve">
+    <value>Список рабочих сессий</value>
+  </data>
+  <data name="report_occupation_average" xml:space="preserve">
+    <value>Средняя занятость</value>
+  </data>
+  <data name="report_record_peak_hour" xml:space="preserve">
+    <value>Топ пиковые часы регистрации</value>
+  </data>
+  <data name="report_sales_detail_group_postfix" xml:space="preserve">
+    <value>(Детально/Группировано)</value>
+  </data>
+  <data name="report_sales_detail_per_family_and_subfamily" xml:space="preserve">
+    <value>Детали продаж по семейству/подсемейству</value>
+  </data>
+  <data name="report_sales_detail_per_place_order" xml:space="preserve">
+    <value>Детальные продажи по зоне/заказу</value>
+    <comment>Label for Retail theme reports</comment>
+  </data>
+  <data name="report_sales_detail_per_place_table" xml:space="preserve">
+    <value>Детали продаж по зоне/столу</value>
+    <comment>Label for Default theme reports</comment>
+  </data>
+  <data name="report_sales_detail_postfix" xml:space="preserve">
+    <value>(Детально)</value>
+  </data>
+  <data name="report_sales_per_country" xml:space="preserve">
+    <value>Продажи по стране</value>
+  </data>
+  <data name="report_sales_per_currency" xml:space="preserve">
+    <value>Продажи по валюте</value>
+  </data>
+  <data name="report_sales_per_customer" xml:space="preserve">
+    <value>Продажи по клиенту</value>
+  </data>
+  <data name="report_sales_per_date" xml:space="preserve">
+    <value>Продажи по дате</value>
+  </data>
+  <data name="report_sales_per_vat" xml:space="preserve">
+    <value>Продажи по НДС</value>
+  </data>
+  <data name="report_sales_per_vat_by_article_class" xml:space="preserve">
+    <value>Продажи по НДС/классу товара</value>
+  </data>
+  <data name="report_sales_per_family" xml:space="preserve">
+    <value>Продажи по семейству</value>
+  </data>
+  <data name="report_sales_per_family_and_subfamily" xml:space="preserve">
+    <value>Продажи по семейству/подсемейству</value>
+  </data>
+  <data name="report_sales_per_finance_document" xml:space="preserve">
+    <value>Продажи по финансовому документу</value>
+  </data>
+  <data name="report_sales_per_payment_condition" xml:space="preserve">
+    <value>Продажи по условиям оплаты</value>
+  </data>
+  <data name="report_sales_per_payment_method" xml:space="preserve">
+    <value>Продажи по способу оплаты</value>
+  </data>
+  <data name="report_sales_per_place" xml:space="preserve">
+    <value>Продажи по зоне</value>
+  </data>
+  <data name="report_sales_per_place_order" xml:space="preserve">
+    <value>Продажи по зоне/заказу</value>
+    <comment>Label for Retail reports menu</comment>
+  </data>
+  <data name="report_sales_per_place_table" xml:space="preserve">
+    <value>Продажи по зоне/столу</value>
+    <comment>Label for Default reports menu</comment>
+  </data>
+  <data name="report_sales_per_terminal" xml:space="preserve">
+    <value>Продажи по терминалу</value>
+  </data>
+  <data name="report_sales_per_user" xml:space="preserve">
+    <value>Продажи по сотруднику</value>
+  </data>
+  <data name="report_service_hours" xml:space="preserve">
+    <value>Часы работы</value>
+  </data>
+  <data name="report_top_close_employees" xml:space="preserve">
+    <value>Топ закрывающих сотрудников</value>
+  </data>
+  <data name="report_top_employee_records" xml:space="preserve">
+    <value>Топ записей сотрудников</value>
+  </data>
+  <data name="report_top_offers" xml:space="preserve">
+    <value>Топ предложений</value>
+  </data>
+  <data name="report_total_credit" xml:space="preserve">
+    <value>Кредитный баланс за период</value>
+    <comment>Final credit balance filter based</comment>
+  </data>
+  <data name="report_total_debit" xml:space="preserve">
+    <value>Дебетовый баланс за период</value>
+    <comment>Final debit balance filter based</comment>
+  </data>
+  <data name="report_total_per_terminal" xml:space="preserve">
+    <value>Итого по терминалу</value>
+  </data>
+  <data name="report_total_record_count" xml:space="preserve">
+    <value>Количество записей за период</value>
+    <comment>Sum of all records filter based</comment>
+  </data>
+  <data name="report_withholding_tax" xml:space="preserve">
+    <value>Удержанный налог</value>
+  </data>
+  <data name="report_zone_total" xml:space="preserve">
+    <value>Итого по зоне</value>
+  </data>
+  <data name="saft_value_unknown" xml:space="preserve">
+    <value>Неизвестно</value>
+  </data>
+  <data name="status_message_open_cashdrawer" xml:space="preserve">
+    <value>Откройте смену/кассу для начала работы</value>
+  </data>
+  <data name="status_message_pin_error" xml:space="preserve">
+    <value>Неверный пароль!</value>
+  </data>
+  <data name="status_message_select_order_or_table_appmode_default" xml:space="preserve">
+    <value>Выберите стол для начала работы</value>
+  </data>
+  <data name="status_message_select_order_or_table_appmode_retail" xml:space="preserve">
+    <value>Выберите заказ для начала работы</value>
+  </data>
+  <data name="ticket_title_worksession_day_close" xml:space="preserve">
+    <value>Закрытие дня</value>
+  </data>
+  <data name="ticket_title_worksession_day_resume" xml:space="preserve">
+    <value>Итоги дня</value>
+  </data>
+  <data name="ticket_title_worksession_money_in" xml:space="preserve">
+    <value>Внесение в кассу</value>
+  </data>
+  <data name="ticket_title_worksession_money_out" xml:space="preserve">
+    <value>Изъятие из кассы</value>
+  </data>
+  <data name="ticket_title_worksession_terminal_close" xml:space="preserve">
+    <value>Закрыть кассу</value>
+  </data>
+  <data name="ticket_title_worksession_terminal_open" xml:space="preserve">
+    <value>Открыть кассу</value>
+  </data>
+  <data name="ticket_title_worksession_terminal_resume" xml:space="preserve">
+    <value>Итоги кассы</value>
+  </data>
+  <data name="widget_combobox_undefined" xml:space="preserve">
+    <value>-- Выберите --</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_insert" xml:space="preserve">
+    <value>Вставить</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_page_first" xml:space="preserve">
+    <value>Первая страница</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_page_last" xml:space="preserve">
+    <value>Последняя страница</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_page_next" xml:space="preserve">
+    <value>Следующая страница</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_page_prev" xml:space="preserve">
+    <value>Предыдущая страница</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_preview" xml:space="preserve">
+    <value>Предпросмотр</value>
+    <comment>Preview</comment>
+  </data>
+  <data name="widget_generictreeviewnavigator_record_next" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_record_prev" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_update" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="widget_generictreeviewnavigator_view" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
+  <data name="widget_generictreeviewsearch_search_advanced" xml:space="preserve">
+    <value>Расширенный</value>
+  </data>
+  <data name="widget_generictreeviewsearch_search_label" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="widget_pospinpad_change_password" xml:space="preserve">
+    <value>Сброс</value>
+  </data>
+  <data name="widget_pospinpad_loggerin" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="widget_pospinpad_ok" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="window_license_label_info" xml:space="preserve">
+    <value>На этой форме можно зарегистрировать программное обеспечение. Введенные данные конфиденциальны и не передаются третьим лицам в рекламных целях.</value>
+  </data>
+  <data name="window_license_label_internet_registration" xml:space="preserve">
+    <value>Регистрация через Интернет</value>
+  </data>
+  <data name="window_license_label_welcome" xml:space="preserve">
+    <value>Добро пожаловать</value>
+  </data>
+  <data name="window_license_label_without_internet_contact_info" xml:space="preserve">
+    <value>Выполните регистрацию по следующим контактам:</value>
+  </data>
+  <data name="window_license_label_without_internet_registration" xml:space="preserve">
+    <value>Нет подключения к Интернету?</value>
+  </data>
+  <data name="window_title_backoffice" xml:space="preserve">
+    <value>Бэк-офис</value>
+  </data>
+  <data name="window_title_default_input_text_dialog" xml:space="preserve">
+    <value>Ввод текста</value>
+  </data>
+  <data name="window_title_dialog_already_paid" xml:space="preserve">
+    <value>Товар оплачен</value>
+  </data>
+  <data name="window_title_dialog_already_exited" xml:space="preserve">
+    <value>Товар выдан</value>
+  </data>
+  <data name="window_title_dialog_article_stock" xml:space="preserve">
+    <value>Склад</value>
+  </data>
+  <data name="window_title_dialog_cash" xml:space="preserve">
+    <value>Рабочая сессия</value>
+  </data>
+  <data name="window_title_dialog_cashdrawer" xml:space="preserve">
+    <value>Кассовый ящик :: Итого в кассовом ящике: {0}</value>
+  </data>
+  <data name="window_title_dialog_change_password" xml:space="preserve">
+    <value>Изменить пароль</value>
+  </data>
+  <data name="window_title_dialog_change_user" xml:space="preserve">
+    <value>Сменить пользователя</value>
+  </data>
+  <data name="window_title_dialog_clone_documents_confirmation" xml:space="preserve">
+    <value>Хотите подтвердить и скопировать следующие документы?
+
+{0}</value>
+  </data>
+  <data name="window_title_dialog_datepicker" xml:space="preserve">
+    <value>Выберите дату</value>
+  </data>
+  <data name="window_title_dialog_datepicket_startend" xml:space="preserve">
+    <value>Выберите начальную/конечную дату</value>
+  </data>
+  <data name="window_title_dialog_delete_record" xml:space="preserve">
+    <value>Удалить запись</value>
+  </data>
+  <data name="window_title_dialog_documentfinance_preview_totals_mode_confirm" xml:space="preserve">
+    <value>Хотите продолжить и выдать фискальный документ?</value>
+  </data>
+  <data name="window_title_dialog_documentfinance_preview_totals_mode_preview" xml:space="preserve">
+    <value>Итоги фискального документа</value>
+  </data>
+  <data name="window_title_dialog_document_finance" xml:space="preserve">
+    <value>Документы</value>
+  </data>
+  <data name="window_title_dialog_document_finance_payment" xml:space="preserve">
+    <value>Квитанции</value>
+    <comment>Payment documents window label</comment>
+  </data>
+  <data name="window_title_dialog_document_finance_column_related_doc" xml:space="preserve">
+    <value>Связанные документы</value>
+    <comment>Column label for the list of document numbers associated to the document</comment>
+  </data>
+  <data name="window_title_dialog_document_finance_column_total_credit_rc_nc_based" xml:space="preserve">
+    <value>Оплаченная сумма</value>
+    <comment>Column label for the sum of RC and NC issued to the document</comment>
+  </data>
+  <data name="window_title_dialog_document_finance_page1" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="window_title_dialog_document_finance_page2" xml:space="preserve">
+    <value>Клиент/Организация</value>
+  </data>
+  <data name="window_title_dialog_document_finance_page3" xml:space="preserve">
+    <value>Товары</value>
+  </data>
+  <data name="window_title_dialog_document_finance_page4" xml:space="preserve">
+    <value>Справка: Доставка</value>
+  </data>
+  <data name="window_title_dialog_document_finance_page5" xml:space="preserve">
+    <value>Справка: Отгрузка</value>
+  </data>
+  <data name="window_title_dialog_document_finance_page6" xml:space="preserve">
+    <value>Комментарии</value>
+  </data>
+  <data name="window_title_dialog_document_finance_print" xml:space="preserve">
+    <value>Док.№: {0}</value>
+  </data>
+  <data name="window_title_dialog_exception_error" xml:space="preserve">
+    <value>Ошибка исключения</value>
+  </data>
+  <data name="window_title_dialog_filepicker" xml:space="preserve">
+    <value>Выберите файл</value>
+  </data>
+  <data name="window_title_dialog_filter" xml:space="preserve">
+    <value>Фильтровать документы</value>
+    <comment>Documents filter window label</comment>
+  </data>
+  <data name="window_title_dialog_message_dialog" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="window_title_dialog_moneypad" xml:space="preserve">
+    <value>Запрошенные деньги</value>
+  </data>
+  <data name="window_title_dialog_moneypad_product_price" xml:space="preserve">
+    <value>Цена товара</value>
+  </data>
+  <data name="window_title_dialog_new_finance_document" xml:space="preserve">
+    <value>Новый фискальный документ</value>
+  </data>
+  <data name="window_title_dialog_notification" xml:space="preserve">
+    <value>Уведомления</value>
+  </data>
+  <data name="window_title_dialog_orders" xml:space="preserve">
+    <value>Заказы</value>
+  </data>
+  <data name="window_title_dialog_partial_payment" xml:space="preserve">
+    <value>Частичная оплата</value>
+  </data>
+  <data name="window_title_dialog_payments" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="window_title_dialog_pay_invoices" xml:space="preserve">
+    <value>Погасить счета</value>
+  </data>
+  <data name="window_title_dialog_readcard" xml:space="preserve">
+    <value>Читать карту</value>
+  </data>
+  <data name="window_title_dialog_report_filter" xml:space="preserve">
+    <value>Фильтровать отчет</value>
+  </data>
+  <data name="window_title_dialog_request_user_pin" xml:space="preserve">
+    <value>Аутентификация пользователя</value>
+  </data>
+  <data name="window_title_dialog_select_record" xml:space="preserve">
+    <value>Выберите запись</value>
+  </data>
+  <data name="window_title_dialog_send_message" xml:space="preserve">
+    <value>Отправить сообщение</value>
+  </data>
+  <data name="window_title_dialog_split_payment" xml:space="preserve">
+    <value>Разделение платежа: Итого по клиенту: [{0} x {1}]</value>
+  </data>
+  <data name="window_title_dialog_system" xml:space="preserve">
+    <value>Система</value>
+  </data>
+  <data name="window_title_dialog_tables_appmode_default" xml:space="preserve">
+    <value>Столы</value>
+  </data>
+  <data name="window_title_dialog_tables_appmode_retail" xml:space="preserve">
+    <value>Заказы</value>
+  </data>
+  <data name="window_title_dialog_template" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="window_title_dialog_update_POS" xml:space="preserve">
+    <value>Обновить POS до версии: {0}</value>
+  </data>
+  <data name="window_title_dialog_update_record" xml:space="preserve">
+    <value>Обновить запись</value>
+  </data>
+  <data name="window_title_dialog_validation_error" xml:space="preserve">
+    <value>Ошибка валидации</value>
+  </data>
+  <data name="window_title_dialog_vatrate_free_article_detected" xml:space="preserve">
+    <value>Товар, освобожденный от НДС</value>
+  </data>
+  <data name="window_title_dialog_virtual_keyboard" xml:space="preserve">
+    <value>Виртуальная клавиатура</value>
+  </data>
+  <data name="window_title_edit_article" xml:space="preserve">
+    <value>Редактировать товары</value>
+  </data>
+  <data name="window_title_edit_articlefamily" xml:space="preserve">
+    <value>Редактировать семейства товаров</value>
+  </data>
+  <data name="window_title_edit_articlesubfamily" xml:space="preserve">
+    <value>Редактировать подсемейства товаров</value>
+  </data>
+  <data name="window_title_edit_articletype" xml:space="preserve">
+    <value>Редактировать типы товаров</value>
+  </data>
+  <data name="window_title_edit_commission_groups" xml:space="preserve">
+    <value>Редактировать группы комиссий</value>
+  </data>
+  <data name="window_title_edit_configurationcashregister" xml:space="preserve">
+    <value>Редактировать кассовые аппараты</value>
+  </data>
+  <data name="window_title_edit_configurationcurrency" xml:space="preserve">
+    <value>Редактировать валюту</value>
+  </data>
+  <data name="window_title_edit_configurationdevice" xml:space="preserve">
+    <value>Редактировать устройства</value>
+  </data>
+  <data name="window_title_edit_configurationinputreader" xml:space="preserve">
+    <value>Ввод данных</value>
+  </data>
+  <data name="window_title_edit_configurationkeyboard" xml:space="preserve">
+    <value>Редактировать клавиатуры</value>
+  </data>
+  <data name="window_title_edit_configurationmaintenance" xml:space="preserve">
+    <value>Управлять обслуживанием</value>
+  </data>
+  <data name="window_title_edit_configurationpaymentcondition" xml:space="preserve">
+    <value>Редактировать условия оплаты</value>
+  </data>
+  <data name="window_title_edit_configurationpaymentmethod" xml:space="preserve">
+    <value>Редактировать способы оплаты</value>
+  </data>
+  <data name="window_title_edit_configurationplacemovementtype" xml:space="preserve">
+    <value>Тип движения</value>
+  </data>
+  <data name="window_title_edit_configurationplacetable" xml:space="preserve">
+    <value>Связать столы с местами</value>
+  </data>
+  <data name="window_title_edit_configurationplaceterminal" xml:space="preserve">
+    <value>Связать терминалы с местами</value>
+  </data>
+  <data name="window_title_edit_configurationpoledisplay" xml:space="preserve">
+    <value>Дисплей клиента</value>
+  </data>
+  <data name="window_title_edit_configurationpreferenceparameter" xml:space="preserve">
+    <value>Редактировать системные параметры</value>
+  </data>
+  <data name="window_title_edit_configurationpricetype" xml:space="preserve">
+    <value>Редактировать типы цен</value>
+  </data>
+  <data name="window_title_edit_configurationunitmeasure" xml:space="preserve">
+    <value>Редактировать единицы измерения</value>
+  </data>
+  <data name="window_title_edit_configurationunitsize" xml:space="preserve">
+    <value>Редактировать единицы длины</value>
+  </data>
+  <data name="window_title_edit_configurationvatrate" xml:space="preserve">
+    <value>Редактировать налоговые ставки</value>
+  </data>
+  <data name="window_title_edit_configurationweighingmachine" xml:space="preserve">
+    <value>Весы</value>
+  </data>
+  <data name="window_title_edit_customer" xml:space="preserve">
+    <value>Редактировать клиента</value>
+  </data>
+  <data name="window_title_edit_customerdiscountgroup" xml:space="preserve">
+    <value>Редактировать скидки</value>
+  </data>
+  <data name="window_title_edit_customertype" xml:space="preserve">
+    <value>Редактировать типы клиентов</value>
+  </data>
+  <data name="window_title_edit_dialogconfigurationprinters" xml:space="preserve">
+    <value>Принтеры</value>
+  </data>
+  <data name="window_title_edit_dialogconfigurationprinterstype" xml:space="preserve">
+    <value>Редактировать тип принтера</value>
+  </data>
+  <data name="window_title_edit_dialog_article_class" xml:space="preserve">
+    <value>Редактировать класс товаров</value>
+  </data>
+  <data name="window_title_edit_dialog_configuration_country" xml:space="preserve">
+    <value>Редактировать страны</value>
+  </data>
+  <data name="window_title_edit_dialog_configuration_holydays" xml:space="preserve">
+    <value>Редактировать праздники</value>
+  </data>
+  <data name="window_title_edit_documentfinanceseries" xml:space="preserve">
+    <value>Редактировать серии</value>
+  </data>
+  <data name="window_title_edit_template" xml:space="preserve">
+    <value>Редактировать шаблон</value>
+  </data>
+  <data name="window_title_edit_user" xml:space="preserve">
+    <value>Редактировать пользователей</value>
+  </data>
+  <data name="window_title_edit_user_commission_group" xml:space="preserve">
+    <value>Редактировать группы комиссий</value>
+  </data>
+  <data name="window_title_edit_user_profile" xml:space="preserve">
+    <value>Редактировать профили пользователей</value>
+  </data>
+  <data name="window_title_license" xml:space="preserve">
+    <value>LogicPulse: Система бесплатной регистрации</value>
+  </data>
+  <data name="window_title_reports" xml:space="preserve">
+    <value>Отчеты</value>
+  </data>
+  <data name="window_title_select_backup_filename" xml:space="preserve">
+    <value>Выберите файл резервной копии</value>
+  </data>
+  <data name="window_title_select_country" xml:space="preserve">
+    <value>Выберите страну</value>
+  </data>
+  <data name="window_title_select_customer" xml:space="preserve">
+    <value>Выбрать клиента</value>
+  </data>
+  <data name="window_title_select_finance_document" xml:space="preserve">
+    <value>Документы</value>
+  </data>
+  <data name="window_title_select_finance_document_cc" xml:space="preserve">
+    <value>Выберите документы текущего счета</value>
+  </data>
+  <data name="window_title_select_finance_document_ft_unpaid" xml:space="preserve">
+    <value>Выберите счета к погашению</value>
+  </data>
+  <data name="window_title_select_payments" xml:space="preserve">
+    <value>Выберите квитанции</value>
+  </data>
+  <data name="window_title_select_ticket" xml:space="preserve">
+    <value>Выберите заказ</value>
+  </data>
+  <data name="window_title_select_worksession_period_day" xml:space="preserve">
+    <value>Выберите рабочий период (день)</value>
+  </data>
+  <data name="window_title_send_email" xml:space="preserve">
+    <value>Отправить Email</value>
+  </data>
+  <data name="window_title_series_create_document_type_series" xml:space="preserve">
+    <value>Создать серии</value>
+  </data>
+  <data name="window_title_series_create_series" xml:space="preserve">
+    <value>Создать фискальные серии</value>
+  </data>
+  <data name="window_title_series_fiscal_year_close_current" xml:space="preserve">
+    <value>Закрыть/Открыть фискальный год</value>
+  </data>
+  <data name="window_title_show_results" xml:space="preserve">
+    <value>Показать {0} результатов из {1}</value>
+    <comment>Показать результаты</comment>
+  </data>
+  <data name="xml_value_unknown" xml:space="preserve">
+    <value>Неизвестно</value>
+  </data>
+  <data name="global_new_version" xml:space="preserve">
+    <value>Новая версия: {0}</value>
+  </data>
+  <data name="global_pos_update" xml:space="preserve">
+    <value>Хотите обновить POS? Он будет автоматически закрыт в процессе обновления!</value>
+  </data>
+  <data name="global_documentfinance_years_short" xml:space="preserve">
+    <value>Откр. фискального года</value>
+  </data>
+  <data name="global_documentticket_type_title_cs_short" xml:space="preserve">
+    <value>Склады</value>
+  </data>
+  <data name="report_company_billing_short" xml:space="preserve">
+    <value>Отч. по счетам</value>
+  </data>
+  <data name="report_customer_balance_details_short" xml:space="preserve">
+    <value>Вып. по клиенту</value>
+  </data>
+  <data name="window_title_dialog_new_document" xml:space="preserve">
+    <value>Новый документ</value>
+  </data>
+  <data name="global_update_pos" xml:space="preserve">
+    <value>Обновить POS</value>
+  </data>
+  <data name="dialog_message_culture_change" xml:space="preserve">
+    <value>Язык приложения был изменен на {0}, пожалуйста, перезапустите POS для подтверждения изменений</value>
+  </data>
+  <data name="global_warning_cant_open_title" xml:space="preserve">
+    <value>Невозможно открыть</value>
+  </data>
+  <data name="window_dialog_cant_open_document" xml:space="preserve">
+    <value>Документ {0}, который вы пытаетесь открыть, был выдан на принтер чеков, его нельзя открыть!
+
+Примечание: Можно открывать только документы, выданные на принтер A4 или экспортированные в PDF</value>
+  </data>
+  <data name="global_insert_articles" xml:space="preserve">
+    <value>Вставить товары</value>
+  </data>
+  <data name="dialog_message_code_number_exists" xml:space="preserve">
+    <value>Код уже зарегистрирован в системе!
+Пожалуйста, введите другой номер и попробуйте снова.</value>
+  </data>
+  <data name="prefparam_use_ccdailyticket" xml:space="preserve">
+    <value>Чек :: Печатать детали текущего счета в чеке дневных движений или сессии</value>
+  </data>
+  <data name="dialog_edit_article_tab4_label1" xml:space="preserve">
+    <value>Связанные товары</value>
+  </data>
+  <data name="global_composite_article" xml:space="preserve">
+    <value>Составной товар</value>
+  </data>
+  <data name="dialog_message_composite_article_same" xml:space="preserve">
+    <value>Вставленный товар является оригинальным товаром!</value>
+  </data>
+  <data name="dialog_message_composite_article_already" xml:space="preserve">
+    <value>Вставленный товар уже связан!</value>
+  </data>
+  <data name="dialog_message__pos_order_cancel" xml:space="preserve">
+    <value>Вы уверены, что хотите отменить текущий заказ?</value>
+  </data>
+  <data name="report_amount_carried" xml:space="preserve">
+    <value>Перенесенная сумма</value>
+  </data>
+  <data name="report_amount_transposed" xml:space="preserve">
+    <value>Сумма к переносу</value>
+  </data>
+  <data name="report_footer_ao" xml:space="preserve">
+    <value>Товары/услуги были предоставлены покупателю в эту дату: </value>
+  </data>
+  <data name="global_pole_display_com_port" xml:space="preserve">
+    <value>COM порт</value>
+  </data>
+  <data name="global_pole_display_global_total" xml:space="preserve">
+    <value>Итого неликв.</value>
+  </data>
+  <data name="global_barcode_articlecode" xml:space="preserve">
+    <value>Штрих-код / Код товара</value>
+  </data>
+  <data name="global_invalid_code" xml:space="preserve">
+    <value>Введенный код не существует в системе</value>
+  </data>
+  <data name="global_documentfinance_insert_new_article" xml:space="preserve">
+    <value>Новый товар успешно добавлен</value>
+  </data>
+  <data name="global_documentfinance_insert_new_article_code_error" xml:space="preserve">
+    <value>Код вставленного товара уже существует или код/название товара пустое</value>
+  </data>
+  <data name="article_type_without_price" xml:space="preserve">
+    <value>Тип товара без цены</value>
+  </data>
+  <data name="global_new_article" xml:space="preserve">
+    <value>новый товар</value>
+  </data>
+  <data name="global_printer_choose_printer" xml:space="preserve">
+    <value>Хотите напечатать документ на принтере чеков?</value>
+  </data>
+  <data name="global_email_separator" xml:space="preserve">
+    <value>Email (для нескольких email используйте запятую. Например: 123@123.ru,test@test.ru)</value>
+  </data>
+  <data name="change_logger" xml:space="preserve">
+    <value>Журнал изменений (Changelog)</value>
+  </data>
+  <data name="global_minimum_stock" xml:space="preserve">
+    <value>Минимальный запас</value>
+  </data>
+  <data name="prefparam_check_stocks" xml:space="preserve">
+    <value>Склады :: Проверять запасы</value>
+  </data>
+  <data name="prefparam_check_stocks_message" xml:space="preserve">
+    <value>Склады :: Показывать сообщение о запасе</value>
+  </data>
+  <data name="window_check_stock_question" xml:space="preserve">
+    <value>Введенное количество равно или меньше минимального количества запаса, хотите продолжить?</value>
+  </data>
+  <data name="global_serialnumber" xml:space="preserve">
+    <value>Серийный номер</value>
+  </data>
+  <data name="global_unique_articles" xml:space="preserve">
+    <value>Уникальные товары</value>
+  </data>
+  <data name="global_serial_number" xml:space="preserve">
+    <value>Серийный номер</value>
+  </data>
+  <data name="global_warehose_management" xml:space="preserve">
+    <value>Управление складами</value>
+  </data>
+  <data name="global_warehouse" xml:space="preserve">
+    <value>Склад</value>
+  </data>
+  <data name="window_title_article_location" xml:space="preserve">
+    <value>Изменить местоположение товара</value>
+  </data>
+  <data name="global_default_warehouse" xml:space="preserve">
+    <value>Склад по умолчанию</value>
+  </data>
+  <data name="global_article_history" xml:space="preserve">
+    <value>История товара</value>
+  </data>
+  <data name="global_internal_moviment" xml:space="preserve">
+    <value>Внутреннее движение</value>
+  </data>
+  <data name="global_locations" xml:space="preserve">
+    <value>Местоположения</value>
+  </data>
+  <data name="global_warning_acquire_module_stocks" xml:space="preserve">
+    <value>Для использования полной версии управления запасами, пожалуйста, приобретите дополнительный модуль</value>
+  </data>
+  <data name="global_warning_message_database_version" xml:space="preserve">
+    <value>Версия базы данных выше версии программного обеспечения, обновитесь до версии</value>
+  </data>
+  <data name="global_purchase_price" xml:space="preserve">
+    <value>Цена покупки</value>
+  </data>
+  <data name="report_sales_detail_per_group_vat" xml:space="preserve">
+    <value>Продажи по ставке НДС</value>
+  </data>
+  <data name="open_cash_draw_permissions" xml:space="preserve">
+    <value>Пользователь не имеет разрешений для открытия кассового аппарата</value>
+  </data>
+  <data name="global_software_key" xml:space="preserve">
+    <value>Ключ программного обеспечения</value>
+  </data>
+  <data name="prefparam_ticket_print_company_name" xml:space="preserve">
+    <value>Чек :: Печатать коммерческое название</value>
+  </data>
+</root>

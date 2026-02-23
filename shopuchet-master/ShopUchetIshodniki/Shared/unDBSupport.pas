@@ -1,0 +1,517 @@
+unit unDBSupport;
+
+interface
+
+uses
+  Classes, Forms, Sysutils, Windows, Dialogs,DB, FIB, pFIBDatabase, Variants, Controls, Types,
+  DateUtils, StrUtils, System.UITypes;
+
+type
+  TRightsArr = array of Integer;
+
+function ConnectToFB(IBDB: TpFIBDatabase; RoleName: String): Boolean;
+{Показывает окно ввода имени/пароля и пытается подключиться к FireBird}
+
+function DisconnectFromFB(IBDB: TpFIBDatabase): Boolean;
+{Пытается отключиться от FireBird}
+
+function ConnectToFBWithoutLogonDlg(IBDB: TpFIBDatabase): Boolean;
+{Не показывает окно ввода имени/пароля и пытается подключиться к FireBird}
+
+function ShowLogonDlg(OUT Count : integer) : Boolean;
+{ЕСЛИ ПОЛЬЗОВАТЕЛЕЙ БОЛЬШЕ ОДНОГО, ИЛИ ПОЛЬЗОВАТЕЛЬ ОДИН И У НЕГО ЗАДАН ПАРОЛЬ, ТОГДА ВЫДАВАТЬ ОКНО С ВЫБОРОМ ЛОГИНА/ПАРОЛЯ.
+ЕСЛИ ПОЛЬЗОВАТЕЛЕЙ НЕТ, ИЛИ ПОЛЬЗОВАТЕЛЬ ОДИН И У НЕГО НЕ ЗАДАН ПАРОЛЬ, ТО ОКНО ВЫВОДИТЬ НЕ НУЖНО}
+
+function GetServerTime: TDateTime;
+{Возвращает текущее время на сервере (приведенное к локальному)}
+
+function IsHaveRight(RightItem: Integer; RightsArr: array of Integer): Boolean;
+function IsHaveAnyRight(RightItemsArr, RightsArr: array of Integer): Boolean;
+
+procedure ReadCurrOfficRights(var RightsArr: TRightsArr);
+{Читает список прав текущего должностного лица в массив}
+
+procedure ReadSkladList;
+{Читает список складов}
+
+function SetCurSklad(Index : Integer) : Boolean;
+{Установить ID текущего склада}
+
+function GetSystemSetup(SYSTEM_SETUP : integer) : String;
+{Возвращает настройки из таблицы System_setup}
+
+function SetSystemSetup(SYSTEM_SETUP : Integer; Val : String) : Boolean;
+{Установить системную настройку в таблицу System_setup}
+
+function FillWorkSchedule : Boolean;
+{Заполняю график рабочих дней}
+
+function HowManyProductInBase : Integer;
+{Сколько товаров в базе данных}
+
+implementation
+
+uses
+  DMMain, frmMain, unErrorHandlers, unCommonFunc,
+  unInitApp, frmPsevdLogon, smsc_api;
+
+function ConnectToFB(IBDB: TpFIBDatabase; RoleName: String): Boolean;
+{Показывает окно ввода имени/пароля и пытается подключиться к FireBird}
+const
+  PasswTryCount = 3;
+var
+  UserCancel: Boolean;
+  PasswTry  : Integer;
+  Filename, FilePath : String;
+  ClientDll : String;
+begin
+  Result := True;
+  if YesNetwork = 0 then begin
+    // надоело всю папку таскать туда-сюда, закинул все исходники в папку MAIN, и потому теперь оттуда надо брать базу при тестировании.
+    // Придумал файл, если он есть - значит надо брать из тестовой папки
+    FilePath := ExtractFilePath(Application.exename);
+    if FileExists(FilePath + 'aidyn_temekov_uchet_debug.ini') then begin
+      if DataBaseName = 'Salonuchet.fdb' then
+        Filename := 'C:\CVSWork\Work\RSalonUchetFB\MAIN_SALON\' + 'SALONUCHET.FDB'
+      else if DataBaseName = 'SERVICEUCHET.FDB' then
+        Filename := 'C:\CVSWork\Work\TServiceUchetFb\MAIN_SERVICE\' + 'SERVICEUCHET.FDB'
+      else
+        Filename := 'C:\CVSWork\Work\ShopUchetFB\MAIN_SHOP\' + 'SHOPUCHET.FDB';
+    end else begin
+      if FileExists('SHOPUCHET.GDB') then
+        Filename := FilePath + 'SHOPUCHET.GDB'
+      else
+        Filename := FilePath + DataBaseName;
+    end;
+
+    ClientDll := 'fbclient.dll';
+    if not FileExists(Filename) then begin
+      MessageDlg('База данных по данному пути не найдена ' + Filename, mtError, [mbOk], 0);
+      Result := False;
+      Exit;
+    end;
+
+  end else begin
+    if ServerName = '' then begin
+      MessageDlg('Включен сетевой режим, но компьютер "Сервер" не задан! Сетевой режим будет отключен!', mtWarning, [mbOK], 0);
+      YesNetwork := 0;
+      ServerName := '';
+      Filename := ExtractFilePath(Application.exename) + DataBaseName;
+      ClientDll := 'fbclient.dll';
+    end else begin
+      if DataBaseName = 'Salonuchet.fdb' then
+        Filename := ServerName + ':salonuchet'
+      else if DataBaseName = 'SERVICEUCHET.FDB' then
+        Filename := ServerName + ':serviceuchet'
+      else
+        Filename := ServerName + ':shopuchet';
+      ClientDll := 'client.dll';
+    end;  
+  end;
+  if IBDB.Connected then
+    {Уже подключены к БД}
+    Exit;
+
+  {Подключаемся к БД}
+  PasswTry := 0;
+  repeat
+    with IBDB do begin
+      {Спрашиваем пароль}
+      UserCancel := False;
+      DBName := Filename;
+
+      if not UserCancel then begin
+        {Устанавливаем параметры подключения}
+        IBDB.DBName := DBName;
+
+        IBDB.ConnectParams.Username := 'sysdba';//UserName;
+        IBDB.ConnectParams.Password := 'masterkey';//Password;
+        IBDB.ConnectParams.RoleName := RoleName;
+        IBDB.LibraryName := ClientDll;
+        with IBDB do begin
+          try
+            Open;
+          except
+            on E: EFIBError do
+              case E.SQLCode of
+                        {
+                        Unsuccessfull execution caused by a system error that precludes successfull execution of
+                        subsequent statements.
+
+                        - Your user name and password are not defined. Ask your database
+                          administrator to set up an InterBase login
+                        - I/O error for file "FileName". Error while trying to open file.
+                          Unknown Win32 error 2
+                        }
+                -902: MessageDlg('НЕВОЗМОЖНО УСТАНОВИТЬ СВЯЗЬ С СЕРВЕРОМ. СЕРВЕР "' + ServerName + '".' + CRLF + CRLF +
+                                'Закройте программу, проверьте соединение с сервером (Wi-Fi, Lan), и попробуйте ' +
+                                'запустить программу заново.' + CRLF + CRLF +
+                                'Детали: ' + Copy(E.Message, 16), mtError, [mbOk], 0);
+                        {Unsuccessfull execution caused by an unavailable resource. Unavailable database}
+                -904: MessageDlg('Недоступная база данных' + CRLF +
+                        '(возможно, сервер FireBird остановлен).' + CRLF +
+                        'В доступе отказано', mtError, [mbOk], 0);
+              else
+                MessageDlg('Ошибка № ' + IntToStr(E.SQLCode) + ':' + CRLF +
+                           'В доступе отказано', mtError, [mbOk], 0);
+              end;
+            on E: Exception do
+              MessageDlg('Ошибка ' + E.Message + CRLF + 'В доступе отказано', mtError, [mbOk], 0);
+          end;
+        end;
+        inc(PasswTry);
+      end;
+    end;
+  until (PasswTry >= PasswTryCount) or (IBDB.Connected) or UserCancel;
+
+  Result := IBDB.Connected;
+end;
+
+function DisconnectFromFB(IBDB: TpFIBDatabase): Boolean;
+{Пытается отключиться от FireBird}
+begin
+  Result := False;
+
+  if not IBDB.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  try
+    IBDB.Close;
+  except
+    on E: Exception do
+      MessageDlg('Ошибка при отключении от базы данных:'#13#10 +
+                 E.Message, mtWarning, [mbOk], 0);
+  end;
+
+  Result := IBDB.Connected;
+end;
+
+function ConnectToFBWithoutLogonDlg(IBDB: TpFIBDatabase): Boolean;
+{Не показывает окно ввода имени/пароля и пытается подключиться к FireBird}
+begin
+  Result := True;
+
+  if IBDB.Connected then
+    {Уже подключены к БД}
+    Exit;
+
+  {Подключаемся к БД}
+  try
+    IBDB.Open;
+  except
+    on E: EFIBError do
+      case E.SQLCode of
+                {
+                Unsuccessfull execution caused by a system error that precludes successfull execution of
+                subsequent statements.
+
+                - Your user name and password are not defined. Ask your database
+                  administrator to set up an FireBird login
+                - I/O error for file "FileName". Error while trying to open file.
+                  Unknown Win32 error 2
+                }
+        -902: MessageDlg(E.Message + #13#10'В доступе отказано', mtInformation, [mbOk], 0);
+                {Unsuccessfull execution caused by an unavailable resource. Unavailable database}
+        -904: MessageDlg('Недоступная база данных'#13#10 +
+                '(возможно, сервер FireBird остановлен).'#13#10 +
+                'В доступе отказано', mtError, [mbOk], 0);
+      else
+        MessageDlg('Ошибка № ' + IntToStr(E.SQLCode) + ':'#13#10 +
+                   'В доступе отказано', mtError, [mbOk], 0);
+      end;
+    on E: Exception do
+      MessageDlg('Ошибка ' + E.Message + #13#10'В доступе отказано', mtError, [mbOk], 0);
+  end;
+
+  Result := IBDB.Connected;
+end;
+
+function GetServerTime: TDateTime;
+{Возвращает текущее время на сервере (приведенное к локальному)}
+var
+  OldDateSeparator: Char;
+begin
+  OldDateSeparator := FormatSettings.DateSeparator;
+  FormatSettings.DateSeparator := '.';
+  try
+    Result := StrToDate('01.01.1900');
+  finally
+    FormatSettings.DateSeparator := OldDateSeparator;
+  end;
+
+  if not MainDM.dbMain.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  try
+    if not MainDM.spGetServerTime.Transaction.InTransaction then
+      MainDM.spGetServerTime.Transaction.StartTransaction;
+
+    with MainDM.spGetServerTime do begin
+      ExecProc;
+
+      Result  := ParamByName('SERVER_TIME').AsDateTime;
+    end;
+
+    if MainDM.spGetServerTime.Transaction.InTransaction then
+      MainDM.spGetServerTime.Transaction.Commit;
+  except
+    on E: EFIBError do begin
+      if MainDM.spGetServerTime.Transaction.InTransaction then
+        MainDM.spGetServerTime.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in unDBSupport.GetServerTime)');
+    end;
+    on E: Exception do begin
+      if MainDM.spGetServerTime.Transaction.InTransaction then
+        MainDM.spGetServerTime.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in unDBSupport.GetServerTime)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure ReadCurrOfficRights(var RightsArr: TRightsArr);
+{Читает список прав текущего должностного лица в массив}
+var
+  i : Integer;
+begin
+  if not MainDM.dbMain.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  try
+    if not MainDM.spReadCurrOfficRights.Transaction.InTransaction then
+      MainDM.spReadCurrOfficRights.Transaction.StartTransaction;
+
+    with MainDM.spReadCurrOfficRights do begin
+      {Читаем список прав пользователя}
+      Open;
+      try
+        SetLength(RightsArr, AllRecordCount);
+        First;
+        i := 0;
+        while not Eof do begin
+          RightsArr[i] := FieldByName('RIGHTS_ITEM').AsInteger;
+          Next;
+          inc(i);
+        end;
+      finally
+        Close;
+      end;
+    end;
+
+    if MainDM.spReadCurrOfficRights.Transaction.InTransaction then
+      MainDM.spReadCurrOfficRights.Transaction.Commit;
+  except
+    on E: EFIBError do begin
+      if MainDM.spReadCurrOfficRights.Transaction.InTransaction then
+        MainDM.spReadCurrOfficRights.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in unDBSupport.ReadCurrOfficRights)');
+    end;
+    on E: Exception do begin
+      if MainDM.spReadCurrOfficRights.Transaction.InTransaction then
+        MainDM.spReadCurrOfficRights.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in unDBSupport.ReadCurrOfficRights)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+procedure ReadSkladList;
+{Читает список складов, если их больше одного}
+var
+  i : Integer;
+begin
+  if not MainDM.dbMain.Connected then
+    {Не подключены к БД}
+    Exit;
+
+  try
+    if not MainDM.spTochka.Transaction.InTransaction then
+      MainDM.spTochka.Transaction.StartTransaction;
+
+    with MainDM.spTochka do begin
+      {Читаем список прав пользователя}
+      Open;
+      try
+        SetLength(SkladArr, AllRecordCount);
+        First;
+        i := 0;
+        while not Eof do begin
+          SkladArr[i].ID := FieldByName('g_tochka').AsLargeInt;
+          SkladArr[i].Name := FieldByName('name').Asstring;
+          Next;
+          inc(i);
+        end;
+      finally
+        Close;
+      end;
+    end;
+
+    if MainDM.spTochka.Transaction.InTransaction then
+      MainDM.spTochka.Transaction.Commit;
+  except
+    on E: EFIBError do begin
+      if MainDM.spTochka.Transaction.InTransaction then
+        MainDM.spTochka.Transaction.Rollback;
+      DBErrorHandler(E.SQLCode, E.Message + #13#10'(occured in unDBSupport.ReadSkladList)');
+    end;
+    on E: Exception do begin
+      if MainDM.spTochka.Transaction.InTransaction then
+        MainDM.spTochka.Transaction.Rollback;
+      MessageDlg(E.Message + #13#10'(occured in unDBSupport.ReadSkladList)', mtError, [mbOk], 0);
+    end;
+  end;
+end;
+
+function IsHaveRight(RightItem: Integer; RightsArr: array of Integer): Boolean;
+var
+  i                 : Integer;
+  Found             : Boolean;
+  RightsArrHighBound: Integer;
+begin
+  Found := False;
+  RightsArrHighBound := High(RightsArr);
+  for i := 0 to RightsArrHighBound do
+    if RightItem = RightsArr[i] then begin
+      Found := True;
+      Break;
+    end;
+  Result := Found;
+end;
+
+function IsHaveAnyRight(RightItemsArr, RightsArr: array of Integer): Boolean;
+var
+  i,j                    : Integer;
+  Found                  : Boolean;
+  RightItemsArrHighBound,
+  RightsArrHighBound     : Integer;
+begin
+  Found := False;
+  RightItemsArrHighBound := High(RightItemsArr);
+  RightsArrHighBound := High(RightsArr);
+  for i := 0 to RightItemsArrHighBound do begin
+    for j := 0 to RightsArrHighBound do
+      if RightItemsArr[i] = RightsArr[j] then begin
+        Found := True;
+        Break;
+      end;
+    if Found then
+      Break;
+  end;
+  Result := Found;
+end;
+
+{ЕСЛИ ПОЛЬЗОВАТЕЛЕЙ БОЛЬШЕ ОДНОГО, ИЛИ ПОЛЬЗОВАТЕЛЬ ОДИН И У НЕГО ЗАДАН ПАРОЛЬ, ТОГДА ВЫДАВАТЬ ОКНО С ВЫБОРОМ ЛОГИНА/ПАРОЛЯ.
+ЕСЛИ ПОЛЬЗОВАТЕЛЕЙ НЕТ, ИЛИ ПОЛЬЗОВАТЕЛЬ ОДИН И У НЕГО НЕ ЗАДАН ПАРОЛЬ, ТО ОКНО ВЫВОДИТЬ НЕ НУЖНО}
+function ShowLogonDlg(OUT Count : integer) : Boolean;
+var
+  PsevdLogonForm: TPsevdLogonForm;
+begin
+  Result := False;
+
+  {Не подключены к БД}
+  if not MainDM.dbMain.Connected then
+    Exit;
+
+  CurrentOfficial := 0;
+  MainDM.spGetSysParamCount.ParamByName('mode_').AsInteger := 0;
+  if ExecSP(MainDM.spGetSysParamCount) then begin
+    Count := MainDM.spGetSysParamCount.ParamByName('PARAM1_OUT_').AsInteger;
+    if (Count > 1) or (Length(MainDM.spGetSysParamCount.ParamByName('PARAM1_STR_OUT_').AsString) > 0) then begin
+      PsevdLogonForm := TPsevdLogonForm.Create(Application);
+      with PsevdLogonForm do begin
+        try
+          if ShowModal = mrOK then begin
+            if leIspolnitel.EditValue > 0 then begin
+              CurrentOfficial     := leIspolnitel.EditValue;
+              CurrentOfficialAppointment := spIspolnitel.FieldByName('IS_ISPOLNITEL').AsInteger;
+              CurrentOfficialName := spIspolnitel.FieldByName('FIO').AsString;
+            end;
+          end else
+            Exit;
+        finally
+          Free
+        end;
+      end;
+    end;
+  end else
+    Exit;
+
+  // бывает что пользователь мог поставить галочку "Разграничить просмотр продаж" случайно
+  // а пользователей у него и нет. В таком случае продажи вообще не будут отражаться
+  // поэтому выключаю тут эту настройку
+  if CurrentOfficial = 0 then
+    SetSaleOfGoods := 0;
+
+  MainDM.spFillCurParams.ParamByName('G_OFFICIAL_').AsInt64 := CurrentOfficial;
+  if ExecSP(MainDM.spFillCurParams) then
+    Result := True;
+end;
+
+{Установить ID текущего склада}
+function SetCurSklad(Index : Integer) : Boolean;
+begin
+  Result := False;
+
+  MainDM.spSetSklad.ParamByName('CUR_PARAMS_').AsInteger := 2;
+  MainDM.spSetSklad.ParamByName('ID_').AsInt64 := SkladArr[Index].ID;
+
+  if ExecSpTR(MainDM.spSetSklad) then
+    result := True;
+end;
+
+{Возвращает настройки из таблицы System_setup}
+function GetSystemSetup(SYSTEM_SETUP : integer) : String;
+begin
+  MainDM.spGetSystemSetup.ParamByName('system_setup_').AsInteger := SYSTEM_SETUP;
+  if ExecSPTR(MainDM.spGetSystemSetup) then
+    result := MainDM.spGetSystemSetup.ParamByName('S_VALUE_').AsString
+  else
+    result := '';
+end;
+
+{Установить системную настройку в таблицу System_setup}
+function SetSystemSetup(SYSTEM_SETUP : Integer; Val : String) : Boolean;
+begin
+  Result := False;
+  MainDM.spSetSystemSetup.ParamByName('system_setup_').AsInteger := SYSTEM_SETUP;
+  MainDM.spSetSystemSetup.ParamByName('s_value_').AsString := Val;
+
+  if ExecSpTR(MainDM.spSetSystemSetup) then
+    result := True;
+end;
+
+{Заполняю график рабочих дней}
+function FillWorkSchedule : Boolean;
+begin
+  Result := False;
+
+  {Не подключены к БД}
+  if not MainDM.dbMain.Connected then
+    Exit;
+
+  MainDM.spFillSchedule.ParamByName('MODE_').AsInteger := 0;
+  MainDM.spFillSchedule.ParamByName('g_tochka_').AsInt64 := CurSklad;
+  if not ExecSPWT(MainDM.spFillSchedule) then
+    Exit;
+
+  Result := True;
+end;
+
+{Сколько товаров в базе данных}
+function HowManyProductInBase : Integer;
+begin
+  Result := 0;
+
+  {Не подключены к БД}
+  if not MainDM.dbMain.Connected then
+    Exit;
+
+  MainDM.spReadUniversal.SelectSql.Text := 'select g_product from g_product where g_product > 0';
+  if not OpenSP(MainDM.spReadUniversal, False) then
+    Exit;
+
+  Result := MainDM.spReadUniversal.RecordCount;
+end;
+
+end.

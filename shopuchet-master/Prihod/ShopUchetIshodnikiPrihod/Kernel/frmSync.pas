@@ -1,0 +1,513 @@
+unit frmSync;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, AppEvnts, ExtCtrls, StdCtrls,
+  Buttons, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
+  cxCalendar, cxPC, cxControls, FIBQuery, pFIBQuery,
+  pFIBStoredProc, FIBDatabase, pFIBDatabase, ComCtrls, cxCheckBox, ComOBJ, ExcelXP,
+  FileCtrl, ActiveX, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel,
+  dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
+  dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky, dxSkinLondonLiquidSky,
+  dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black, dxSkinOffice2007Blue,
+  dxSkinOffice2007Green, dxSkinOffice2007Pink, dxSkinOffice2007Silver,
+  dxSkinOffice2010Black, dxSkinOffice2010Blue, dxSkinOffice2010Silver,
+  dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver, dxSkinSpringTime,
+  dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinXmas2008Blue, dxSkinscxPCPainter, cxGraphics, cxLookAndFeels,
+  cxLookAndFeelPainters, cxButtonEdit, System.UITypes, dxBarBuiltInMenu, dxCore,
+  cxDateUtils, cxClasses, Vcl.Menus, cxButtons, cxSplitter, frmTreeFrame,
+  frmGridFrame, cxSpinEdit, cxTimeEdit, cxLookupEdit, cxDBLookupEdit,
+  cxDBLookupComboBox, cxCurrencyEdit, cxRadioGroup;
+
+type
+  TSyncForm = class(TDlgForm)
+    dxPageControl: TcxPageControl;
+    tsExport: TcxTabSheet;
+    tsImport: TcxTabSheet;
+    Label17: TLabel;
+    Shape35: TShape;
+    Shape36: TShape;
+    Label7: TLabel;
+    Shape12: TShape;
+    edDateBegin: TcxDateEdit;
+    Shape13: TShape;
+    Label2: TLabel;
+    Label3: TLabel;
+    Shape3: TShape;
+    Shape4: TShape;
+    Label1: TLabel;
+    Shape1: TShape;
+    edDateEnd: TcxDateEdit;
+    Shape2: TShape;
+    Memo1: TMemo;
+    ProgressBar: TProgressBar;
+    tranWrite: TpFIBTransaction;
+    spLoad: TpFIBStoredProc;
+    odlg: TOpenDialog;
+    spUpload: TpFIBStoredProc;
+    tranRead: TpFIBTransaction;
+    spGet: TpFIBStoredProc;
+    lbSklad: TLabel;
+    lbSklad1: TLabel;
+    cbAll: TcxCheckBox;
+    cbSales: TcxCheckBox;
+    cbPrihod: TcxCheckBox;
+    cbVozvrat: TcxCheckBox;
+    cbSpisanie: TcxCheckBox;
+    cbMove: TcxCheckBox;
+    cbProduction: TcxCheckBox;
+    bedtFileName: TcxButtonEdit;
+    bdeFileImp: TcxButtonEdit;
+    btHelp: TcxButton;
+    procedure dxPageControlChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    function Connect: boolean;
+    procedure Disconnect;
+    function OpenDocument(const aFileUrl:string): boolean;
+    procedure btHelpClick(Sender: TObject);
+    procedure cbAllClick(Sender: TObject);
+    procedure bedtFileNamePropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure bdeFileImpPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+  private
+    StarOffice: OleVariant;
+    Sheet : Variant;
+    Sheets : Variant;
+    Document: Variant;
+    function ooCreateValue(ooName: string; ooData: variant): variant;
+  public
+    { Public declarations }
+  end;
+
+var
+  SyncForm: TSyncForm;
+
+implementation
+
+uses dmReports, unCommonFunc;
+
+{$R *.dfm}
+
+procedure TSyncForm.cbAllClick(Sender: TObject);
+begin
+  if cbAll.Checked then begin
+    cbSales.Checked := false;
+    cbPrihod.Checked := false;
+    cbVozvrat.Checked := false;
+    cbSpisanie.Checked := false;
+    cbMove.Checked := false;
+    cbProduction.Checked := false;
+  end;
+  cbSales.Enabled := not (cbAll.Checked);
+  cbPrihod.Enabled := not (cbAll.Checked);
+  cbVozvrat.Enabled := not (cbAll.Checked);
+  cbSpisanie.Enabled := not (cbAll.Checked);
+  cbMove.Enabled := not (cbAll.Checked);
+  cbProduction.Enabled := not (cbAll.Checked);
+end;
+
+procedure TSyncForm.dxPageControlChange(Sender: TObject);
+begin
+  if dxPageControl.ActivePage = tsExport then begin
+    btnOk.Caption := 'Выгрузить';
+    btnOk.Enabled := True;
+  end else begin
+    if High(SkladArr) > 0 then begin
+      lbSklad.Visible := true;
+      lbSklad1.Visible := true;
+      lbSklad1.Caption := CurSkladName;
+    end;
+    btnOk.Caption := 'Загрузить';
+    IF (IsActivated = 0) THEN BEGIN
+      MessageDlg('Программа не зарегистрирована.' + #10#13 + 'Вы не можете сделать импорт!', mtWarning, [mbOk], 0);
+      btnOk.Enabled := FALSE;
+      EXIT;
+    END;
+  end;
+end;
+
+procedure TSyncForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  edDateBegin.Date := Date;
+  edDateEnd.Date   := Date;
+
+  //ставлю шрифт 9, на разных DPI он разный
+  cbAll.Style.Font.Size := 9;
+  cbSales.Style.Font.Size := 9;
+  cbMove.Style.Font.Size := 9;
+  cbPrihod.Style.Font.Size := 9;
+  cbProduction.Style.Font.Size := 9;
+  cbSpisanie.Style.Font.Size := 9;
+  cbVozvrat.Style.Font.Size := 9;
+end;
+
+procedure TSyncForm.bdeFileImpPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+begin
+  if odlg.Execute then
+    bdeFileImp.Text := odlg.FileName;
+end;
+
+procedure TSyncForm.bedtFileNamePropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var
+  Dir : String;
+begin
+  if SelectDirectory('Выберите папку', '', Dir) then BEGIN
+    IF Dir <> 'C:\' THEN
+      bedtFileName.Text := Dir + '\sync.xls'
+    ELSE
+      bedtFileName.Text := Dir + 'sync.xls';
+  END
+end;
+
+function IsOLEObjectInstalled(Name: String): boolean;
+var
+  ClassID: TCLSID;
+begin
+  Result := CLSIDFromProgID(PWideChar(WideString(Name)), ClassID) = S_OK;
+end;
+
+function TSyncForm.Connect: boolean;
+begin
+   if VarIsEmpty(StarOffice) then
+      StarOffice := CreateOleObject('com.sun.star.ServiceManager');
+   Result := not (VarIsEmpty(StarOffice) or VarIsNull(StarOffice));
+end;
+
+procedure TSyncForm.Disconnect;
+begin
+   Document.Close(True);
+   Document := Null;
+   Sheet := Unassigned;
+   StarOffice := Unassigned;
+   StarOffice := Null;
+   winexec('taskkill /F /IM soffice.bin', SW_HIDE);
+end;
+
+function TSyncForm.ooCreateValue(ooName: string; ooData: variant): variant;
+var
+  ooReflection: variant;
+begin
+  ooReflection:= StarOffice.createInstance('com.sun.star.reflection.CoreReflection');
+  ooReflection.forName('com.sun.star.beans.PropertyValue').createObject(result);
+  result.Name := ooName;
+  result.Value:= ooData;
+end;
+
+function ConvertToURL(FileName:string):string;
+var
+  i:integer;
+  ch:char;
+begin
+  Result:= '';
+  for i:=1 to Length(FileName) do
+    begin
+      ch:=FileName[i];
+      case ch of
+        ' ':Result:=Result + '%20';
+        '\':Result:=Result + '/';
+      else
+        Result:=Result + ch;
+      end;
+    end;
+  Result:= 'file:///' + Result;
+end;
+
+function TSyncForm.OpenDocument(const aFileUrl:string): boolean;
+var
+   StarDesktop: Variant;
+   VariantArr: variant;
+   FilePath : String;
+begin
+   FilePath := ConvertToURL(aFileUrl);
+   StarDesktop := StarOffice.CreateInstance('com.sun.star.frame.Desktop');
+   VariantArr := VarArrayCreate([0, 1], varVariant);
+   VariantArr[0]:= ooCreateValue('Hidden', Visible);
+   Document := StarDesktop.LoadComponentFromURL(
+                  FilePath, '_blank', 0,
+                  VariantArr);
+   Result := not (VarIsEmpty(Document) or VarIsNull(Document));
+end;
+
+procedure TSyncForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+type
+  TLog = array of string;
+var
+  AFileName: String;
+  FData    : OLEVariant;
+  WorkSheet: OLEVariant;
+  I, X: Integer;
+  Row_begin, RowForOff : Integer;  // начальная строка с которой будет импорт идти, в дальнейшем будет как входной параметр
+  ExcelInstalled, OpenOffInstalled : Boolean;
+  Var1, Var2, Var3, Var4, Var5, Var6, Var7, Var8, Var9, Var10, Var11,
+  Var12, Var13, Var14, Var15, Var16, Var17, Var18, Var19, Var20, Var21, Var22, Var23, Var24, Var25, Var26, Var27, V : Variant;
+  Pnt : String;
+begin
+  IF ModalResult = mrOk then BEGIN
+    Canclose := False;
+    IF dxPageControl.ActivePage = tsExport then BEGIN
+      if (DateToStr(edDateBegin.Date) = '00.00.0000') or (DateToStr(edDateEnd.Date) = '00.00.0000') then begin
+        MessageDlg('Введите корректный период для выгрузки данных!', mtInformation, [mbOK], 0);
+        Exit;
+      end;
+
+      if bedtFileName.Text = '' then begin
+        MessageDlg('Файл для сохранения данных не введен!', mtInformation, [mbOK], 0);
+        bedtFileName.SetFocus;
+        Exit;
+      end;
+
+      ReportsDM.PrepareReport(30);
+      ReportsDM.spReport.ParamByName('DATE_BEGIN_').AsDate := edDateBegin.Date;
+      ReportsDM.spReport.ParamByName('DATE_END_').AsDate := edDateEnd.Date;
+      ReportsDM.spReport.ParamByName('ALL_').AsInteger := Integer(cbAll.checked);
+      ReportsDM.spReport.ParamByName('SALES_').AsInteger := Integer(cbSales.checked);
+      ReportsDM.spReport.ParamByName('PRIHOD_').AsInteger := Integer(cbPrihod.checked);
+      ReportsDM.spReport.ParamByName('VOZVRAT_').AsInteger := Integer(cbVozvrat.checked);
+      ReportsDM.spReport.ParamByName('SPIS_').AsInteger := Integer(cbSpisanie.checked);
+      ReportsDM.spReport.ParamByName('MOVE_').AsInteger := Integer(cbMove.checked);
+      ReportsDM.spReport.ParamByName('PRODUCTION_').AsInteger := Integer(cbProduction.checked);
+      ReportsDM.ShowReport(2, bedtFileName.Text);
+      if ReportsDM.spReport.Transaction.InTransaction then
+        ReportsDM.spReport.Transaction.Rollback;
+
+    END ELSE BEGIN
+      IF NOT FILEEXISTS(bdeFileImp.TEXT) THEN BEGIN
+        MessageDlg('Файл для импорта не найден!', mtInformation, [mbOK], 0);
+        bdeFileImp.SetFocus;
+        Exit;
+      END;
+
+      AFileName := bdeFileImp.TEXT;
+      I := 0;
+      Row_begin := 2;   // начальная строка с которой будет импорт идти, в дальнейшем будет как входной параметр
+      Pnt := '01';
+      try
+        Screen.Cursor := crHourGlass;
+        Memo1.Lines.Add('-------- ПАРСИНГ ФАЙЛА EXCEL ---------');
+        ExcelInstalled := IsOLEObjectInstalled('Excel.Application');
+        OpenOffInstalled := IsOLEObjectInstalled('com.sun.star.ServiceManager');
+        IF ExcelInstalled THEN BEGIN
+          Pnt := '02';
+          Excel := CreateOleObject('Excel.Application');
+          Excel.Workbooks.Open(AFileName);
+          WorkSheet := Excel.ActiveWorkbook.ActiveSheet;
+          FData := WorkSheet.UsedRange.Value;
+
+          //НАЙДУ ПОСЛЕДНЮЮ ЯЧЕЙКУ И ЗАКРОЮ EXCEL ОТ ГРЕХА ПОДАЛЬШЕ
+          Excel.Cells.SpecialCells(xlCellTypeLastCell).Activate;
+          X := Excel.ActiveCell.Row;
+          ProgressBar.Max := X - Row_begin + 10;
+          Screen.Cursor := crDefault;
+          Excel.Quit;
+          Excel := Null;
+        END ELSE BEGIN
+          Pnt := '03';
+          try
+            if not Connect then begin
+              Memo1.Lines.Add('Приложение "Excel" не установлено. Приложение "OpenOffice Calc" не установлено, либо не запускается. Нет возможности для импорта из файла.');
+              Screen.Cursor := crDefault;
+              Exit;
+            end;
+          except
+            Memo1.Lines.Add('Приложение "Excel" не установлено. Приложение "OpenOffice Calc" не установлено, либо не запускается. Нет возможности для импорта из файла.');
+            Screen.Cursor := crDefault;
+            Exit;
+          end;
+          Row_begin := 0;   // начальная строка с которой будет импорт идти, в дальнейшем будет как входной параметр
+          RowForOff := 1;
+          OpenDocument(AFileName);
+          Sheets := Document.GetSheets;
+          Sheet := Sheets.getByName('Лист1');
+          V := Sheet.createCursor;
+          v.GotoEndOfUsedArea(false);
+          X := v.RangeAddress.EndRow-1;
+          ProgressBar.Max := X - Row_begin;
+          FData := Sheet.getCellRangeByPosition(0, 1, v.RangeAddress.EndColumn, v.RangeAddress.EndRow).getDataArray;
+          V := Unassigned;
+          Disconnect;
+          Screen.Cursor := crDefault;
+        END;
+
+        Pnt := '04';
+        Memo1.Lines.Add('-------- ЗАГРУЗКА ТОВАРОВ В БУФЕР ---------');
+        if not spLoad.Transaction.InTransaction then    //ПОСТАВЛЮ ТУТ, ЧТОБЫ ОЧИЩАЛАСЬ ВРЕМЕННАЯ ТАБЛИЦА
+           spLoad.Transaction.StartTransaction;
+        for I := 0 to X-Row_begin do begin
+          try
+            if ExcelInstalled then begin
+              Var1 := FData[I+Row_begin, 1];
+              Var2 := FData[I+Row_begin, 2];
+              Var3 := FData[I+Row_begin, 3];
+              Var4 := FData[I+Row_begin, 4];
+              Var5 := FData[I+Row_begin, 5];
+              Var6 := FData[I+Row_begin, 6];
+              Var7 := FData[I+Row_begin, 7];
+              Var8 := FData[I+Row_begin, 8];
+              Var9 := FData[I+Row_begin, 9];
+              Var10 := FData[I+Row_begin, 10];
+              Var11 := FData[I+Row_begin, 11];
+              Var12 := FData[I+Row_begin, 12];
+              Var13 := FData[I+Row_begin, 13];
+              Var14 := FData[I+Row_begin, 14];
+              Var15 := FData[I+Row_begin, 15];
+              Var16 := FData[I+Row_begin, 16];
+              Var17 := FData[I+Row_begin, 17];
+              Var18 := FData[I+Row_begin, 18];
+              Var19 := FData[I+Row_begin, 19];
+              Var20 := FData[I+Row_begin, 20];
+              Var21 := FData[I+Row_begin, 21];
+              Var22 := FData[I+Row_begin, 22];
+              Var23 := FData[I+Row_begin, 23];
+              Var24 := FData[I+Row_begin, 24];
+              Var25 := FData[I+Row_begin, 25];
+              Var26 := FData[I+Row_begin, 26];
+              Var27 := FData[I+Row_begin, 27];
+            end else begin
+              Var1 := FData[I][0];
+              Var2 := FData[I][1];
+              Var3 := FData[I][2];
+              Var4 := FData[I][3];
+              Var5 := FData[I][4];
+              Var6 := FData[I][5];
+              Var7 := FData[I][6];
+              Var8 := FData[I][7];
+              Var9 := FData[I][8];
+              Var10 := FData[I][9];
+              Var11 := FData[I][10];
+              Var12 := FData[I][11];
+              Var13 := FData[I][12];
+              Var14 := FData[I][13];
+              Var15 := FData[I][14];
+              Var16 := FData[I][15];
+              Var17 := FData[I][16];
+              Var18 := FData[I][17];
+              Var19 := FData[I][18];
+              Var20 := FData[I][19];
+              Var21 := FData[I][20];
+              Var22 := FData[I][21];
+              Var23 := FData[I][22];
+              Var24 := FData[I][23];
+              Var25 := FData[I][24];
+              Var26 := FData[I][25];
+              Var27 := FData[I][26];
+            end;
+
+            Pnt := '05';
+            spLoad.ParamByName('UPLOAD_TABLE_TMP').AsInteger := StrToInt(Var1);
+            spLoad.ParamByName('MODE').AsInteger := StrToInt(Var2);
+            spLoad.ParamByName('PARENT').AsInteger := StrToInt(Var3);
+            spLoad.ParamByName('DATE_OPER').AsDate:= VarToDateTime(Var4);
+            spLoad.ParamByName('TIME_OPER').AsDateTime:= VarToDateTime(Var5);
+            IF Trim(VarToStr(Var6)) <> '' THEN
+              spLoad.ParamByName('G_CLIENT').AsInteger := StrToInt(Var6);
+            IF Trim(VarToStr(Var7)) <> '' THEN
+              spLoad.ParamByName('G_PAYMENT_TYPE').AsInteger := StrToInt(Var7);
+            IF Trim(VarToStr(Var8)) <> '' THEN
+              spLoad.ParamByName('SUMM_ALL').AsFloat := StrToFloat(Var8);
+            IF Trim(VarToStr(Var9)) <> '' THEN
+              spLoad.ParamByName('SUMM_FACT_ALL').AsFloat := StrToFloat(Var9);
+            IF Trim(VarToStr(Var10)) <> '' THEN
+              spLoad.ParamByName('SUMM_PAY_BONUS').AsFloat := StrToFloat(Var10);
+            IF Trim(VarToStr(Var11)) <> '' THEN
+              spLoad.ParamByName('SUMM_BONUS_GOT').AsFloat := StrToFloat(Var11);
+            spLoad.ParamByName('OSNOVANIE').AsString := Var12;
+            spLoad.ParamByName('NOTE').AsString := Var13;
+
+            IF Trim(VarToStr(Var14)) <> '' THEN
+              spLoad.ParamByName('G_OFFICIAL').AsInteger := StrToInt(Var14);
+            spLoad.ParamByName('G_PRODUCT').AsInteger := StrToInt(Var15);
+            spLoad.ParamByName('AMOUNT').AsFloat:= StrToFloat(Var16);
+            spLoad.ParamByName('PRICE').AsFloat := StrToFloat(Var17);
+            spLoad.ParamByName('SUMM').AsFloat := StrToFloat(Var18);
+            IF Trim(VarToStr(Var19)) <> '' THEN
+              spLoad.ParamByName('DISCOUNT_PERC').AsFloat := StrToFloat(Var19);
+            IF Trim(VarToStr(Var20)) <> '' THEN
+              spLoad.ParamByName('DISCOUNT_TENGE').AsFloat := StrToFloat(Var20);
+            IF Trim(VarToStr(Var21)) <> '' THEN
+              spLoad.ParamByName('DISCOUNT_SUMM').AsFloat := StrToFloat(Var21);
+            IF Trim(VarToStr(Var22)) <> '' THEN
+              spLoad.ParamByName('NDS').AsFloat := StrToFloat(Var22);
+            IF Trim(VarToStr(Var23)) <> '' THEN
+              spLoad.ParamByName('NDS_SUMM').AsFloat := StrToFloat(Var23);
+            IF Trim(VarToStr(Var24)) <> '' THEN
+              spLoad.ParamByName('COST_PRICE').AsFloat := StrToFloat(Var24);
+            IF Trim(VarToStr(Var25)) <> '' THEN
+              spLoad.ParamByName('BY_RECIPE').AsInteger := StrToInt(Var25);
+            IF Trim(VarToStr(Var26)) <> '' THEN
+              spLoad.ParamByName('IS_RESERVE').AsInteger := StrToInt(Var26);
+            spLoad.ParamByName('PAYMENTS').AsString := Var27;
+            spLoad.ParamByName('IS_LOAD_').AsInteger := 0;
+
+            Pnt := '06';
+            try
+              spLoad.ExecQuery;
+              if spLoad.ParamByname('ERR_CODE').AsInteger <> 0 then begin
+                Memo1.Lines.Add(spLoad.ParamByname('Err_msg').AsString + ' Строка в файле Excel - ' + INTTOSTR(I+Row_begin + RowForOff));
+                if spLoad.Transaction.InTransaction then
+                  spLoad.Transaction.Rollback;
+                Exit;
+              end;
+              if spLoad.ParamByname('Err_msg').AsString <> '' then
+                Memo1.Lines.Add(spLoad.ParamByname('Err_msg').AsString + ' Строка в файле Excel - ' + INTTOSTR(I+Row_begin + RowForOff));
+            except
+              on E: Exception do begin
+                Memo1.Lines.Add('ОШИБКА. СТРОКА ' + INTTOSTR(I+Row_begin + RowForOff) +'. Pnt = ' + Pnt + '. ' + E.Message);
+                Exit;
+              end;
+            end;
+
+            ProgressBar.Position := ProgressBar.Position + 1;
+          except
+            on E: Exception do begin
+              Memo1.Lines.Add('ОШИБКА. СТРОКА ' + INTTOSTR(I+Row_begin + RowForOff) +'. Pnt = ' + Pnt + '. ' + E.Message);
+              Exit;
+            end;
+          end;
+        end;  // for .. do
+      except
+        on E: Exception do BEGIN
+          Memo1.Lines.Add('ОШИБКА. СТРОКА ' + INTTOSTR(I+Row_begin + RowForOff) +'. Pnt = ' + Pnt + '. ' + E.Message);
+        END
+      end;  // try
+
+      Memo1.Lines.Add('----------------------------------');
+      Memo1.Lines.Add(INTTOSTR(I) + ' ОПЕРАЦИЙ ЗАПИСАНО.');
+      Memo1.Lines.Add('----------------------------------');
+      Memo1.Lines.Add('-------- ЗАГРУЗКА ДАННЫХ В БАЗУ ---------');
+      spLoad.ParamByName('IS_LOAD_').AsInteger := 1;
+      try
+        spLoad.ExecQuery;
+        if spLoad.ParamByname('ERR_CODE').AsInteger <> 0 then begin
+          Memo1.Lines.Add('-------- В ХОДЕ ЗАГРУЗКИ ДАННЫХ ПРОИЗОШЛИ ОШИБКИ: ' + spLoad.ParambYName('ERR_MSG').ASSTRING + '---------');
+          if spLoad.Transaction.InTransaction then
+            spLoad.Transaction.Rollback;
+        end
+        else begin
+          Memo1.Lines.Add('-------- ЗАГРУЗКА ДАННЫХ ЗАВЕРШЕНА УСПЕШНО ---------');
+          ProgressBar.Position := ProgressBar.Max;
+          if spLoad.Transaction.InTransaction then
+            spLoad.Transaction.Commit;
+        end;
+        btnOk.Enabled := False;
+      except
+        on E: Exception do
+          Memo1.Lines.Add('ПРОИЗОШЛА ОШИБКА В ХОДЕ ЗАГРУЗКИ. Pnt = ' + Pnt + '. ТЕКСТ ' + E.Message);
+      end;
+    END;
+  END;
+end;
+
+procedure TSyncForm.btHelpClick(Sender: TObject);
+begin
+  Application.HelpContext(43);
+end;
+
+end.

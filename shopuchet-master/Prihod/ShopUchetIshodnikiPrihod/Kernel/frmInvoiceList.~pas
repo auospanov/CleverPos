@@ -1,0 +1,121 @@
+unit frmInvoiceList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, Oracle, DB, OracleData, ExtCtrls, Menus,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid,
+  dxDBTLCl, dxGrClms, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDataSet,
+  pFIBDataSet, FIBDatabase, pFIBDatabase;
+
+type
+  TInvoiceListForm = class(TDBListForm)
+    dxDBGridINVOICE_PAY: TdxDBGridMaskColumn;
+    dxDBGridNUM: TdxDBGridMaskColumn;
+    dxDBGridINIT_DATE: TdxDBGridDateColumn;
+    dxDBGridG_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridAGREEMENT: TdxDBGridMaskColumn;
+    dxDBGridCLIENT_NAME: TdxDBGridMaskColumn;
+    dxDBGridIDN_CLIENT: TdxDBGridMaskColumn;
+    dxDBGridADDRESS_STR: TdxDBGridMaskColumn;
+    dxDBGridFIO_DOC: TdxDBGridMaskColumn;
+    procedure FormCreate(Sender: TObject);
+    procedure aDelExecute(Sender: TObject);
+    procedure aHelpExecute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure ViewData; override;
+    {procedure InsData; override;
+    procedure InsLikeData; override;}
+    procedure UpdData; override;
+    procedure ReadList; override;
+  end;
+
+var
+  InvoiceListForm: TInvoiceListForm;
+
+implementation
+
+uses frmInvoice;
+
+{$R *.dfm}
+
+procedure TInvoiceListForm.ReadList;
+begin
+  inherited;
+  aIns.Visible := False;
+  aInsLike.Visible := False;
+end;
+
+procedure TInvoiceListForm.ViewData;
+begin
+  ClassForm := TInvoiceForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    ClassForm.RecID := spRead.FieldByName(KeyFieldList).AsInteger;
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+{procedure TInvoiceListForm.InsData;
+begin
+  ClassForm := TInvoicePayForm.Create(Self);
+  try
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TInvoiceListForm.InsLikeData;
+begin
+  ClassForm := TInvoicePayForm.Create(Self);
+  try
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;}
+
+procedure TInvoiceListForm.UpdData;
+begin
+  ClassForm := TInvoiceForm.Create(Self);
+  try
+    {Вызываем метод предка}
+    inherited;
+  finally
+    ClassForm.Free;
+  end;
+end;
+
+procedure TInvoiceListForm.aDelExecute(Sender: TObject);
+begin
+  if MessageDlg(Format('Удалить счет-фактуру за "%s" ?',
+    [spRead.FieldByName('init_date').AsString]), mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  inherited;
+
+  {spDel.SetVariable(KeyFieldClass, spRead.FieldByName(KeyFieldList).AsInteger);
+  if ExecSP(spDel) then
+    Readlist;          }
+end;
+
+procedure TInvoiceListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  KeyFieldList := 'INVOICE';
+  KeyFieldClass := 'INVOICE_';
+end;
+
+procedure TInvoiceListForm.aHelpExecute(Sender: TObject);
+begin
+  Helpc := 38;
+  inherited;
+end;
+
+end.

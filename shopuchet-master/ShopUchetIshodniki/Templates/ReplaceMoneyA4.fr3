@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.4.6" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.AllowEdit="False" PreviewOptions.Buttons="3569" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="44533,6681792593" ReportOptions.Description.Text="" ReportOptions.LastChange="44555,5127466782" ScriptLanguage="PascalScript" ScriptText.Text="&#13;&#10;begin&#13;&#10;&#13;&#10;end.">
+  <Datasets>
+    <item DataSet="frxDBDataset2" DataSetName="frxDBReportX"/>
+  </Datasets>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" PaperWidth="210" PaperHeight="297" PaperSize="9" LeftMargin="10" RightMargin="10" TopMargin="10" BottomMargin="10" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxReportTitle Name="ReportTitle1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="94,48825" Left="0" Top="18,89765" Width="718,1107" Stretched="True">
+      <TfrxMemoView Name="Memo1" Align="baWidth" Left="0" Top="3,77953" Width="718,1107" Height="22,67718" Font.Charset="1" Font.Color="0" Font.Height="-16" Font.Name="Times New Roman" Font.Style="1" HAlign="haCenter" ParentFont="False" Text="[NAMEORG]"/>
+      <TfrxMemoView Name="Memo2" Align="baWidth" Left="0" Top="30,23624" Width="718,1107" Height="60,47248" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-16" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" Text="БИН [BIN]&#13;&#10;ЗНМ [NUM] ИНК ОФД [OFDID]&#13;&#10;[Date] [Time]">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item FormatStr="dd.mm.yyyy" Kind="fkDateTime"/>
+          <item FormatStr="hh:mm:ss" Kind="fkDateTime"/>
+        </Formats>
+      </TfrxMemoView>
+    </TfrxReportTitle>
+    <TfrxMasterData Name="MasterData2" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="26,45671" Left="0" Top="173,85838" Width="718,1107" ColumnWidth="0" ColumnGap="0" DataSet="frxDBDataset2" DataSetName="frxDBReportX" RowCount="0" Stretched="True">
+      <TfrxMemoView Name="Memo7" Left="0" Top="0" Width="487,55937" Height="18,89765" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-16" Font.Name="Times New Roman" Font.Style="0" ParentFont="False" VAlign="vaCenter" Text="[frxDBReportX.&#34;Names&#34;]"/>
+      <TfrxMemoView Name="Memo8" Align="baRight" Left="495,11843" Top="0" Width="222,99227" Height="18,89765" StretchMode="smActualHeight" Font.Charset="1" Font.Color="0" Font.Height="-16" Font.Name="Times New Roman" Font.Style="0" HAlign="haRight" ParentFont="False" Text="[frxDBReportX.&#34;Values&#34;]"/>
+    </TfrxMasterData>
+  </TfrxReportPage>
+</TfrxReport>

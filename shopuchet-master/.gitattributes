@@ -1,0 +1,9 @@
+*.dcu merge=ours
+Shopuchet.exe merge=ours
+Shopuchet.res merge=ours
+Shopuchet.exe.bak merge=ours
+Shopuchet.identcache merge=ours
+Shopuchet_PROM.FDB merge=ours
+Shopuchet32/Shopuchet.FDB merge=ours
+ShopUchet.dproj.local merge=ours
+

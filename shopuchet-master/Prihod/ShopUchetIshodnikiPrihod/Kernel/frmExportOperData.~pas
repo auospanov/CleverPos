@@ -1,0 +1,122 @@
+unit frmExportOperData;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDlg, dxCntner, dxEditor, dxExEdtr, dxEdLib, StdCtrls,
+  ExtCtrls, AppEvnts, Buttons, ActiveX, FileCtrl, Inifiles, cxControls,
+  cxContainer, cxEdit, cxCheckBox;
+
+type
+  TExportOperDataForm = class(TDlgForm)
+    lbPayment: TLabel;
+    lb1: TLabel;
+    lb2: TLabel;
+    shp1: TShape;
+    shp2: TShape;
+    cbTime: TComboBox;
+    lb3: TLabel;
+    shp3: TShape;
+    shp4: TShape;
+    bedtFileName: TdxButtonEdit;
+    lb4: TLabel;
+    cbSales: TcxCheckBox;
+    cbOstatok: TcxCheckBox;
+    cbOstatokXML: TcxCheckBox;
+    procedure bedtFileNameButtonClick(Sender: TObject;
+      AbsoluteIndex: Integer);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure cbSalesPropertiesChange(Sender: TObject);
+    procedure cbOstatokPropertiesChange(Sender: TObject);
+    procedure cbOstatokXMLPropertiesChange(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ExportOperDataForm: TExportOperDataForm;
+
+implementation
+
+{$R *.dfm}
+
+procedure TExportOperDataForm.bedtFileNameButtonClick(Sender: TObject;
+  AbsoluteIndex: Integer);
+var
+  Dir : String;
+begin
+  if SelectDirectory('Выберите папку', '', Dir) then
+    bedtFileName.Text := IncludeTrailingPathDelimiter(Dir);
+end;
+
+procedure TExportOperDataForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+begin
+  if ModalResult = mrOk then begin
+    if not DirectoryExists(bedtFileName.Text) and (cbTime.ItemIndex > 0) then begin
+      MessageDlg('Такого пути не существует! Переопределите папку для сохранения!', mtWarning, [mbOK], 0);
+      bedtFileName.SetFocus;
+      CanClose := False;
+      Exit;
+    end;
+
+    Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+    try
+      Ini.WriteString('ExportOperData', 'DataType', IntToStr(Integer(cbSales.checked)) + IntToStr(Integer(cbOstatok.checked)) + IntToStr(Integer(cbOstatokXML.checked)));
+      Ini.WriteInteger('ExportOperData', 'cbTime', cbTime.ItemIndex);
+      Ini.WriteString('ExportOperData', 'ExportPath', bedtFileName.Text);
+    finally
+      Ini.Free;
+    end;
+  end;  
+
+  inherited;
+end;
+
+procedure TExportOperDataForm.FormShow(Sender: TObject);
+var
+  Ini: Tinifile; //необходимо создать объект, чтоб потом с ним работать
+  Val : String;
+begin
+  inherited;
+
+  Ini:=TiniFile.Create(extractfilepath(paramstr(0))+'Settings.ini');
+  try
+    Val := Ini.ReadString('ExportOperData', 'DataType', '000');
+    cbSales.Checked      := Copy(Val, 1, 1) = '1';
+    cbOstatok.Checked      := Copy(Val, 2, 1) = '1';
+    cbOstatokXML.Checked      := Copy(Val, 3, 1) = '1';
+
+    cbTime.ItemIndex     := Ini.ReadInteger('ExportOperData', 'cbTime', 0);
+    bedtFileName.Text    := Ini.ReadString('ExportOperData', 'ExportPath', '');
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TExportOperDataForm.cbSalesPropertiesChange(Sender: TObject);
+begin
+  if (Integer(cbSales.Checked) + Integer(cbOstatok.Checked) + Integer(cbOstatokXML.Checked)) = 0 then
+    cbTime.ItemIndex := 0;
+end;
+
+procedure TExportOperDataForm.cbOstatokPropertiesChange(Sender: TObject);
+begin
+  if (Integer(cbSales.Checked) + Integer(cbOstatok.Checked) + Integer(cbOstatokXML.Checked)) = 0 then
+    cbTime.ItemIndex := 0;
+end;
+
+procedure TExportOperDataForm.cbOstatokXMLPropertiesChange(
+  Sender: TObject);
+begin
+  if (Integer(cbSales.Checked) + Integer(cbOstatok.Checked) + Integer(cbOstatokXML.Checked)) = 0 then
+    cbTime.ItemIndex := 0;
+end;
+
+end.

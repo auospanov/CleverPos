@@ -1,0 +1,26 @@
+unit frmPriceList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, frmDBList, dxExEdtr, FIBQuery, pFIBQuery, pFIBStoredProc, DB,
+  ExtCtrls, Menus, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet,
+  ActnList, dxBar, dxBarExtItems, dxCntner, dxTL, dxDBCtrl, dxDBGrid;
+
+type
+  TPriceListForm = class(TDBListForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  PriceListForm: TPriceListForm;
+
+implementation
+
+{$R *.dfm}
+
+end.
