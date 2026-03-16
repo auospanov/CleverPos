@@ -1,4 +1,4 @@
-﻿using Gtk;
+using Gtk;
 using logicpos.Classes.Gui.Gtk.BackOffice;
 using logicpos.Classes.Gui.Gtk.Pos.Dialogs;
 using logicpos.Classes.Logic.Hardware;
@@ -31,5 +31,7 @@ namespace logicpos.App
         public static WeighingBalance WeighingBalance { get; set; }
         public static ProtectedFiles ProtectedFiles { get; set; }
         public static ParkingTicket ParkingTicket { get; set; }
+        public static System.Threading.CancellationTokenSource BarcodeBroadcastCancellation { get; set; }
+        public static System.Threading.Thread BarcodeBroadcastThread { get; set; }
     }
 }

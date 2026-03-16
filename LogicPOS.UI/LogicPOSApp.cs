@@ -1,4 +1,4 @@
-﻿using DevExpress.Xpo;
+using DevExpress.Xpo;
 using DevExpress.Xpo.DB;
 using Gtk;
 using logicpos.App;
@@ -24,6 +24,10 @@ using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 
 namespace logicpos
 {
@@ -54,6 +58,8 @@ namespace logicpos
 
                 InitBackupTimerProcess();
 
+                StartBarcodeBroadcast();
+
                 if (!_quitAfterBootStrap) Application.Run();
             }
             catch (Exception ex)
@@ -72,6 +78,7 @@ namespace logicpos
             }
             finally
             {
+                StopBarcodeBroadcast();
                 // Dispose Devices
 
                 // Always Close Display Device
@@ -586,6 +593,81 @@ namespace logicpos
             }
         }
 
+        private const int BarcodeBroadcastHttpPort = 5000;
+        private const int BarcodeBroadcastUdpPort = 8888;
+        /// <summary>Интервал рассылки UDP broadcast (мс). Постоянная рассылка, чтобы мобильное приложение могло найти сервер при подключении/переподключении.</summary>
+        private const int BarcodeBroadcastIntervalMs = 1000;
+
+        private static void StartBarcodeBroadcast()
+        {
+            try
+            {
+                string serverIp = GetLocalIPAddress();
+                if (string.IsNullOrEmpty(serverIp)) return;
+                GlobalApp.BarcodeBroadcastCancellation = new CancellationTokenSource();
+                var token = GlobalApp.BarcodeBroadcastCancellation.Token;
+                GlobalApp.BarcodeBroadcastThread = new Thread(() => RunBarcodeBroadcastLoop(serverIp, token))
+                {
+                    IsBackground = true
+                };
+                GlobalApp.BarcodeBroadcastThread.Start();
+            }
+            catch (Exception ex)
+            {
+                log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Debug("StartBarcodeBroadcast: " + ex.Message);
+            }
+        }
+
+        private static void StopBarcodeBroadcast()
+        {
+            try
+            {
+                GlobalApp.BarcodeBroadcastCancellation?.Cancel();
+                if (GlobalApp.BarcodeBroadcastThread != null && GlobalApp.BarcodeBroadcastThread.IsAlive)
+                    GlobalApp.BarcodeBroadcastThread.Join(3000);
+                GlobalApp.BarcodeBroadcastCancellation?.Dispose();
+                GlobalApp.BarcodeBroadcastCancellation = null;
+                GlobalApp.BarcodeBroadcastThread = null;
+            }
+            catch { }
+        }
+
+        private static void RunBarcodeBroadcastLoop(string serverIp, CancellationToken token)
+        {
+            try
+            {
+                using (var udp = new UdpClient())
+                {
+                    udp.EnableBroadcast = true;
+                    var endpoint = new IPEndPoint(IPAddress.Broadcast, BarcodeBroadcastUdpPort);
+                    var message = string.Format("BARCODE_SERVER:{0}:{1}", serverIp, BarcodeBroadcastHttpPort);
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    while (!token.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            udp.Send(bytes, bytes.Length, endpoint);
+                        }
+                        catch (SocketException) { }
+                        if (token.WaitHandle.WaitOne(BarcodeBroadcastIntervalMs)) break;
+                    }
+                }
+            }
+            catch (Exception) { }
+        }
+
+        private static string GetLocalIPAddress()
+        {
+            try
+            {
+                foreach (var addr in System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList)
+                    if (addr.AddressFamily == AddressFamily.InterNetwork)
+                        return addr.ToString();
+            }
+            catch { }
+            return null;
+        }
+
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
         private ProtectedFiles InitProtectedFiles()
@@ -727,6 +809,7 @@ namespace logicpos
         {
             log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+            StopBarcodeBroadcast();
             try
             {
                 //Audit
