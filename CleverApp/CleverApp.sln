@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36705.20 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleverApp", "CleverApp.csproj", "{A8143C94-8E0B-45D0-A9AB-11F4BE9E5B4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8143C94-8E0B-45D0-A9AB-11F4BE9E5B4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8143C94-8E0B-45D0-A9AB-11F4BE9E5B4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8143C94-8E0B-45D0-A9AB-11F4BE9E5B4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8143C94-8E0B-45D0-A9AB-11F4BE9E5B4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {375AD008-122B-4EF9-A64E-14336FD29297}
+	EndGlobalSection
+EndGlobal
