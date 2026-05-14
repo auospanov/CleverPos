@@ -35,13 +35,19 @@
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<!-- ML Kit / AndroidX lifecycle used by barcode scanning require minSdk 23+ -->
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 
 		<!-- Disable Fast Deployment to fix XA0129 deployment error (e.g. System.Text.RegularExpressions.dll) -->
 		<EmbedAssembliesIntoApk Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</EmbedAssembliesIntoApk>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
+	  <CodesignKey>Apple Development: Created via API (9AA7YL9584)</CodesignKey>
+	  <CodesignProvision>VS: com.companyname.cleverapp Development</CodesignProvision>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -63,8 +69,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
+		<PackageReference Include="SkiaSharp" Version="3.119.2" />
+		<PackageReference Include="ZXing.Net" Version="0.16.11" />
 	</ItemGroup>
-
+	<!-- ML Kit: только Android (нет TFM для iOS/Windows) -->
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<PackageReference Include="Xamarin.Google.MLKit.BarcodeScanning" Version="117.3.0.7" />
+		<PackageReference Include="Xamarin.Google.MLKit.TextRecognition" Version="116.0.1.7" />
+		<!-- Согласовать с Xamarin.AndroidX.SavedState 1.4.x от ML Kit, иначе R8: ViewKt duplicate -->
+		<PackageReference Include="Xamarin.AndroidX.SavedState.SavedState.Ktx" Version="1.4.0.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<MauiExtraProperty Include="NSCameraUsageDescription" Value="Нужен доступ к камере для сканирования документа" />
+		<MauiExtraProperty Include="NSPhotoLibraryUsageDescription" Value="Доступ к фото" />
+	</ItemGroup>
 </Project>

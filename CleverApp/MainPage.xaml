@@ -32,6 +32,10 @@
                 Text="Найти сервер"
                 Clicked="OnSearchServerClicked"
                 HorizontalOptions="Fill" />
+            <Button
+    Text="Сканировать удостоверение"
+    Clicked="OnOpenScannerClicked"
+    HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

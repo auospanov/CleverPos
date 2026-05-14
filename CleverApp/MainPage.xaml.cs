@@ -21,7 +21,7 @@ namespace CleverApp
             if (_discovery == null) return;
 
             _discovery.Stop();
-            StatusLabel.Text = "Поиск сервера LogicPOS...";
+            StatusLabel.Text = "Поиск сервера ...";
             ServerLabel.Text = "Сервер не найден";
             ServerLabel.IsVisible = false;
 
@@ -29,7 +29,10 @@ namespace CleverApp
             _discovery.ServerFound += OnServerFound;
             _discovery.Start();
         }
-
+        private async void OnOpenScannerClicked(object sender, EventArgs e)
+{
+    await Navigation.PushAsync(new ScanPage());
+}
         private void OnServerFound(object? sender, (string Ip, int Port) e)
         {
             StatusLabel.Text = "Сервер найден";

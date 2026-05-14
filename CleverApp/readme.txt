@@ -1,0 +1,1 @@
+  dotnet publish -f net9.0-android -c Release /p:AndroidPackageFormat=apk /p:AndroidKeyStore=false

@@ -100,3 +100,8 @@ Open source Point of Sale Solution
 	
 	
 https://github.com/logicpulse/logicPOS
+
+https://nationalcatalog.kz/personal-account/api-keys
+rada2748884@gmail.com
+Seazon_123
+G0ySjGsZHr2t2O0RjARmv2gPDezeH48OpkN-nG9uRH0
