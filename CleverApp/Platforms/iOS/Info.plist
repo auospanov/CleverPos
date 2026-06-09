@@ -6,6 +6,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Нужно для сканирования штрихкода</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Нужно для автоматического поиска ПК с LogicPOS в локальной сети</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

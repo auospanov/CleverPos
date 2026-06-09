@@ -28,7 +28,7 @@ namespace CleverApp
             if (DiscoveredServerStore.HasServer)
             {
                 StatusLabel.Text = "Сервер подключён";
-                ServerLabel.Text = $"IP ПК: {DiscoveredServerStore.Ip}";
+                ServerLabel.Text = $"IP ПК: {DiscoveredServerStore.Ip}:{DiscoveredServerStore.DefaultHttpPort}";
                 ServerLabel.IsVisible = true;
             }
         }
@@ -108,7 +108,7 @@ namespace CleverApp
         {
             DiscoveredServerStore.Set(ip, DiscoveredServerStore.DefaultHttpPort);
             StatusLabel.Text = "Сервер подключён";
-            ServerLabel.Text = $"IP ПК: {ip}";
+            ServerLabel.Text = $"IP ПК: {ip}:{DiscoveredServerStore.DefaultHttpPort}";
             ServerLabel.IsVisible = true;
         }
 
