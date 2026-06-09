@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -689,70 +690,106 @@ namespace logicpos
             catch (Exception) { }
         }
 
+        /// <summary>
+        /// TCP-сервер вместо HttpListener: не требует netsh urlacl на Windows,
+        /// слушает на всех интерфейсах (телефон подключается по IP из UDP broadcast).
+        /// </summary>
         private static void RunBarcodeHttpServer(string serverIp, CancellationToken token)
         {
-            HttpListener listener = null;
+            TcpListener listener = null;
             try
             {
-                listener = new HttpListener();
-                listener.Prefixes.Add(string.Format("http://{0}:{1}/", serverIp, BarcodeBroadcastHttpPort));
+                listener = new TcpListener(IPAddress.Any, BarcodeBroadcastHttpPort);
                 listener.Start();
                 log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Info(
-                    string.Format("Barcode HTTP server listening on http://{0}:{1}/", serverIp, BarcodeBroadcastHttpPort));
+                    string.Format(
+                        "Barcode TCP server listening on 0.0.0.0:{0} (advertised IP {1})",
+                        BarcodeBroadcastHttpPort, serverIp));
 
                 while (!token.IsCancellationRequested)
                 {
-                    IAsyncResult asyncResult = listener.BeginGetContext(null, null);
-                    while (!asyncResult.IsCompleted && !token.IsCancellationRequested)
-                        asyncResult.AsyncWaitHandle.WaitOne(100);
-                    if (token.IsCancellationRequested) break;
+                    if (!listener.Pending())
+                    {
+                        if (token.WaitHandle.WaitOne(100))
+                            break;
+                        continue;
+                    }
 
                     try
                     {
-                        var context = listener.EndGetContext(asyncResult);
-                        ProcessBarcodeHttpRequest(context);
+                        var client = listener.AcceptTcpClient();
+                        ThreadPool.QueueUserWorkItem(_ => ProcessBarcodeTcpClient(client));
                     }
-                    catch (HttpListenerException) { }
+                    catch (SocketException) { }
                     catch (ObjectDisposedException) { break; }
                 }
             }
             catch (Exception ex)
             {
                 log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Error(
-                    "Barcode HTTP server failed: " + ex.Message, ex);
+                    "Barcode TCP server failed: " + ex.Message, ex);
             }
             finally
             {
-                try
-                {
-                    if (listener != null && listener.IsListening)
-                        listener.Stop();
-                    listener?.Close();
-                }
+                try { listener?.Stop(); }
                 catch { }
             }
         }
 
-        private static void ProcessBarcodeHttpRequest(HttpListenerContext context)
+        private static void ProcessBarcodeTcpClient(TcpClient client)
         {
             string barcode = string.Empty;
+            var statusCode = 200;
             try
             {
-                var request = context.Request;
-                if (request.Url.AbsolutePath == "/barcode" && request.HttpMethod == "POST")
+                using (client)
+                using (var stream = client.GetStream())
                 {
-                    using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
-                        barcode = reader.ReadToEnd();
+                    stream.ReadTimeout = 5000;
+                    stream.WriteTimeout = 5000;
+
+                    using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 1024, leaveOpen: true))
+                    {
+                        var requestLine = reader.ReadLine();
+                        if (string.IsNullOrEmpty(requestLine))
+                            return;
+
+                        var parts = requestLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var method = parts.Length > 0 ? parts[0] : string.Empty;
+                        var path = parts.Length > 1 ? parts[1] : string.Empty;
+
+                        var contentLength = 0;
+                        string headerLine;
+                        while (!string.IsNullOrEmpty(headerLine = reader.ReadLine()))
+                        {
+                            if (headerLine.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
+                                int.TryParse(headerLine.Substring(15).Trim(), out contentLength);
+                        }
+
+                        if (method == "POST" && path == "/barcode" && contentLength > 0)
+                        {
+                            var bodyChars = new char[contentLength];
+                            var read = reader.Read(bodyChars, 0, contentLength);
+                            if (read > 0)
+                                barcode = new string(bodyChars, 0, read);
+                        }
+                        else
+                        {
+                            statusCode = 404;
+                        }
+                    }
+
+                    var response = string.Format(
+                        "HTTP/1.1 {0} OK\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
+                        statusCode);
+                    var responseBytes = Encoding.ASCII.GetBytes(response);
+                    stream.Write(responseBytes, 0, responseBytes.Length);
+                    stream.Flush();
                 }
-                context.Response.StatusCode = 200;
             }
             catch
             {
-                context.Response.StatusCode = 500;
-            }
-            finally
-            {
-                try { context.Response.Close(); } catch { }
+                statusCode = 500;
             }
 
             if (!string.IsNullOrWhiteSpace(barcode))
@@ -792,11 +829,18 @@ namespace logicpos
         {
             try
             {
+                string wifiIp = null;
+                string ethernetIp = null;
                 string fallback = null;
+
                 foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
                 {
                     if (ni.OperationalStatus != OperationalStatus.Up) continue;
                     if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Tunnel) continue;
+
+                    var hasGateway = ni.GetIPProperties().GatewayAddresses
+                        .Any(g => g.Address.AddressFamily == AddressFamily.InterNetwork && !g.Address.Equals(IPAddress.Any));
 
                     foreach (var ua in ni.GetIPProperties().UnicastAddresses)
                     {
@@ -805,15 +849,23 @@ namespace logicpos
 
                         var ip = ua.Address.ToString();
                         if (ip.StartsWith("169.254.")) continue;
+                        if (!IsPrivateLanAddress(ua.Address))
+                        {
+                            if (fallback == null)
+                                fallback = ip;
+                            continue;
+                        }
 
-                        if (IsPrivateLanAddress(ua.Address))
-                            return ip;
-
-                        if (fallback == null)
+                        if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && hasGateway)
+                            wifiIp = ip;
+                        else if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && hasGateway)
+                            ethernetIp = ip;
+                        else if (fallback == null)
                             fallback = ip;
                     }
                 }
-                return fallback;
+
+                return wifiIp ?? ethernetIp ?? fallback;
             }
             catch { }
             return null;
