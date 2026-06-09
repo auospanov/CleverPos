@@ -1,4 +1,4 @@
-﻿namespace CleverApp
+namespace CleverApp
 {
     public partial class AppShell : Shell
     {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CleverApp.BarcodeScanPage"
+             Title="Сканер штрихкода">
+
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <Label
+            x:Name="StatusLabel"
+            Text="Нажмите «Сканировать» — откроется камера для снимка штрихкода"
+            HorizontalTextAlignment="Center"
+            LineBreakMode="WordWrap" />
+
+        <Button
+            x:Name="ScanBtn"
+            Text="Сканировать"
+            Clicked="OnScanClicked"
+            HorizontalOptions="Fill" />
+
+        <Image
+            x:Name="PreviewImage"
+            HeightRequest="250"
+            Aspect="AspectFit"
+            IsVisible="False" />
+
+        <Label
+            x:Name="BarcodeLabel"
+            Text="Штрихкод: —"
+            FontSize="18"
+            FontAttributes="Bold"
+            HorizontalTextAlignment="Center"
+            LineBreakMode="WordWrap" />
+
+        <Button
+            x:Name="SendBtn"
+            Text="Отправить на сервер"
+            Clicked="OnSendClicked"
+            IsEnabled="False"
+            HorizontalOptions="Fill" />
+
+        <Button
+            Text="Назад"
+            Clicked="OnBackClicked"
+            HorizontalOptions="Fill" />
+
+    </VerticalStackLayout>
+</ContentPage>

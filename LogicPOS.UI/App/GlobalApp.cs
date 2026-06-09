@@ -33,5 +33,6 @@ namespace logicpos.App
         public static ParkingTicket ParkingTicket { get; set; }
         public static System.Threading.CancellationTokenSource BarcodeBroadcastCancellation { get; set; }
         public static System.Threading.Thread BarcodeBroadcastThread { get; set; }
+        public static System.Threading.Thread BarcodeHttpThread { get; set; }
     }
 }

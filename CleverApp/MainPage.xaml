@@ -32,10 +32,31 @@
                 Text="Найти сервер"
                 Clicked="OnSearchServerClicked"
                 HorizontalOptions="Fill" />
+
+            <Label Text="Или введите IP ПК вручную:" FontSize="14" />
+            <Entry
+                x:Name="ManualIpEntry"
+                Placeholder="192.168.1.10"
+                Keyboard="Telephone"
+                HorizontalOptions="Fill" />
             <Button
-    Text="Сканировать удостоверение"
-    Clicked="OnOpenScannerClicked"
-    HorizontalOptions="Fill" />
+                Text="Подключить по IP"
+                Clicked="OnManualConnectClicked"
+                HorizontalOptions="Fill" />
+            <Button
+                x:Name="LiveBarcodeBtn"
+                Text="Сканировать штрихкод"
+                Clicked="OnLiveBarcodeClicked"
+                HorizontalOptions="Fill" />
+            <Button
+                x:Name="ScanBarcodeBtn"
+                Text="Сканировать штрихкод (фото)"
+                Clicked="OnScanBarcodeClicked"
+                HorizontalOptions="Fill" />
+            <Button
+                Text="Сканировать удостоверение"
+                Clicked="OnOpenScannerClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

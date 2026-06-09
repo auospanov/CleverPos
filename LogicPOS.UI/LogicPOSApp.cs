@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -610,7 +611,23 @@ namespace logicpos
                 {
                     IsBackground = true
                 };
+                GlobalApp.BarcodeHttpThread = new Thread(() => RunBarcodeHttpServer(serverIp, token))
+                {
+                    IsBackground = true
+                };
                 GlobalApp.BarcodeBroadcastThread.Start();
+                try
+                {
+                    GlobalApp.BarcodeHttpThread.Start();
+                }
+                catch (Exception httpEx)
+                {
+                    log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Debug(
+                        "StartBarcodeBroadcast: HTTP server not started: " + httpEx.Message);
+                }
+
+                log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Info(
+                    string.Format("Barcode UDP broadcast started: {0} -> port {1}", serverIp, BarcodeBroadcastUdpPort));
             }
             catch (Exception ex)
             {
@@ -625,9 +642,12 @@ namespace logicpos
                 GlobalApp.BarcodeBroadcastCancellation?.Cancel();
                 if (GlobalApp.BarcodeBroadcastThread != null && GlobalApp.BarcodeBroadcastThread.IsAlive)
                     GlobalApp.BarcodeBroadcastThread.Join(3000);
+                if (GlobalApp.BarcodeHttpThread != null && GlobalApp.BarcodeHttpThread.IsAlive)
+                    GlobalApp.BarcodeHttpThread.Join(3000);
                 GlobalApp.BarcodeBroadcastCancellation?.Dispose();
                 GlobalApp.BarcodeBroadcastCancellation = null;
                 GlobalApp.BarcodeBroadcastThread = null;
+                GlobalApp.BarcodeHttpThread = null;
             }
             catch { }
         }
@@ -636,17 +656,30 @@ namespace logicpos
         {
             try
             {
-                using (var udp = new UdpClient())
+                var localIp = IPAddress.Parse(serverIp);
+                var subnetBroadcast = GetSubnetBroadcastAddress(serverIp);
+                var message = string.Format("BARCODE_SERVER:{0}:{1}", serverIp, BarcodeBroadcastHttpPort);
+                var bytes = Encoding.UTF8.GetBytes(message);
+
+                using (var udp = new UdpClient(new IPEndPoint(localIp, 0)))
                 {
                     udp.EnableBroadcast = true;
-                    var endpoint = new IPEndPoint(IPAddress.Broadcast, BarcodeBroadcastUdpPort);
-                    var message = string.Format("BARCODE_SERVER:{0}:{1}", serverIp, BarcodeBroadcastHttpPort);
-                    var bytes = Encoding.UTF8.GetBytes(message);
+                    var globalBroadcast = new IPEndPoint(IPAddress.Broadcast, BarcodeBroadcastUdpPort);
+                    IPEndPoint directedBroadcast = null;
+                    bool useDirectedBroadcast = false;
+                    if (subnetBroadcast != null)
+                    {
+                        directedBroadcast = new IPEndPoint(subnetBroadcast, BarcodeBroadcastUdpPort);
+                        useDirectedBroadcast = true;
+                    }
+
                     while (!token.IsCancellationRequested)
                     {
                         try
                         {
-                            udp.Send(bytes, bytes.Length, endpoint);
+                            udp.Send(bytes, bytes.Length, globalBroadcast);
+                            if (useDirectedBroadcast)
+                                udp.Send(bytes, bytes.Length, directedBroadcast);
                         }
                         catch (SocketException) { }
                         if (token.WaitHandle.WaitOne(BarcodeBroadcastIntervalMs)) break;
@@ -656,13 +689,169 @@ namespace logicpos
             catch (Exception) { }
         }
 
+        private static void RunBarcodeHttpServer(string serverIp, CancellationToken token)
+        {
+            HttpListener listener = null;
+            try
+            {
+                listener = new HttpListener();
+                listener.Prefixes.Add(string.Format("http://{0}:{1}/", serverIp, BarcodeBroadcastHttpPort));
+                listener.Start();
+                log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Info(
+                    string.Format("Barcode HTTP server listening on http://{0}:{1}/", serverIp, BarcodeBroadcastHttpPort));
+
+                while (!token.IsCancellationRequested)
+                {
+                    IAsyncResult asyncResult = listener.BeginGetContext(null, null);
+                    while (!asyncResult.IsCompleted && !token.IsCancellationRequested)
+                        asyncResult.AsyncWaitHandle.WaitOne(100);
+                    if (token.IsCancellationRequested) break;
+
+                    try
+                    {
+                        var context = listener.EndGetContext(asyncResult);
+                        ProcessBarcodeHttpRequest(context);
+                    }
+                    catch (HttpListenerException) { }
+                    catch (ObjectDisposedException) { break; }
+                }
+            }
+            catch (Exception ex)
+            {
+                log4net.LogManager.GetLogger(typeof(LogicPOSApp)).Error(
+                    "Barcode HTTP server failed: " + ex.Message, ex);
+            }
+            finally
+            {
+                try
+                {
+                    if (listener != null && listener.IsListening)
+                        listener.Stop();
+                    listener?.Close();
+                }
+                catch { }
+            }
+        }
+
+        private static void ProcessBarcodeHttpRequest(HttpListenerContext context)
+        {
+            string barcode = string.Empty;
+            try
+            {
+                var request = context.Request;
+                if (request.Url.AbsolutePath == "/barcode" && request.HttpMethod == "POST")
+                {
+                    using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                        barcode = reader.ReadToEnd();
+                }
+                context.Response.StatusCode = 200;
+            }
+            catch
+            {
+                context.Response.StatusCode = 500;
+            }
+            finally
+            {
+                try { context.Response.Close(); } catch { }
+            }
+
+            if (!string.IsNullOrWhiteSpace(barcode))
+                ShowMobileBarcodeReceived(barcode.Trim());
+        }
+
+        private static void ShowMobileBarcodeReceived(string barcode)
+        {
+            GLib.Timeout.Add(0, delegate
+            {
+                try
+                {
+                    Window window = GlobalApp.PosMainWindow;
+                    if (window == null)
+                        window = GlobalApp.StartupWindow;
+                    if (window == null)
+                        window = GlobalApp.BackOfficeMainWindow;
+
+                    if (window != null)
+                    {
+                        Utils.ShowMessageBox(
+                            window,
+                            DialogFlags.Modal,
+                            new Size(500, 280),
+                            MessageType.Info,
+                            ButtonsType.Ok,
+                            "Штрихкод с телефона",
+                            barcode);
+                    }
+                }
+                catch { }
+                return false;
+            });
+        }
+
         private static string GetLocalIPAddress()
         {
             try
             {
-                foreach (var addr in System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList)
-                    if (addr.AddressFamily == AddressFamily.InterNetwork)
-                        return addr.ToString();
+                string fallback = null;
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus != OperationalStatus.Up) continue;
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+                    foreach (var ua in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ua.Address.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (IPAddress.IsLoopback(ua.Address)) continue;
+
+                        var ip = ua.Address.ToString();
+                        if (ip.StartsWith("169.254.")) continue;
+
+                        if (IsPrivateLanAddress(ua.Address))
+                            return ip;
+
+                        if (fallback == null)
+                            fallback = ip;
+                    }
+                }
+                return fallback;
+            }
+            catch { }
+            return null;
+        }
+
+        private static bool IsPrivateLanAddress(IPAddress address)
+        {
+            var bytes = address.GetAddressBytes();
+            if (bytes.Length != 4) return false;
+            if (bytes[0] == 10) return true;
+            if (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31) return true;
+            if (bytes[0] == 192 && bytes[1] == 168) return true;
+            return false;
+        }
+
+        private static IPAddress GetSubnetBroadcastAddress(string serverIp)
+        {
+            try
+            {
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus != OperationalStatus.Up) continue;
+
+                    foreach (var ua in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ua.Address.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (!ua.Address.ToString().Equals(serverIp, StringComparison.Ordinal)) continue;
+                        if (ua.IPv4Mask == null) continue;
+
+                        var ipBytes = ua.Address.GetAddressBytes();
+                        var maskBytes = ua.IPv4Mask.GetAddressBytes();
+                        var broadcastBytes = new byte[4];
+                        for (int i = 0; i < 4; i++)
+                            broadcastBytes[i] = (byte)(ipBytes[i] | (maskBytes[i] ^ 255));
+
+                        return new IPAddress(broadcastBytes);
+                    }
+                }
             }
             catch { }
             return null;

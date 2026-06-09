@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using CleverApp.Services;
 using CommunityToolkit.Maui;
+using ZXing.Net.Maui.Controls;
 #if ANDROID
 using CleverApp.Platforms.Android.Services;
 #endif
@@ -18,7 +19,9 @@ namespace CleverApp
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                }).UseMauiCommunityToolkit();
+                })
+                .UseMauiCommunityToolkit()
+                .UseBarcodeReader();
 
             builder.Services.AddSingleton<BarcodeServerDiscoveryService>();
 #if ANDROID

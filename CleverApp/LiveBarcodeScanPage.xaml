@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+             x:Class="CleverApp.LiveBarcodeScanPage"
+             Title="Сканер штрихкода"
+             Shell.NavBarIsVisible="False">
+
+    <!-- Камера только в верхней части — кнопки отдельно, иначе iOS перехватывает нажатия -->
+    <Grid RowDefinitions="*,Auto">
+        <Grid Grid.Row="0">
+            <zxing:CameraBarcodeReaderView
+                x:Name="cameraBarcodeReaderView"
+                BarcodesDetected="BarcodesDetected"
+                CameraLocation="Rear"
+                IsTorchOn="False"
+                IsDetecting="False" />
+
+            <Grid InputTransparent="True" Padding="24">
+                <Label
+                    x:Name="StatusLabel"
+                    Text="Запуск камеры..."
+                    TextColor="White"
+                    FontSize="16"
+                    HorizontalTextAlignment="Center"
+                    VerticalOptions="Start"
+                    LineBreakMode="WordWrap">
+                    <Label.Shadow>
+                        <Shadow Brush="Black" Offset="1,1" Radius="3" Opacity="0.8" />
+                    </Label.Shadow>
+                </Label>
+
+                <Border
+                    x:Name="ScanFrame"
+                    Stroke="#00E676"
+                    StrokeThickness="3"
+                    StrokeShape="RoundRectangle 8"
+                    WidthRequest="300"
+                    HeightRequest="200"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    BackgroundColor="Transparent">
+                    <Grid>
+                        <BoxView
+                            x:Name="ScanLine"
+                            HeightRequest="3"
+                            Color="#FF1744"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Start"
+                            Opacity="0.9" />
+                    </Grid>
+                </Border>
+
+                <Label
+                    x:Name="ResultLabel"
+                    Text=""
+                    TextColor="#00E676"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    VerticalOptions="End"
+                    LineBreakMode="WordWrap"
+                    IsVisible="False">
+                    <Label.Shadow>
+                        <Shadow Brush="Black" Offset="1,1" Radius="3" Opacity="0.8" />
+                    </Label.Shadow>
+                </Label>
+            </Grid>
+        </Grid>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Padding="16,12"
+            Spacing="8"
+            BackgroundColor="#EE000000">
+            <Button
+                x:Name="TorchBtn"
+                Text="Вспышка"
+                Clicked="OnTorchClicked"
+                HorizontalOptions="Fill" />
+            <Button
+                x:Name="SendBtn"
+                Text="Отправить на сервер"
+                Clicked="OnSendClicked"
+                IsEnabled="False"
+                HorizontalOptions="Fill" />
+            <Button
+                x:Name="RescanBtn"
+                Text="Сканировать снова"
+                Clicked="OnRescanClicked"
+                IsEnabled="False"
+                HorizontalOptions="Fill" />
+            <Button
+                Text="Назад"
+                Clicked="OnBackClicked"
+                HorizontalOptions="Fill" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
