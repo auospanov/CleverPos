@@ -28,7 +28,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>2</ApplicationVersion>
+		<ApplicationVersion>6</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -48,6 +48,9 @@
 	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
 		<CodesignKey>Apple Development: Created via API (9AA7YL9584)</CodesignKey>
 		<CodesignProvision>VS: com.companyname.cleverapp Development</CodesignProvision>
+		<!-- Privacy keys: only here, not duplicated in Info.plist -->
+		<NSCameraUsageDescription>Camera access is required to scan barcodes and documents</NSCameraUsageDescription>
+		<NSPhotoLibraryUsageDescription>Photo library access is required to pick images for scanning</NSPhotoLibraryUsageDescription>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -75,8 +78,14 @@
 		<PackageReference Include="ZXing.Net.Maui.Controls" Version="[0.5.2]" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
-		<PackageReference Include="SkiaSharp" Version="3.119.2" />
 		<PackageReference Include="ZXing.Net" Version="0.16.11" />
+	</ItemGroup>
+	<!-- SkiaSharp только Android — на iOS ломает Hot Restart (libSkiaSharp.framework) -->
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<PackageReference Include="SkiaSharp" Version="3.119.2" />
+	</ItemGroup>
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'">
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
 	</ItemGroup>
 	<!-- ML Kit: только Android (нет TFM для iOS/Windows) -->
 	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
@@ -84,10 +93,5 @@
 		<PackageReference Include="Xamarin.Google.MLKit.TextRecognition" Version="116.0.1.7" />
 		<!-- Согласовать с Xamarin.AndroidX.SavedState 1.4.x от ML Kit, иначе R8: ViewKt duplicate -->
 		<PackageReference Include="Xamarin.AndroidX.SavedState.SavedState.Ktx" Version="1.4.0.2" />
-	</ItemGroup>
-	<ItemGroup>
-		<MauiExtraProperty Include="NSCameraUsageDescription" Value="Camera access is required to scan barcodes and documents" />
-		<MauiExtraProperty Include="NSPhotoLibraryUsageDescription" Value="Photo library access" />
-		<MauiExtraProperty Include="NSLocalNetworkUsageDescription" Value="Local network access is required to send barcodes to LogicPOS PC" />
 	</ItemGroup>
 </Project>
