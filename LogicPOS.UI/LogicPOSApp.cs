@@ -357,9 +357,10 @@ namespace logicpos
             //}                
             CultureSettings.CurrentCulture = CultureSettings.CurrentCulture = new System.Globalization.CultureInfo(ConfigurationManager.AppSettings["customCultureResourceDefinition"]);
 
-            // Принудительно устанавливаем культуру потока
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
-            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("ru-RU");
+            // Устанавливаем культуру потока из настроек приложения
+            var threadCulture = CultureSettings.CurrentCultureName;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(threadCulture);
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(threadCulture);
 
             // Обновляем ресурсы локализации для текущего языка
             CultureResources.ForceUpdateLanguage(CultureSettings.CurrentCultureName);

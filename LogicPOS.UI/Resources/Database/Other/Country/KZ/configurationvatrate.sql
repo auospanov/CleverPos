@@ -1,0 +1,5 @@
+-- Ставки НДС для Казахстана;
+UPDATE fin_configurationvatrate SET Designation = 'Стандартная ставка НДС (12%)', Value = 12, TaxType = 'НДС', TaxCode = 'NOR', TaxCountryRegion = 'KZ', TaxDescription = 'Казахстан', Disabled = NULL WHERE Oid = 'cee00590-7317-41b8-af46-66560401096b';
+UPDATE fin_configurationvatrate SET Designation = 'Без НДС', Value = 0, TaxType = 'НДС', TaxCode = 'ISE', TaxCountryRegion = 'KZ', TaxDescription = 'Казахстан', Disabled = NULL WHERE Oid = 'e74faad7-f5c9-4206-a662-f95820014195';
+UPDATE fin_configurationvatrate SET Disabled = 1 WHERE Oid IN ('f73e3b41-4967-48c6-9f9a-260abf2146e1','7e89eaed-ce56-4565-8eec-98f2e8d004a5','ecd64d02-5249-4303-a35c-c662ffba4844','f0281b91-83d7-482f-bfd8-e52461983136','b57d85a5-843e-4b84-9660-9124006b9b05','389661c1-05f6-4830-bc06-176e2fdb3dc2','52c6ce3c-9246-4b8b-a143-b84733a074d4','e4478dea-9272-4090-a71a-df775b96c4b3');
+UPDATE fin_configurationvatrate SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';

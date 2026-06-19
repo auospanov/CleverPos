@@ -1,0 +1,13 @@
+-- Параметры системы для Казахстана;
+UPDATE cfg_configurationpreferenceparameter SET Value = 'False' WHERE Token = 'SERVICE_AT_PRODUCTION_MODE_ENABLED';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'False' WHERE Token = 'SERVICE_AT_SEND_DOCUMENTS';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'False' WHERE Token = 'SERVICE_AT_SEND_DOCUMENTS_WAYBILL';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'False' WHERE Token = 'SERVICE_AT_WAYBILL_AGRICULTURAL_MODE_ENABLED';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'ru-RU' WHERE Token = 'CULTURE';
+UPDATE cfg_configurationpreferenceparameter SET ValueTip = 'ru-RU, pt-PT, pt-BR, pt-MZ, pt-AO, en-GB, en-US, fr-FR, es-ES' WHERE Token = 'CULTURE';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'Казахстан' WHERE Token = 'COMPANY_COUNTRY';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'KZ' WHERE Token = 'COMPANY_COUNTRY_CODE2';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'be4d3781-dfa0-40fb-ab06-1debf5bf0edd' WHERE Token = 'COMPANY_COUNTRY_OID';
+UPDATE cfg_configurationpreferenceparameter SET Value = 'KZT' WHERE Token = 'SYSTEM_CURRENCY';
+UPDATE cfg_configurationpreferenceparameter SET Value = '3f8e1a2b-4c5d-6e7f-8a9b-0c1d2e3f4a5b' WHERE Token = 'SYSTEM_CURRENCY_OID';
+UPDATE cfg_configurationpreferenceparameter SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', UpdatedAt = '2019-03-11 23:16:18';

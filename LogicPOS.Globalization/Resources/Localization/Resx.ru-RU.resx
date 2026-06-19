@@ -2617,11 +2617,11 @@ Show this message next time?</value>
     <comment>Used for writing out the document values into words</comment>
   </data>
   <data name="numbers_to_words_cent" xml:space="preserve">
-    <value>Penny</value>
+    <value>тиын</value>
     <comment>Used for writing out the document values into words</comment>
   </data>
   <data name="numbers_to_words_cents" xml:space="preserve">
-    <value>Копейки</value>
+    <value>тиын</value>
     <comment>Used for writing out the document values into words</comment>
   </data>
   <data name="numbers_to_words_space_and" xml:space="preserve">

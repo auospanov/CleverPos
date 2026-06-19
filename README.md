@@ -97,11 +97,13 @@ Open source Point of Sale Solution
 	- Nugget SkiaSharp.QrCode
 
 	- Run **logicpos** project
-	
-	
-https://github.com/logicpulse/logicPOS
 
-https://nationalcatalog.kz/personal-account/api-keys
-rada2748884@gmail.com
-Seazon_123
-G0ySjGsZHr2t2O0RjARmv2gPDezeH48OpkN-nG9uRH0
+## Kazakhstan (ru-RU + KZ)
+
+Runtime settings are in `LogicPOS.UI/App.config`:
+
+- `customCultureResourceDefinition` = `ru-RU`
+- `cultureFinancialRules` = `ru-RU`
+- `appOperationModeToken` = `ClothingStore` (or your store type)
+- `useDatabaseDataDemo` = `true` for demo data
+- National Catalog (NKT) API key: `nationalCatalogApiKey` — obtain at [nationalcatalog.kz](https://nationalcatalog.kz/personal-account/api-keys). **Never store passwords or API keys in this README.**
