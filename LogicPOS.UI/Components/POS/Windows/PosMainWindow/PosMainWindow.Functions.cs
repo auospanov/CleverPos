@@ -364,36 +364,39 @@ namespace logicpos
         private void HWBarCodeReader_Captured(object sender, EventArgs e)
         {
             //_logger.Debug(String.Format("Window: [{0}] Device: [{1}] Captured: [{2}] Length: [{3}]", GlobalApp.HWBarCodeReader.Window, GlobalApp.HWBarCodeReader.Device, GlobalApp.HWBarCodeReader.Buffer, GlobalApp.HWBarCodeReader.Buffer.Length));
-            /* 
-             * TK013134 - Parking Ticket 
-             * Check for cases that a table has not been opened yet
-             */
-            if (GlobalApp.PosMainWindow.TicketList.CurrentOrderDetails != null)
+            switch (GlobalApp.BarCodeReader.Device)
             {
-                switch (GlobalApp.BarCodeReader.Device)
-                {
-                    case InputReaderDevice.None:
-                        break;
-                    case InputReaderDevice.BarCodeReader:
-                    case InputReaderDevice.CardReader:
-                        /* TK013134 - Parking Ticket */
-                        // TODO implement a message dialog for UX purposes informing user that needs to select a table before scan a barcode
-                        if (GeneralSettings.AppUseParkingTicketModule)
-                        {
-                            GlobalApp.ParkingTicket.GetTicketDetailFromWS(GlobalApp.BarCodeReader.Buffer);
-                            //TicketList.InsertOrUpdate(GlobalApp.BarCodeReader.Buffer);
-                        }
-                        // Default Mode : Articles
-                        else
-                        {
-                            TicketList.InsertOrUpdate(GlobalApp.BarCodeReader.Buffer);
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
+                case InputReaderDevice.None:
+                    break;
+                case InputReaderDevice.BarCodeReader:
+                case InputReaderDevice.CardReader:
+                    ProcessScannedBarcode(GlobalApp.BarCodeReader.Buffer);
+                    break;
+                default:
+                    break;
             }
+        }
+
+        /// <summary>
+        /// Adds article (or parking ticket) from scanned barcode — USB scanner and mobile app.
+        /// </summary>
+        /// <returns>true if barcode was processed; false when POS has no open order or barcode is empty.</returns>
+        public bool ProcessScannedBarcode(string barcode)
+        {
+            if (string.IsNullOrWhiteSpace(barcode))
+                return false;
+
+            if (TicketList.CurrentOrderDetails == null)
+                return false;
+
+            barcode = barcode.Trim();
+
+            if (GeneralSettings.AppUseParkingTicketModule)
+                GlobalApp.ParkingTicket.GetTicketDetailFromWS(barcode);
+            else
+                TicketList.InsertOrUpdate(barcode);
+
+            return true;
         }
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -803,22 +803,41 @@ namespace logicpos
             {
                 try
                 {
-                    Window window = GlobalApp.PosMainWindow;
-                    if (window == null)
-                        window = GlobalApp.StartupWindow;
-                    if (window == null)
-                        window = GlobalApp.BackOfficeMainWindow;
+                    var posWindow = GlobalApp.PosMainWindow;
+                    if (posWindow != null)
+                    {
+                        if (!posWindow.ProcessScannedBarcode(barcode))
+                        {
+                            string message = CultureResources.GetResourceByLanguage(
+                                CultureSettings.CurrentCultureName,
+                                string.Format(
+                                    "status_message_select_order_or_table_appmode_{0}",
+                                    AppOperationModeSettings.CustomAppOperationMode.AppOperationTheme).ToLower());
 
+                            Utils.ShowMessageBox(
+                                posWindow,
+                                DialogFlags.Modal,
+                                new Size(500, 280),
+                                MessageType.Warning,
+                                ButtonsType.Ok,
+                                GeneralUtils.GetResourceByName("global_barcode"),
+                                message);
+                        }
+
+                        return false;
+                    }
+
+                    Window window = GlobalApp.StartupWindow ?? GlobalApp.BackOfficeMainWindow;
                     if (window != null)
                     {
                         Utils.ShowMessageBox(
                             window,
                             DialogFlags.Modal,
                             new Size(500, 280),
-                            MessageType.Info,
+                            MessageType.Warning,
                             ButtonsType.Ok,
-                            "Штрихкод с телефона",
-                            barcode);
+                            GeneralUtils.GetResourceByName("global_barcode"),
+                            "Откройте кассу и выберите заказ, затем повторите сканирование.");
                     }
                 }
                 catch { }
