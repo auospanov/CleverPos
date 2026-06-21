@@ -107,3 +107,5 @@ Runtime settings are in `LogicPOS.UI/App.config`:
 - `appOperationModeToken` = `ClothingStore` (or your store type)
 - `useDatabaseDataDemo` = `true` for demo data
 - National Catalog (NKT) API key: `nationalCatalogApiKey` — obtain at [nationalcatalog.kz](https://nationalcatalog.kz/personal-account/api-keys). **Never store passwords or API keys in this README.**
+
+**Roadmap / checklist:** see [TODO.md](TODO.md) (ru-RU, KZ, barcodes, NKT, CleverApp).
