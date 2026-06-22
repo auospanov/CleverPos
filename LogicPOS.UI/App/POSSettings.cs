@@ -1,6 +1,7 @@
 using LogicPOS.Settings;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace logicpos.App
 {
@@ -102,10 +103,10 @@ namespace logicpos.App
 
         /* IN009035 */
         public static string FileDatabaseDataPath = @"Resources\Database\Data\{0}\{1}\databasedata.sql"; // "Resources\Database\Data\Default\en\databasedata.sql"
-        public static string FileDatabaseData = GetDatabaseFileName(false, FileDatabaseDataPath);// Default Script: "databasedata.sql";
+        public static string FileDatabaseData => GetDatabaseFileName(false, FileDatabaseDataPath);
         /* IN008024 */
         public static string FileDatabaseDataDemoPath = @"Resources\Database\Demos\{0}\{1}\{2}"; // "Resources\Database\Demos\Backery\en\databasedatademo_backery.sql"
-        public static string FileDatabaseDataDemo = GetDatabaseFileName(true, FileDatabaseDataDemoPath);// Default Script: "databasedatademo.sql";
+        public static string FileDatabaseDataDemo => GetDatabaseFileName(true, FileDatabaseDataDemoPath);
 
         public static string FileDatabaseViews = @"Resources\Database\databaseviews.sql";
         // public static string FileDatabaseOtherDatabaseType = @"Resources\Database\{0}\Other\";/* IN009045: Not in use */
@@ -115,7 +116,7 @@ namespace logicpos.App
         //Encrypted Scripts
         /* IN009035 */
         public static string FileDatabaseOtherCommonPluginsSoftwareVendorPath = @"Resources\Database\Other\Plugins\SoftwareVendor\Data\{0}\{1}"; // "Resources\Database\Other\Plugins\SoftwareVendor\Data\Default\en"
-        public static string FileDatabaseOtherCommonPluginsSoftwareVendor = GetDatabaseFileName(false, FileDatabaseOtherCommonPluginsSoftwareVendorPath);// Default Path: "Resources\Database\Other\Plugins\SoftwareVendor"
+        public static string FileDatabaseOtherCommonPluginsSoftwareVendor => GetDatabaseFileName(false, FileDatabaseOtherCommonPluginsSoftwareVendorPath);
 
         //Country Scripts
         public static string FileDatabaseOtherCommonCountry = @"Resources\Database\Other\Country";
@@ -311,18 +312,21 @@ namespace logicpos.App
             try
             {
                 CustomAppOperationMode customAppOperationMode = CustomAppOperationMode.GetAppOperationMode(GeneralSettings.Settings["appOperationModeToken"]);
-                        
-                string cultureName = CultureSettings.CurrentCultureName;
-                string cultureCountryPrefix = cultureName.Substring(0, cultureName.IndexOf('-'));         
+
+                string cultureName = GeneralSettings.Settings["customCultureResourceDefinition"];
+                if (string.IsNullOrWhiteSpace(cultureName))
+                    cultureName = "ru-RU";
+
+                int dashIndex = cultureName.IndexOf('-');
+                string cultureCountryPrefix = dashIndex > 0
+                    ? cultureName.Substring(0, dashIndex)
+                    : cultureName;
 
                 if (demo)
-                {                    
-                    //string appOperationModeToken = LogicPOS.Settings.GeneralSettings.Settings["appOperationModeToken"];
+                {
                     string appOperationModeToken = customAppOperationMode.AppOperationModeToken;
-                    //..\Resources\Database\Demos\..\..\databasedatademo_backery.sql
                     string fileName = customAppOperationMode.DatabaseDemoFileName;
 
-                    //"Resources\Database\Demos\{0}\{1}\{2}
                     result = string.Format(basePath,
                         appOperationModeToken,
                         cultureCountryPrefix,
@@ -331,34 +335,86 @@ namespace logicpos.App
                 }
                 else
                 {
-					//Angola - Certificação [TK:016268]
                     if (cultureName == "pt-AO" && basePath == "Resources\\Database\\Data\\{0}\\{1}\\databasedata.sql")
                     {
                         cultureCountryPrefix = "ao";
                     }
-                    /* Default or Retail */
+
                     string appOperationTheme = customAppOperationMode.AppOperationTheme;
-					//Utiliza SQL para BackOfficeMode
-                    if(AppOperationModeSettings.CustomAppOperationMode.AppOperationModeToken == "BackOfficeMode")
+                    if (AppOperationModeSettings.CustomAppOperationMode.AppOperationModeToken == "BackOfficeMode")
                     {
                         appOperationTheme = "BackOfficeMode";
                     }
-                    // "Resources\Database\Data\{0}\{1}\databasedata.sql"
-                    // "..\Resources\Database\Other\Plugins\SoftwareVendor\Data\{0}\{1}"
+
                     result = string.Format(basePath,
                         appOperationTheme,
                         cultureCountryPrefix
                     );
                 }
+
+                result = ResolveExistingDatabaseScriptPath(result, demo, basePath, cultureCountryPrefix, customAppOperationMode);
+                log.Info(string.Format("GetDatabaseFileName: using script [{0}]", result));
             }
             catch (Exception ex)
             {
                 log.Error("string GetDatabaseFileName(bool demo) :: " + ex.Message, ex);
-                /* Default script for demo or data */
-                  result = demo ?  @"Resources\Database\databasedatademo.sql" : basePath.EndsWith(".sql") ? @"Resources\Database\databasedata.sql" : @"Resources\Database\Other\Plugins\SoftwareVendor";
+                result = demo
+                    ? @"Resources\Database\databasedatademo.sql"
+                    : string.Format(FileDatabaseDataPath, "Retail", "en");
             }
 
             return result;
+        }
+
+        private static string ResolveExistingDatabaseScriptPath(
+            string primaryPath,
+            bool demo,
+            string basePath,
+            string cultureCountryPrefix,
+            CustomAppOperationMode customAppOperationMode)
+        {
+            if (File.Exists(primaryPath))
+                return primaryPath;
+
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(POSSettings));
+            log.Warn(string.Format("Database script not found: [{0}]", primaryPath));
+
+            string[] fallbackPrefixes;
+            if (string.Equals(cultureCountryPrefix, "ru", StringComparison.OrdinalIgnoreCase))
+                fallbackPrefixes = new[] { "ru", "en" };
+            else if (string.Equals(cultureCountryPrefix, "en", StringComparison.OrdinalIgnoreCase))
+                fallbackPrefixes = new[] { "en" };
+            else
+                fallbackPrefixes = new[] { cultureCountryPrefix, "en" };
+
+            foreach (string prefix in fallbackPrefixes)
+            {
+                string candidate;
+                if (demo)
+                {
+                    candidate = string.Format(
+                        basePath,
+                        customAppOperationMode.AppOperationModeToken,
+                        prefix,
+                        customAppOperationMode.DatabaseDemoFileName);
+                }
+                else
+                {
+                    string theme = customAppOperationMode.AppOperationTheme;
+                    if (customAppOperationMode.AppOperationModeToken == "BackOfficeMode")
+                        theme = "BackOfficeMode";
+
+                    candidate = string.Format(basePath, theme, prefix);
+                }
+
+                if (File.Exists(candidate))
+                {
+                    log.Warn(string.Format("Database script fallback: [{0}] -> [{1}]", primaryPath, candidate));
+                    return candidate;
+                }
+            }
+
+            return primaryPath;
         }
     }
 }

@@ -39,13 +39,16 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             string windowTitle = GeneralUtils.GetResourceByName("window_title_dialog_virtual_keyboard");
             Size windowSize = new Size(916, 358);
             string fileDefaultWindowIcon = PathsSettings.ImagesFolderLocation + @"Icons\Windows\icon_window_keyboard.png";
-            string fileKeyboardXML = PathsSettings.Paths["keyboards"] + @"163.xml";
+            string keyboardsPath = PathsSettings.Paths["keyboards"].ToString();
+            string fileKeyboardRu = keyboardsPath + (GeneralSettings.Settings["keyboardLayoutCyrillic"] ?? "ru.xml");
+            string fileKeyboardEn = keyboardsPath + (GeneralSettings.Settings["keyboardLayoutLatin"] ?? "en.xml");
+            // Portuguese layout (LogicPOS PT): keyboardsPath + "163.xml" — not used in CleverPos
 
             //Init Content
             Fixed fixedContent = new Fixed();
 
-            //Initialize Virtual Keyboard
-            _keyboardPad = new KeyBoardPad(fileKeyboardXML);
+            //Initialize Virtual Keyboard (default: Russian)
+            _keyboardPad = new KeyBoardPad(fileKeyboardRu, fileKeyboardEn);
 
             //Pack It
             fixedContent.Put(_keyboardPad, 0, 10);

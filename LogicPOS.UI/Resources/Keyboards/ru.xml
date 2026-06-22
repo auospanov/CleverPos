@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- CleverPos: Russian ЙЦУКЕН layout (default) -->
+<keyboard>
+  <info>
+    <kbdid>ru</kbdid>
+    <description>Russian JCUKEN for CleverPos</description>
+  </info>
+  <keys>
+    <key row="0" col="1" level="1" glyph="/" charactername="Slash" unicodeid="002F" />
+    <key row="0" col="1" level="0" glyph="\" charactername="Backslash" unicodeid="005C" />
+    <key row="0" col="2" level="1" glyph="!" charactername="Exclamation Point" unicodeid="0021" />
+    <key row="0" col="2" level="0" glyph="1" charactername="One" unicodeid="0031" />
+    <key row="0" col="3" level="1" glyph="&#34;" charactername="Quotation Marks" unicodeid="0022" />
+    <key row="0" col="3" level="0" glyph="2" charactername="Two" unicodeid="0032" />
+    <key row="0" col="3" level="2" glyph="@" charactername="At Sign" unicodeid="0040" />
+    <key row="0" col="4" level="1" glyph="№" charactername="Numero Sign" unicodeid="2116" />
+    <key row="0" col="4" level="0" glyph="3" charactername="Three" unicodeid="0033" />
+    <key row="0" col="5" level="1" glyph="%" charactername="Percent Sign" unicodeid="0025" />
+    <key row="0" col="5" level="0" glyph="4" charactername="Four" unicodeid="0034" />
+    <key row="0" col="6" level="1" glyph=":" charactername="Colon" unicodeid="003A" />
+    <key row="0" col="6" level="0" glyph="5" charactername="Five" unicodeid="0035" />
+    <key row="0" col="7" level="1" glyph="?" charactername="Question Mark" unicodeid="003F" />
+    <key row="0" col="7" level="0" glyph="6" charactername="Six" unicodeid="0036" />
+    <key row="0" col="8" level="1" glyph="*" charactername="Asterisk" unicodeid="002A" />
+    <key row="0" col="8" level="0" glyph="7" charactername="Seven" unicodeid="0037" />
+    <key row="0" col="9" level="1" glyph="(" charactername="Left Parenthesis" unicodeid="0028" />
+    <key row="0" col="9" level="0" glyph="8" charactername="Eight" unicodeid="0038" />
+    <key row="0" col="10" level="1" glyph=")" charactername="Right Parenthesis" unicodeid="0029" />
+    <key row="0" col="10" level="0" glyph="9" charactername="Nine" unicodeid="0039" />
+    <key row="0" col="11" level="1" glyph="_" charactername="Underline" unicodeid="005F" />
+    <key row="0" col="11" level="0" glyph="0" charactername="Zero" unicodeid="0030" />
+    <key row="0" col="12" level="1" glyph="+" charactername="Plus Sign" unicodeid="002B" />
+    <key row="0" col="12" level="0" glyph="-" charactername="Hyphen" unicodeid="002D" />
+
+    <key row="1" col="1" level="1" glyph="Й" charactername="Short I Capital" unicodeid="0419" />
+    <key row="1" col="1" level="0" glyph="й" charactername="Short I Small" unicodeid="0439" hidel2="true" bold="true" />
+    <key row="1" col="2" level="1" glyph="Ц" charactername="Tse Capital" unicodeid="0426" />
+    <key row="1" col="2" level="0" glyph="ц" charactername="Tse Small" unicodeid="0446" hidel2="true" bold="true" />
+    <key row="1" col="3" level="1" glyph="У" charactername="U Capital" unicodeid="0423" />
+    <key row="1" col="3" level="0" glyph="у" charactername="U Small" unicodeid="0443" hidel2="true" bold="true" />
+    <key row="1" col="4" level="1" glyph="К" charactername="Ka Capital" unicodeid="041A" />
+    <key row="1" col="4" level="0" glyph="к" charactername="Ka Small" unicodeid="043A" hidel2="true" bold="true" />
+    <key row="1" col="5" level="1" glyph="Е" charactername="Ie Capital" unicodeid="0415" />
+    <key row="1" col="5" level="0" glyph="е" charactername="Ie Small" unicodeid="0435" hidel2="true" bold="true" />
+    <key row="1" col="6" level="1" glyph="Н" charactername="En Capital" unicodeid="041D" />
+    <key row="1" col="6" level="0" glyph="н" charactername="En Small" unicodeid="043D" hidel2="true" bold="true" />
+    <key row="1" col="7" level="1" glyph="Г" charactername="Ghe Capital" unicodeid="0413" />
+    <key row="1" col="7" level="0" glyph="г" charactername="Ghe Small" unicodeid="0433" hidel2="true" bold="true" />
+    <key row="1" col="8" level="1" glyph="Ш" charactername="Sha Capital" unicodeid="0428" />
+    <key row="1" col="8" level="0" glyph="ш" charactername="Sha Small" unicodeid="0448" hidel2="true" bold="true" />
+    <key row="1" col="9" level="1" glyph="Щ" charactername="Shcha Capital" unicodeid="0429" />
+    <key row="1" col="9" level="0" glyph="щ" charactername="Shcha Small" unicodeid="0449" hidel2="true" bold="true" />
+    <key row="1" col="10" level="1" glyph="З" charactername="Ze Capital" unicodeid="0417" />
+    <key row="1" col="10" level="0" glyph="з" charactername="Ze Small" unicodeid="0437" hidel2="true" bold="true" />
+    <key row="1" col="11" level="1" glyph="Х" charactername="Ha Capital" unicodeid="0425" />
+    <key row="1" col="11" level="0" glyph="х" charactername="Ha Small" unicodeid="0445" hidel2="true" bold="true" />
+    <key row="1" col="12" level="1" glyph="Ъ" charactername="Hard Sign Capital" unicodeid="042A" />
+    <key row="1" col="12" level="0" glyph="ъ" charactername="Hard Sign Small" unicodeid="044A" hidel2="true" bold="true" />
+
+    <key row="2" col="1" level="1" glyph="Ф" charactername="Ef Capital" unicodeid="0424" />
+    <key row="2" col="1" level="0" glyph="ф" charactername="Ef Small" unicodeid="0444" hidel2="true" bold="true" />
+    <key row="2" col="2" level="1" glyph="Ы" charactername="Yeru Capital" unicodeid="042B" />
+    <key row="2" col="2" level="0" glyph="ы" charactername="Yeru Small" unicodeid="044B" hidel2="true" bold="true" />
+    <key row="2" col="3" level="1" glyph="В" charactername="Ve Capital" unicodeid="0412" />
+    <key row="2" col="3" level="0" glyph="в" charactername="Ve Small" unicodeid="0432" hidel2="true" bold="true" />
+    <key row="2" col="4" level="1" glyph="А" charactername="A Capital" unicodeid="0410" />
+    <key row="2" col="4" level="0" glyph="а" charactername="A Small" unicodeid="0430" hidel2="true" bold="true" />
+    <key row="2" col="5" level="1" glyph="П" charactername="Pe Capital" unicodeid="041F" />
+    <key row="2" col="5" level="0" glyph="п" charactername="Pe Small" unicodeid="043F" hidel2="true" bold="true" />
+    <key row="2" col="6" level="1" glyph="Р" charactername="Er Capital" unicodeid="0420" />
+    <key row="2" col="6" level="0" glyph="р" charactername="Er Small" unicodeid="0440" hidel2="true" bold="true" />
+    <key row="2" col="7" level="1" glyph="О" charactername="O Capital" unicodeid="041E" />
+    <key row="2" col="7" level="0" glyph="о" charactername="O Small" unicodeid="043E" hidel2="true" bold="true" />
+    <key row="2" col="8" level="1" glyph="Л" charactername="El Capital" unicodeid="041B" />
+    <key row="2" col="8" level="0" glyph="л" charactername="El Small" unicodeid="043B" hidel2="true" bold="true" />
+    <key row="2" col="9" level="1" glyph="Д" charactername="De Capital" unicodeid="0414" />
+    <key row="2" col="9" level="0" glyph="д" charactername="De Small" unicodeid="0434" hidel2="true" bold="true" />
+    <key row="2" col="10" level="1" glyph="Ж" charactername="Zhe Capital" unicodeid="0416" />
+    <key row="2" col="10" level="0" glyph="ж" charactername="Zhe Small" unicodeid="0436" hidel2="true" bold="true" />
+    <key row="2" col="11" level="1" glyph="Э" charactername="E Capital" unicodeid="042D" />
+    <key row="2" col="11" level="0" glyph="э" charactername="E Small" unicodeid="044D" hidel2="true" bold="true" />
+
+    <key row="3" col="1" level="1" glyph="," charactername="Comma" unicodeid="002C" />
+    <key row="3" col="1" level="0" glyph="." charactername="Period" unicodeid="002E" />
+    <key row="3" col="2" level="1" glyph="Я" charactername="Ya Capital" unicodeid="042F" />
+    <key row="3" col="2" level="0" glyph="я" charactername="Ya Small" unicodeid="044F" hidel2="true" bold="true" />
+    <key row="3" col="3" level="1" glyph="Ч" charactername="Che Capital" unicodeid="0427" />
+    <key row="3" col="3" level="0" glyph="ч" charactername="Che Small" unicodeid="0447" hidel2="true" bold="true" />
+    <key row="3" col="4" level="1" glyph="С" charactername="Es Capital" unicodeid="0421" />
+    <key row="3" col="4" level="0" glyph="с" charactername="Es Small" unicodeid="0441" hidel2="true" bold="true" />
+    <key row="3" col="5" level="1" glyph="М" charactername="Em Capital" unicodeid="041C" />
+    <key row="3" col="5" level="0" glyph="м" charactername="Em Small" unicodeid="043C" hidel2="true" bold="true" />
+    <key row="3" col="6" level="1" glyph="И" charactername="I Capital" unicodeid="0418" />
+    <key row="3" col="6" level="0" glyph="и" charactername="I Small" unicodeid="0438" hidel2="true" bold="true" />
+    <key row="3" col="7" level="1" glyph="Т" charactername="Te Capital" unicodeid="0422" />
+    <key row="3" col="7" level="0" glyph="т" charactername="Te Small" unicodeid="0442" hidel2="true" bold="true" />
+    <key row="3" col="8" level="1" glyph="Ь" charactername="Soft Sign Capital" unicodeid="042C" />
+    <key row="3" col="8" level="0" glyph="ь" charactername="Soft Sign Small" unicodeid="044C" hidel2="true" bold="true" />
+    <key row="3" col="9" level="1" glyph="Б" charactername="Be Capital" unicodeid="0411" />
+    <key row="3" col="9" level="0" glyph="б" charactername="Be Small" unicodeid="0431" hidel2="true" bold="true" />
+    <key row="3" col="10" level="1" glyph="Ю" charactername="Yu Capital" unicodeid="042E" />
+    <key row="3" col="10" level="0" glyph="ю" charactername="Yu Small" unicodeid="044E" hidel2="true" bold="true" />
+    <key row="3" col="11" level="1" glyph="Ё" charactername="Io Capital" unicodeid="0401" />
+    <key row="3" col="11" level="0" glyph="ё" charactername="Io Small" unicodeid="0451" hidel2="true" bold="true" />
+
+    <key row="0" col="0" level="0" glyph="Esc" type="esc" charactername="Left Escape" halign="left" />
+    <key row="0" col="13" level="0" glyph="Back" type="back" charactername="Left Back" keywidth="100" />
+    <key row="0" col="14" level="0" glyph="7" charactername="Number Pad 7" unicodeid="0037" numpad="true" bold="true" />
+    <key row="0" col="15" level="0" glyph="8" charactername="Number Pad 8" unicodeid="0038" numpad="true" bold="true" />
+    <key row="0" col="16" level="0" glyph="9" charactername="Number Pad 9" unicodeid="0039" numpad="true" bold="true" />
+    <key row="0" col="17" level="0" glyph="Esc" type="esc" charactername="Escape" numpad="true" />
+    <key row="1" col="0" level="0" glyph="Tab" type="tab" charactername="Tab" keywidth="64" halign="left" />
+    <key row="1" col="13" level="1" glyph="\" charactername="Backslash" unicodeid="005C" />
+    <key row="1" col="13" level="0" glyph="/" charactername="Slash" unicodeid="002F" keywidth="82" />
+    <key row="1" col="14" level="0" glyph="4" charactername="Four" unicodeid="0034" numpad="true" bold="true" />
+    <key row="1" col="15" level="0" glyph="5" charactername="Five" unicodeid="0035" numpad="true" bold="true" />
+    <key row="1" col="16" level="0" glyph="6" charactername="Six" unicodeid="0036" numpad="true" bold="true" />
+    <key row="1" col="17" level="0" glyph="*" charactername="Asterisk" unicodeid="002A" numpad="true" />
+    <key row="2" col="0" level="0" glyph="Caps" type="caps" charactername="Caps Lock" keywidth="82" halign="left" />
+    <key row="2" col="12" level="0" glyph="Enter" type="enter" charactername="Left Enter" keywidth="110" />
+    <key row="2" col="13" level="0" glyph="1" charactername="One" unicodeid="0031" numpad="true" bold="true" />
+    <key row="2" col="14" level="0" glyph="2" charactername="Two" unicodeid="0032" numpad="true" bold="true" />
+    <key row="2" col="15" level="0" glyph="3" charactername="Three" unicodeid="0033" numpad="true" bold="true" />
+    <key row="2" col="16" level="0" glyph="-" charactername="Hyphen" unicodeid="002D" numpad="true" />
+    <key row="3" col="0" level="0" glyph="Shift" type="shift" charactername="Left Shift" keywidth="100" halign="left" />
+    <key row="3" col="12" level="0" glyph="↑" type="up" charactername="Up Cursor" />
+    <key row="3" col="13" level="0" glyph="Shf" type="shift" charactername="Right Shift" />
+    <key row="3" col="14" level="0" glyph="0" charactername="Zero" unicodeid="0030" numpad="true" bold="true" />
+    <key row="3" col="15" level="0" glyph="." charactername="Period" unicodeid="002E" numpad="true" />
+    <key row="3" col="16" level="0" glyph="/" charactername="Slash" unicodeid="002F" numpad="true" />
+    <key row="3" col="17" level="0" glyph="+" charactername="Plus Sign" unicodeid="002B" numpad="true" />
+    <key row="4" col="0" level="0" glyph="EN" type="ekey" charactername="Swap" keywidth="59" halign="left" />
+    <key row="4" col="1" level="0" glyph="Ctrl" type="ctrl" charactername="Left Control" keywidth="62" />
+    <key row="4" col="2" level="0" glyph="Alt" type="alt" charactername="Left Alt" keywidth="52" />
+    <key row="4" col="3" level="0" glyph="" type="space" charactername="Space" unicodeid="0020" keywidth="255" />
+    <key row="4" col="4" level="0" glyph="Home" type="home" charactername="Home" keywidth="66" />
+    <key row="4" col="5" level="0" glyph="End" type="end" charactername="End" keywidth="66" />
+    <key row="4" col="6" level="0" glyph="←" type="left" charactername="Left Cursor" />
+    <key row="4" col="7" level="0" glyph="↓" type="down" charactername="Down Cursor" />
+    <key row="4" col="8" level="0" glyph="→" type="right" charactername="Right Cursor" />
+    <key row="4" col="9" level="0" glyph="Enter" type="enter" charactername="Right Enter" keywidth="92" numpad="true" />
+    <key row="4" col="10" level="0" glyph="Back" type="back" charactername="Right Back" keywidth="92" numpad="true" />
+  </keys>
+</keyboard>

@@ -14,7 +14,7 @@
 - [x] **App.config:** `cultureFinancialRules=ru-RU`, отключены AT/SAF-T для KZ, `appUseParkingTicketModule=false`
 - [x] **Культура:** `LogicPOSApp.cs` — потоковая культура из настроек (не захардкожен `ru-RU`)
 - [x] **Локализация:** `Resx.ru-RU.resx` — «тиын» в сумме прописью
-- [x] **Мобильный штрихкод → чек:** `PosMainWindow.ProcessScannedBarcode` + вызов из `LogicPOSApp.ShowMobileBarcodeReceived`
+- [x] **Справочник стран на русском:** `scripts/countries_ru.json`, `scripts/translate_countries_ru.py`, все `Data/**/ru/databasedata.sql`; авто-патч существующей БД при `ru-RU` (`DataLayer.ApplyRussianCountryNamesIfNeeded`)
 - [x] **Скрипт:** `scripts/apply_kz_ru_phase_a.py`
 
 ---
@@ -110,6 +110,7 @@
 
 ## Фаза G — Опциональные улучшения
 
+- [x] Справочник стран на русском (seed + миграция для существующей БД)
 - [ ] Нормализация EAN при скане (ведущий `0`, 12 vs 13 цифр) перед поиском в БД
 - [ ] Убрать захардкоженный русский текст в `ShowMobileBarcodeReceived` («Откройте кассу…») → в `Resx.ru-RU.resx`
 - [ ] Демо-артикулы: проставить `BarCode` в `Demos/*/ru/` SQL

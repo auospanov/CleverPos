@@ -855,7 +855,7 @@ namespace logicpos
         //Check if is letter with RegEx, better than Char.IsLetter that returns º and ª too
         public static bool IsLetter(char input)
         {
-            string pattern = @"^[a-zA-ZçÇÁáÉéÍóÚúÀàÈèÌìÒòÙùÃãÕõÂâÊêÎîÔôÛû]+$";
+            string pattern = @"^[a-zA-ZçÇÁáÉéÍóÚúÀàÈèÌìÒòÙùÃãÕõÂâÊêÎîÔôÛûа-яА-ЯёЁ]+$";
             Regex regex = new Regex(pattern);
             return regex.IsMatch(Convert.ToString(input));
         }

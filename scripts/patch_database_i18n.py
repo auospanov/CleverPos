@@ -251,6 +251,11 @@ def main():
     create_ru_demos()
     create_kz_country_scripts()
     n = patch_all_databasedata()
+    # Russian country names in ru seed files + migration SQL
+    import subprocess
+    import sys
+    script = os.path.join(os.path.dirname(__file__), "translate_countries_ru.py")
+    subprocess.check_call([sys.executable, script], cwd=os.path.dirname(__file__))
     print(f"DONE. Patched {n} databasedata files.")
 
 

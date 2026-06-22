@@ -24,104 +24,137 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
 
         //Private Members
         private readonly string _fontKeyboardPadTextEntry = LogicPOS.Settings.GeneralSettings.Settings["fontKeyboardPadTextEntry"];
-        private readonly VirtualKeyBoard _virtualKeyBoard;
+        private readonly string _layoutCyrillicFile;
+        private readonly string _layoutLatinFile;
+        private VirtualKeyBoard _virtualKeyBoard;
         private readonly int _spacing = 10;
+        private bool _useCyrillicLayout = true;
         private bool _isCapsEnabled = false;
         private string _activeDiacritical;
         private ModifierKeys _activeModifierKey = ModifierKeys.None;
+        private VBox _vboxResult;
+        private HBox _hboxResultKeyboard;
         private VBox _vboxKeyboardRows;
         private VBox _vboxNumPadRows;
 
-        //Constructor
-        public KeyBoardPad(string pFile)
+        //Constructor: default Cyrillic (ru), alternate Latin (en)
+        public KeyBoardPad(string pCyrillicLayoutFile, string pLatinLayoutFile)
         {
-            //ParseXML into VirtualKeyBoard Object
-            _virtualKeyBoard = new VirtualKeyBoard(pFile);
+            _layoutCyrillicFile = pCyrillicLayoutFile;
+            _layoutLatinFile = pLatinLayoutFile;
+            _virtualKeyBoard = new VirtualKeyBoard(_layoutCyrillicFile);
 
-            //Transform VirtualKeyBoard Object into UI VBox of Rows
-            VBox keyboard = InitVirtualKeyboard(_virtualKeyBoard);
-
-            PackStart(keyboard);
+            _vboxResult = BuildKeyboardUi();
+            PackStart(_vboxResult);
 
             //Update after Allocated
             _vboxNumPadRows.SizeAllocated += delegate { UpdateKeyboardMode(); };
         }
 
         //Initialize UI Keyboard from VirtualKeyboard
-        private VBox InitVirtualKeyboard(VirtualKeyBoard pVirtualKeyboard)
+        private VBox BuildKeyboardUi()
+        {
+            Pango.FontDescription fontDescriptiontextEntry = Pango.FontDescription.FromString(_fontKeyboardPadTextEntry);
+            TextEntry = new ValidatableTextBox();
+            TextEntry.ModifyFont(fontDescriptiontextEntry);
+            TextEntry.ModifyBase(StateType.Active, Color.Gray.ToGdkColor());
+
+            _hboxResultKeyboard = new HBox(false, 0);
+            _hboxResultKeyboard.Spacing = _spacing;
+            PopulateKeyboardRows();
+
+            VBox vboxResult = new VBox(false, _spacing);
+            vboxResult.PackStart(TextEntry);
+            vboxResult.PackStart(_hboxResultKeyboard);
+
+            this.KeyReleaseEvent += KeyBoardPad_KeyReleaseEvent;
+            return vboxResult;
+        }
+
+        private void PopulateKeyboardRows()
         {
             List<VirtualKey> currentKeyboardRow;
-            VirtualKey currentKey;//Virtual Key
-            KeyboardPadKey keyboardPadKey;//UI GTK Key
+            VirtualKey currentKey;
+            KeyboardPadKey keyboardPadKey;
 
-            //Init Lists
             List<HBox> hboxKeyBoard = new List<HBox>();
             List<HBox> hboxNumPad = new List<HBox>();
-            //Init VBoxs to strore Rows
             _vboxKeyboardRows = new VBox(true, 0);
             _vboxNumPadRows = new VBox(true, 0);
 
-            //loop rows
-            for (int i = 0; i < pVirtualKeyboard.KeyBoard.Count; i++)
+            for (int i = 0; i < _virtualKeyBoard.KeyBoard.Count; i++)
             {
-                //Get current VirtualKeyboard Row to Work
-                currentKeyboardRow = pVirtualKeyboard.KeyBoard[i];
-
-                //add new Hbox to hboxKeyBoard/hboxNumPad rows List
+                currentKeyboardRow = _virtualKeyBoard.KeyBoard[i];
                 hboxKeyBoard.Add(new HBox(false, 0));
                 hboxNumPad.Add(new HBox(false, 0));
 
-                //loop columns in a row
                 for (int j = 0; j < currentKeyboardRow.Count; j++)
                 {
-                    //Debug
-                    //_logger.Debug(string.Format("InitVirtualKeyboard(): tmpKey{0}:{1}:{2}", i, j, currentKey.L1.Glyph));
-
                     currentKey = currentKeyboardRow[j];
-
-                    //Create UI Key
                     keyboardPadKey = new KeyboardPadKey(currentKey);
                     keyboardPadKey.Clicked += keyboardPadKey_Clicked;
-                    //Assign its UI reference to VirtualKey, usefull to have access to UI in VirtualKeyboard.VirtualKey
                     currentKey.UIKey = keyboardPadKey;
 
-                    //If is a IsNumPad L1 key add to IsNumPad
                     if (currentKey.L1.IsNumPad)
-                    {
                         hboxNumPad[i].PackStart(keyboardPadKey, false, false, 0);
-                    }
-                    //Else Add to KeyBoard
                     else
-                    {
                         hboxKeyBoard[i].PackStart(keyboardPadKey, false, false, 0);
-                    };
                 }
-                //In the end add row to Vbox
+
                 _vboxKeyboardRows.PackStart(hboxKeyBoard[i]);
                 _vboxNumPadRows.PackStart(hboxNumPad[i]);
             }
 
-            //Pack KeyBoard and NumberPad into hboxResultReyboard
-            HBox hboxResultReyboard = new HBox(false, 0);
-            hboxResultReyboard.Spacing = _spacing;
-            hboxResultReyboard.PackStart(_vboxKeyboardRows, false, false, 0);
-            hboxResultReyboard.PackStart(_vboxNumPadRows, false, false, 0);
-            //Init _textEntry
-            Pango.FontDescription fontDescriptiontextEntry = Pango.FontDescription.FromString(_fontKeyboardPadTextEntry);
-            TextEntry = new ValidatableTextBox();
-            TextEntry.ModifyFont(fontDescriptiontextEntry);
-            //Change Selected Text, when looses entry focus
-            TextEntry.ModifyBase(StateType.Active, Color.Gray.ToGdkColor());
-            //Final Pack KeyBoard + TextEntry
-            VBox vboxResult = new VBox(false, _spacing);
-            vboxResult.PackStart(TextEntry);
-            vboxResult.PackStart(hboxResultReyboard);
+            if (_hboxResultKeyboard != null)
+            {
+                Widget[] children = _hboxResultKeyboard.Children;
+                foreach (Widget child in children)
+                    _hboxResultKeyboard.Remove(child);
 
-            //Events
-            this.KeyReleaseEvent += KeyBoardPad_KeyReleaseEvent;
+                _hboxResultKeyboard.PackStart(_vboxKeyboardRows, false, false, 0);
+                _hboxResultKeyboard.PackStart(_vboxNumPadRows, false, false, 0);
+            }
+        }
 
-            //Add Space arround Keyboards
-            return vboxResult;
+        private void ToggleKeyboardLayout()
+        {
+            _useCyrillicLayout = !_useCyrillicLayout;
+            _isCapsEnabled = false;
+            _activeModifierKey = ModifierKeys.None;
+            _activeDiacritical = null;
+
+            string layoutFile = _useCyrillicLayout ? _layoutCyrillicFile : _layoutLatinFile;
+            _virtualKeyBoard = new VirtualKeyBoard(layoutFile);
+
+            if (_vboxKeyboardRows != null)
+            {
+                _hboxResultKeyboard.Remove(_vboxKeyboardRows);
+                _vboxKeyboardRows.Destroy();
+            }
+            if (_vboxNumPadRows != null)
+            {
+                _hboxResultKeyboard.Remove(_vboxNumPadRows);
+                _vboxNumPadRows.Destroy();
+            }
+
+            PopulateKeyboardRows();
+            _hboxResultKeyboard.ShowAll();
+            UpdateKeyboard();
+            UpdateKeyboardMode();
+            UpdateLayoutSwitchKeyLabel();
+        }
+
+        private void UpdateLayoutSwitchKeyLabel()
+        {
+            string label = _useCyrillicLayout ? "EN" : "RU";
+            for (int i = 0; i < _virtualKeyBoard.KeyBoard.Count; i++)
+            {
+                foreach (VirtualKey key in _virtualKeyBoard.KeyBoard[i])
+                {
+                    if (key.Type == "ekey" && key.UIKey?.LabelL1 != null)
+                        key.UIKey.LabelL1.Text = label;
+                }
+            }
         }
 
         private void KeyBoardPad_KeyReleaseEvent(object o, KeyReleaseEventArgs args)
@@ -383,8 +416,11 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                         };
                     }
                     break;
-                //Enable/Disable Internal Keyboard
+                //Swap Latin / Cyrillic layout
                 case "ekey":
+                    _requireUpdate = true;
+                    _skipInsert = true;
+                    ToggleKeyboardLayout();
                     break;
                 //Delete
                 case "back":

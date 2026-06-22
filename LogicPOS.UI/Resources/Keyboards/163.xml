@@ -1,4 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  DISABLED for CleverPos KZ — Portuguese national layout (LogicPOS PT origin).
+  CleverPos uses ru.xml (default) and en.xml; see App.config keyboardLayout*.
+-->
 <keyboard>
   <info>
     <kbdid>163</kbdid>

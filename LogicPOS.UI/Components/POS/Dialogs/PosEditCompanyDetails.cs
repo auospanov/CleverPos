@@ -95,9 +95,10 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 systemCurrency = CultureSettings.EuroCurrencyId;
             }
 
-            //Init Inital Values
-            cfg_configurationcountry intialValueConfigurationCountry = XPOUtility.GetEntityById<cfg_configurationcountry>(systemCountry);
-            cfg_configurationcurrency intialValueConfigurationCurrency = XPOUtility.GetEntityById<cfg_configurationcurrency>(systemCurrency);
+            //Init Inital Values (config OID may be missing in DB until seed/migration is applied)
+            cfg_configurationcountry intialValueConfigurationCountry = ResolveInitialCountry(systemCountry);
+            cfg_configurationcurrency intialValueConfigurationCurrency = ResolveInitialCurrency(
+                systemCurrency, intialValueConfigurationCountry);
 
             try
             {
@@ -111,7 +112,8 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 CriteriaOperator criteriaOperatorSystemCountry = CriteriaOperator.Parse("(Disabled IS NULL OR Disabled  <> 1) AND (RegExFiscalNumber IS NOT NULL)");
                 _entryBoxSelectSystemCountry = new XPOEntryBoxSelectRecordValidation<cfg_configurationcountry, TreeViewConfigurationCountry>(this, GeneralUtils.GetResourceByName("global_country"), "Designation", "Oid", intialValueConfigurationCountry, criteriaOperatorSystemCountry, RegexUtils.RegexGuid, true);
                 _entryBoxSelectSystemCountry.EntryValidation.IsEditable = false;
-                _entryBoxSelectSystemCountry.EntryValidation.Validate(_entryBoxSelectSystemCountry.Value.Oid.ToString());
+                if (_entryBoxSelectSystemCountry.Value != null)
+                    _entryBoxSelectSystemCountry.EntryValidation.Validate(_entryBoxSelectSystemCountry.Value.Oid.ToString());
                 //Disabled, Now Country and Currency are disabled
                 _entryBoxSelectSystemCountry.ButtonSelectValue.Sensitive = true;
                 _entryBoxSelectSystemCountry.EntryValidation.Sensitive = true;
@@ -136,7 +138,8 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 CriteriaOperator criteriaOperatorSystemCurrency = CriteriaOperator.Parse("(Disabled IS NULL OR Disabled  <> 1)");
                 _entryBoxSelectSystemCurrency = new XPOEntryBoxSelectRecordValidation<cfg_configurationcurrency, TreeViewConfigurationCurrency>(this, GeneralUtils.GetResourceByName("global_currency"), "Designation", "Oid", intialValueConfigurationCurrency, criteriaOperatorSystemCurrency, RegexUtils.RegexGuid, true);
                 _entryBoxSelectSystemCurrency.EntryValidation.IsEditable = false;
-                _entryBoxSelectSystemCurrency.EntryValidation.Validate(_entryBoxSelectSystemCurrency.Value.Oid.ToString());
+                if (_entryBoxSelectSystemCurrency.Value != null)
+                    _entryBoxSelectSystemCurrency.EntryValidation.Validate(_entryBoxSelectSystemCurrency.Value.Oid.ToString());
 
                 //Disabled, Now Country and Currency are disabled
                 //_entryBoxSelectSystemCurrency.ButtonSelectValue.Sensitive = false;
@@ -378,6 +381,74 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 // This Error Occurs only id Debugger is Attached
                 _logger.Error(ex.Message, ex);
             }
+        }
+
+        private static cfg_configurationcountry ResolveInitialCountry(Guid preferredOid)
+        {
+            cfg_configurationcountry entity = XPOUtility.GetEntityById<cfg_configurationcountry>(preferredOid);
+            if (entity != null)
+                return entity;
+
+            string code2 = GeneralSettings.Settings["xpoOidConfigurationCountrySystemCountryCountryCode2"];
+            if (!string.IsNullOrWhiteSpace(code2))
+            {
+                Guid oid = XPOUtility.GetGuidFromQuery(
+                    string.Format("SELECT Oid FROM cfg_configurationcountry WHERE Code2 = '{0}';", code2));
+                if (oid != Guid.Empty)
+                {
+                    entity = XPOUtility.GetEntityById<cfg_configurationcountry>(oid);
+                    if (entity != null)
+                        return entity;
+                }
+            }
+
+            entity = XPOUtility.GetEntityById<cfg_configurationcountry>(CultureSettings.PortugalCountryId);
+            if (entity != null)
+                return entity;
+
+            Guid fallbackOid = XPOUtility.GetGuidFromQuery(
+                "SELECT Oid FROM cfg_configurationcountry WHERE (Disabled IS NULL OR Disabled <> 1) AND RegExFiscalNumber IS NOT NULL ORDER BY Ord LIMIT 1;");
+            return fallbackOid != Guid.Empty
+                ? XPOUtility.GetEntityById<cfg_configurationcountry>(fallbackOid)
+                : null;
+        }
+
+        private static cfg_configurationcurrency ResolveInitialCurrency(
+            Guid preferredOid, cfg_configurationcountry country)
+        {
+            if (country != null && string.Equals(country.Code2, "KZ", StringComparison.OrdinalIgnoreCase))
+            {
+                cfg_configurationcurrency kzt = GetCurrencyByAcronym("KZT");
+                if (kzt != null)
+                    return kzt;
+            }
+
+            cfg_configurationcurrency entity = XPOUtility.GetEntityById<cfg_configurationcurrency>(preferredOid);
+            if (entity != null)
+                return entity;
+
+            entity = GetCurrencyByAcronym("KZT");
+            if (entity != null)
+                return entity;
+
+            entity = XPOUtility.GetEntityById<cfg_configurationcurrency>(CultureSettings.EuroCurrencyId);
+            if (entity != null)
+                return entity;
+
+            Guid fallbackOid = XPOUtility.GetGuidFromQuery(
+                "SELECT Oid FROM cfg_configurationcurrency WHERE (Disabled IS NULL OR Disabled <> 1) ORDER BY Ord LIMIT 1;");
+            return fallbackOid != Guid.Empty
+                ? XPOUtility.GetEntityById<cfg_configurationcurrency>(fallbackOid)
+                : null;
+        }
+
+        private static cfg_configurationcurrency GetCurrencyByAcronym(string acronym)
+        {
+            Guid oid = XPOUtility.GetGuidFromQuery(
+                string.Format("SELECT Oid FROM cfg_configurationcurrency WHERE Acronym = '{0}';", acronym));
+            return oid != Guid.Empty
+                ? XPOUtility.GetEntityById<cfg_configurationcurrency>(oid)
+                : null;
         }
     }
 }

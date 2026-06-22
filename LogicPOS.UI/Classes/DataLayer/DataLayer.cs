@@ -171,11 +171,13 @@ namespace logicpos
                         //Data
                         if (result)
                         {
+                            log.Info(string.Format("CreateDatabaseSchema: loading databasedata from [{0}]", sqlDatabaseData));
                             result = ProcessDump(xpoSession, sqlDatabaseData, ";", replace);
                         }
                         //DataDemo
                         if (useDatabaseDataDemo && result)
                         {
+                            log.Info(string.Format("CreateDatabaseSchema: loading demo data from [{0}]", sqlDatabaseDataDemo));
                             result = ProcessDump(xpoSession, sqlDatabaseDataDemo, ";", replace);
                         }
                         //Process Other Files: DatabaseOtherCommonPluginsSoftwareVendor
@@ -257,6 +259,9 @@ namespace logicpos
                             resultCmd = xpoSession.ExecuteScalar(sql);
                             log.Debug(string.Format("insert_version resultCmd: [{0}]", resultCmd));
                         }
+
+                        ApplyRussianCountryNamesIfNeeded(xpoSession, databaseType, replace);
+                        ApplyRussianCurrencyNamesIfNeeded(xpoSession, databaseType, replace);
                     }
                     else
                     {
@@ -323,6 +328,9 @@ namespace logicpos
                                 }
                             }
                         }
+
+                        ApplyRussianCountryNamesIfNeeded(xpoSession, databaseType, replace);
+                        ApplyRussianCurrencyNamesIfNeeded(xpoSession, databaseType, replace);
 
                         log.Debug(string.Format("{0} Database: [{1}] Already Exist! Skip Creating Database", databaseType, databaseName));
                         result = false;
@@ -453,6 +461,232 @@ namespace logicpos
             return result;
         }
 
+        private static string ResolveDatabaseScriptPath(string relativePath)
+        {
+            if (File.Exists(relativePath))
+                return relativePath;
+
+            string baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (!string.IsNullOrEmpty(baseDir))
+            {
+                string candidate = Path.Combine(baseDir, relativePath.Replace('/', Path.DirectorySeparatorChar));
+                if (File.Exists(candidate))
+                    return candidate;
+            }
+
+            return relativePath;
+        }
+
+        private static bool NeedsCisCurrencyPatch(Session xpoSession)
+        {
+            string[] requiredAcronyms = { "KZT", "RUB", "UAH", "BYN", "KGS", "TJS", "UZS", "AMD", "AZN", "GEL", "MDL", "TMT" };
+            foreach (string acronym in requiredAcronyms)
+            {
+                object count = xpoSession.ExecuteScalar(
+                    string.Format("SELECT COUNT(*) FROM cfg_configurationcurrency WHERE Acronym = '{0}';", acronym));
+                if (count == null || Convert.ToInt32(count) == 0)
+                    return true;
+            }
+
+            object eurDesignation = xpoSession.ExecuteScalar(
+                "SELECT Designation FROM cfg_configurationcurrency WHERE Acronym = 'EUR' LIMIT 1;");
+            string eurName = eurDesignation?.ToString() ?? string.Empty;
+            return eurName == "Euro";
+        }
+
+        private static string SqlLiteral(string value)
+        {
+            return (value ?? string.Empty).Replace("'", "''");
+        }
+
+        /// <summary>
+        /// Inserts missing CIS currencies directly (ProcessDump SQL file can fail silently on INSERT...SELECT).
+        /// </summary>
+        private static int InsertMissingCisCurrencies(Session xpoSession)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+            int inserted = 0;
+
+            string[][] rows =
+            {
+                new[] { "3f8e1a2b-4c5d-6e7f-8a9b-0c1d2e3f4a5b", "5", "5", "KZT", "520.0000", "Казахстанский тенге", "₸", "Казахстан" },
+                new[] { "a1b2c3d4-e5f6-4789-a012-3456789abcde", "640", "640", "RUB", "100.0000", "Российский рубль", "₽", "Россия" },
+                new[] { "b2c3d4e5-f6a7-4890-b123-456789abcdef", "650", "650", "UAH", "40.0000", "Украинская гривна", "₴", "Украина" },
+                new[] { "c3d4e5f6-a7b8-4901-c234-56789abcdef0", "660", "660", "BYN", "3.2000", "Белорусский рубль", "Br", "Беларусь" },
+                new[] { "d4e5f6a7-b8c9-4012-d345-6789abcdef01", "670", "670", "KGS", "90.0000", "Киргизский сом", "с", "Киргизия" },
+                new[] { "e5f6a7b8-c9d0-4123-e456-789abcdef012", "680", "680", "TJS", "11.0000", "Таджикский сомони", "SM", "Таджикистан" },
+                new[] { "f6a7b8c9-d0e1-4234-f567-89abcdef0123", "690", "690", "UZS", "12500.0000", "Узбекский сум", "сўм", "Узбекистан" },
+                new[] { "a7b8c9d0-e1f2-4345-a678-9abcdef01234", "700", "700", "AMD", "400.0000", "Армянский драм", "֏", "Армения" },
+                new[] { "b8c9d0e1-f2a3-4456-b789-abcdef012345", "710", "710", "AZN", "1.7000", "Азербайджанский манат", "₼", "Азербайджан" },
+                new[] { "c9d0e1f2-a3b4-4567-c89a-bcdef0123456", "720", "720", "GEL", "2.7000", "Грузинский лари", "₾", "Грузия" },
+                new[] { "d0e1f2a3-b4c5-4678-d9ab-cdef01234567", "730", "730", "MDL", "18.0000", "Молдавский лей", "L", "Молдова" },
+                new[] { "e1f2a3b4-c5d6-4789-eabc-def012345678", "740", "740", "TMT", "3.5000", "Туркменский манат", "m", "Туркменистан" },
+            };
+
+            foreach (string[] row in rows)
+            {
+                string acronym = row[3];
+                object count = xpoSession.ExecuteScalar(
+                    string.Format("SELECT COUNT(*) FROM cfg_configurationcurrency WHERE Acronym = '{0}';", acronym));
+                if (count != null && Convert.ToInt32(count) > 0)
+                    continue;
+
+                string sql = string.Format(
+                    "INSERT INTO cfg_configurationcurrency (Oid, Ord, Code, Acronym, ExchangeRate, Designation, Symbol, Entity) " +
+                    "VALUES ('{0}', {1}, {2}, '{3}', {4}, '{5}', '{6}', '{7}');",
+                    row[0], row[1], row[2], row[3], row[4],
+                    SqlLiteral(row[5]), SqlLiteral(row[6]), SqlLiteral(row[7]));
+
+                try
+                {
+                    xpoSession.ExecuteNonQuery(sql);
+                    inserted++;
+                    log.Info("InsertMissingCisCurrencies: inserted " + acronym);
+                }
+                catch (Exception ex)
+                {
+                    log.Error("InsertMissingCisCurrencies: failed to insert " + acronym + ": " + ex.Message, ex);
+                }
+            }
+
+            if (inserted > 0)
+            {
+                try
+                {
+                    xpoSession.ExecuteNonQuery(
+                        "UPDATE cfg_configurationcurrency SET Disabled = NULL, DeletedAt = NULL " +
+                        "WHERE Acronym IN ('KZT','RUB','UAH','BYN','KGS','TJS','UZS','AMD','AZN','GEL','MDL','TMT');");
+                    xpoSession.ExecuteNonQuery(
+                        "UPDATE cfg_configurationcurrency SET Ord = 5, Code = 5 WHERE Acronym = 'KZT';");
+                }
+                catch (Exception ex)
+                {
+                    log.Error("InsertMissingCisCurrencies: post-insert update failed: " + ex.Message, ex);
+                }
+            }
+
+            return inserted;
+        }
+
+        /// <summary>
+        /// Called on every startup after XPO session is ready — ensures CIS currencies exist in the live database.
+        /// </summary>
+        public static void ApplyCisCurrencyStartupPatch(Session xpoSession, DatabaseType databaseType)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            try
+            {
+                string culture = GeneralSettings.Settings["customCultureResourceDefinition"] ?? string.Empty;
+                if (!culture.StartsWith("ru", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                int inserted = InsertMissingCisCurrencies(xpoSession);
+                if (inserted > 0)
+                    log.Info(string.Format("ApplyCisCurrencyStartupPatch: inserted {0} CIS currencies", inserted));
+
+                if (!NeedsCisCurrencyPatch(xpoSession))
+                    return;
+
+                Dictionary<string, string> replace = GetReplaceables(databaseType);
+                string sqlFile = ResolveDatabaseScriptPath(
+                    Path.Combine(POSSettings.FileDatabaseOtherCommon, "Common", "configurationcurrency_ru.sql"));
+                if (!File.Exists(sqlFile))
+                {
+                    log.Warn("ApplyCisCurrencyStartupPatch: file not found: " + sqlFile);
+                    return;
+                }
+
+                log.Info("ApplyCisCurrencyStartupPatch: applying Russian currency labels from " + sqlFile);
+                ProcessDump(xpoSession, sqlFile, ";", replace);
+            }
+            catch (Exception ex)
+            {
+                log.Error("ApplyCisCurrencyStartupPatch: " + ex.Message, ex);
+            }
+        }
+
+        private static void ApplyRussianCurrencyNamesViaSql(Session xpoSession, DatabaseType databaseType, Dictionary<string, string> replace)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            InsertMissingCisCurrencies(xpoSession);
+
+            if (!NeedsCisCurrencyPatch(xpoSession))
+                return;
+
+            string sqlFile = ResolveDatabaseScriptPath(
+                Path.Combine(POSSettings.FileDatabaseOtherCommon, "Common", "configurationcurrency_ru.sql"));
+            if (!File.Exists(sqlFile))
+            {
+                log.Warn("ApplyRussianCurrencyNamesIfNeeded: file not found: " + sqlFile);
+                return;
+            }
+
+            log.Info("ApplyRussianCurrencyNamesIfNeeded: applying CIS currency patch from " + sqlFile);
+            ProcessDump(xpoSession, sqlFile, ";", replace);
+        }
+
+        /// <summary>
+        /// One-time patch for ru-RU installs created before Russian country seed data existed.
+        /// </summary>
+        private static void ApplyRussianCountryNamesIfNeeded(Session xpoSession, DatabaseType databaseType, Dictionary<string, string> replace)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            try
+            {
+                string culture = GeneralSettings.Settings["customCultureResourceDefinition"] ?? string.Empty;
+                if (!culture.StartsWith("ru", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                string probeSql = databaseType == DatabaseType.MSSqlServer
+                    ? "SELECT TOP 1 Designation FROM cfg_configurationcountry WHERE Code2 = 'DE';"
+                    : "SELECT Designation FROM cfg_configurationcountry WHERE Code2 = 'DE' LIMIT 1;";
+
+                object designation = xpoSession.ExecuteScalar(probeSql);
+                string deName = designation?.ToString() ?? string.Empty;
+                if (deName != "Germany" && deName != "Alemanha" && deName != "Германия")
+                    return;
+
+                string sqlFile = ResolveDatabaseScriptPath(
+                    Path.Combine(POSSettings.FileDatabaseOtherCommon, "Common", "configurationcountry_ru.sql"));
+                if (!File.Exists(sqlFile))
+                {
+                    log.Warn("ApplyRussianCountryNamesIfNeeded: file not found: " + sqlFile);
+                    return;
+                }
+
+                log.Info("ApplyRussianCountryNamesIfNeeded: applying Russian country names");
+                ProcessDump(xpoSession, sqlFile, ";", replace);
+            }
+            catch (Exception ex)
+            {
+                log.Error("ApplyRussianCountryNamesIfNeeded: " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// One-time patch for ru-RU installs with English/Portuguese currency names in reference data.
+        /// </summary>
+        private static void ApplyRussianCurrencyNamesIfNeeded(Session xpoSession, DatabaseType databaseType, Dictionary<string, string> replace)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            try
+            {
+                string culture = GeneralSettings.Settings["customCultureResourceDefinition"] ?? string.Empty;
+                if (!culture.StartsWith("ru", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                ApplyRussianCurrencyNamesViaSql(xpoSession, databaseType, replace);
+            }
+            catch (Exception ex)
+            {
+                log.Error("ApplyRussianCurrencyNamesIfNeeded: " + ex.Message, ex);
+            }
+        }
+
         /// <summary>
         /// Process filepath/filename script
         /// </summary>
@@ -475,9 +709,8 @@ namespace logicpos
 
                 if (File.Exists(pFilename))
                 {
-                    //Get Script Content
-                    FileInfo file = new FileInfo(pFilename);
-                    string script = file.OpenText().ReadToEnd() + "\r\n";
+                    //Get Script Content (UTF-8 for Russian seed/migration scripts)
+                    string script = File.ReadAllText(pFilename, System.Text.Encoding.UTF8) + "\r\n";
 
                     //Replace Content before Process
                     if (pReplaceables.Count > 0)

@@ -226,6 +226,7 @@ namespace logicpos
 
                 XpoDefault.DataLayer = XpoDefault.GetDataLayer(xpoConnectionString, xpoAutoCreateOption);
                 XPOSettings.Session = new Session(XpoDefault.DataLayer) { LockingOption = LockingOption.None };
+                DataLayer.ApplyCisCurrencyStartupPatch(XPOSettings.Session, DatabaseSettings.DatabaseType);
             }
             catch (Exception ex)
             {
