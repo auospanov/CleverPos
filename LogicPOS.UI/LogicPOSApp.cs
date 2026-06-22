@@ -827,7 +827,7 @@ namespace logicpos
                         return false;
                     }
 
-                    Window window = GlobalApp.StartupWindow ?? GlobalApp.BackOfficeMainWindow;
+                    Window window = (Window)GlobalApp.StartupWindow ?? GlobalApp.BackOfficeMainWindow;
                     if (window != null)
                     {
                         Utils.ShowMessageBox(
