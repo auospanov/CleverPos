@@ -973,14 +973,14 @@ INSERT INTO cfg_configurationholidays (Oid,Ord,Code,Year,Month,Day,Designation,D
 UPDATE cfg_configurationholidays SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('4261daa6-c0bd-4ac9-949a-cae0be2dd472',10,10,'Наличные','PP');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('989e65f9-ea5f-47c1-8505-1c0038e9a552',20,20,'Net 10','N10');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('198235e4-12e3-42ad-b6fb-2675b5baeac2',30,30,'Net 15','N15');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('3464045c-9776-48f8-83ad-9bb741526965',40,40,'Net 30','N30');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('bb487817-8819-4fdd-a3ea-b302f32a4ce9',50,50,'2% 10, Net 30','2%10N30');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('c07a5c41-37b2-4bf3-9469-5faf1799a89f',60,60,'Financing Payment','FIN');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('27c320aa-6c51-4a8e-94cd-c7e07a3b5d66',70,70,'Cash on Delivery','COD');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('10007044-2ad3-47a1-812c-d3f91203e50e',80,80,'Cash with Order','CWO');
-INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('cf94d207-e4c1-4f7b-913e-eaf3df60bc88',90,90,'Cash in Advance','CIA');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('989e65f9-ea5f-47c1-8505-1c0038e9a552',20,20,'Оплата в течение 10 дней','N10');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('198235e4-12e3-42ad-b6fb-2675b5baeac2',30,30,'Оплата в течение 15 дней','N15');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('3464045c-9776-48f8-83ad-9bb741526965',40,40,'Оплата в течение 30 дней','N30');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('bb487817-8819-4fdd-a3ea-b302f32a4ce9',50,50,'Скидка 2% за 10 дней, иначе 30','2%10N30');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('c07a5c41-37b2-4bf3-9469-5faf1799a89f',60,60,'Оплата в рассрочку','FIN');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('27c320aa-6c51-4a8e-94cd-c7e07a3b5d66',70,70,'Оплата при доставке','COD');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('10007044-2ad3-47a1-812c-d3f91203e50e',80,80,'Оплата при заказе','CWO');
+INSERT INTO fin_configurationpaymentcondition (Oid,Ord,Code,Designation,Acronym) VALUES ('cf94d207-e4c1-4f7b-913e-eaf3df60bc88',90,90,'Предоплата','CIA');
 -- Letter of Credit, Pay At Table, Cash on Delivery (COD), Payment in Advance (PIA), Cash with Order (CWO), Cash in Advance (CIA);
 UPDATE fin_configurationpaymentcondition SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
@@ -988,14 +988,14 @@ UPDATE fin_configurationpaymentcondition SET UpdatedBy = '090c5684-52ba-4d7a-8bc
 --UPDATE fin_configurationpaymentmethod SET ButtonIcon = LOWER(CONCAT("Icons/icon_pos_payment_type_", TOKEN, ".png"));
 INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('fa7ae225-b0c3-4ebc-a1f2-aa8ffef0c59d',10,10,'CREDIT_CARD','Банковская карта','CC','pos_button_label_payment_type_credit_card','Icons/icon_pos_payment_type_credit_card.png');
 INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('0eea8170-9853-4e99-9324-eb7317e075b8',20,20,'DEBIT_CARD','Дебетовая карта','CD','pos_button_label_payment_type_debit_card','Icons/icon_pos_payment_type_debit_card.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('cd9a472a-b495-4d10-9e22-291085185d2a',30,30,'BANK_CHECK','Check','CH','pos_button_label_payment_type_bank_check','Icons/icon_pos_payment_type_bank_check.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('39ddd898-3be3-4d74-bfd2-5163ebeb8f21',80,80,'CASH_MACHINE','ATM','MB','pos_button_label_payment_type_cash_machine','Icons/icon_pos_payment_type_cash_machine.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('cd9a472a-b495-4d10-9e22-291085185d2a',30,30,'BANK_CHECK','Банковский чек','CH','pos_button_label_payment_type_bank_check','Icons/icon_pos_payment_type_bank_check.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('39ddd898-3be3-4d74-bfd2-5163ebeb8f21',80,80,'CASH_MACHINE','Банкомат','MB','pos_button_label_payment_type_cash_machine','Icons/icon_pos_payment_type_cash_machine.png');
 INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('3da1ea12-ea22-4527-af34-dea0dfd64504',90,90,'MONEY','Наличные','NU','pos_button_label_payment_type_money','Icons/icon_pos_payment_type_money.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('194d38bd-a54a-42f0-bf60-254e9a62424b',100,100,'OTHER','Others','OU','pos_button_label_payment_type_other','Icons/icon_pos_payment_type_other.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('4edec9ca-21a9-4423-ae0c-798508c91899',120,120,'BANK_TRANSFER','Wire Transfer','TB','pos_button_label_payment_type_bank_transfer','Icons/icon_pos_payment_type_bank_transfer.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('536ad245-7459-4462-9bca-1f29d3df31ef',200,200,'VISA','Visa Payment','CC','pos_button_label_payment_type_visa','Icons/icon_pos_payment_type_visa.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('6db009fd-6729-4353-a4d0-d599c4c19297',300,300,'CURRENT_ACCOUNT','Pay On Credit','CA','pos_button_label_payment_type_current_account','Icons/icon_pos_payment_type_current_account.png');
-INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('18109fb6-8117-4816-98b8-51b0326582e3',400,400,'CUSTOMER_CARD','Customer Card','CR','pos_button_label_payment_type_customer_card','Icons/icon_pos_payment_type_customer_card.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('194d38bd-a54a-42f0-bf60-254e9a62424b',100,100,'OTHER','Прочее','OU','pos_button_label_payment_type_other','Icons/icon_pos_payment_type_other.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('4edec9ca-21a9-4423-ae0c-798508c91899',120,120,'BANK_TRANSFER','Банковский перевод','TB','pos_button_label_payment_type_bank_transfer','Icons/icon_pos_payment_type_bank_transfer.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('536ad245-7459-4462-9bca-1f29d3df31ef',200,200,'VISA','Оплата Visa','CC','pos_button_label_payment_type_visa','Icons/icon_pos_payment_type_visa.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('6db009fd-6729-4353-a4d0-d599c4c19297',300,300,'CURRENT_ACCOUNT','Оплата в кредит','CA','pos_button_label_payment_type_current_account','Icons/icon_pos_payment_type_current_account.png');
+INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon) VALUES ('18109fb6-8117-4816-98b8-51b0326582e3',400,400,'CUSTOMER_CARD','Карта клиента','CR','pos_button_label_payment_type_customer_card','Icons/icon_pos_payment_type_customer_card.png');
 UPDATE fin_configurationpaymentmethod SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_configurationpricetype (Oid,Ord,Code,Designation,EnumValue) VALUES ('cf17a218-b687-4b82-a8f4-0905594ac1f5',10,10,'Обычный',1);
@@ -1005,20 +1005,20 @@ INSERT INTO fin_configurationpricetype (Oid,Ord,Code,Designation,EnumValue) VALU
 INSERT INTO fin_configurationpricetype (Oid,Ord,Code,Designation,EnumValue) VALUES ('a6e20c09-5b4e-49ed-9565-875ae2a70590',50,50,'Питание персонала',5);
 UPDATE fin_configurationpricetype SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('378cef43-82a0-4c2e-a157-4907e52806ef',10,10,'Regular',NULL);
-INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('9e3d68b5-5aae-459b-969d-dd039b33e8cd',20,20,'Staff Consumption',NULL);
-INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('88e92456-cea4-4a32-ad43-9c3aafb3033b',30,30,'Take-Out',1);
-INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('ab506a3c-4aec-4427-9b71-ce9f0269ce7c',40,40,'Delivery',1);
+INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('378cef43-82a0-4c2e-a157-4907e52806ef',10,10,'Обычный',NULL);
+INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('9e3d68b5-5aae-459b-969d-dd039b33e8cd',20,20,'Питание персонала',NULL);
+INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('88e92456-cea4-4a32-ad43-9c3aafb3033b',30,30,'На вынос',1);
+INSERT INTO pos_configurationplacemovementtype (Oid,Ord,Code,Designation,VatDirectSelling) VALUES ('ab506a3c-4aec-4427-9b71-ce9f0269ce7c',40,40,'Доставка',1);
 UPDATE pos_configurationplacemovementtype SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('dd5a3869-db52-42d4-bbed-dec4adfaf62b',10,10,'Bar Counter','Assets/Images/Icons/Places/icon_pos_balcao.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','378cef43-82a0-4c2e-a157-4907e52806ef');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('99afc739-7828-4fa6-83c9-6e8b71987909',20,20,'Dinning Room','Assets/Images/Icons/Places/icon_pos_sala.png','cf17a218-b687-4b82-a8f4-0905594ac1f5','378cef43-82a0-4c2e-a157-4907e52806ef');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('08f60493-2823-4279-920d-003ab1696eda',30,30,'Patio','Assets/Images/Icons/Places/icon_pos_esplanada.png','f42bc933-49e9-46bc-aee2-d1f17c6ea012','378cef43-82a0-4c2e-a157-4907e52806ef');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('0ae5cbc0-73de-4d28-a9b6-f415b21217d3',40,40,'Hotel','Assets/Images/Icons/Places/icon_pos_hotel.png','4d3c1925-64ac-4ce9-98a8-f9fa17b18832','378cef43-82a0-4c2e-a157-4907e52806ef');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('7c0dda6f-54f4-45f0-836a-71cb52aff52b',50,50,'Disco','Assets/Images/Icons/Places/icon_pos_discoteca.png','4d3c1925-64ac-4ce9-98a8-f9fa17b18832','378cef43-82a0-4c2e-a157-4907e52806ef');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('5d1f314a-9f86-4cb8-95b7-73149a1b2ab9',60,60,'Take-Out','Assets/Images/Icons/Places/icon_pos_take_away.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','88e92456-cea4-4a32-ad43-9c3aafb3033b');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('dbb86cc4-46f5-4202-b24d-32d5b0d3f0b0',70,70,'Delivery','Assets/Images/Icons/Places/icon_pos_delivery.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','ab506a3c-4aec-4427-9b71-ce9f0269ce7c');
-INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('f8c8fa99-751e-423f-96ac-1f4fe0dcbbec',80,80,'Staff Area','Assets/Images/Icons/Places/icon_pos_staff_area.png','a6e20c09-5b4e-49ed-9565-875ae2a70590','9e3d68b5-5aae-459b-969d-dd039b33e8cd');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('dd5a3869-db52-42d4-bbed-dec4adfaf62b',10,10,'Барная стойка','Assets/Images/Icons/Places/icon_pos_balcao.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','378cef43-82a0-4c2e-a157-4907e52806ef');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('99afc739-7828-4fa6-83c9-6e8b71987909',20,20,'Зал','Assets/Images/Icons/Places/icon_pos_sala.png','cf17a218-b687-4b82-a8f4-0905594ac1f5','378cef43-82a0-4c2e-a157-4907e52806ef');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('08f60493-2823-4279-920d-003ab1696eda',30,30,'Терраса','Assets/Images/Icons/Places/icon_pos_esplanada.png','f42bc933-49e9-46bc-aee2-d1f17c6ea012','378cef43-82a0-4c2e-a157-4907e52806ef');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('0ae5cbc0-73de-4d28-a9b6-f415b21217d3',40,40,'Отель','Assets/Images/Icons/Places/icon_pos_hotel.png','4d3c1925-64ac-4ce9-98a8-f9fa17b18832','378cef43-82a0-4c2e-a157-4907e52806ef');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('7c0dda6f-54f4-45f0-836a-71cb52aff52b',50,50,'Дискотека','Assets/Images/Icons/Places/icon_pos_discoteca.png','4d3c1925-64ac-4ce9-98a8-f9fa17b18832','378cef43-82a0-4c2e-a157-4907e52806ef');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('5d1f314a-9f86-4cb8-95b7-73149a1b2ab9',60,60,'На вынос','Assets/Images/Icons/Places/icon_pos_take_away.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','88e92456-cea4-4a32-ad43-9c3aafb3033b');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('dbb86cc4-46f5-4202-b24d-32d5b0d3f0b0',70,70,'Доставка','Assets/Images/Icons/Places/icon_pos_delivery.png','f837476d-1b62-447f-80fb-b8cbfe5e9c2b','ab506a3c-4aec-4427-9b71-ce9f0269ce7c');
+INSERT INTO pos_configurationplace (Oid,Ord,Code,Designation,ButtonImage,PriceType,MovementType) VALUES ('f8c8fa99-751e-423f-96ac-1f4fe0dcbbec',80,80,'Зона персонала','Assets/Images/Icons/Places/icon_pos_staff_area.png','a6e20c09-5b4e-49ed-9565-875ae2a70590','9e3d68b5-5aae-459b-969d-dd039b33e8cd');
 UPDATE pos_configurationplace SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 -- INSERT INTO pos_configurationplacetable (Oid,Ord,Code,Designation,TableStatus,Place) VALUES ('5a8690a2-5dc7-48fa-98ab-ba6c9adbf253',1,10,'Table 1.1',0,'312ab3e7-c3e7-456f-8da9-c7644f49bf17');
@@ -1068,13 +1068,13 @@ INSERT INTO pos_configurationplacetable (Oid,Ord,Code,Designation,Place) VALUES 
 INSERT INTO pos_configurationplacetable (Oid,Ord,Code,Designation,Place) VALUES ('0b15cc4d-5457-4032-bd8c-0ce72b42c05a',400,400,40,'f8c8fa99-751e-423f-96ac-1f4fe0dcbbec');
 UPDATE pos_configurationplacetable SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('4c81aa20-98ec-4497-b740-165cdb5fa395',10,10,'Unit','un.');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('d04d07e2-671c-4555-a177-da7634419a9b',20,20,'Kilogram','kg');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('4bbdb44a-c15a-4133-9eff-bbb6ce179d61',30,30,'Liter','l');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('63f94a2e-30ae-4dae-bf2e-71e7dc49b0ff',40,40,'Hour','h');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('d9ff39ae-58ce-4c86-a267-899b11373380',50,50,'Metro','m');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('db6bf60c-c2b2-4130-b092-fbc78ce683fd',60,60,'Square Meter','m2');
-INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('176429e9-38f2-42ae-8cb6-32c5aa055ac4',70,70,'Cubic Meter','m3');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('4c81aa20-98ec-4497-b740-165cdb5fa395',10,10,'Штука','шт.');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('d04d07e2-671c-4555-a177-da7634419a9b',20,20,'Килограмм','кг');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('4bbdb44a-c15a-4133-9eff-bbb6ce179d61',30,30,'Литр','л');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('63f94a2e-30ae-4dae-bf2e-71e7dc49b0ff',40,40,'Час','ч');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('d9ff39ae-58ce-4c86-a267-899b11373380',50,50,'Метр','м');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('db6bf60c-c2b2-4130-b092-fbc78ce683fd',60,60,'Квадратный метр','м2');
+INSERT INTO cfg_configurationunitmeasure (Oid,Ord,Code,Designation,Acronym) VALUES ('176429e9-38f2-42ae-8cb6-32c5aa055ac4',70,70,'Кубический метр','м3');
 UPDATE cfg_configurationunitmeasure SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_configurationvatexemptionreason (Oid,Ord,Code,Designation,Acronym,StandardApplicable) VALUES ('f60f97c0-390e-4d76-90d7-204b6ea57949',10,10,'Без НДС','KZ01','НК РК ст. 394');
@@ -1085,9 +1085,9 @@ INSERT INTO fin_configurationvatexemptionreason (Oid,Ord,Code,Designation,Acrony
 INSERT INTO fin_configurationvatexemptionreason (Oid,Ord,Code,Designation,Acronym,StandardApplicable) VALUES ('1c7c52ec-7eb5-44d0-a130-da8a47a069e3',60,60,'Финансовые услуги','KZ06','НК РК ст. 396');
 UPDATE fin_configurationvatexemptionreason SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('18f564aa-7da5-4a1c-9091-8014638b818c',10,10,'Regular');
-INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('4d3e69a5-90dc-4918-848f-4eb7ce7a792e',20,20,'Small');
-INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('016ba999-1a4d-4933-8ff1-e5945a7652a3',30,30,'Large');
+INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('18f564aa-7da5-4a1c-9091-8014638b818c',10,10,'Обычный');
+INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('4d3e69a5-90dc-4918-848f-4eb7ce7a792e',20,20,'Малый');
+INSERT INTO cfg_configurationunitsize (Oid,Ord,Code,Designation) VALUES ('016ba999-1a4d-4933-8ff1-e5945a7652a3',30,30,'Большой');
 UPDATE cfg_configurationunitsize SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_configurationvatrate (Oid,Ord,Code,Designation,Value,TaxType,TaxCode,TaxCountryRegion,TaxDescription,Disabled) VALUES ('cee00590-7317-41b8-af46-66560401096b',10,10,'Стандартная ставка НДС (12%)',12,'НДС','NOR','KZ','Казахстан',NULL);
@@ -1102,12 +1102,12 @@ INSERT INTO fin_configurationvatrate (Oid,Ord,Code,Designation,Value,TaxType,Tax
 INSERT INTO fin_configurationvatrate (Oid,Ord,Code,Designation,Value,TaxType,TaxCode,TaxCountryRegion,TaxDescription,Disabled) VALUES ('e74faad7-f5c9-4206-a662-f95820014195',100,100,'Без НДС',0,'НДС','ISE','KZ','Казахстан',NULL);
 UPDATE fin_configurationvatrate SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('a4b3811f-9851-430d-810e-f8be7ac3f392',10,10,'Regular');
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('f2a3a388-1c91-4cb6-b96c-a0a40872c53f',20,20,'Low Frequency');
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('e244d1bc-8ace-40f0-b275-7124188d9991',30,30,'Good');
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('2ea60fc9-b8d6-4e29-b322-856c898400fd',40,40,'Very Good');
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('ca2e73ba-5cac-4d45-860e-ccb64b061778',50,50,'Company');
-INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('15120324-9e28-4e74-8ea0-241aa9be7914',60,60,'Weekends');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('a4b3811f-9851-430d-810e-f8be7ac3f392',10,10,'Обычный');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('f2a3a388-1c91-4cb6-b96c-a0a40872c53f',20,20,'Редкий');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('e244d1bc-8ace-40f0-b275-7124188d9991',30,30,'Хороший');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('2ea60fc9-b8d6-4e29-b322-856c898400fd',40,40,'Очень хороший');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('ca2e73ba-5cac-4d45-860e-ccb64b061778',50,50,'Корпоративный');
+INSERT INTO erp_customertype (Oid,Ord,Code,Designation) VALUES ('15120324-9e28-4e74-8ea0-241aa9be7914',60,60,'Выходные');
 UPDATE erp_customertype SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 -- Encrypted : Will be Updated by Vendor Plugin Script;
@@ -1115,18 +1115,18 @@ INSERT INTO erp_customer (Oid,Ord,Code,CodeInternal,Name,FiscalNumber,CardNumber
 INSERT INTO erp_customer (Oid,Ord,Code,CodeInternal,Name,FiscalNumber,CardNumber,Address,Locality,ZipCode,City,Country,Discount,PriceType,CustomerType,Disabled,Supplier) VALUES ('00000000-0000-0000-0000-000000000002',01,01,'00000000-0000-0000-0000-000002',(Select Value from cfg_configurationpreferenceparameter where Token = 'COMPANY_NAME'),(Select Value from cfg_configurationpreferenceparameter where Token = 'COMPANY_FISCALNUMBER'),NULL,'Desconhecido','Desconhecido','1000-000','Indefinido','e7e8c325-a0d4-4908-b148-508ed750676a',0,'cf17a218-b687-4b82-a8f4-0905594ac1f5','a4b3811f-9851-430d-810e-f8be7ac3f392',1,1);
 UPDATE erp_customer SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('72dfb8e2-3a48-4d01-8800-8d497e599fbe',10,10,'Minimum');
-INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('cd8ecd6b-1dd8-45ae-9d81-126f65fa7e58',20,20,'Regular');
-INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('da3b9576-cdf8-4b18-95df-646cd70023fe',30,30,'Special');
+INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('72dfb8e2-3a48-4d01-8800-8d497e599fbe',10,10,'Минимальная');
+INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('cd8ecd6b-1dd8-45ae-9d81-126f65fa7e58',20,20,'Обычная');
+INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('da3b9576-cdf8-4b18-95df-646cd70023fe',30,30,'Специальная');
 INSERT INTO erp_customerdiscountgroup (Oid,Ord,Code,Designation) VALUES ('51880963-295b-4039-84c9-fb137975f420',40,40,'VIP');
 UPDATE erp_customerdiscountgroup SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('8dd94fe3-e124-4a86-b112-81d184672a58',10,10,'Bar Corner');
-INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('4a18e3a7-5152-4c21-a3bc-93efbb24c34e',20,20,'Waiter');
-INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('1490a7b8-5092-4084-ab96-6c8efca8f5b8',30,30,'Head Waiter');
+INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('8dd94fe3-e124-4a86-b112-81d184672a58',10,10,'Барная стойка');
+INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('4a18e3a7-5152-4c21-a3bc-93efbb24c34e',20,20,'Официант');
+INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('1490a7b8-5092-4084-ab96-6c8efca8f5b8',30,30,'Старший официант');
 INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('1bf83136-3a64-41b8-942e-19d409a5d67d',40,40,'Менеджер');
-INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('2231a819-aeef-43e9-90a9-546d30ca90a3',50,50,'Chef');
-INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('cca989d4-d62f-4c08-95e7-117b41c4d090',60,60,'Cook');
+INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('2231a819-aeef-43e9-90a9-546d30ca90a3',50,50,'Шеф-повар');
+INSERT INTO pos_usercommissiongroup (Oid,Ord,Code,Designation) VALUES ('cca989d4-d62f-4c08-95e7-117b41c4d090',60,60,'Повар');
 UPDATE pos_usercommissiongroup SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO rpt_reporttype (Oid,Ord,Code,Designation,ResourceString,MenuIcon,Disabled) VALUES ('eeb05008-d250-4898-bae0-b36980d08543',10,10,'ReportType #1','reporttype_label_type1','report_financial.png',NULL);
@@ -1260,15 +1260,15 @@ UPDATE sys_configurationprinterstemplates SET UpdatedBy = '090c5684-52ba-4d7a-8b
 
 UPDATE fin_article SET TemplateBarCode = 'b931ef9c-75cf-4e2e-94ed-b67a22f50cda', UpdatedAt = '2021-03-15 14:16:18';
 
-INSERT INTO sys_configurationpoledisplay (Oid,Disabled,Ord,Code,Designation,VID,PID,EndPoint,CodeTable,COM,DisplayCharactersPerLine,GoToStandByInSeconds,StandByLine1,StandByLine2) VALUES ('a8e7ecb0-1d8c-4cd5-af78-b369b22ac427',0,10,10,'Display de Cliente Genérico Appostar CPD-3230','0x03EB','0x1101','Ep01','0x10','COM1',20,60,'LogicPulse','Bem Vindo');
+INSERT INTO sys_configurationpoledisplay (Oid,Disabled,Ord,Code,Designation,VID,PID,EndPoint,CodeTable,COM,DisplayCharactersPerLine,GoToStandByInSeconds,StandByLine1,StandByLine2) VALUES ('a8e7ecb0-1d8c-4cd5-af78-b369b22ac427',0,10,10,'Универсальный дисплей покупателя Appostar CPD-3230','0x03EB','0x1101','Ep01','0x10','COM1',20,60,'CleverPos','Добро пожаловать');
 UPDATE sys_configurationpoledisplay SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-07-05 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO sys_configurationweighingmachine (Oid,Disabled,Ord,Code,Designation,PortName,BaudRate,Parity,StopBits,DataBits) VALUES ('f4f91d26-a66f-44be-b12b-146bde20e638',0,10,10,'Generic Scale','COM1',9600,'None','One',8);
-INSERT INTO sys_configurationweighingmachine (Oid,Disabled,Ord,Code,Designation,PortName,BaudRate,Parity,StopBits,DataBits) VALUES ('4e1ba1d6-dca8-4c04-bb63-00408b9ec467',0,20,20,'Scale DIBAL G310','COM1',9600,'None','One',8);
+INSERT INTO sys_configurationweighingmachine (Oid,Disabled,Ord,Code,Designation,PortName,BaudRate,Parity,StopBits,DataBits) VALUES ('f4f91d26-a66f-44be-b12b-146bde20e638',0,10,10,'Универсальные весы','COM1',9600,'None','One',8);
+INSERT INTO sys_configurationweighingmachine (Oid,Disabled,Ord,Code,Designation,PortName,BaudRate,Parity,StopBits,DataBits) VALUES ('4e1ba1d6-dca8-4c04-bb63-00408b9ec467',0,20,20,'Весы DIBAL G310','COM1',9600,'None','One',8);
 UPDATE sys_configurationweighingmachine SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-07-05 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
-INSERT INTO sys_configurationinputreader (Oid,Disabled,Ord,Code,Designation,ReaderSizes) VALUES ('f1c969b4-1022-4977-ac1a-26d3bec19c7a',0,10,10,'Generic Bar Reader','9,13');
-INSERT INTO sys_configurationinputreader (Oid,Disabled,Ord,Code,Designation,ReaderSizes) VALUES ('674da945-f177-4121-a538-72e8799404e6',0,20,20,'Generic Card Reader','7,10,13');
+INSERT INTO sys_configurationinputreader (Oid,Disabled,Ord,Code,Designation,ReaderSizes) VALUES ('f1c969b4-1022-4977-ac1a-26d3bec19c7a',0,10,10,'Универсальный сканер штрихкодов','9,13');
+INSERT INTO sys_configurationinputreader (Oid,Disabled,Ord,Code,Designation,ReaderSizes) VALUES ('674da945-f177-4121-a538-72e8799404e6',0,20,20,'Универсальный считыватель карт','7,10,13');
 UPDATE sys_configurationinputreader SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-07-05 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_articleclass (Oid,Ord,Code,Designation,Acronym,WorkInStock) VALUES ('6924945d-f99e-476b-9c4d-78fb9e2b30a3',10,10,'Товары','P',1);

@@ -239,8 +239,8 @@ namespace logicpos
                 throw; // TO DO
             }
 
-            //Check Valid Database Scheme
-            if (!xpoCreateDatabaseAndSchema && !GeneralUtils.IsRunningOnMono)
+            //Check Valid Database Scheme (skip right after script-based install — schema was just created)
+            if (!xpoCreateDatabaseAndSchema && !GeneralUtils.IsRunningOnMono && !databaseCreated)
             {
                 bool isSchemaValid = DataLayer.IsSchemaValid(xpoConnectionString);
                 _logger.Debug(string.Format("void Init() :: Check if Database Scheme: isSchemaValid : [{0}]", isSchemaValid));
@@ -435,39 +435,43 @@ namespace logicpos
             FastReportUtils.InitializeFastReports(POSSettings.AppName);
 
             //Hardware : Init Display
-            if (TerminalSettings.LoggedTerminal.PoleDisplay != null)
+            if (TerminalSettings.LoggedTerminal != null)
             {
-                GlobalApp.UsbDisplay = (UsbDisplayDevice)UsbDisplayDevice.InitDisplay();
-                GlobalApp.UsbDisplay.WriteCentered(string.Format("{0} {1}", POSSettings.AppName, GeneralSettings.ProductVersion), 1);
-                GlobalApp.UsbDisplay.WriteCentered(POSSettings.AppUrl, 2);
-                GlobalApp.UsbDisplay.EnableStandBy();
-            }
-
-            //Hardware : Init BarCodeReader 
-            if (TerminalSettings.LoggedTerminal.BarcodeReader != null)
-            {
-                GlobalApp.BarCodeReader = new InputReader();
-            }
-
-            //Hardware : Init WeighingBalance
-            if (TerminalSettings.LoggedTerminal.WeighingMachine != null)
-            {
-                //Protecções de integridade das BD's [IN:013327]
-                //Check if port is used by pole display
-                if (TerminalSettings.LoggedTerminal.WeighingMachine.PortName == TerminalSettings.LoggedTerminal.PoleDisplay.COM)
+                if (TerminalSettings.LoggedTerminal.PoleDisplay != null)
                 {
-                    _logger.Debug(string.Format("Port " + TerminalSettings.LoggedTerminal.WeighingMachine.PortName + "Already taken by pole display"));
+                    GlobalApp.UsbDisplay = (UsbDisplayDevice)UsbDisplayDevice.InitDisplay();
+                    GlobalApp.UsbDisplay.WriteCentered(string.Format("{0} {1}", POSSettings.AppName, GeneralSettings.ProductVersion), 1);
+                    GlobalApp.UsbDisplay.WriteCentered(POSSettings.AppUrl, 2);
+                    GlobalApp.UsbDisplay.EnableStandBy();
                 }
-                else
+
+                //Hardware : Init BarCodeReader 
+                if (TerminalSettings.LoggedTerminal.BarcodeReader != null)
                 {
-                    if (Utils.IsPortOpen(TerminalSettings.LoggedTerminal.WeighingMachine.PortName))
+                    GlobalApp.BarCodeReader = new InputReader();
+                }
+
+                //Hardware : Init WeighingBalance
+                if (TerminalSettings.LoggedTerminal.WeighingMachine != null)
+                {
+                    //Protecções de integridade das BD's [IN:013327]
+                    //Check if port is used by pole display
+                    if (TerminalSettings.LoggedTerminal.PoleDisplay != null
+                        && TerminalSettings.LoggedTerminal.WeighingMachine.PortName == TerminalSettings.LoggedTerminal.PoleDisplay.COM)
                     {
-                        GlobalApp.WeighingBalance = new WeighingBalance(TerminalSettings.LoggedTerminal.WeighingMachine);
-                        //_logger.Debug(string.Format("IsPortOpen: [{0}]", GlobalApp.WeighingBalance.IsPortOpen())); }
+                        _logger.Debug(string.Format("Port " + TerminalSettings.LoggedTerminal.WeighingMachine.PortName + "Already taken by pole display"));
+                    }
+                    else
+                    {
+                        if (Utils.IsPortOpen(TerminalSettings.LoggedTerminal.WeighingMachine.PortName))
+                        {
+                            GlobalApp.WeighingBalance = new WeighingBalance(TerminalSettings.LoggedTerminal.WeighingMachine);
+                            //_logger.Debug(string.Format("IsPortOpen: [{0}]", GlobalApp.WeighingBalance.IsPortOpen())); }
+                        }
+
                     }
 
                 }
-
             }
 
             //Send To Log

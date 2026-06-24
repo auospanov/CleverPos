@@ -1,11 +1,10 @@
 ﻿using logicpos.shared.Enums;
-using LogicPOS.Data.XPO.Settings;
-using LogicPOS.Domain.Entities;
 using LogicPOS.Reporting.Reports.CustomerBalanceSummary;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using LogicPOS.Reporting.Reports.Data;
 using LogicPOS.Reporting.Data.Common;
 
@@ -63,16 +62,13 @@ namespace LogicPOS.Reporting.Reports
         private void PrepareDataSources()
         {
             ReportDataList<CustomerBalanceDetailsReportData> customerBalanceDetailsReportDataList = new ReportDataList<CustomerBalanceDetailsReportData>(_filter);
-            ReportDataList<CustomerBalanceSummaryReportData> customerBalanceSummaryReportDataList = new ReportDataList<CustomerBalanceSummaryReportData>();
+            ReportDataList<CustomerBalanceSummaryReportData> customerBalanceSummaryReportDataList = new ReportDataList<CustomerBalanceSummaryReportData>(_filter);
 
-            erp_customer customer = null;
-            List<erp_customer> customersList = new List<erp_customer>();
-            bool printTotalBalance = true;
+            var entityOids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-
-            if (PluginSettings.HasSoftwareVendorPlugin)
+            foreach (var item in customerBalanceDetailsReportDataList)
             {
-                foreach (var item in customerBalanceDetailsReportDataList)
+                if (PluginSettings.HasSoftwareVendorPlugin)
                 {
                     if (item.EntityName != null)
                     {
@@ -83,36 +79,58 @@ namespace LogicPOS.Reporting.Reports
                     {
                         item.EntityFiscalNumber = PluginSettings.SoftwareVendor.Decrypt(item.EntityFiscalNumber);
                     }
+                }
 
-                    if (item.EntityOid != null)
-                    {
-                        customer = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), Guid.Parse(item.EntityOid));
-                    }
+                if (!string.IsNullOrEmpty(item.EntityOid))
+                {
+                    entityOids.Add(item.EntityOid);
+                }
 
-                    if (!customersList.Contains(customer))
+                foreach (var summary in customerBalanceSummaryReportDataList)
+                {
+                    if (summary.Oid != null && summary.Oid.Equals(item.EntityOid))
                     {
-                        customersList.Add(customer);
-                    }
-
-                    foreach (var summary in customerBalanceSummaryReportDataList)
-                    {
-                        if (summary.Oid != null && summary.Oid.Equals(item.EntityOid))
-                        {
-                            item.Balance = summary.Balance;
-                            item.CustomerSinceDate = summary.CustomerSinceDate;
-                            break;
-                        }
+                        item.Balance = summary.Balance;
+                        item.CustomerSinceDate = summary.CustomerSinceDate;
+                        break;
                     }
                 }
             }
 
-            if (customersList.Count > 1) printTotalBalance = false;
+            bool printTotalBalance = entityOids.Count == 1;
+            decimal totalCredit = 0;
+            decimal totalDebit = 0;
+            decimal totalBalance = 0;
 
-            ReportDataList<CustomerBalanceSummaryReportData> gcCustomerBalanceSummaryTotal = new ReportDataList<CustomerBalanceSummaryReportData>(string.Format("(EntityOid = '{0}')", customer.Oid));
+            if (printTotalBalance)
+            {
+                string entityOid = entityOids.First();
+                CustomerBalanceSummaryReportData summaryTotal = customerBalanceSummaryReportDataList.List
+                    .FirstOrDefault(summary => summary.Oid == entityOid || summary.EntityOid == entityOid);
+
+                if (summaryTotal == null)
+                {
+                    ReportDataList<CustomerBalanceSummaryReportData> gcCustomerBalanceSummaryTotal =
+                        new ReportDataList<CustomerBalanceSummaryReportData>(string.Format("(EntityOid = '{0}')", entityOid));
+
+                    if (gcCustomerBalanceSummaryTotal.List.Count > 0)
+                    {
+                        summaryTotal = gcCustomerBalanceSummaryTotal.List[0];
+                    }
+                }
+
+                if (summaryTotal != null)
+                {
+                    totalCredit = summaryTotal.TotalCredit;
+                    totalDebit = summaryTotal.TotalDebit;
+                    totalBalance = summaryTotal.Balance;
+                }
+            }
+
             _report.SetParameterValue("PrintTotalBalance", printTotalBalance);
-            _report.SetParameterValue("TotalCreditFinal", gcCustomerBalanceSummaryTotal.List[0].TotalCredit);
-            _report.SetParameterValue("TotalDebitFinal", gcCustomerBalanceSummaryTotal.List[0].TotalDebit);
-            _report.SetParameterValue("TotalBalanceFinal", gcCustomerBalanceSummaryTotal.List[0].Balance);
+            _report.SetParameterValue("TotalCreditFinal", totalCredit);
+            _report.SetParameterValue("TotalDebitFinal", totalDebit);
+            _report.SetParameterValue("TotalBalanceFinal", totalBalance);
 
             _report.RegisterData(customerBalanceDetailsReportDataList, "CustomerBalanceDetails");
 

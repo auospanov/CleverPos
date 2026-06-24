@@ -24,6 +24,7 @@ namespace logicpos
         {
             //Log4Net
             log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            Session xpoSession = null;
             try
             {
 
@@ -39,7 +40,6 @@ namespace logicpos
                 Hashtable commands = new Hashtable();
                 string commandSeparator = ";";
                 bool databaseExists = false;
-                Session xpoSession;
                 Dictionary<string, string> replace = GetReplaceables(pDatabaseType);
 
                 string sqlDatabaseSchema = string.Format(POSSettings.FileDatabaseSchema, databaseTypeString);
@@ -361,7 +361,35 @@ namespace logicpos
                 needToUpdate = false;
                 return false;
             }
+            finally
+            {
+                ReleaseXpoSession(xpoSession);
+            }
 
+        }
+
+        private static void ReleaseXpoSession(Session xpoSession)
+        {
+            if (xpoSession == null)
+                return;
+
+            try
+            {
+                xpoSession.Disconnect();
+            }
+            catch
+            {
+                // ignore disconnect errors during cleanup
+            }
+
+            try
+            {
+                xpoSession.Dispose();
+            }
+            catch
+            {
+                // ignore dispose errors during cleanup
+            }
         }
 
         /// <summary>
@@ -377,8 +405,11 @@ namespace logicpos
             IDataLayer dl = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
             try
             {
-                new Session(dl).UpdateSchema();
-                return true;
+                using (Session session = new Session(dl))
+                {
+                    session.UpdateSchema();
+                    return true;
+                }
             }
             catch (DevExpress.Xpo.DB.Exceptions.SchemaCorrectionNeededException ex)
             {

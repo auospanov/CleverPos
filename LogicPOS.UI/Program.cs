@@ -3,6 +3,7 @@ using logicpos.App;
 using logicpos.Classes.Enums.App;
 using logicpos.Classes.Gui.Gtk.Pos.Dialogs;
 using logicpos.Classes.Logic.License;
+using DevExpress.Xpo;
 using LogicPOS.Data.XPO.Settings;
 using LogicPOS.Modules;
 using LogicPOS.Modules.StockManagement;
@@ -166,13 +167,18 @@ namespace logicpos
 
         private static string GetCultureFromDb()
         {
-            string sql = "SELECT value FROM cfg_configurationpreferenceparameter where token = 'CULTURE';";
-            XPOSettings.Session = DatabaseService.CreateDatabaseSession();
-            var result = XPOSettings.Session.ExecuteScalar(sql);
+            if (!DatabaseService.DatabaseExists())
+                return null;
 
-            if (result != null)
+            string sql = "SELECT value FROM cfg_configurationpreferenceparameter where token = 'CULTURE';";
+            using (Session session = DatabaseService.CreateDatabaseSession())
             {
-                return result.ToString();
+                var result = session.ExecuteScalar(sql);
+
+                if (result != null)
+                {
+                    return result.ToString();
+                }
             }
 
             return null;

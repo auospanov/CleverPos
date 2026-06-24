@@ -11,20 +11,24 @@ namespace LogicPOS.Persistence.Services
         {
             try
             {
-
-                Session databaseSession = CreateDatabaseSession();
-
                 string databaseType = GeneralSettings.Settings["databaseType"];
 
                 switch (databaseType)
                 {
                     case "SQLite":
+                    case "MonoLite":
                         return SqliteExists();
                     case "MySql":
-                        return MysqlExists(databaseSession);
+                        using (Session databaseSession = CreateDatabaseSession())
+                        {
+                            return MysqlExists(databaseSession);
+                        }
                     case "MSSqlServer":
                     default:
-                        return MsqlServerExists(databaseSession);
+                        using (Session databaseSession = CreateDatabaseSession())
+                        {
+                            return MsqlServerExists(databaseSession);
+                        }
                 }
             }
             catch
