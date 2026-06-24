@@ -4,7 +4,8 @@
 
 **Репозиторий:** `C:\Projects\CleverPos`  
 **Ветка:** проверьте `git status` и `git branch` после клонирования  
-**Документация НКТ:** https://nationalcatalog.kz/gwp/docs
+**Документация НКТ:** https://nationalcatalog.kz/gwp/docs  
+**Подробный анализ** (розница, склады, НКТ): [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)
 
 ---
 
@@ -79,21 +80,64 @@
 
 ## Фаза E — Национальный каталог (НКТ)
 
-Только при `ConfigurationSystemCountry.Code2 == "KZ"` и `nationalCatalogEnabled=true`.
+Только при `ConfigurationSystemCountry.Code2 == "KZ"` и `nationalCatalogEnabled=true`.  
+**Анализ API, маппинг, архитектура:** [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md) §3.
 
-- [ ] HTTP-клиент: `X-API-KEY`, base `https://nationalcatalog.kz`
-- [ ] UI в BackOffice (карточка товара): кнопка «Отправить в НКТ» / статус заявки
-- [ ] Справочник **OKTRU** — picker из `/portal/api/v1/dictionaries/...`
-- [ ] Создание заявки:
-  - [ ] POST draft → PUT attributes → PUT moderation → опрос status → publish
-  - [ ] Минимум в attributes: `oktru`, `name_ru`
-  - [ ] `gtin` = `fin_article.BarCode`
-  - [ ] `name_ru` = `Designation`, внутренний артикул = `Code`
-- [ ] Хранение метаданных НКТ без новых колонок: JSON в `Notes` или отдельная таблица связи (request id, status, xtin)
-- [ ] Обработка ошибок API и повторная отправка
-- [ ] Тест с реальным API-ключом на `nationalcatalog.kz`
+### E.1 — Конфиг и клиент
+
+- [ ] `App.config`: `nationalCatalogEnabled`, `nationalCatalogApiKey`, `nationalCatalogBaseUrl=https://nationalcatalog.kz`
+- [ ] Проект `LogicPOS.NationalCatalog` (или `LogicPOS.Integration.NationalCatalog`)
+- [ ] HTTP-клиент: заголовок `X-API-KEY`, обработка 401/422/429
+- [ ] Тест: `POST /portal/api/v1/products/requests` с тестовым ключом
+
+### E.2 — Данные и маппинг
+
+- [ ] Таблица `fin_articlenationalcatalog` (Article, RequestId, Status, Oktru, Gtin, LastError, UpdatedAt)
+- [ ] Маппинг: `BarCode`→`gtin`, `Designation`→`name_ru`, `Code`→`article`, `name_kk` (копия или поле)
+- [ ] Поле/справочник **ОКТРУ** у товара (обязательно для заявки)
+
+### E.3 — UI (BackOffice)
+
+- [ ] `DialogArticle`: кнопки «Отправить в НКТ», «Статус», «Повторить» (видимы только KZ + enabled)
+- [ ] `DialogNationalCatalogOktru` — дерево из `/portal/api/v1/dictionaries/...` (кэш)
+- [ ] Отображение статуса заявки (`new` … `completed`)
+
+### E.4 — Workflow заявки
+
+- [ ] POST draft → PUT attributes → PUT moderation → GET status (опрос) → PUT publish
+- [ ] MVP-атрибуты для одежды: `oktru`, `name_ru`, `name_kk`, `gtin`, `article`, `country=KZ`
+- [ ] `GET .../requests/attributes?oktru=` — подбор обязательных полей по категории
+- [ ] Повтор при `underRevision`; обработка `existingProductSelected`
+
+### E.5 — Не в MVP
+
+- [ ] Импорт товаров из НКТ в CleverPos
+- [ ] Универсальный редактор всех атрибутов НКТ
 
 **Не делать:** интеграцию со `stg.nct.kz` — нет в официальной документации.
+
+---
+
+## Фаза H — Склад (опционально, не блокер для кассы)
+
+**Не нужен** для сценария «один штрихкод на SKU → скан → оплата».  
+**Анализ схемы, плагин, оценки:** [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md) §2.
+
+### H.1 — MVP модуля `IStockManagementModule`
+
+- [ ] Класс `StockManagementModule` (в `LogicPOS.Modules` или `*Plugin.dll` в `plugins/`)
+- [ ] Регистрация в `Program.cs` или через `PluginLoader`
+- [ ] `Add`: `fin_articlestock` + обновление `fin_articlewarehouse` + `article.Accounting`
+- [ ] Склад по умолчанию: `fin_warehouse.IsDefault`
+- [ ] Списание при продаже / возврат при отмене документа (`StockMode`)
+
+### H.2 — Позже
+
+- [ ] Серийные номера, составные товары
+- [ ] Опционально: `Warehouse`/`Location` в `fin_articlestock` (аудит в журнале)
+- [ ] Колонка «склад» в `TreeViewArticleStock`
+
+**UI форм новых не требует** — `DialogArticleStock`, `DialogAddArticleStock` уже есть.
 
 ---
 
@@ -157,8 +201,11 @@ git log -5 --oneline
 
 ## Порядок приоритетов (кратко)
 
-1. **B** — исправить App.config НКТ, проверить запуск  
+1. **B** — исправить App.config, проверить запуск KZ/ru-RU  
 2. **C** — `BarCode` + печать этикеток с EAN  
 3. **D** — прогнать CleverApp + кассу  
-4. **E** — модуль НКТ  
-5. **F** — ЭСФ/KKM/КГД (позже)
+4. **E** — интеграция НКТ (после C: `gtin` = `BarCode`)  
+5. **H** — склад MVP (позже, не блокер розницы)  
+6. **F** — ЭСФ/KKM/КГД (позже)
+
+Полный анализ: [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)

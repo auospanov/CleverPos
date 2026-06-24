@@ -108,4 +108,5 @@ Runtime settings are in `LogicPOS.UI/App.config`:
 - `useDatabaseDataDemo` = `true` for demo data
 - National Catalog (NKT) API key: `nationalCatalogApiKey` — obtain at [nationalcatalog.kz](https://nationalcatalog.kz/personal-account/api-keys). **Never store passwords or API keys in this README.**
 
-**Roadmap / checklist:** see [TODO.md](TODO.md) (ru-RU, KZ, barcodes, NKT, CleverApp).
+**Roadmap / checklist:** see [TODO.md](TODO.md) (ru-RU, KZ, barcodes, NKT, CleverApp).  
+**Analysis (retail, warehouse, NKT API):** [docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)
