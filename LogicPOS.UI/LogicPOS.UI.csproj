@@ -2258,6 +2258,9 @@
     <Content Include="Assets\Images\Icons\Other\connection_status_on.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Images\Icons\Other\pinpad_backspace.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Images\Icons\Other\pinpad_password_reset.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

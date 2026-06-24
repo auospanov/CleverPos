@@ -94,7 +94,9 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
             TouchButtonText buttonKey8 = new TouchButtonText("touchButtonKey8", pButtonColor, "8", pFont, pFontColor, pButtonWidth, pButtonHeight);
             TouchButtonText buttonKey9 = new TouchButtonText("touchButtonKey9", pButtonColor, "9", pFont, pFontColor, pButtonWidth, pButtonHeight);
             TouchButtonText buttonKey0 = new TouchButtonText("touchButtonKey0", pButtonColor, "0", pFont, pFontColor, pButtonWidth, pButtonHeight);
-            TouchButtonText buttonKeyCE = new TouchButtonText("touchButtonKeyCE_Red", pButtonColor, "CE", pFont, pFontColor, pButtonWidth, pButtonHeight);
+            string numberPadPinButtonBackspaceImageFileName = PathsSettings.ImagesFolderLocation + @"Icons\Other\pinpad_backspace.png";
+            int backspaceIconSize = Math.Max(24, Math.Min(pButtonWidth, pButtonHeight) - 20);
+            TouchButtonIcon buttonKeyCE = new TouchButtonIcon("touchButtonKeyCE_Red", pButtonColor, numberPadPinButtonBackspaceImageFileName, new Size(backspaceIconSize, backspaceIconSize), pButtonWidth, pButtonHeight);
 
             //Shared Button,can be OK or Quit based on ShowSystemButtons
             TouchButtonText _buttonQuitOrOk;

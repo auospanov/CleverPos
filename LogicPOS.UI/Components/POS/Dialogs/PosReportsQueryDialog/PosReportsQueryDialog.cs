@@ -86,10 +86,8 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             /* IN005974 */
             //DateTime firstDayOfYear = new DateTime(workingDate.Year, 1, 1);
             DateTime firstDayOfMonth = new DateTime(workingDate.Year, workingDate.Month, 1);
-            //DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             DateTime dateTimeStart = firstDayOfMonth;
-            //DateTime dateTimeEnd = lastDayOfMonth.AddHours(23).AddMinutes(59).AddSeconds(59);
-            DateTime dateTimeEnd = workingDate;
+            DateTime dateTimeEnd = workingDate.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
             _windowTitle = GeneralUtils.GetResourceByName("window_title_dialog_report_filter");
 

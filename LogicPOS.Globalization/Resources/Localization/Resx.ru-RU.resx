@@ -606,6 +606,9 @@ POS будет закрыт.</value>
     <value>Нет уведомлений за последние {0} дней.</value>
     <comment>Message for when there are no notifications to be shown on "System - Notifications" BackOffice option</comment>
   </data>
+  <data name="notification_new_terminal_registered" xml:space="preserve">
+    <value>Зарегистрирован новый терминал: {0}</value>
+  </data>
   <data name="dialog_message_operation_successfully" xml:space="preserve">
     <value>Операция выполнена успешно!</value>
   </data>
@@ -1928,6 +1931,9 @@ Show this message next time?</value>
   <data name="global_question" xml:space="preserve">
     <value>Вопрос</value>
   </data>
+  <data name="global_dashboard" xml:space="preserve">
+    <value>Главная</value>
+  </data>
   <data name="global_quit" xml:space="preserve">
     <value>Выйти из приложения</value>
   </data>
@@ -2176,6 +2182,9 @@ Show this message next time?</value>
   </data>
   <data name="global_terminal" xml:space="preserve">
     <value>Терминал</value>
+  </data>
+  <data name="global_terminal_designation_format" xml:space="preserve">
+    <value>Терминал №{0}</value>
   </data>
   <data name="global_terminal_name" xml:space="preserve">
     <value>Имя терминала</value>
@@ -2848,16 +2857,16 @@ Show this message next time?</value>
     <value>Скидка</value>
   </data>
   <data name="pos_ticketlist_label_price" xml:space="preserve">
-    <value>Price</value>
+    <value>Цена</value>
   </data>
   <data name="pos_ticketlist_label_quantity" xml:space="preserve">
-    <value>Qtd.</value>
+    <value>Кол-во</value>
   </data>
   <data name="pos_ticketlist_label_total" xml:space="preserve">
-    <value>Total</value>
+    <value>Итого</value>
   </data>
   <data name="pos_ticketlist_label_vat" xml:space="preserve">
-    <value>VAT</value>
+    <value>НДС</value>
   </data>
   <data name="prefparam_app_screen_size" xml:space="preserve">
     <value>Application :: Screen Resolution</value>
@@ -2866,7 +2875,7 @@ Show this message next time?</value>
     <value>Application :: Theme [ Default | Retail ]</value>
   </data>
   <data name="prefparam_company_address" xml:space="preserve">
-    <value>Address</value>
+    <value>Адрес</value>
   </data>
   <data name="prefparam_company_business_name" xml:space="preserve">
     <value>Коммерческое название (слоган)</value>

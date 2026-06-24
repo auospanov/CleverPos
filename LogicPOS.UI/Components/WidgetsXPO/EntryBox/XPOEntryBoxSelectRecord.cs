@@ -228,6 +228,10 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
                         }
                         else Entry.Text = (string)Convert.ChangeType(_value.GetMemberValue(_fieldDisplayValue), typeof(string));
                     }
+                    else if (_value is erp_customer)
+                    {
+                        Entry.Text = FormatFieldDisplayValue(_value, _value.GetMemberValue(_fieldDisplayValue));
+                    }
                     else Entry.Text = (string)Convert.ChangeType(_value.GetMemberValue(_fieldDisplayValue), typeof(string));
                 }
                 catch (Exception ex)
@@ -272,76 +276,75 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
         private ListStore fillDropDowntext(T1 value, CriteriaOperator pCriteria = null)
         {
             ListStore store = new ListStore(typeof(string));
-            if (value != null)
+            Type entityType = typeof(T1);
+
+            string sortProp = "Designation";
+            if (entityType == typeof(erp_customer))
             {
-                string sortProp = "Designation";
-                if (value.GetType() == typeof(erp_customer))
-                {
-                    sortProp = "Name";
-                }
-                else if (value.GetType() == typeof(fin_articleserialnumber))
-                {
-                    sortProp = "SerialNumber";
-                }
-                else if (value.GetType() == typeof(fin_articlewarehouse))
-                {
-                    sortProp = "CreatedAt";
-                }
-                else if (value.GetType() == typeof(fin_articlestock))
-                {
-                    sortProp = "DocumentNumber";
-                }
-                else if (value.GetType() == typeof(fin_documentfinancemaster))
-                {
-                    sortProp = "DocumentNumber";
-                }
-                SortingCollection sortCollection = new SortingCollection
-                {
-                    new SortProperty(sortProp, DevExpress.Xpo.DB.SortingDirection.Ascending)
-                };
-                if (pCriteria == null) pCriteria = CriteriaOperator.Parse(string.Format("(Disabled = 0 OR Disabled IS NULL)"));
-
-                dropdownTextCollection = XPOSettings.Session.GetObjects(XPOSettings.Session.GetClassInfo(value), pCriteria, sortCollection, int.MaxValue, false, true);
-
-                if (dropdownTextCollection != null)
-                {
-                    foreach (dynamic item in dropdownTextCollection)
-                    {
-                        if (value.GetType() == typeof(erp_customer))
-                        {
-                            store.AppendValues(item.Name);
-                        }
-                        else if (_articleCode)
-                        {
-                            store.AppendValues(item.Code);
-                        }
-                        else if (value.GetType() == typeof(fin_articleserialnumber))
-                        {
-                            store.AppendValues(item.SerialNumber);
-                        }
-                        else if (value.GetType() == typeof(fin_articlestock) || value.GetType() == typeof(fin_documentfinancemaster))
-                        {
-                            if (item.DocumentNumber != null)
-                            {
-                                store.AppendValues(item.DocumentNumber);
-                            }
-                        }
-                        else if (value.GetType() == typeof(fin_articlewarehouse))
-                        {
-                            if (item.ArticleSerialNumber != null)
-                            {
-                                store.AppendValues(item.ArticleSerialNumber.SerialNumber);
-                            }
-                            else
-                            {
-                                store.AppendValues(item.Article.Designation);
-                            }
-                        }
-                        else { store.AppendValues(item.Designation); }
-                    }
-                }
-
+                sortProp = "Name";
             }
+            else if (entityType == typeof(fin_articleserialnumber))
+            {
+                sortProp = "SerialNumber";
+            }
+            else if (entityType == typeof(fin_articlewarehouse))
+            {
+                sortProp = "CreatedAt";
+            }
+            else if (entityType == typeof(fin_articlestock))
+            {
+                sortProp = "DocumentNumber";
+            }
+            else if (entityType == typeof(fin_documentfinancemaster))
+            {
+                sortProp = "DocumentNumber";
+            }
+            SortingCollection sortCollection = new SortingCollection
+            {
+                new SortProperty(sortProp, DevExpress.Xpo.DB.SortingDirection.Ascending)
+            };
+            if (pCriteria == null) pCriteria = CriteriaOperator.Parse(string.Format("(Disabled = 0 OR Disabled IS NULL)"));
+
+            dropdownTextCollection = XPOSettings.Session.GetObjects(XPOSettings.Session.GetClassInfo(entityType), pCriteria, sortCollection, int.MaxValue, false, true);
+
+            if (dropdownTextCollection != null)
+            {
+                foreach (dynamic item in dropdownTextCollection)
+                {
+                    if (entityType == typeof(erp_customer))
+                    {
+                        store.AppendValues(Entity.DecryptIfNeeded(item.Name)?.ToString() ?? string.Empty);
+                    }
+                    else if (_articleCode)
+                    {
+                        store.AppendValues(item.Code);
+                    }
+                    else if (entityType == typeof(fin_articleserialnumber))
+                    {
+                        store.AppendValues(item.SerialNumber);
+                    }
+                    else if (entityType == typeof(fin_articlestock) || entityType == typeof(fin_documentfinancemaster))
+                    {
+                        if (item.DocumentNumber != null)
+                        {
+                            store.AppendValues(item.DocumentNumber);
+                        }
+                    }
+                    else if (entityType == typeof(fin_articlewarehouse))
+                    {
+                        if (item.ArticleSerialNumber != null)
+                        {
+                            store.AppendValues(item.ArticleSerialNumber.SerialNumber);
+                        }
+                        else
+                        {
+                            store.AppendValues(item.Article.Designation);
+                        }
+                    }
+                    else { store.AppendValues(item.Designation); }
+                }
+            }
+
             return store;
         }
         //Artigos Compostos [IN:016522]
@@ -410,13 +413,15 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
             _previousValue = _value;
 
             Guid articleOid = Guid.Empty;
-            if (dropdownTextCollection != null && _value != null)
+            if (dropdownTextCollection != null)
             {
+                Type entityType = typeof(T1);
                 foreach (dynamic item in dropdownTextCollection)
                 {
-                    if (_value.GetType() == typeof(erp_customer))
+                    if (entityType == typeof(erp_customer))
                     {
-                        if (item.Name == pEntry.Text)
+                        string itemName = Entity.DecryptIfNeeded(item.Name)?.ToString() ?? string.Empty;
+                        if (itemName == pEntry.Text)
                         {
                             articleOid = item.Oid;
                         }
@@ -428,21 +433,21 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
                             articleOid = item.Oid;
                         }
                     }
-                    else if (_value.GetType() == typeof(fin_articleserialnumber))
+                    else if (entityType == typeof(fin_articleserialnumber))
                     {
                         if (item.SerialNumber == pEntry.Text)
                         {
                             articleOid = item.Oid;
                         }
                     }
-                    else if (_value.GetType() == typeof(fin_articlestock))
+                    else if (entityType == typeof(fin_articlestock))
                     {
                         if (item.DocumentNumber == pEntry.Text)
                         {
                             articleOid = item.Oid;
                         }
                     }
-                    else if (_value.GetType() == typeof(fin_articlewarehouse))
+                    else if (entityType == typeof(fin_articlewarehouse))
                     {
                         if (item.ArticleSerialNumber != null)
                         {
@@ -493,7 +498,7 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
                 }
                 else
                 {
-                    pEntry.Text = (value != null) ? value.ToString() : GeneralUtils.GetResourceByName("global_error");
+                    pEntry.Text = FormatFieldDisplayValue(_value, value);
                 }
                 OnClosePopup();
             }
@@ -556,6 +561,26 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
                 _logger.Error(ex.Message, ex);
             }
         }
+        private string FormatFieldDisplayValue(T1 entity, object fieldValue)
+        {
+            if (fieldValue == null)
+            {
+                return string.Empty;
+            }
+
+            if (entity is erp_customer && (_fieldDisplayValue == "Name" || _fieldDisplayValue == "FiscalNumber"))
+            {
+                return Entity.DecryptIfNeeded(fieldValue)?.ToString() ?? string.Empty;
+            }
+
+            if (entity != null && entity.Oid == XPOSettings.XpoOidUserRecord)
+            {
+                return CryptographyUtils.Decrypt(fieldValue.ToString(), true, PluginSettings.SecretKey);
+            }
+
+            return fieldValue.ToString();
+        }
+
         /// <summary>
         /// If Record is Selected and Ok clicked
         /// </summary>
@@ -601,15 +626,7 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsXPO
             }
             else
             {
-                if (_value != null && _value.Oid == XPOSettings.XpoOidUserRecord)
-                {
-                    pEntry.Text = (value != null) ? CryptographyUtils.Decrypt(value.ToString(), true, PluginSettings.SecretKey) : "";
-                }
-                else
-                {
-                    pEntry.Text = (value != null) ? value.ToString() : "";
-                }
-                //CultureResources.GetCustomResources(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_error");
+                pEntry.Text = FormatFieldDisplayValue(_value, value);
             }
             if (typeof(T2) == typeof(TreeViewArticleWarehouse))
             {

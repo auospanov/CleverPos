@@ -142,6 +142,7 @@
         public const string DIALOG_MESSAGE_LOW_RESOLUTION_DETECTED = "dialog_message_low_resolution_detected";
         public const string DIALOG_MESSAGE_MAIL_SENT_SUCCESSFULLY = "dialog_message_mail_sent_successfully";
         public const string DIALOG_MESSAGE_NO_NOTIFICATION = "dialog_message_no_notification";
+        public const string NOTIFICATION_NEW_TERMINAL_REGISTERED = "notification_new_terminal_registered";
         public const string DIALOG_MESSAGE_OPERATION_SUCCESSFULLY = "dialog_message_operation_successfully";
         public const string DIALOG_MESSAGE_PARTIAL_IMPORT = "dialog_message_partial_import";
         public const string DIALOG_MESSAGE_POS_INSTANCE_ALREADY_RUNNING = "dialog_message_pos_instance_already_running";
@@ -658,6 +659,7 @@
         public const string GLOBAL_TARE = "global_tare";
         public const string GLOBAL_TAX = "global_tax";
         public const string GLOBAL_TERMINAL = "global_terminal";
+        public const string GLOBAL_TERMINAL_DESIGNATION_FORMAT = "global_terminal_designation_format";
         public const string GLOBAL_TERMINAL_NAME = "global_terminal_name";
         public const string GLOBAL_TICKET_NUMBER = "global_ticket_number";
         public const string GLOBAL_TITLE = "global_title";

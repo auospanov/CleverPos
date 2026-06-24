@@ -218,19 +218,6 @@ namespace logicpos
 
             //LOGO
             Image imageLogo = new Image(Utils.GetThemeFileLocation(GeneralSettings.Settings["fileImageBackOfficeLogo"]));
-            if (PluginSettings.LicenceManager != null)
-            {
-                string fileImageBackOfficeLogo = string.Format(PathsSettings.Paths["themes"] + @"Default\Images\logicPOS_logicpulse_login.png");
-
-                if (!string.IsNullOrEmpty(LicenseSettings.LicenseReseller) && LicenseSettings.LicenseReseller == "NewTech")
-                {
-                    fileImageBackOfficeLogo = string.Format(PathsSettings.Paths["themes"] + @"Default\Images\Branding\{0}\logicPOS_logicpulse_login.png", "NT");
-                }
-
-                var bitmapImage = PluginSettings.LicenceManager.DecodeImage(fileImageBackOfficeLogo, eventBoxImageLogoSize.Width, eventBoxImageLogoSize.Height);
-                 Gdk.Pixbuf pixbufImageLogo = Utils.ImageToPixbuf(bitmapImage);
-                imageLogo = new Image(pixbufImageLogo);
-            }
 
             //fix.Put(imageLogo, GlobalApp.ScreenSize.Width - 300, 50);
             //UI

@@ -40,7 +40,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
         private EntryBoxValidation _entryBoxNotes;
         private HSeparator _separator;
         //InitialValues
-        private readonly erp_customer _initialSupplier = null;
+        private erp_customer _initialSupplier = null;
         private DateTime _initialDocumentDate;
         private readonly string _initialDocumentNumber;
         //MultiArticles
@@ -120,7 +120,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 //_articleCollection = new List<fin_article>();
                 ArticleCollection = new Dictionary<fin_article, Tuple<decimal, Dictionary<ValidatableTextBox, List<fin_articleserialnumber>>, decimal, fin_warehouselocation>>();
                 //Supplier
-                CriteriaOperator criteriaOperatorSupplier = CriteriaOperator.Parse("(Supplier = 1)");
+                CriteriaOperator criteriaOperatorSupplier = CriteriaOperator.Parse(string.Format("(Supplier = 1) AND ((Disabled IS NULL OR Disabled <> 1) OR (Oid = '{0}'))", XPOSettings.XpoOidUserRecord));
                 _entryBoxSelectSupplier = new XPOEntryBoxSelectRecordValidation<erp_customer, TreeViewCustomer>(this, GeneralUtils.GetResourceByName("global_supplier"), "Name", "Oid", _initialSupplier, criteriaOperatorSupplier, RegexUtils.RegexGuid, true, true);
                 _entryBoxSelectSupplier.EntryValidation.IsEditable = true;
                 _entryBoxSelectSupplier.EntryValidation.Completion.PopupCompletion = true;
@@ -128,6 +128,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 _entryBoxSelectSupplier.EntryValidation.Completion.PopupSingleMatch = true;
                 _entryBoxSelectSupplier.EntryValidation.Completion.InlineSelection = true;
                 _entryBoxSelectSupplier.EntryValidation.Changed += delegate { ValidateDialog(); };
+                _entryBoxSelectSupplier.ClosePopup += delegate { ValidateDialog(); };
 
                 //DocumentDate
                 _entryBoxDocumentDate = new EntryBoxValidationDatePickerDialog(this, GeneralUtils.GetResourceByName("global_date"), GeneralUtils.GetResourceByName("global_date"), _initialDocumentDate, RegexUtils.RegexDate, true, CultureSettings.DateFormat, true);
@@ -430,19 +431,27 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             //Assign if Valid
             try
             {
-                //if (supplier != null) //_initialSupplier = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), new Guid(supplier.ToString()));
-                var own_customer = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), XPOSettings.XpoOidUserRecord);
-                if (own_customer != null && string.IsNullOrEmpty(own_customer.Name))
+                if (supplier != null)
                 {
-                    //update owner customer for internal stock moviments                        
-                    //own_customer.FiscalNumber = CryptographyUtils.Encrypt(GlobalFramework.PreferenceParameters["COMPANY_FISCALNUMBER"], true, SettingsApp.SecretKey);
-                    own_customer.FiscalNumber = GeneralSettings.PreferenceParameters["COMPANY_FISCALNUMBER"];
-                    own_customer.Name = GeneralSettings.PreferenceParameters["COMPANY_NAME"];
-                    own_customer.Save();
-                    _logger.Debug("Updating own supplier name and fiscal number");
-                    //if (supplier == null) { supplier = own_customer; }
+                    _initialSupplier = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), new Guid(supplier.ToString()));
                 }
 
+                var own_customer = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), XPOSettings.XpoOidUserRecord);
+                if (own_customer != null)
+                {
+                    if (string.IsNullOrEmpty(own_customer.Name))
+                    {
+                        own_customer.FiscalNumber = GeneralSettings.PreferenceParameters["COMPANY_FISCALNUMBER"];
+                        own_customer.Name = GeneralSettings.PreferenceParameters["COMPANY_NAME"];
+                        own_customer.Save();
+                        _logger.Debug("Updating own supplier name and fiscal number");
+                    }
+
+                    if (_initialSupplier == null)
+                    {
+                        _initialSupplier = own_customer;
+                    }
+                }
             }
             catch (Exception ex)
             {

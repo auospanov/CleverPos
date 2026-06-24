@@ -606,6 +606,9 @@ POS will be closed.</value>
     <value>There are no notifications for the last {0} days.</value>
     <comment>Message for when there are no notifications to be shown on "System - Notifications" BackOffice option</comment>
   </data>
+  <data name="notification_new_terminal_registered" xml:space="preserve">
+    <value>New terminal registered: {0}</value>
+  </data>
   <data name="dialog_message_operation_successfully" xml:space="preserve">
     <value>Operation successfully!</value>
   </data>
@@ -1930,6 +1933,9 @@ To continue press Yes to close all terminals, or press No and close all terminal
   <data name="global_question" xml:space="preserve">
     <value>Question</value>
   </data>
+  <data name="global_dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
   <data name="global_quit" xml:space="preserve">
     <value>Quit Application</value>
   </data>
@@ -2178,6 +2184,9 @@ To continue press Yes to close all terminals, or press No and close all terminal
   </data>
   <data name="global_terminal" xml:space="preserve">
     <value>Terminal</value>
+  </data>
+  <data name="global_terminal_designation_format" xml:space="preserve">
+    <value>Terminal #{0}</value>
   </data>
   <data name="global_terminal_name" xml:space="preserve">
     <value>Terminal Name</value>

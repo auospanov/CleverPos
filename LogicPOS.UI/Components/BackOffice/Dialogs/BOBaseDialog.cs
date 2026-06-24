@@ -229,8 +229,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                         {
                             if (pResponse == ResponseType.Ok || pResponse == ResponseType.Apply)
                             {
-                                string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", (_dataSourceRow as fin_article).Oid);
-                                var getArticleStock = Convert.ToDecimal(_dataSourceRow.Session.ExecuteScalar(stockQuery));
+                                decimal getArticleStock = logicpos.Utils.GetArticleStockSum((_dataSourceRow as fin_article).Oid, _dataSourceRow.Session);
                                 if (Convert.ToDecimal(getArticleStock.ToString()) != (_dataSourceRow as fin_article).Accounting)
                                 {
                                     var own_customer = (erp_customer)XPOSettings.Session.GetObjectByKey(typeof(erp_customer), XPOSettings.XpoOidUserRecord);

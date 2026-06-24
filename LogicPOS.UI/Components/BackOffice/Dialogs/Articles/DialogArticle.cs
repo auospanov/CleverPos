@@ -382,15 +382,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 vboxTab3.PackStart(boxAccounting, false, false, 0);
                 _crudWidgetList.Add(new GenericCRUDWidgetXPO(boxAccounting, _dataSourceRow, "Accounting", RegexUtils.RegexDecimal, false));
                 //entryAccounting.Editable = false;
-                try
-                {
-                    string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", _article.Oid);
-                    entryAccounting.Text = _dataSourceRow.Session.ExecuteScalar(stockQuery).ToString();
-                }
-                catch
-                {
-                    entryAccounting.Text = "0";
-                }
+                entryAccounting.Text = logicpos.Utils.GetArticleStockSum(_article.Oid, _dataSourceRow.Session).ToString();
                 //MinimumStock
                 Entry entryMinimumStock = new Entry();
                 BOWidgetBox boxMinimumStock = new BOWidgetBox(GeneralUtils.GetResourceByName("global_minimum_stock"), entryMinimumStock);

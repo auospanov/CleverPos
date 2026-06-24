@@ -201,9 +201,9 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice.Dialogs.Articles
             }
             if(_selectedArticle != null)
             {
-                string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", _selectedArticle.Oid);
-                boxQuantity.TooltipText = _dataSourceRow.Session.ExecuteScalar(stockQuery).ToString();
-                _selectedArticle.Accounting = Convert.ToDecimal(boxQuantity.TooltipText);
+                decimal articleStock = logicpos.Utils.GetArticleStockSum(_selectedArticle.Oid, _dataSourceRow.Session);
+                boxQuantity.TooltipText = articleStock.ToString();
+                _selectedArticle.Accounting = articleStock;
                 boxQuantity.LabelComponent.Text = string.Format(CultureResources.GetResourceByLanguage(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_quantity") + " :: Total em Stock: " + _selectedArticle.Accounting.ToString());
             }
             if (xpoComboBoxWarehouse.Value == null)
@@ -267,9 +267,9 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice.Dialogs.Articles
 
                 if (_selectedArticle != null)
                 {
-                    string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", _selectedArticle.Oid);
-                    boxQuantity.TooltipText = _dataSourceRow.Session.ExecuteScalar(stockQuery).ToString();
-                    _selectedArticle.Accounting = Convert.ToDecimal(boxQuantity.TooltipText);
+                    decimal articleStock = logicpos.Utils.GetArticleStockSum(_selectedArticle.Oid, _dataSourceRow.Session);
+                    boxQuantity.TooltipText = articleStock.ToString();
+                    _selectedArticle.Accounting = articleStock;
                     boxQuantity.LabelComponent.Text = string.Format(CultureResources.GetResourceByLanguage(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_quantity") + " :: Total em Stock: " + _selectedArticle.Accounting.ToString());
                 }
 

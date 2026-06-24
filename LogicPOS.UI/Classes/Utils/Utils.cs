@@ -374,6 +374,22 @@ namespace logicpos
 
             return result;
         }
+        public static decimal GetArticleStockSum(Guid articleOid, Session session = null)
+        {
+            if (articleOid == Guid.Empty)
+            {
+                return 0m;
+            }
+
+            session = session ?? XPOSettings.Session;
+            string stockQuery = string.Format(
+                "SELECT SUM(Quantity) FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled IS NULL)",
+                articleOid);
+
+            object result = session.ExecuteScalar(stockQuery);
+            return result == null || result == DBNull.Value ? 0m : Convert.ToDecimal(result);
+        }
+
         public static bool ShowMessageMinimumStock(Window pSourceWindow, Guid pArticleOid, decimal pNewQuantity)
         {
             bool unusedBool;
@@ -385,17 +401,7 @@ namespace logicpos
             showMessage = false;
             Size size = new Size(500, 350);
             fin_article article = (fin_article)XPOSettings.Session.GetObjectByKey(typeof(fin_article), pArticleOid);
-            decimal articleStock;
-            try
-            {
-                string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", article.Oid);
-                articleStock = Convert.ToDecimal(XPOSettings.Session.ExecuteScalar(stockQuery));
-            }
-            catch
-            {
-                _logger.Debug("Article with stock 0 or NULL");
-                articleStock = 0;
-            }
+            decimal articleStock = GetArticleStockSum(article.Oid);
 
             string childStockMessage = Environment.NewLine + Environment.NewLine + "Stock de artigos associados: " + Environment.NewLine;
             //Composite article Messages
@@ -405,17 +411,7 @@ namespace logicpos
                 foreach (fin_articlecomposition item in article.ArticleComposition)
                 {
                     fin_article child = item.ArticleChild;
-                    decimal childStock = 0;
-                    try
-                    {
-                        string stockQuery = string.Format("SELECT SUM(Quantity) as Result FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled is NULL) GROUP BY Article;", item.ArticleChild.Oid);
-                        childStock = Convert.ToDecimal(XPOSettings.Session.ExecuteScalar(stockQuery));
-                    }
-                    catch
-                    {
-                        _logger.Debug("Article child with stock 0 or NULL");
-                        childStock = 0;
-                    }
+                    decimal childStock = GetArticleStockSum(item.ArticleChild.Oid);
                     var childStockAfterChanged = childStock - (pNewQuantity * item.Quantity);
                     if (childStockAfterChanged <= child.MinimumStock)
                     {
@@ -1507,11 +1503,12 @@ namespace logicpos
                     try
                     {
                         //Persist Terminal in DB
+                        uint terminalCode = XPOUtility.GetNextTableFieldID("pos_configurationplaceterminal", "Code");
                         configurationPlaceTerminal = new pos_configurationplaceterminal(XPOSettings.Session)
                         {
                             Ord = XPOUtility.GetNextTableFieldID("pos_configurationplaceterminal", "Ord"),
-                            Code = XPOUtility.GetNextTableFieldID("pos_configurationplaceterminal", "Code"),
-                            Designation = "Terminal #" + XPOUtility.GetNextTableFieldID("pos_configurationplaceterminal", "Code"),
+                            Code = terminalCode,
+                            Designation = string.Format(GeneralUtils.GetResourceByName(ResourceNames.GLOBAL_TERMINAL_DESIGNATION_FORMAT), terminalCode),
                             HardwareId = LicenseSettings.LicenseHardwareId
                             //Fqdn = GetFQDN()
                         };

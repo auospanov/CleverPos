@@ -114,7 +114,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 //_articleCollection = new List<fin_article>();
                 ArticleCollection = new Dictionary<fin_article, decimal>();
                 //Supplier
-                CriteriaOperator criteriaOperatorSupplier = CriteriaOperator.Parse("(Supplier = 1)");
+                CriteriaOperator criteriaOperatorSupplier = CriteriaOperator.Parse(string.Format("(Supplier = 1) AND ((Disabled IS NULL OR Disabled <> 1) OR (Oid = '{0}'))", XPOSettings.XpoOidUserRecord));
                 _entryBoxSelectSupplier = new XPOEntryBoxSelectRecordValidation<erp_customer, TreeViewCustomer>(this, CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, "global_supplier"), "Name", "Oid", _initialSupplier, criteriaOperatorSupplier, LogicPOS.Utility.RegexUtils.RegexGuid, true);
                 _entryBoxSelectSupplier.EntryValidation.IsEditable = true;
                 _entryBoxSelectSupplier.EntryValidation.Completion.PopupCompletion = true;
@@ -122,6 +122,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 _entryBoxSelectSupplier.EntryValidation.Completion.PopupSingleMatch = true;
                 _entryBoxSelectSupplier.EntryValidation.Completion.InlineSelection = true;
                 _entryBoxSelectSupplier.EntryValidation.Changed += delegate { ValidateDialog(); };
+                _entryBoxSelectSupplier.ClosePopup += delegate { ValidateDialog(); };
 
                 //DocumentDate
                 _entryBoxDocumentDate = new EntryBoxValidationDatePickerDialog(this, CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, "global_date"), CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, "global_date"), _initialDocumentDate, LogicPOS.Utility.RegexUtils.RegexDate, true, CultureSettings.DateFormat);

@@ -503,7 +503,12 @@ namespace LogicPOS.Data.XPO.Utility
                     systemNotification = new sys_systemnotification(xpoSession);
                     systemNotification.Ord = ord;
                     systemNotification.NotificationType = systemNotificationType;
-                    systemNotification.Message = string.Format(systemNotificationType.Message, TerminalSettings.LoggedTerminal.Designation);
+                    string messageTemplate = CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, ResourceNames.NOTIFICATION_NEW_TERMINAL_REGISTERED);
+                    if (string.IsNullOrEmpty(messageTemplate))
+                    {
+                        messageTemplate = systemNotificationType.Message;
+                    }
+                    systemNotification.Message = string.Format(messageTemplate, TerminalSettings.LoggedTerminal.Designation);
                     systemNotification.Save();
                     ord++;
                 }

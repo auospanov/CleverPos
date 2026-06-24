@@ -209,9 +209,9 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             }
 
             _imageLogo.Dispose();
-            _dashboardButton = new TouchButtonIconWithText("DASHBOARD_ICON", ("168, 204, 79").StringToColor(), "Dashboard", fontDescription, ("61, 61, 61").StringToColor(), _dashboardIcon, sizeIconDashboard, _widthAccordion, _heightAccordion, true);
+            _dashboardButton = new TouchButtonIconWithText("DASHBOARD_ICON", ("168, 204, 79").StringToColor(), GeneralUtils.GetResourceByName("global_dashboard"), fontDescription, ("61, 61, 61").StringToColor(), _dashboardIcon, sizeIconDashboard, _widthAccordion, _heightAccordion, true);
             _exitButton = new TouchButtonIconWithText("EXIT_BUTTON", ("201, 102, 88").StringToColor(), GeneralUtils.GetResourceByName("global_quit"), fontDescription, ("255, 255, 255").StringToColor(), _exitIcon, sizeButton, _widthAccordion, _heightAccordion, true);
-            _backPOS = new TouchButtonIconWithText("POS", ("168, 204, 79").StringToColor(), "LogicPOS", fontDescription, ("61, 61, 61").StringToColor(), _backPOSIcon, sizeButton, _widthAccordion, _heightAccordion, true);
+            _backPOS = new TouchButtonIconWithText("POS", ("168, 204, 79").StringToColor(), POSSettings.AppName, fontDescription, ("61, 61, 61").StringToColor(), _backPOSIcon, sizeButton, _widthAccordion, _heightAccordion, true);
             _NewVersion = new TouchButtonIconWithText("Update_Button", ("168, 204, 79").StringToColor(), GeneralUtils.GetResourceByName("global_update_pos"), fontDescription, ("61, 61, 61").StringToColor(), _updateIcon, sizeButton, _widthAccordion, _heightAccordion, true);
             _labelClock.ModifyFont(fontDescriptionStatusBar);
             //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

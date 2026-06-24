@@ -44,7 +44,7 @@ namespace logicpos.App
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //Application
 
-        public static string AppName = "LogicPos";
+        public static string AppName = "CleverPos";
         public static string AppIcon = "application.ico";
         public static string AppUrl = "www.logicpulse.com";
 
