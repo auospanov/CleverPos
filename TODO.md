@@ -209,3 +209,7 @@ git log -5 --oneline
 6. **F** — ЭСФ/KKM/КГД (позже)
 
 Полный анализ: [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)
+
+Шаблон BarCodeTemplate_*.frx — кодировать fin_article.BarCode (EAN-13), а не SerialNumber.
+Убрать зависимость печати от плагина SoftwareVendor.
+Опционально: кнопка «Печать этикетки» прямо из карточки товара без склада.
