@@ -20,6 +20,44 @@
 
 ---
 
+## Первоочередные задачи в коде (магазин вещей → НКТ)
+
+**Цель:** залить товары с `BarCode`, печатать наклейки с карточки, потом передать в НКТ.  
+**Склад (H) и фискализация (F) — не в этом списке.**
+
+**До кода (без правок репозитория):** Excel-импорт через BackOffice → Система → Импорт товаров (6 колонок: Code, Designation, Family, SubFamily, Price1, VAT). `BarCode` импорт **пока не поддерживает** — см. задачу 1 ниже.
+
+### Приоритет 1 — заливка и штрихкоды (фаза C, код)
+
+- [ ] **C-1.** `ExcelProcessing.cs` — колонка **BarCode** (7-я) в импорте и экспорте товаров (`SaveArticles`, `ExportArticles`)
+- [ ] **C-2.** Валидация EAN-13 при сохранении `BarCode` (13 цифр + контрольная цифра; уникальность уже в БД)
+- [ ] **C-3.** Шаблоны `BarCodeTemplate_40x30.frx` / `BarCodeTemplate_100x50.frx` — печать **EAN-13 из `fin_article.BarCode`**, не Code128 + `SerialNumber`
+- [ ] **C-4.** `FastReport.ProcessReportBarcodeLabel` — печать по **товару** (`fin_article`), без `fin_articleserialnumber` и без `HasSoftwareVendorPlugin`
+- [ ] **C-5.** `DialogArticle.cs` — кнопка **«Печать этикетки»** (кол-во копий), вызов печати по `BarCode` + `TemplateBarCode`
+- [ ] **C-6.** Опционально: отдельный шаблон «этикетка розницы» vs «серийник склада» (`IsBarCode` в `sys_configurationprinterstemplates`)
+- [ ] **C-7.** Опционально: генератор следующего EAN из пула (настройка в App.config или preference)
+
+**Файлы:** `LogicPOS.UI/Classes/Utils/ExcelProcessing.cs`, `LogicPOS.Reporting/Common/FastReport.cs`, `LogicPOS.UI/Components/BackOffice/Dialogs/Articles/DialogArticle.cs`, `LogicPOS.UI/Resources/Reports/UserReports/BarCodeTemplate_*.frx`
+
+### Приоритет 2 — касса и скан (фаза D, в основном проверка)
+
+- [ ] **D-1.** Нормализация строки скана в `TicketList.InsertOrUpdate` (12 vs 13 цифр, ведущий `0`) — см. фазу G
+- [ ] **D-2.** Русификация предупреждения «откройте заказ» в `ShowMobileBarcodeReceived` → `Resx.ru-RU.resx`
+- [ ] **D-3.** Прогон: USB-сканер + CleverApp → позиция в чеке по `BarCode`
+
+### Приоритет 3 — НКТ (фаза E, после C-1…C-5)
+
+- [ ] **E-*** — см. раздел «Фаза E» ниже; старт после того, как у товаров заполнены `BarCode`, `Designation`, `Code`
+
+### Не делать в первую очередь
+
+- Склад `IStockManagementModule` (фаза H)
+- ЭСФ / KKM / КГД (фаза F)
+- Импорт товаров **из** НКТ в CleverPos
+- Уникальный штрихкод на каждую физическую вещь (серийники)
+
+---
+
 ## Фаза B — Конфиг и первый запуск на новом ПК
 
 - [ ] Клонировать репозиторий, открыть `LogicPOS.sln` в Visual Studio 2019
@@ -43,7 +81,8 @@
 
 ## Фаза C — Штрихкоды и этикетки (перекупщик)
 
-**Модель:** один SKU = одно значение в `fin_article.BarCode` = то же на этикетке = `gtin` в НКТ.
+**Модель:** один SKU = одно значение в `fin_article.BarCode` = то же на этикетке = `gtin` в НКТ.  
+**Детальный чеклист в коде:** см. **«Первоочередные задачи в коде»** (C-1 … C-7).
 
 - [ ] Заполнить `BarCode` у тестовых товаров (EAN-13, префикс 487 или свой пул GS1)
 - [ ] Проверить: EAN валидный (13 цифр + контрольная цифра)
@@ -202,14 +241,10 @@ git log -5 --oneline
 ## Порядок приоритетов (кратко)
 
 1. **B** — исправить App.config, проверить запуск KZ/ru-RU  
-2. **C** — `BarCode` + печать этикеток с EAN  
+2. **Первоочередные задачи в коде** — C-1…C-5 (импорт BarCode, этикетки EAN, печать с карточки товара)  
 3. **D** — прогнать CleverApp + кассу  
 4. **E** — интеграция НКТ (после C: `gtin` = `BarCode`)  
 5. **H** — склад MVP (позже, не блокер розницы)  
 6. **F** — ЭСФ/KKM/КГД (позже)
 
 Полный анализ: [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)
-
-Шаблон BarCodeTemplate_*.frx — кодировать fin_article.BarCode (EAN-13), а не SerialNumber.
-Убрать зависимость печати от плагина SoftwareVendor.
-Опционально: кнопка «Печать этикетки» прямо из карточки товара без склада.
