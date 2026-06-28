@@ -6,6 +6,7 @@ using logicpos.Classes.Gui.Gtk.WidgetsGeneric;
 using logicpos.Classes.Gui.Gtk.WidgetsXPO;
 using LogicPOS.Domain.Entities;
 using LogicPOS.Globalization;
+using LogicPOS.Printing.Utility;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
 using System;
@@ -19,6 +20,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
         private XPOComboBox _xpoComboBoxPrinterType;
         private BOWidgetBox _xpoComboBoxPrinterSelect;
         private Entry entryDesignation;
+        private Entry _entryNetworkName;
         private ComboBox xpoComboBoxInputType;
         private Entry _entryThermalEncoding;
         private Entry _entryThermalImageCompanyLogo;
@@ -30,6 +32,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
         private Entry _entryThermalOpenDrawerValueT1;
         private Entry _entryThermalOpenDrawerValueT2;
 
+        private Button _buttonThermalTestPrint;
 
         private sys_configurationprinters _configurationPrinter;
 
@@ -138,6 +141,8 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                     //Verifica designação válida
                     _crudWidgetList.Add(new GenericCRUDWidgetXPO(entryDesignation, _dataSourceRow, "Designation", RegexUtils.RegexAlfaNumericExtended, true));
 
+                    SyncDesignationFromWindowsPrinterCombo(_printersOnSystem, flagSelected);
+
                 }
                 //Se for Linux usa a Designação por defeito, escrita á mão
                 else
@@ -150,8 +155,8 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 }
 
                 //NetworkName
-                Entry entryNetworkName = new Entry();
-                BOWidgetBox boxNetworkName = new BOWidgetBox(GeneralUtils.GetResourceByName("global_networkname"), entryNetworkName);
+                _entryNetworkName = new Entry();
+                BOWidgetBox boxNetworkName = new BOWidgetBox(GeneralUtils.GetResourceByName("global_networkname"), _entryNetworkName);
                 vboxTab1.PackStart(boxNetworkName, false, false, 0);
                 _crudWidgetList.Add(new GenericCRUDWidgetXPO(boxNetworkName, _dataSourceRow, "NetworkName", "", false));
 
@@ -167,11 +172,11 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                             //Se for impressora de rede associa logo o caminho da rede á impressora associada
                             if (_xpoComboBoxPrinterType.Active == 3)
                             {
-                                entryNetworkName.Text = _printersOnSystem[xpoComboBoxInputType.Active];
+                                _entryNetworkName.Text = _printersOnSystem[xpoComboBoxInputType.Active];
                             }
                             else
                             {
-                                entryNetworkName.Text = "";
+                                _entryNetworkName.Text = "";
                             }
                         }
                         catch (Exception ex)
@@ -256,6 +261,13 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 _vboxTab2.PackStart(checkButtonThermalPrintLogo, false, false, 0);
                 _crudWidgetList.Add(new GenericCRUDWidgetXPO(checkButtonThermalPrintLogo, _dataSourceRow, "ThermalPrintLogo"));
 
+                _buttonThermalTestPrint = new Button(GeneralUtils.GetResourceByName("global_printer_thermal_test_print"));
+                _buttonThermalTestPrint.Clicked += ButtonThermalTestPrint_Clicked;
+                HBox hboxThermalTestPrint = new HBox(false, _boxSpacing);
+                hboxThermalTestPrint.PackStart(_buttonThermalTestPrint, false, false, 0);
+                _vboxTab2.PackStart(hboxThermalTestPrint, false, false, 0);
+                UpdateThermalTestPrintButtonVisibility();
+
                 // Events
                 _xpoComboBoxPrinterType.Changed += XpoComboBoxPrinterType_Changed;
 
@@ -316,6 +328,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
 
                 //Tab Visibility
                 _vboxTab2.Visible = (_xpoComboBoxPrinterType.Value != null && (_xpoComboBoxPrinterType.Value as sys_configurationprinterstype).ThermalPrinter);
+                UpdateThermalTestPrintButtonVisibility();
 
                 // If Working in ThermalPrinter assign Defaults From Config
                 if (_vboxTab2.Visible)
@@ -345,6 +358,163 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             {
                 _logger.Error(ex.Message, ex);
             }
+        }
+
+        private void UpdateThermalTestPrintButtonVisibility()
+        {
+            if (_buttonThermalTestPrint == null)
+                return;
+
+            var printerType = _xpoComboBoxPrinterType?.Value as sys_configurationprinterstype;
+            bool isWindowsThermal = printerType != null
+                && printerType.ThermalPrinter
+                && (printerType.Token == "THERMAL_PRINTER_WINDOWS" || printerType.Token == "THERMAL_PRINTER_SOCKET");
+
+            _buttonThermalTestPrint.Visible = isWindowsThermal;
+            _buttonThermalTestPrint.Sensitive = isWindowsThermal;
+        }
+
+        private void ButtonThermalTestPrint_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var printerType = _xpoComboBoxPrinterType?.Value as sys_configurationprinterstype;
+                if (printerType == null)
+                    return;
+
+                string designation = null;
+                string networkName = _entryNetworkName?.Text;
+                bool isSocket = printerType.Token == "THERMAL_PRINTER_SOCKET";
+
+                if (isSocket)
+                {
+                    if (string.IsNullOrWhiteSpace(networkName))
+                    {
+                        logicpos.Utils.ShowMessageTouch(
+                            this,
+                            DialogFlags.Modal,
+                            MessageType.Warning,
+                            ButtonsType.Close,
+                            GeneralUtils.GetResourceByName("global_warning"),
+                            GeneralUtils.GetResourceByName("dialog_message_thermal_test_print_select_network"));
+                        return;
+                    }
+                }
+                else
+                {
+                    designation = ResolveWindowsPrinterNameForPrint();
+                    if (string.IsNullOrWhiteSpace(designation))
+                    {
+                        logicpos.Utils.ShowMessageTouch(
+                            this,
+                            DialogFlags.Modal,
+                            MessageType.Warning,
+                            ButtonsType.Close,
+                            GeneralUtils.GetResourceByName("global_warning"),
+                            GeneralUtils.GetResourceByName("dialog_message_thermal_test_print_select_printer"));
+                        return;
+                    }
+                }
+
+                bool success = ThermalPrinterTestPrint.TryPrint(
+                    printerType.Token,
+                    designation,
+                    networkName,
+                    _entryThermalEncoding?.Text,
+                    ParsePositiveInt(_entryThermalMaxCharsPerLineNormal?.Text, PrintingSettings.ThermalPrinter.MaxCharsPerLineNormal),
+                    ParsePositiveInt(_entryThermalMaxCharsPerLineNormalBold?.Text, PrintingSettings.ThermalPrinter.MaxCharsPerLineNormalBold),
+                    ParsePositiveInt(_entryThermalMaxCharsPerLineSmall?.Text, PrintingSettings.ThermalPrinter.MaxCharsPerLineSmall),
+                    _entryThermalCutCommand?.Text,
+                    out string errorMessage);
+
+                if (success)
+                {
+                    logicpos.Utils.ShowMessageTouch(
+                        this,
+                        DialogFlags.Modal,
+                        MessageType.Info,
+                        ButtonsType.Close,
+                        GeneralUtils.GetResourceByName("dialog_message_operation_successfully"),
+                        GeneralUtils.GetResourceByName("dialog_message_thermal_test_print_success"));
+                }
+                else
+                {
+                    logicpos.Utils.ShowMessageTouch(
+                        this,
+                        DialogFlags.Modal,
+                        MessageType.Error,
+                        ButtonsType.Close,
+                        GeneralUtils.GetResourceByName("global_error"),
+                        string.Format(GeneralUtils.GetResourceByName("dialog_message_thermal_test_print_error"), errorMessage));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message, ex);
+                logicpos.Utils.ShowMessageTouch(
+                    this,
+                    DialogFlags.Modal,
+                    MessageType.Error,
+                    ButtonsType.Close,
+                    GeneralUtils.GetResourceByName("global_error"),
+                    string.Format(GeneralUtils.GetResourceByName("dialog_message_thermal_test_print_error"), ex.Message));
+            }
+        }
+
+        private static int ParsePositiveInt(string text, int defaultValue)
+        {
+            if (int.TryParse(text, out int value) && value > 0)
+                return value;
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// For Windows thermal printers, Designation must be the Windows spooler name (from the dropdown), not the CleverPos record label.
+        /// </summary>
+        private void SyncDesignationFromWindowsPrinterCombo(string[] printersOnSystem, bool matchedExistingDesignation)
+        {
+            if (entryDesignation == null || xpoComboBoxInputType == null || printersOnSystem == null || printersOnSystem.Length == 0)
+                return;
+
+            if (matchedExistingDesignation && xpoComboBoxInputType.Active >= 0)
+            {
+                entryDesignation.Text = printersOnSystem[xpoComboBoxInputType.Active];
+                return;
+            }
+
+            if (IsInstalledWindowsPrinterName(entryDesignation.Text))
+                return;
+
+            if (xpoComboBoxInputType.Active < 0)
+                xpoComboBoxInputType.Active = 0;
+
+            if (xpoComboBoxInputType.Active >= 0)
+                entryDesignation.Text = printersOnSystem[xpoComboBoxInputType.Active];
+        }
+
+        private string ResolveWindowsPrinterNameForPrint()
+        {
+            if (xpoComboBoxInputType != null && xpoComboBoxInputType.Active >= 0)
+                return xpoComboBoxInputType.ActiveText;
+
+            string designation = entryDesignation?.Text;
+            if (IsInstalledWindowsPrinterName(designation))
+                return designation;
+
+            return null;
+        }
+
+        private static bool IsInstalledWindowsPrinterName(string printerName)
+        {
+            if (string.IsNullOrWhiteSpace(printerName))
+                return false;
+
+            foreach (string installed in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+            {
+                if (string.Equals(installed, printerName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
         }
     }
 }

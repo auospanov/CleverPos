@@ -779,7 +779,13 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                     bool showMessage;
                     if (logicpos.Utils.CheckStocks())
                     {
-                        if (!logicpos.Utils.ShowMessageMinimumStock(SourceWindow, pArticleOid, Convert.ToDecimal(ListStoreModel.GetValue(_treeIter, (int)TicketListColumns.Quantity)) + defaultQuantity, out showMessage))
+                        decimal quantityForStockCheck = defaultQuantity;
+                        if (_listStoreModelSelectedIndex != -1)
+                        {
+                            quantityForStockCheck = CurrentOrderDetails.Lines[_listStoreModelSelectedIndex].Properties.Quantity + defaultQuantity;
+                        }
+
+                        if (!logicpos.Utils.ShowMessageMinimumStock(SourceWindow, pArticleOid, quantityForStockCheck, out showMessage))
                         {
                             if (showMessage) return;
                         }
@@ -886,13 +892,13 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                     for (int itemPosition = 0; itemPosition < ListStoreModel.IterNChildren(); itemPosition++)
                     {
                         if ((Guid)(ListStoreModel.GetValue(_treeIter, (int)TicketListColumns.ArticleId)) == pArticleOid &&
-                                Convert.ToDecimal(ListStoreModel.GetValue(_treeIter, (int)TicketListColumns.Price)) == Math.Round(priceProperties.PriceFinal, CultureSettings.DecimalRoundTo))
+                                DataConversionUtils.StringToDecimal(Convert.ToString(ListStoreModel.GetValue(_treeIter, (int)TicketListColumns.Price))) == Math.Round(priceProperties.PriceFinal, CultureSettings.DecimalRoundTo))
                         {
 
                             _listStoreModelSelectedIndex = itemPosition;
 
                             //Update TreeView Model Price and quantity
-                            newQuantity = Convert.ToDecimal(ListStoreModel.GetValue(_treeIter, (int)TicketListColumns.Quantity)) + defaultQuantity;
+                            newQuantity = CurrentOrderDetails.Lines[_listStoreModelSelectedIndex].Properties.Quantity + defaultQuantity;
                             newTotalPrice = newQuantity * Convert.ToDecimal(CurrentOrderDetails.Lines[_listStoreModelSelectedIndex].Properties.PriceFinal);
 
                             //Update orderDetails 

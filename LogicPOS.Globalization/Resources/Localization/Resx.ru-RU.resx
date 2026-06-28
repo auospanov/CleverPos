@@ -1879,6 +1879,21 @@ Show this message next time?</value>
   <data name="global_printer_thermal_print_loggero" xml:space="preserve">
     <value>Печатать логотип компании</value>
   </data>
+  <data name="global_printer_thermal_test_print" xml:space="preserve">
+    <value>Тестовая печать</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_success" xml:space="preserve">
+    <value>Тестовая этикетка со штрихкодом отправлена на принтер.</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_error" xml:space="preserve">
+    <value>Не удалось выполнить тестовую печать: {0}</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_select_printer" xml:space="preserve">
+    <value>Выберите принтер Windows в списке «Наименование» (например XPrinter). Название записи CleverPos («Термопринтер Windows…») — не имя устройства в Windows.</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_select_network" xml:space="preserve">
+    <value>Укажите сетевой адрес принтера в формате IP:PORT (например 192.168.1.30:9100).</value>
+  </data>
   <data name="global_printer_type" xml:space="preserve">
     <value>Тип принтера</value>
   </data>
