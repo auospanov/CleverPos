@@ -1875,6 +1875,21 @@ To continue press Yes to close all terminals, or press No and close all terminal
   <data name="global_printer_thermal_print_loggero" xml:space="preserve">
     <value>Print Company Logo</value>
   </data>
+  <data name="global_printer_thermal_test_print" xml:space="preserve">
+    <value>Test print</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_success" xml:space="preserve">
+    <value>Test barcode label sent to the printer.</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_error" xml:space="preserve">
+    <value>Test print failed: {0}</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_select_printer" xml:space="preserve">
+    <value>Select the Windows printer from the Designation list (e.g. your XPrinter). The CleverPos record title is not the Windows printer name.</value>
+  </data>
+  <data name="dialog_message_thermal_test_print_select_network" xml:space="preserve">
+    <value>Enter the printer network address as IP:PORT (e.g. 192.168.1.30:9100).</value>
+  </data>
   <data name="global_printer_type" xml:space="preserve">
     <value>Printer type</value>
   </data>
