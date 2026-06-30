@@ -5,7 +5,8 @@
 **Репозиторий:** `C:\Projects\CleverPos`  
 **Ветка:** проверьте `git status` и `git branch` после клонирования  
 **Документация НКТ:** https://nationalcatalog.kz/gwp/docs  
-**Подробный анализ** (розница, склады, НКТ): [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)
+**Подробный анализ** (розница, склады, НКТ): [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)  
+**Полный TODO внедрения** (НКТ, ОФД, Kaspi/Halyk/Jusan, Kaspi Shop, склад): [`docs/KZ-IMPLEMENTATION-TODO.md`](docs/KZ-IMPLEMENTATION-TODO.md)
 
 ---
 
