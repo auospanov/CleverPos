@@ -18,7 +18,7 @@
 
 `articles_import_backoffice.csv` → Excel → BackOffice.
 
-Цены — **максимум** коридора (колонка «до») из `price_tiers.txt`. Подробнее: `PRICING-ANALYSIS.md`.
+Цены — **максимум** коридора (колонка «до») из `price_tiers.txt`, **с НДС** (в карточке товара — «Цена с НДС»). Подробнее: `PRICING-ANALYSIS.md`.
 
 ## Демо при первом запуске CleverPos
 
