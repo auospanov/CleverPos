@@ -106,6 +106,7 @@ namespace logicpos.App
         public static string FileDatabaseData => GetDatabaseFileName(false, FileDatabaseDataPath);
         /* IN008024 */
         public static string FileDatabaseDataDemoPath = @"Resources\Database\Demos\{0}\{1}\{2}"; // "Resources\Database\Demos\Backery\en\databasedatademo_backery.sql"
+        public static string FileDatabaseDataDemoShop = @"Resources\Database\Demos\Shop\databasedatademo_shop.sql";
         public static string FileDatabaseDataDemo => GetDatabaseFileName(true, FileDatabaseDataDemoPath);
 
         public static string FileDatabaseViews = @"Resources\Database\databaseviews.sql";
@@ -324,6 +325,13 @@ namespace logicpos.App
 
                 if (demo)
                 {
+                    if (UseShopCatalogDemo())
+                    {
+                        result = FileDatabaseDataDemoShop;
+                        log.Info(string.Format("GetDatabaseFileName: shop catalog demo articles [{0}]", result));
+                        return result;
+                    }
+
                     string appOperationModeToken = customAppOperationMode.AppOperationModeToken;
                     string fileName = customAppOperationMode.DatabaseDemoFileName;
 
@@ -415,6 +423,12 @@ namespace logicpos.App
             }
 
             return primaryPath;
+        }
+
+        private static bool UseShopCatalogDemo()
+        {
+            string value = GeneralSettings.Settings["useShopCatalogDemo"];
+            return !string.IsNullOrEmpty(value) && Convert.ToBoolean(value);
         }
     }
 }
