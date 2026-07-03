@@ -974,6 +974,12 @@ Show this message next time?</value>
   <data name="global_button_label_print_as" xml:space="preserve">
     <value>Печать как</value>
   </data>
+  <data name="global_button_label_print_barcode" xml:space="preserve">
+    <value>Печать штрихкода</value>
+  </data>
+  <data name="global_barcode_empty" xml:space="preserve">
+    <value>Штрих-код не указан для этого товара.</value>
+  </data>
   <data name="global_button_label_readcard" xml:space="preserve">
     <value>Читать карту</value>
   </data>

@@ -155,7 +155,12 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             {
                 this.AddActionWidget(_buttonOk, ResponseType.Ok);
             }
+            InitAdditionalActionButtons();
             this.AddActionWidget(_buttonCancel, ResponseType.Cancel);
+        }
+
+        protected virtual void InitAdditionalActionButtons()
+        {
         }
 
         private void InitUI()

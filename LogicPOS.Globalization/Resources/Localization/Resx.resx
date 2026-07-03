@@ -976,6 +976,12 @@ To continue press Yes to close all terminals, or press No and close all terminal
   <data name="global_button_label_print_as" xml:space="preserve">
     <value>Print As</value>
   </data>
+  <data name="global_button_label_print_barcode" xml:space="preserve">
+    <value>Print barcode</value>
+  </data>
+  <data name="global_barcode_empty" xml:space="preserve">
+    <value>Barcode is not defined for this article.</value>
+  </data>
   <data name="global_button_label_readcard" xml:space="preserve">
     <value>Read card</value>
   </data>

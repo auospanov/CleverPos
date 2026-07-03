@@ -12,6 +12,7 @@ using LogicPOS.Data.XPO.Settings;
 using LogicPOS.Data.XPO.Utility;
 using LogicPOS.Domain.Entities;
 using LogicPOS.Globalization;
+using LogicPOS.Reporting.Common;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
 using System;
@@ -63,6 +64,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
         private ICollection<Tuple<fin_articleserialnumber, Entry, GenericCRUDWidgetXPO, GenericCRUDWidgetXPO, GenericCRUDWidgetXPO, HBox>> _serialNumberCollection;
         private readonly string iconAddRecord = PathsUtils.GetImageLocationRelativeToImagesFolder(@"Icons/icon_pos_nav_new.png");
         private readonly string iconClearRecord = PathsUtils.GetImageLocationRelativeToImagesFolder(@"Icons/Windows/icon_window_delete_record.png");
+        private TouchButtonIconWithText _buttonPrintBarcode;
 
         private int _totalCompositeEntrys = 0;
 
@@ -91,6 +93,102 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             if (_scrolledWindowCompositionView != null) _scrolledWindowCompositionView.Visible = _checkButtonComposite.Active;
             if (_scrolledWindowSerialNumbersView != null) _scrolledWindowSerialNumbersView.Visible = _checkButtonUniqueArticles.Active;
             if (_checkButtonComposite.Active && _checkButtonUniqueArticles.Active) SetSizeRequest(550, 740); else { SetSizeRequest(500, 740); }
+        }
+
+        protected override void InitAdditionalActionButtons()
+        {
+            string fontBaseDialogActionAreaButton = GeneralSettings.Settings["fontBaseDialogActionAreaButton"];
+            string filePrintIcon = PathsSettings.ImagesFolderLocation + @"Icons\Dialogs\icon_pos_dialog_action_print.png";
+            System.Drawing.Size sizeBaseDialogActionAreaButtonIcon = logicpos.Utils.StringToSize(GeneralSettings.Settings["sizeBaseDialogActionAreaButtonIcon"]);
+            System.Drawing.Size sizeBaseDialogActionAreaButton = logicpos.Utils.StringToSize(GeneralSettings.Settings["sizeBaseDialogActionAreaButton"]);
+            System.Drawing.Color colorBaseDialogActionAreaButtonBackground = GeneralSettings.Settings["colorBaseDialogActionAreaButtonBackground"].StringToColor();
+            System.Drawing.Color colorBaseDialogActionAreaButtonFont = GeneralSettings.Settings["colorBaseDialogActionAreaButtonFont"].StringToColor();
+
+            if (GlobalApp.ScreenSize.Width == 800 && GlobalApp.ScreenSize.Height == 600)
+            {
+                sizeBaseDialogActionAreaButton.Height -= 10;
+                sizeBaseDialogActionAreaButtonIcon.Width -= 10;
+                sizeBaseDialogActionAreaButtonIcon.Height -= 10;
+            }
+
+            _buttonPrintBarcode = new TouchButtonIconWithText(
+                "touchButtonPrintBarcode_DialogActionArea",
+                colorBaseDialogActionAreaButtonBackground,
+                GeneralUtils.GetResourceByName("global_button_label_print_barcode"),
+                fontBaseDialogActionAreaButton,
+                colorBaseDialogActionAreaButtonFont,
+                filePrintIcon,
+                sizeBaseDialogActionAreaButtonIcon,
+                sizeBaseDialogActionAreaButton.Width,
+                sizeBaseDialogActionAreaButton.Height);
+            _buttonPrintBarcode.Clicked += ButtonPrintBarcode_Clicked;
+            AddActionWidget(_buttonPrintBarcode, ResponseType.None);
+        }
+
+        private void ButtonPrintBarcode_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                fin_article article = _dataSourceRow as fin_article;
+                if (article == null) return;
+
+                string barCode = GetWidgetTextValue("BarCode");
+                if (string.IsNullOrEmpty(barCode))
+                {
+                    barCode = article.BarCode?.Trim();
+                }
+
+                if (string.IsNullOrEmpty(barCode))
+                {
+                    logicpos.Utils.ShowMessageBox(
+                        this,
+                        DialogFlags.Modal,
+                        new Size(500, 300),
+                        MessageType.Info,
+                        ButtonsType.Ok,
+                        GeneralUtils.GetResourceByName("global_barcode"),
+                        GeneralUtils.GetResourceByName("global_barcode_empty"));
+                    return;
+                }
+
+                article.BarCode = barCode;
+
+                string designation = GetWidgetTextValue("Designation");
+                if (!string.IsNullOrEmpty(designation)) article.Designation = designation;
+
+                string code = GetWidgetTextValue("Code");
+                if (!string.IsNullOrEmpty(code)) article.Code = code;
+
+                sys_configurationprinterstemplates templateBarCode = GetTemplateBarCodeFromWidget();
+                LogicPOS.Reporting.Common.FastReport.ProcessReportArticleBarcodeLabel(article, templateBarCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message, ex);
+            }
+        }
+
+        private string GetWidgetTextValue(string fieldName)
+        {
+            foreach (GenericCRUDWidget<Entity> item in _crudWidgetList)
+            {
+                if (item.FieldName != fieldName) continue;
+                if (item.Widget is Entry entry) return entry.Text?.Trim();
+            }
+            return null;
+        }
+
+        private sys_configurationprinterstemplates GetTemplateBarCodeFromWidget()
+        {
+            foreach (GenericCRUDWidget<Entity> item in _crudWidgetList)
+            {
+                if (item.FieldName != "TemplateBarCode") continue;
+                if (item.Widget is XPOComboBox combo && combo.Value is sys_configurationprinterstemplates template)
+                {
+                    return template;
+                }
+            }
+            return (_dataSourceRow as fin_article)?.TemplateBarCode;
         }
 
         [Obsolete]

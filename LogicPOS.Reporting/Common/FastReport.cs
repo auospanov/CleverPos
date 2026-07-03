@@ -788,6 +788,88 @@ namespace LogicPOS.Reporting.Common
             //customReport.Print();
         }
 
+        public static void ProcessReportArticleBarcodeLabel(
+            fin_article pArticle,
+            sys_configurationprinterstemplates pTemplateBarCode = null)
+        {
+            if (pArticle == null) return;
+
+            string barCode = pArticle.BarCode?.Trim();
+            if (string.IsNullOrEmpty(barCode)) return;
+
+            sys_configurationprinterstemplates templateBarCode = pTemplateBarCode ?? pArticle.TemplateBarCode;
+            string reportFileName = FastReportUtils.GetReportFilePath("BarCodeTemplate_40x30.frx");
+            if (templateBarCode != null && !string.IsNullOrEmpty(templateBarCode.FileTemplate))
+            {
+                reportFileName = templateBarCode.FileTemplate.ToString();
+            }
+
+            reportFileName = Path.GetFileName(reportFileName);
+
+            FastReport customReport = new FastReport(
+                reportFileName: reportFileName,
+                templateBase: "",
+                numberOfCopies: 1);
+
+            string footer = GeneralSettings.PreferenceParameters["COMPANY_WEBSITE"];
+            if (string.IsNullOrEmpty(footer)) footer = string.Empty;
+
+            List<ArticleSerialNumberReportData> reportData = new List<ArticleSerialNumberReportData>
+            {
+                new ArticleSerialNumberReportData
+                {
+                    SerialNumber = barCode,
+                    ArticleName = pArticle.Designation ?? string.Empty,
+                    ArticleRef = "ref." + (pArticle.Code ?? string.Empty),
+                    footerText = footer
+                }
+            };
+
+            customReport.RegisterData(reportData, "ArticleSerialNumber");
+
+            DataBand dataBand = (DataBand)customReport.FindObject("Data1");
+            int dataBandRec = 1;
+            int dataBandMaxRecs = 30;
+
+            if (dataBand != null)
+            {
+                dataBand.BeforePrint += delegate
+                {
+                    var barcodeObject = dataBand.Objects[0] as global::FastReport.Barcode.BarcodeObject;
+                    if (barcodeObject == null) return;
+
+                    barcodeObject.Text = barCode;
+                    barcodeObject.AutoSize = false;
+                    barcodeObject.Barcode = barCode.Length == 13 && barCode.All(char.IsDigit)
+                        ? global::FastReport.Barcode.Barcode.EAN13
+                        : global::FastReport.Barcode.Barcode.Code128;
+                };
+
+                dataBand.AfterPrint += delegate
+                {
+                    if (dataBandRec == dataBandMaxRecs)
+                    {
+                        dataBandRec = 1;
+                        dataBand.StartNewPage = true;
+                    }
+                    else
+                    {
+                        dataBandRec++;
+                        dataBand.StartNewPage = false;
+                    }
+                };
+            }
+
+            if (customReport.GetDataSource("ArticleSerialNumber") != null)
+            {
+                customReport.GetDataSource("ArticleSerialNumber").Enabled = true;
+            }
+
+            customReport.Prepare(true);
+            customReport.ShowPrepared(true);
+            customReport.Dispose();
+        }
+
         public static List<int> CopyNames(int printCopies)
         {
             List<int> result = new List<int>();
