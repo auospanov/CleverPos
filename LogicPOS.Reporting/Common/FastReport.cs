@@ -840,9 +840,9 @@ namespace LogicPOS.Reporting.Common
 
                     barcodeObject.Text = barCode;
                     barcodeObject.AutoSize = false;
-                    barcodeObject.Barcode = barCode.Length == 13 && barCode.All(char.IsDigit)
-                        ? global::FastReport.Barcode.Barcode.EAN13
-                        : global::FastReport.Barcode.Barcode.Code128;
+                    barcodeObject.SymbologyName = barCode.Length == 13 && barCode.All(char.IsDigit)
+                        ? "EAN13"
+                        : "Code128";
                 };
 
                 dataBand.AfterPrint += delegate
