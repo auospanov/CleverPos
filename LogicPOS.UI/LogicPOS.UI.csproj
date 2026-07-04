@@ -157,6 +157,8 @@
     <Compile Include="Components\BackOffice\Dialogs\Stocks\DialogArticleStock.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Stocks\DialogArticleWarehouse.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Stocks\DialogConfigurationWarehouse.cs" />
+    <Compile Include="Components\BackOffice\Dialogs\Configuration\DialogConfigurationPaymentTerminal.cs" />
+    <Compile Include="Components\BackOffice\TreeView\Configuration\TreeViewConfigurationPaymentTerminal.cs" />
     <Compile Include="Components\BackOffice\TreeView\Configuration\TreeViewConfigurationWeighingMachine.cs" />
     <Compile Include="Components\BackOffice\TreeView\Configuration\TreeViewConfigurationPoleDisplay.cs" />
     <Compile Include="Components\BackOffice\TreeView\Configuration\TreeViewConfigurationInputReader.cs" />
@@ -363,6 +365,9 @@
     <Compile Include="Components\BackOffice\Dialogs\Articles\DialogArticleSubFamily.cs" />
     <Compile Include="Components\BackOffice\Dialogs\DialogTemplate.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Articles\DialogArticle.cs" />
+    <Compile Include="Components\BackOffice\Dialogs\Articles\DialogArticle.NationalCatalog.cs" />
+    <Compile Include="Components\BackOffice\Dialogs\Articles\DialogNationalCatalogOktru.cs" />
+    <Compile Include="Components\BackOffice\Dialogs\Articles\DialogNationalCatalogDictionary.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Users\DialogUserCommissionGroup.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Users\DialogUserDetail.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Users\DialogUserProfile.cs" />
@@ -411,6 +416,8 @@
     <Compile Include="Components\POS\Dialogs\PosTablesDialog\PosTablesDialog.Functions.cs" />
     <Compile Include="Components\POS\Dialogs\PosReadCardDialog\PosReadCardDialog.Functions.cs" />
     <Compile Include="Components\POS\Windows\StartupWindowEvents.cs" />
+    <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.PaymentTerminal.cs" />
+    <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalProcessingDialog.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.Functions.cs" />
     <Compile Include="Components\POS\Windows\PosMainWindow\PosMainWindow.Functions.cs" />
     <Compile Include="Classes\Logic\Widgets\Pads\TicketPad.cs" />
@@ -6791,6 +6798,14 @@
     <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj">
       <Project>{50C2F757-8478-4FD3-8B35-89BC12E7ACA0}</Project>
       <Name>LogicPOS.Plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LogicPOS.PaymentTerminals\LogicPOS.PaymentTerminals.csproj">
+      <Project>{a8c3f1e2-4b5d-6e7f-8901-234567890abc}</Project>
+      <Name>LogicPOS.PaymentTerminals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LogicPOS.NationalCatalog\LogicPOS.NationalCatalog.csproj">
+      <Project>{b7d4e2f1-3c5a-4e6f-9012-3456789abcde}</Project>
+      <Name>LogicPOS.NationalCatalog</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Printing\LogicPOS.Printing.csproj">
       <Project>{ee93c7f8-f973-4a6e-8c59-e4bac4ff7bf7}</Project>

@@ -155,6 +155,15 @@ CREATE INDEX [iUpdatedBy_fin_articlewarehouse] on [fin_articlewarehouse]([Update
 CREATE INDEX [iUpdatedWhere_fin_articlewarehouse] on [fin_articlewarehouse]([UpdatedWhere]);
 CREATE INDEX [iDeletedBy_fin_articlewarehouse] on [fin_articlewarehouse]([DeletedBy]);
 CREATE INDEX [iDeletedWhere_fin_articlewarehouse] on [fin_articlewarehouse]([DeletedWhere]);
+CREATE TABLE [fin_articlenationalcatalog] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Article] char(36) NULL, [RequestId] numeric(19,0) NULL, [Status] nvarchar(50) NULL, [Oktru] nvarchar(50) NULL, [Gtin] nvarchar(20) NULL, [NameKk] nvarchar(255) NULL, [Tnved] nvarchar(20) NULL, [ManufacturerName] nvarchar(200) NULL, [Quantity] nvarchar(20) NULL, [LastError] text NULL, [LastSyncedAt] datetime NULL, [PublishedAt] datetime NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
+CREATE INDEX [iArticle_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([Article]);
+CREATE UNIQUE INDEX [iGtin_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([Gtin]);
+CREATE INDEX [iCreatedBy_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([CreatedBy]);
+CREATE INDEX [iCreatedWhere_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([CreatedWhere]);
+CREATE INDEX [iUpdatedBy_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([UpdatedBy]);
+CREATE INDEX [iUpdatedWhere_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([UpdatedWhere]);
+CREATE INDEX [iDeletedBy_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([DeletedBy]);
+CREATE INDEX [iDeletedWhere_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([DeletedWhere]);
 CREATE TABLE [fin_articleserialnumber] ([Oid] char (36) NOT NULL, [Disabled] bit, [Notes] text, [CreatedAt] datetime, [CreatedBy] char (36), [CreatedWhere] char (36), [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char (36), [Article] char (36), [SerialNumber] char (36) NOT NULL UNIQUE, [OptimisticLockField] int, [ArticleWarehouse] char (36), [StockMovimentIn] char (36), [StockMovimentOut] char (36), [IsSold] boolean Default null, [Status] int Default NULL, PRIMARY KEY ([Oid]));
 CREATE INDEX [iArticle_fin_articleserialnumber] ON [fin_articleserialnumber] ([Article]);
 CREATE INDEX [iSerialNumber_fin_articleserialnumber] ON [fin_articleserialnumber] ([SerialNumber]);
@@ -245,7 +254,7 @@ CREATE INDEX [iUpdatedBy_fin_configurationpaymentcondition] on [fin_configuratio
 CREATE INDEX [iUpdatedWhere_fin_configurationpaymentcondition] on [fin_configurationpaymentcondition]([UpdatedWhere]);
 CREATE INDEX [iDeletedBy_fin_configurationpaymentcondition] on [fin_configurationpaymentcondition]([DeletedBy]);
 CREATE INDEX [iDeletedWhere_fin_configurationpaymentcondition] on [fin_configurationpaymentcondition]([DeletedWhere]);
-CREATE TABLE [fin_configurationpaymentmethod] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Ord] numeric(10,0) NULL, [Code] numeric(10,0) NULL, [Token] nvarchar(100) NULL, [Designation] nvarchar(100) NULL, [ResourceString] nvarchar(100) NULL, [ButtonIcon] nvarchar(255) NULL, [Acronym] nvarchar(100) NULL, [AllowPayback] nvarchar(100) NULL, [Symbol] nvarchar(100) NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
+CREATE TABLE [fin_configurationpaymentmethod] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Ord] numeric(10,0) NULL, [Code] numeric(10,0) NULL, [Token] nvarchar(100) NULL, [Designation] nvarchar(100) NULL, [ResourceString] nvarchar(100) NULL, [ButtonIcon] nvarchar(255) NULL, [Acronym] nvarchar(100) NULL, [AllowPayback] nvarchar(100) NULL, [Symbol] nvarchar(100) NULL, [RequiresPaymentTerminal] bit, [PaymentTerminal] char(36) NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
 CREATE UNIQUE INDEX [iCode_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([Code]);
 CREATE UNIQUE INDEX [iToken_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([Token]);
 CREATE UNIQUE INDEX [iDesignation_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([Designation]);
@@ -256,6 +265,7 @@ CREATE INDEX [iUpdatedBy_fin_configurationpaymentmethod] on [fin_configurationpa
 CREATE INDEX [iUpdatedWhere_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([UpdatedWhere]);
 CREATE INDEX [iDeletedBy_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([DeletedBy]);
 CREATE INDEX [iDeletedWhere_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([DeletedWhere]);
+CREATE INDEX [iPaymentTerminal_fin_configurationpaymentmethod] on [fin_configurationpaymentmethod]([PaymentTerminal]);
 CREATE TABLE [fin_configurationpricetype] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Ord] numeric(10,0) NULL, [Code] numeric(10,0) NULL, [Designation] nvarchar(100) NULL, [EnumValue] int NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
 CREATE UNIQUE INDEX [iCode_fin_configurationpricetype] on [fin_configurationpricetype]([Code]);
 CREATE UNIQUE INDEX [iDesignation_fin_configurationpricetype] on [fin_configurationpricetype]([Designation]);
@@ -656,6 +666,14 @@ CREATE INDEX [iUpdatedBy_sys_configurationweighingmachine] on [sys_configuration
 CREATE INDEX [iUpdatedWhere_sys_configurationweighingmachine] on [sys_configurationweighingmachine]([UpdatedWhere]);
 CREATE INDEX [iDeletedBy_sys_configurationweighingmachine] on [sys_configurationweighingmachine]([DeletedBy]);
 CREATE INDEX [iDeletedWhere_sys_configurationweighingmachine] on [sys_configurationweighingmachine]([DeletedWhere]);
+CREATE TABLE [sys_configurationpaymentterminal] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Ord] numeric(10,0) NULL, [Code] numeric(10,0) NULL, [Designation] nvarchar(100) NULL, [Brand] nvarchar(20) NULL, [Host] nvarchar(100) NULL, [Port] int NULL, [PosClientName] nvarchar(100) NULL, [UseHttps] bit, [AccessToken] nvarchar(255) NULL, [RefreshToken] nvarchar(255) NULL, [TokenExpiration] datetime NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
+CREATE UNIQUE INDEX [iCode_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([Code]);
+CREATE INDEX [iCreatedBy_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([CreatedBy]);
+CREATE INDEX [iCreatedWhere_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([CreatedWhere]);
+CREATE INDEX [iUpdatedBy_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([UpdatedBy]);
+CREATE INDEX [iUpdatedWhere_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([UpdatedWhere]);
+CREATE INDEX [iDeletedBy_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([DeletedBy]);
+CREATE INDEX [iDeletedWhere_sys_configurationpaymentterminal] on [sys_configurationpaymentterminal]([DeletedWhere]);
 CREATE TABLE [sys_systemaudit] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Date] datetime NULL, [Description] nvarchar(255) NULL, [UserDetail] char(36) NULL, [Terminal] char(36) NULL, [AuditType] char(36) NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
 CREATE INDEX [iCreatedBy_sys_systemaudit] on [sys_systemaudit]([CreatedBy]);
 CREATE INDEX [iCreatedWhere_sys_systemaudit] on [sys_systemaudit]([CreatedWhere]);

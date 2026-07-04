@@ -787,6 +787,47 @@ CREATE TABLE fin_articlewarehouse (
   CONSTRAINT FK_fin_warehouselocation FOREIGN KEY (Location) REFERENCES fin_warehouselocation (Oid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table fin_articlenationalcatalog
+--
+DROP TABLE IF EXISTS fin_articlenationalcatalog;
+CREATE TABLE fin_articlenationalcatalog (
+  Oid char(38) NOT NULL,
+  Disabled bit(1) DEFAULT NULL,
+  Notes longtext,
+  CreatedAt datetime DEFAULT NULL,
+  CreatedBy char(38) DEFAULT NULL,
+  CreatedWhere char(38) DEFAULT NULL,
+  UpdatedAt datetime DEFAULT NULL,
+  UpdatedBy char(38) DEFAULT NULL,
+  UpdatedWhere char(38) DEFAULT NULL,
+  DeletedAt datetime DEFAULT NULL,
+  DeletedBy char(38) DEFAULT NULL,
+  DeletedWhere char(38) DEFAULT NULL,
+  Article char(38) DEFAULT NULL,
+  RequestId bigint DEFAULT NULL,
+  Status varchar(50) DEFAULT NULL,
+  Oktru varchar(50) DEFAULT NULL,
+  Gtin varchar(20) DEFAULT NULL,
+  NameKk varchar(255) DEFAULT NULL,
+  Tnved varchar(20) DEFAULT NULL,
+  ManufacturerName varchar(200) DEFAULT NULL,
+  Quantity varchar(20) DEFAULT NULL,
+  LastError longtext,
+  LastSyncedAt datetime DEFAULT NULL,
+  PublishedAt datetime DEFAULT NULL,
+  OptimisticLockField int(11) DEFAULT NULL,
+  PRIMARY KEY (Oid),
+  KEY iArticle_fin_articlenationalcatalog (Article),
+  UNIQUE KEY iGtin_fin_articlenationalcatalog (Gtin),
+  KEY iCreatedBy_fin_articlenationalcatalog (CreatedBy),
+  KEY iCreatedWhere_fin_articlenationalcatalog (CreatedWhere),
+  KEY iUpdatedBy_fin_articlenationalcatalog (UpdatedBy),
+  KEY iUpdatedWhere_fin_articlenationalcatalog (UpdatedWhere),
+  KEY iDeletedBy_fin_articlenationalcatalog (DeletedBy),
+  KEY iDeletedWhere_fin_articlenationalcatalog (DeletedWhere)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 --
@@ -1135,6 +1176,8 @@ CREATE TABLE fin_configurationpaymentmethod (
   Acronym varchar(100) DEFAULT NULL,
   AllowPayback varchar(100) DEFAULT NULL,
   Symbol varchar(100) DEFAULT NULL,
+  RequiresPaymentTerminal bit(1) DEFAULT NULL,
+  PaymentTerminal char(38) DEFAULT NULL,
   OptimisticLockField int(11) DEFAULT NULL,
   PRIMARY KEY (Oid),
   UNIQUE KEY iOid_fin_configurationpaymentmethod (Oid),
@@ -1148,6 +1191,7 @@ CREATE TABLE fin_configurationpaymentmethod (
   KEY iUpdatedWhere_fin_configurationpaymentmethod (UpdatedWhere),
   KEY iDeletedBy_fin_configurationpaymentmethod (DeletedBy),
   KEY iDeletedWhere_fin_configurationpaymentmethod (DeletedWhere),
+  KEY iPaymentTerminal_fin_configurationpaymentmethod (PaymentTerminal),
   CONSTRAINT FK_fin_configurationpaymentmethod_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES sys_userdetail (Oid),
   CONSTRAINT FK_fin_configurationpaymentmethod_CreatedWhere FOREIGN KEY (CreatedWhere) REFERENCES pos_configurationplaceterminal (Oid),
   CONSTRAINT FK_fin_configurationpaymentmethod_DeletedBy FOREIGN KEY (DeletedBy) REFERENCES sys_userdetail (Oid),
@@ -3247,6 +3291,50 @@ CREATE TABLE sys_configurationweighingmachine (
   CONSTRAINT FK_sys_configurationweighingmachine_DeletedWhere FOREIGN KEY (DeletedWhere) REFERENCES pos_configurationplaceterminal (Oid),
   CONSTRAINT FK_sys_configurationweighingmachine_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES sys_userdetail (Oid),
   CONSTRAINT FK_sys_configurationweighingmachine_UpdatedWhere FOREIGN KEY (UpdatedWhere) REFERENCES pos_configurationplaceterminal (Oid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table sys_configurationpaymentterminal
+--
+
+DROP TABLE IF EXISTS sys_configurationpaymentterminal;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE sys_configurationpaymentterminal (
+  Oid char(38) NOT NULL,
+  Disabled bit(1) DEFAULT NULL,
+  Notes longtext,
+  CreatedAt datetime DEFAULT NULL,
+  CreatedBy char(38) DEFAULT NULL,
+  CreatedWhere char(38) DEFAULT NULL,
+  UpdatedAt datetime DEFAULT NULL,
+  UpdatedBy char(38) DEFAULT NULL,
+  UpdatedWhere char(38) DEFAULT NULL,
+  DeletedAt datetime DEFAULT NULL,
+  DeletedBy char(38) DEFAULT NULL,
+  DeletedWhere char(38) DEFAULT NULL,
+  Ord int(10) unsigned DEFAULT NULL,
+  Code int(10) unsigned DEFAULT NULL,
+  Designation varchar(100) DEFAULT NULL,
+  Brand varchar(20) DEFAULT NULL,
+  Host varchar(100) DEFAULT NULL,
+  Port int(11) DEFAULT NULL,
+  PosClientName varchar(100) DEFAULT NULL,
+  UseHttps bit(1) DEFAULT NULL,
+  AccessToken varchar(255) DEFAULT NULL,
+  RefreshToken varchar(255) DEFAULT NULL,
+  TokenExpiration datetime DEFAULT NULL,
+  OptimisticLockField int(11) DEFAULT NULL,
+  PRIMARY KEY (Oid),
+  UNIQUE KEY iOid_sys_configurationpaymentterminal (Oid),
+  UNIQUE KEY iCode_sys_configurationpaymentterminal (Code),
+  KEY iCreatedBy_sys_configurationpaymentterminal (CreatedBy),
+  KEY iCreatedWhere_sys_configurationpaymentterminal (CreatedWhere),
+  KEY iUpdatedBy_sys_configurationpaymentterminal (UpdatedBy),
+  KEY iUpdatedWhere_sys_configurationpaymentterminal (UpdatedWhere),
+  KEY iDeletedBy_sys_configurationpaymentterminal (DeletedBy),
+  KEY iDeletedWhere_sys_configurationpaymentterminal (DeletedWhere)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

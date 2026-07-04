@@ -3918,4 +3918,181 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
   <data name="prefparam_ticket_print_company_name" xml:space="preserve">
     <value>Ticket :: Print Commercial Name (Slogan)</value>
   </data>
+  <data name="global_ConfigurationPaymentTerminal" xml:space="preserve">
+    <value>Payment terminals</value>
+  </data>
+  <data name="window_title_edit_dialogconfigurationpaymentterminal" xml:space="preserve">
+    <value>Payment terminal</value>
+  </data>
+  <data name="global_payment_terminal_brand" xml:space="preserve">
+    <value>Terminal brand</value>
+  </data>
+  <data name="global_payment_terminal_host" xml:space="preserve">
+    <value>IP address</value>
+  </data>
+  <data name="global_payment_terminal_port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="global_payment_terminal_pos_client_name" xml:space="preserve">
+    <value>POS client name (register)</value>
+  </data>
+  <data name="global_payment_terminal_use_https" xml:space="preserve">
+    <value>HTTPS (terminal integration protection)</value>
+  </data>
+  <data name="global_payment_terminal_test_connection" xml:space="preserve">
+    <value>Test connection</value>
+  </data>
+  <data name="global_payment_terminal_discover" xml:space="preserve">
+    <value>Discover on network</value>
+  </data>
+  <data name="global_payment_terminal_test_started" xml:space="preserve">
+    <value>Testing connection...</value>
+  </data>
+  <data name="global_payment_terminal_test_finished" xml:space="preserve">
+    <value>Test finished</value>
+  </data>
+  <data name="global_payment_terminal_discover_started" xml:space="preserve">
+    <value>Searching for Kaspi terminal (port 8080)...</value>
+  </data>
+  <data name="global_payment_terminal_discover_not_found" xml:space="preserve">
+    <value>No terminals found</value>
+  </data>
+  <data name="global_payment_terminal_discover_found" xml:space="preserve">
+    <value>Found terminals:</value>
+  </data>
+  <data name="global_ConfigurationPaymentMethod_RequiresPaymentTerminal" xml:space="preserve">
+    <value>Requires payment terminal</value>
+  </data>
+  <data name="pos_button_label_payment_type_kaspi_card" xml:space="preserve">
+    <value>Kaspi card</value>
+  </data>
+  <data name="pos_button_label_payment_type_kaspi_qr" xml:space="preserve">
+    <value>Kaspi QR</value>
+  </data>
+  <data name="window_title_dialog_payment_terminal_processing" xml:space="preserve">
+    <value>Payment processing</value>
+  </data>
+  <data name="dialog_message_payment_terminal_processing" xml:space="preserve">
+    <value>Waiting for Kaspi terminal response...</value>
+  </data>
+  <data name="dialog_message_payment_terminal_started" xml:space="preserve">
+    <value>Sending amount to terminal...</value>
+  </data>
+  <data name="dialog_message_payment_terminal_not_configured" xml:space="preserve">
+    <value>Payment terminal is not configured. Continue without terminal?</value>
+  </data>
+  <data name="dialog_button_payment_terminal_continue_without" xml:space="preserve">
+    <value>Continue without terminal</value>
+  </data>
+  <data name="global_payment_terminal_log_tab" xml:space="preserve">
+    <value>Connection test</value>
+  </data>
+  <data name="global_payment_terminal_log_hint" xml:space="preserve">
+    <value>Click Test connection or Discover on network. Progress is shown in the log below.</value>
+  </data>
+  <data name="global_payment_terminal_log_ready" xml:space="preserve">
+    <value>Log ready. Enter IP or run network discovery.</value>
+  </data>
+  <data name="global_payment_terminal_host_required" xml:space="preserve">
+    <value>Enter terminal IP address or run network discovery first.</value>
+  </data>
+  <data name="global_payment_terminal_discover_ip_applied" xml:space="preserve">
+    <value>First found terminal IP was applied on the Details tab.</value>
+  </data>
+  <data name="global_national_catalog_tab" xml:space="preserve">
+    <value>NKT</value>
+  </data>
+  <data name="global_national_catalog_hint" xml:space="preserve">
+    <value>GTIN = barcode on Stock tab. Pick OKTRU and TNVED from dictionaries. Quantity and manufacturer are filled automatically. After DB recreate use Sync all.</value>
+  </data>
+  <data name="global_national_catalog_oktru" xml:space="preserve">
+    <value>OKTRU (category code)</value>
+  </data>
+  <data name="global_national_catalog_name_kk" xml:space="preserve">
+    <value>Name (Kazakh)</value>
+  </data>
+  <data name="global_national_catalog_status" xml:space="preserve">
+    <value>NKT status</value>
+  </data>
+  <data name="global_national_catalog_status_none" xml:space="preserve">
+    <value>NKT status: not submitted</value>
+  </data>
+  <data name="global_national_catalog_request_id" xml:space="preserve">
+    <value>RequestId</value>
+  </data>
+  <data name="global_national_catalog_request_none" xml:space="preserve">
+    <value>RequestId: —</value>
+  </data>
+  <data name="global_national_catalog_submit" xml:space="preserve">
+    <value>Submit to NKT</value>
+  </data>
+  <data name="global_national_catalog_refresh_status" xml:space="preserve">
+    <value>Refresh status</value>
+  </data>
+  <data name="global_national_catalog_publish" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="global_national_catalog_link" xml:space="preserve">
+    <value>Link by GTIN</value>
+  </data>
+  <data name="global_national_catalog_reconcile_all" xml:space="preserve">
+    <value>Sync all from NKT</value>
+  </data>
+  <data name="global_national_catalog_log_ready" xml:space="preserve">
+    <value>NKT log ready.</value>
+  </data>
+  <data name="global_national_catalog_reconcile_started" xml:space="preserve">
+    <value>Syncing requests from NKT account...</value>
+  </data>
+  <data name="global_national_catalog_pick_oktru" xml:space="preserve">
+    <value>Pick category</value>
+  </data>
+  <data name="global_national_catalog_oktru_dialog_title" xml:space="preserve">
+    <value>OKTRU — product category (NKT)</value>
+  </data>
+  <data name="global_national_catalog_oktru_dialog_hint" xml:space="preserve">
+    <value>Expand tree sections or search by code/name. Select a category and click OK.</value>
+  </data>
+  <data name="global_national_catalog_oktru_search" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="global_national_catalog_oktru_loading" xml:space="preserve">
+    <value>Loading OKTRU dictionary...</value>
+  </data>
+  <data name="global_national_catalog_oktru_loaded" xml:space="preserve">
+    <value>Root categories loaded: {0}</value>
+  </data>
+  <data name="global_national_catalog_oktru_searching" xml:space="preserve">
+    <value>Searching OKTRU dictionary...</value>
+  </data>
+  <data name="global_national_catalog_oktru_search_result" xml:space="preserve">
+    <value>Found: {0}</value>
+  </data>
+  <data name="global_national_catalog_api_key_required" xml:space="preserve">
+    <value>Set NKT API key in App.config (nationalCatalogApiKey).</value>
+  </data>
+  <data name="global_national_catalog_tnved" xml:space="preserve">
+    <value>TNVED (10 digits)</value>
+  </data>
+  <data name="global_national_catalog_manufacturer" xml:space="preserve">
+    <value>Manufacturer</value>
+  </data>
+  <data name="global_national_catalog_quantity" xml:space="preserve">
+    <value>Quantity (in unit of measure)</value>
+  </data>
+  <data name="global_national_catalog_pick_tnved" xml:space="preserve">
+    <value>Pick TNVED</value>
+  </data>
+  <data name="global_national_catalog_tnved_dialog_title" xml:space="preserve">
+    <value>TNVED — product code (NKT)</value>
+  </data>
+  <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
+    <value>TNVED is a customs code, not a shop name. Type top, t-shirt or 6109 and click Find — apparel opens the matching code group; pick the closest row.</value>
+  </data>
+  <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
+    <value>Examples: top, t-shirt, blouse, or code 6109. Then Find and select a row.</value>
+  </data>
+  <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
+    <value>POS product: "{0}". Type top / t-shirt / 6109 and click Find — TNVED does not use shop names as-is.</value>
+  </data>
 </root>

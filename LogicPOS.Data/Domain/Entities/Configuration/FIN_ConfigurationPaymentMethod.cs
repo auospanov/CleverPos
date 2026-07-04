@@ -84,6 +84,21 @@ namespace LogicPOS.Domain.Entities
             set { SetPropertyValue<string>("Symbol", ref fSymbol, value); }
         }
 
+        private bool fRequiresPaymentTerminal;
+        public bool RequiresPaymentTerminal
+        {
+            get { return fRequiresPaymentTerminal; }
+            set { SetPropertyValue<bool>("RequiresPaymentTerminal", ref fRequiresPaymentTerminal, value); }
+        }
+
+        private sys_configurationpaymentterminal fPaymentTerminal;
+        [Association(@"PaymentTerminalReferencesConfigurationPaymentMethod")]
+        public sys_configurationpaymentterminal PaymentTerminal
+        {
+            get { return fPaymentTerminal; }
+            set { SetPropertyValue("PaymentTerminal", ref fPaymentTerminal, value); }
+        }
+
         //ConfigurationPaymentMethod One <> Many DocumentFinanceMaster
         [Association(@"ConfigurationPaymentMethodReferencesDocumentFinanceMaster", typeof(fin_documentfinancemaster))]
         public XPCollection<fin_documentfinancemaster> DocumentMaster
