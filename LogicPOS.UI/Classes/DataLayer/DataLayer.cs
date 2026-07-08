@@ -402,9 +402,9 @@ namespace logicpos
             //Log4Net
             log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-            IDataLayer dl = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
             try
             {
+                IDataLayer dl = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
                 using (Session session = new Session(dl))
                 {
                     session.UpdateSchema();
@@ -412,6 +412,33 @@ namespace logicpos
                 }
             }
             catch (DevExpress.Xpo.DB.Exceptions.SchemaCorrectionNeededException ex)
+            {
+                log.Warn(string.Format("IsSchemaValid(): schema correction needed, applying: [{0}]", ex.Message), ex);
+
+                try
+                {
+                    IDataLayer dlUpdate = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.SchemaOnly);
+                    using (Session session = new Session(dlUpdate))
+                    {
+                        session.UpdateSchema();
+                    }
+
+                    IDataLayer dlVerify = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
+                    using (Session session = new Session(dlVerify))
+                    {
+                        session.UpdateSchema();
+                    }
+
+                    log.Info("IsSchemaValid(): schema correction applied successfully");
+                    return true;
+                }
+                catch (Exception applyEx)
+                {
+                    log.Error(string.Format("IsSchemaValid(): failed to apply schema correction: [{0}]", applyEx.Message), applyEx);
+                    return false;
+                }
+            }
+            catch (Exception ex)
             {
                 log.Error(string.Format("IsSchemaValid(): [{0}]", ex.Message), ex);
                 return false;
@@ -597,6 +624,108 @@ namespace logicpos
             }
 
             return inserted;
+        }
+
+        private const string PaymentTerminalPermissionGroupOid = "4c047b35-8fe5-4a4b-ac6e-59c87e0f760a";
+        private const string PaymentTerminalMenuToken = "BACKOFFICE_MAN_CONFIGURATIONPAYMENTTERMINAL_MENU";
+        private const string PaymentTerminalGrantSourceToken = "BACKOFFICE_MAN_CONFIGURATIONWEIGHINGMACHINE_MENU";
+        private const string PaymentTerminalGrantSourceTokenAlt = "BACKOFFICE_MAN_CONFIGURATIONPRINTERS_MENU";
+
+        /// <summary>
+        /// Ensures BackOffice permissions exist for payment terminals (menu + CRUD).
+        /// Grants them to profiles that already have device/scales menu access.
+        /// </summary>
+        public static void EnsurePaymentTerminalPermissions(Session xpoSession)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            try
+            {
+                string[][] permissionRows =
+                {
+                    new[] { "f1a2b3c4-d5e6-4f78-9012-3456789abcde", "1320", "1320", "BACKOFFICE_MAN_CONFIGURATIONPAYMENTTERMINAL_CREATE", "BackOffice :: Payment Terminals :: New" },
+                    new[] { "f2b3c4d5-e6f7-4089-0123-456789abcdef", "1330", "1330", "BACKOFFICE_MAN_CONFIGURATIONPAYMENTTERMINAL_DELETE", "BackOffice :: Payment Terminals :: Delete" },
+                    new[] { "f3c4d5e6-f7a8-4190-1234-56789abcdef0", "1340", "1340", "BACKOFFICE_MAN_CONFIGURATIONPAYMENTTERMINAL_EDIT", "BackOffice :: Payment Terminals :: Edit" },
+                    new[] { "f4d5e6f7-a8b9-4201-2345-6789abcdef01", "1350", "1350", PaymentTerminalMenuToken, "BackOffice :: Payment Terminals :: Menu" },
+                    new[] { "f5e6f7a8-b9c0-4312-3456-789abcdef012", "1360", "1360", "BACKOFFICE_MAN_CONFIGURATIONPAYMENTTERMINAL_VIEW", "BackOffice :: Payment Terminals :: View" },
+                };
+
+                bool createdItems = false;
+                foreach (string[] row in permissionRows)
+                {
+                    object existing = xpoSession.ExecuteScalar(
+                        string.Format("SELECT COUNT(*) FROM sys_userpermissionitem WHERE Token = '{0}';", row[3]));
+                    if (existing != null && Convert.ToInt32(existing) > 0)
+                        continue;
+
+                    string sql = string.Format(
+                        "INSERT INTO sys_userpermissionitem (Oid, Ord, Code, Token, Designation, PermissionGroup, Disabled) " +
+                        "VALUES ('{0}', {1}, {2}, '{3}', '{4}', '{5}', NULL);",
+                        row[0], row[1], row[2], row[3], SqlLiteral(row[4]), PaymentTerminalPermissionGroupOid);
+                    xpoSession.ExecuteNonQuery(sql);
+                    createdItems = true;
+                }
+
+                bool grantedAny = GrantPaymentTerminalPermissionsToDeviceProfiles(xpoSession, permissionRows);
+
+                if (createdItems || grantedAny)
+                    log.Info("EnsurePaymentTerminalPermissions: payment terminal permissions updated");
+            }
+            catch (Exception ex)
+            {
+                log.Error("EnsurePaymentTerminalPermissions: " + ex.Message, ex);
+            }
+        }
+
+        private static bool GrantPaymentTerminalPermissionsToDeviceProfiles(Session xpoSession, string[][] permissionRows)
+        {
+            bool grantedAny = false;
+            object profileRows = xpoSession.ExecuteQuery(
+                string.Format(
+                    "SELECT DISTINCT pp.userprofile FROM sys_userpermissionprofile pp " +
+                    "INNER JOIN sys_userpermissionitem pi ON pp.PermissionItem = pi.Oid " +
+                    "WHERE pi.Token IN ('{0}', '{1}');",
+                    PaymentTerminalGrantSourceToken, PaymentTerminalGrantSourceTokenAlt));
+
+            List<string> profileOids = new List<string>();
+            if (profileRows is SelectedData selectedData && selectedData.ResultSet != null && selectedData.ResultSet.Length > 0)
+            {
+                foreach (var row in selectedData.ResultSet[0].Rows)
+                {
+                    string userProfileOid = Convert.ToString(row.Values[0]);
+                    if (!string.IsNullOrWhiteSpace(userProfileOid))
+                        profileOids.Add(userProfileOid);
+                }
+            }
+
+            if (profileOids.Count == 0)
+                profileOids.Add("1626e21f-75e6-429e-b0ac-edb755e733c2");
+
+            foreach (string userProfileOid in profileOids)
+            {
+                foreach (string[] perm in permissionRows)
+                {
+                    if (GrantPaymentTerminalPermissionIfMissing(xpoSession, userProfileOid, perm[0]))
+                        grantedAny = true;
+                }
+            }
+
+            return grantedAny;
+        }
+
+        private static bool GrantPaymentTerminalPermissionIfMissing(Session xpoSession, string userProfileOid, string permissionItemOid)
+        {
+            object count = xpoSession.ExecuteScalar(string.Format(
+                "SELECT COUNT(*) FROM sys_userpermissionprofile WHERE userprofile = '{0}' AND PermissionItem = '{1}';",
+                userProfileOid, permissionItemOid));
+            if (count != null && Convert.ToInt32(count) > 0)
+                return false;
+
+            string grantOid = Guid.NewGuid().ToString();
+            xpoSession.ExecuteNonQuery(string.Format(
+                "INSERT INTO sys_userpermissionprofile (Oid, Granted, userprofile, PermissionItem) VALUES ('{0}', 1, '{1}', '{2}');",
+                grantOid, userProfileOid, permissionItemOid));
+            return true;
         }
 
         /// <summary>

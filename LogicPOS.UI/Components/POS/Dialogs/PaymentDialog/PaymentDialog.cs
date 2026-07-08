@@ -165,9 +165,9 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 fin_configurationpaymentmethod xpoMoney = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "MONEY");
                 fin_configurationpaymentmethod xpoCheck = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "BANK_CHECK");
                 fin_configurationpaymentmethod xpoMB = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "CASH_MACHINE");
-                fin_configurationpaymentmethod xpoCreditCard = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "CREDIT_CARD");
-                /* IN009142 - "Visa" option replaced by "Debit Card" */
-                fin_configurationpaymentmethod xpoDebitCard = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "DEBIT_CARD");
+                fin_configurationpaymentmethod xpoCreditCard = ResolvePaymentMethodButton(xPSelectData, "KASPI_CARD", "CREDIT_CARD");
+                /* IN009142 - "Visa" option replaced by "Debit Card" / Kaspi QR for KZ */
+                fin_configurationpaymentmethod xpoDebitCard = ResolvePaymentMethodButton(xPSelectData, "KASPI_QR", "DEBIT_CARD");
                 fin_configurationpaymentmethod xpoVisa = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "VISA");
                 fin_configurationpaymentmethod xpoCurrentAccount = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "CURRENT_ACCOUNT");
                 fin_configurationpaymentmethod xpoCustomerCard = (fin_configurationpaymentmethod)xPSelectData.GetXPGuidObjectFromField(typeof(fin_configurationpaymentmethod), "Token", "CUSTOMER_CARD");

@@ -319,7 +319,8 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                     { "ConfigurationPrinters", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationPrinters")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationPrinters>(this) } },
                     { "ConfigurationInputReader", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationInputReader")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationInputReader>(this) } },
                     { "ConfigurationPoleDisplay", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationPoleDisplay")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationPoleDisplay>(this) } },
-                    { "ConfigurationWeighingMachine", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationWeighingMachine")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationWeighingMachine>(this) } }
+                    { "ConfigurationWeighingMachine", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationWeighingMachine")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationWeighingMachine>(this) } },
+                    { "ConfigurationPaymentTerminal", new AccordionNode(GeneralUtils.GetResourceByName("global_ConfigurationPaymentTerminal")) { Content = logicpos.Utils.GetGenericTreeViewXPO<TreeViewConfigurationPaymentTerminal>(this) } }
                 };
                 // Deprecated
                 //_accordionPrinters.Add("ConfigurationPrintersTemplates", new AccordionNode(CultureResources.GetCustomResources(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_ConfigurationPrintersTemplates) { Content = Utils.GetGenericTreeViewXPO<TreeViewConfigurationPrintersTemplates>(this) });

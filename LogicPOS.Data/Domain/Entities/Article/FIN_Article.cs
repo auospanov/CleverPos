@@ -355,6 +355,13 @@ namespace LogicPOS.Domain.Entities
             get { return GetCollection<fin_articlewarehouse>("ArticleWarehouse"); }
         }
 
+        //Article One <> Many ArticleNationalCatalog (NKT)
+        [Association(@"ArticleReferencesArticleNationalCatalog", typeof(fin_articlenationalcatalog))]
+        public XPCollection<fin_articlenationalcatalog> ArticleNationalCatalog
+        {
+            get { return GetCollection<fin_articlenationalcatalog>("ArticleNationalCatalog"); }
+        }
+
         //Family One <> Many Article
         private fin_articlefamily fFamily;
         [Association(@"FamilyReferencesArticle")]

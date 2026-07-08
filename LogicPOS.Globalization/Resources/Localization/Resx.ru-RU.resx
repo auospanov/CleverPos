@@ -3932,4 +3932,181 @@ Show this message next time?</value>
   <data name="prefparam_ticket_print_company_name" xml:space="preserve">
     <value>Чек :: Печатать коммерческое название</value>
   </data>
+  <data name="global_ConfigurationPaymentTerminal" xml:space="preserve">
+    <value>Терминалы оплаты</value>
+  </data>
+  <data name="window_title_edit_dialogconfigurationpaymentterminal" xml:space="preserve">
+    <value>Терминал оплаты</value>
+  </data>
+  <data name="global_payment_terminal_brand" xml:space="preserve">
+    <value>Бренд терминала</value>
+  </data>
+  <data name="global_payment_terminal_host" xml:space="preserve">
+    <value>IP-адрес</value>
+  </data>
+  <data name="global_payment_terminal_port" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="global_payment_terminal_pos_client_name" xml:space="preserve">
+    <value>Имя кассы (register)</value>
+  </data>
+  <data name="global_payment_terminal_use_https" xml:space="preserve">
+    <value>HTTPS (защита интеграции на терминале)</value>
+  </data>
+  <data name="global_payment_terminal_test_connection" xml:space="preserve">
+    <value>Проверить связь</value>
+  </data>
+  <data name="global_payment_terminal_discover" xml:space="preserve">
+    <value>Найти в сети</value>
+  </data>
+  <data name="global_payment_terminal_test_started" xml:space="preserve">
+    <value>Проверка связи...</value>
+  </data>
+  <data name="global_payment_terminal_test_finished" xml:space="preserve">
+    <value>Проверка завершена</value>
+  </data>
+  <data name="global_payment_terminal_discover_started" xml:space="preserve">
+    <value>Поиск терминала Kaspi (порт 8080)...</value>
+  </data>
+  <data name="global_payment_terminal_discover_not_found" xml:space="preserve">
+    <value>Терминалы не найдены</value>
+  </data>
+  <data name="global_payment_terminal_discover_found" xml:space="preserve">
+    <value>Найдены терминалы:</value>
+  </data>
+  <data name="global_ConfigurationPaymentMethod_RequiresPaymentTerminal" xml:space="preserve">
+    <value>Требуется терминал оплаты</value>
+  </data>
+  <data name="pos_button_label_payment_type_kaspi_card" xml:space="preserve">
+    <value>Kaspi карта</value>
+  </data>
+  <data name="pos_button_label_payment_type_kaspi_qr" xml:space="preserve">
+    <value>Kaspi QR</value>
+  </data>
+  <data name="window_title_dialog_payment_terminal_processing" xml:space="preserve">
+    <value>Обработка платежа</value>
+  </data>
+  <data name="dialog_message_payment_terminal_processing" xml:space="preserve">
+    <value>Ожидание ответа терминала Kaspi...</value>
+  </data>
+  <data name="dialog_message_payment_terminal_started" xml:space="preserve">
+    <value>Отправка суммы на терминал...</value>
+  </data>
+  <data name="dialog_message_payment_terminal_not_configured" xml:space="preserve">
+    <value>Терминал оплаты не настроен. Продолжить без терминала?</value>
+  </data>
+  <data name="dialog_button_payment_terminal_continue_without" xml:space="preserve">
+    <value>Продолжить без терминала</value>
+  </data>
+  <data name="global_payment_terminal_log_tab" xml:space="preserve">
+    <value>Проверка связи</value>
+  </data>
+  <data name="global_payment_terminal_log_hint" xml:space="preserve">
+    <value>Нажмите «Проверить связь» или «Найти в сети». Ход операции отображается в журнале ниже.</value>
+  </data>
+  <data name="global_payment_terminal_log_ready" xml:space="preserve">
+    <value>Журнал готов. Укажите IP или запустите поиск в сети.</value>
+  </data>
+  <data name="global_payment_terminal_host_required" xml:space="preserve">
+    <value>Укажите IP-адрес терминала или выполните поиск в сети.</value>
+  </data>
+  <data name="global_payment_terminal_discover_ip_applied" xml:space="preserve">
+    <value>IP первого найденного терминала подставлен в поле на вкладке «Детали».</value>
+  </data>
+  <data name="global_national_catalog_tab" xml:space="preserve">
+    <value>НКТ</value>
+  </data>
+  <data name="global_national_catalog_hint" xml:space="preserve">
+    <value>GTIN = штрихкод на вкладке «Склад». Выберите ОКТРУ и ТН ВЭД из справочников (кнопки «Выбрать»). Количество и производитель заполняются автоматически. После пересоздания БД — «Синхронизировать все».</value>
+  </data>
+  <data name="global_national_catalog_oktru" xml:space="preserve">
+    <value>ОКТРУ (код категории)</value>
+  </data>
+  <data name="global_national_catalog_name_kk" xml:space="preserve">
+    <value>Наименование (қаз)</value>
+  </data>
+  <data name="global_national_catalog_status" xml:space="preserve">
+    <value>Статус НКТ</value>
+  </data>
+  <data name="global_national_catalog_status_none" xml:space="preserve">
+    <value>Статус НКТ: не отправлено</value>
+  </data>
+  <data name="global_national_catalog_request_id" xml:space="preserve">
+    <value>RequestId</value>
+  </data>
+  <data name="global_national_catalog_request_none" xml:space="preserve">
+    <value>RequestId: —</value>
+  </data>
+  <data name="global_national_catalog_submit" xml:space="preserve">
+    <value>Отправить в НКТ</value>
+  </data>
+  <data name="global_national_catalog_refresh_status" xml:space="preserve">
+    <value>Обновить статус</value>
+  </data>
+  <data name="global_national_catalog_publish" xml:space="preserve">
+    <value>Опубликовать</value>
+  </data>
+  <data name="global_national_catalog_link" xml:space="preserve">
+    <value>Привязать по GTIN</value>
+  </data>
+  <data name="global_national_catalog_reconcile_all" xml:space="preserve">
+    <value>Синхронизировать все с НКТ</value>
+  </data>
+  <data name="global_national_catalog_log_ready" xml:space="preserve">
+    <value>Журнал НКТ готов.</value>
+  </data>
+  <data name="global_national_catalog_reconcile_started" xml:space="preserve">
+    <value>Запуск синхронизации заявок из личного кабинета НКТ...</value>
+  </data>
+  <data name="global_national_catalog_pick_oktru" xml:space="preserve">
+    <value>Выбрать категорию</value>
+  </data>
+  <data name="global_national_catalog_oktru_dialog_title" xml:space="preserve">
+    <value>ОКТРУ — категория товара (НКТ)</value>
+  </data>
+  <data name="global_national_catalog_oktru_dialog_hint" xml:space="preserve">
+    <value>Раскройте разделы дерева или воспользуйтесь поиском по коду/названию. Выберите категорию и нажмите OK.</value>
+  </data>
+  <data name="global_national_catalog_oktru_search" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="global_national_catalog_oktru_loading" xml:space="preserve">
+    <value>Загрузка справочника ОКТРУ...</value>
+  </data>
+  <data name="global_national_catalog_oktru_loaded" xml:space="preserve">
+    <value>Загружено корневых категорий: {0}</value>
+  </data>
+  <data name="global_national_catalog_oktru_searching" xml:space="preserve">
+    <value>Поиск в справочнике ОКТРУ...</value>
+  </data>
+  <data name="global_national_catalog_oktru_search_result" xml:space="preserve">
+    <value>Найдено: {0}</value>
+  </data>
+  <data name="global_national_catalog_api_key_required" xml:space="preserve">
+    <value>Укажите API-ключ НКТ в App.config (nationalCatalogApiKey).</value>
+  </data>
+  <data name="global_national_catalog_tnved" xml:space="preserve">
+    <value>ТН ВЭД (10 цифр)</value>
+  </data>
+  <data name="global_national_catalog_manufacturer" xml:space="preserve">
+    <value>Производитель</value>
+  </data>
+  <data name="global_national_catalog_quantity" xml:space="preserve">
+    <value>Количество (в ед. изм.)</value>
+  </data>
+  <data name="global_national_catalog_pick_tnved" xml:space="preserve">
+    <value>Выбрать ТН ВЭД</value>
+  </data>
+  <data name="global_national_catalog_tnved_dialog_title" xml:space="preserve">
+    <value>ТН ВЭД — код товара (НКТ)</value>
+  </data>
+  <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
+    <value>ТН ВЭД — таможенный код, не название в магазине. Напишите «топ», «футболка» или «6109» и нажмите «Найти»: для одежды откроется группа кодов, выберите ближайший.</value>
+  </data>
+  <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
+    <value>Примеры: топ, футболка, майка, блузка или код 6109. Затем «Найти» и выберите строку.</value>
+  </data>
+  <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
+    <value>Товар в кассе: «{0}». Введите «топ» / «футболка» / «6109» и нажмите «Найти» — в ТН ВЭД нет магазинных названий как есть.</value>
+  </data>
 </root>

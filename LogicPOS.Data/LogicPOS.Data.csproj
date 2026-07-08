@@ -47,10 +47,12 @@
   <ItemGroup>
     <Compile Include="Domain\Entities\Article\FIN_ArticleCompositionSerialnumber.cs" />
     <Compile Include="Domain\Entities\Article\FIN_ArticleSerialNumber.cs" />
+    <Compile Include="Domain\Entities\Article\FIN_ArticleNationalCatalog.cs" />
     <Compile Include="Domain\Entities\Article\FIN_ArticleComposition.cs" />
     <Compile Include="Domain\Entities\Article\FIN_ArticleWarehouse.cs" />
     <Compile Include="Domain\Entities\Configuration\SYS_ConfigurationInputReader.cs" />
     <Compile Include="Domain\Entities\Configuration\SYS_ConfigurationPoleDisplay.cs" />
+    <Compile Include="Domain\Entities\Configuration\SYS_ConfigurationPaymentTerminal.cs" />
     <Compile Include="Domain\Entities\Configuration\SYS_ConfigurationWeighingMachine.cs" />
     <Compile Include="Domain\Entities\Documents\FIN_Warehouse.cs" />
     <Compile Include="Domain\Entities\Documents\FIN_WarehouseLocation.cs" />

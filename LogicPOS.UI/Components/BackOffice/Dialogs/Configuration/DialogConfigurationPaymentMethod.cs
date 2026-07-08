@@ -2,6 +2,7 @@
 using logicpos.App;
 using logicpos.Classes.Gui.Gtk.Widgets.BackOffice;
 using logicpos.Classes.Gui.Gtk.WidgetsGeneric;
+using logicpos.Classes.Gui.Gtk.WidgetsXPO;
 using logicpos.Classes.Enums.Dialogs;
 using LogicPOS.Globalization;
 using LogicPOS.Domain.Entities;
@@ -57,6 +58,15 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 BOWidgetBox boxAcronym = new BOWidgetBox(CultureResources.GetResourceByLanguage(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_ConfigurationPaymentMethod_Acronym"), entryAcronym);
                 vboxTab1.PackStart(boxAcronym, false, false, 0);
                 _crudWidgetList.Add(new GenericCRUDWidgetXPO(boxAcronym, _dataSourceRow, "Acronym", LogicPOS.Utility.RegexUtils.RegexAcronym2Chars, true));
+
+                XPOComboBox xpoComboBoxPaymentTerminal = new XPOComboBox(DataSourceRow.Session, typeof(sys_configurationpaymentterminal), (_dataSourceRow as fin_configurationpaymentmethod).PaymentTerminal, "Designation", null);
+                BOWidgetBox boxPaymentTerminal = new BOWidgetBox(CultureResources.GetResourceByLanguage(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_ConfigurationPaymentTerminal"), xpoComboBoxPaymentTerminal);
+                vboxTab1.PackStart(boxPaymentTerminal, false, false, 0);
+                _crudWidgetList.Add(new GenericCRUDWidgetXPO(boxPaymentTerminal, DataSourceRow, "PaymentTerminal", LogicPOS.Utility.RegexUtils.RegexGuid, false));
+
+                CheckButton checkButtonRequiresPaymentTerminal = new CheckButton(CultureResources.GetResourceByLanguage(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_ConfigurationPaymentMethod_RequiresPaymentTerminal"));
+                vboxTab1.PackStart(checkButtonRequiresPaymentTerminal, false, false, 0);
+                _crudWidgetList.Add(new GenericCRUDWidgetXPO(checkButtonRequiresPaymentTerminal, _dataSourceRow, "RequiresPaymentTerminal"));
 
                 //Symbol
                 //Entry entrySymbol = new Entry();

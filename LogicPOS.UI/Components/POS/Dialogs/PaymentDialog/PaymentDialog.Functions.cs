@@ -224,6 +224,12 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                                 // PreventPersistFinanceDocument : Used in SplitPayments, to get ProcessFinanceDocumentParameter and Details without PreventPersistFinanceDocument
                                 if (!_skipPersistFinanceDocument)
                                 {
+                                    if (!TryProcessPaymentTerminalCharge(processArticleBag.TotalFinal))
+                                    {
+                                        this.Run();
+                                    }
+                                    else
+                                    {
                                     fin_documentfinancemaster resultDocument = FrameworkCalls.PersistFinanceDocument(this, ProcessFinanceDocumentParameter);
                                     //If Errors Occurs, return null Document, Keep Running until user cancel or a Valid Document is Returned
                                     if (resultDocument == null)
@@ -234,6 +240,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                                     {
                                         //Update Display
                                         if (GlobalApp.UsbDisplay != null) GlobalApp.UsbDisplay.ShowPayment(PaymentMethod.Designation, TotalDelivery, TotalChange);
+                                    }
                                     }
                                 }
                             }

@@ -23,7 +23,7 @@ using Image = Gtk.Image;
 
 namespace logicpos.Classes.Gui.Gtk.BackOffice
 {
-    internal class DialogArticle : BOBaseDialog
+    internal partial class DialogArticle : BOBaseDialog
     {
         //UI
         //Artigos Compostos [IN:016522]
@@ -88,6 +88,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             }
 
             InitUI();
+            InitNationalCatalogTab();
             InitNotes();
             ShowAll();
             if (_scrolledWindowCompositionView != null) _scrolledWindowCompositionView.Visible = _checkButtonComposite.Active;

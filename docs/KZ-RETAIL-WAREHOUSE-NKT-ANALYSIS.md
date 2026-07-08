@@ -150,7 +150,7 @@ fin_article.Designation = name_ru в НКТ
 
 ### 3.3. API (официально)
 
-- **Base URL:** `https://nationalcatalog.kz` (не `stg.nct.kz`, не `nct.kz`)
+- **Base URL:** `https://nationalcatalog.kz/gwp` (не голый `nationalcatalog.kz` — он отдаёт SPA HTML; не `stg.nct.kz`)
 - **Auth:** заголовок `X-API-KEY`
 - **Rate limit:** HTTP 429 — кэшировать справочники, не спамить status
 
