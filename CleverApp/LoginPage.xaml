@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CleverApp.LoginPage"
+             Title="Вход">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,40" Spacing="20">
+            <Label
+                Text="Журнал посетителей"
+                Style="{StaticResource Headline}"
+                HorizontalOptions="Center" />
+
+            <Label
+                x:Name="ApiUrlLabel"
+                FontSize="13"
+                HorizontalTextAlignment="Center"
+                LineBreakMode="WordWrap" />
+
+            <Entry
+                x:Name="LoginEntry"
+                Placeholder="Логин"
+                HorizontalOptions="Fill" />
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <Entry
+                    x:Name="PasswordEntry"
+                    Grid.Column="0"
+                    Placeholder="Пароль"
+                    IsPassword="True"
+                    HorizontalOptions="Fill" />
+                <Button
+                    x:Name="TogglePasswordBtn"
+                    Grid.Column="1"
+                    Text="👁"
+                    Clicked="OnTogglePasswordVisibility"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light=#512BD4, Dark=#AC99EA}"
+                    WidthRequest="48"
+                    HeightRequest="48"
+                    Padding="0"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <Button
+                Text="Войти"
+                Clicked="OnLoginClicked"
+                HorizontalOptions="Fill" />
+
+            <Label
+                x:Name="ErrorLabel"
+                TextColor="Red"
+                FontSize="12"
+                LineBreakMode="WordWrap"
+                IsVisible="False" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

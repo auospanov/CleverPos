@@ -62,13 +62,12 @@ namespace CleverApp
                 return;
             }
 
-            // Без HTTP-запроса: только сохраняем IP (как после UDP broadcast)
             RegisterServer(ip);
         }
 
-        private async Task OpenPageWithCameraAsync(Func<ContentPage> createPage, bool requireServer)
+        private async Task OpenPageWithCameraAsync(Func<ContentPage> createPage)
         {
-            if (requireServer && !DiscoveredServerStore.HasServer)
+            if (!DiscoveredServerStore.HasServer)
             {
                 await DisplayAlert("Сервер не найден", "Сначала нажмите «Найти сервер» или подключитесь по IP.", "OK");
                 return;
@@ -82,28 +81,19 @@ namespace CleverApp
 
         private async void OnLiveBarcodeClicked(object? sender, EventArgs e)
         {
-            await OpenPageWithCameraAsync(() => new LiveBarcodeScanPage(), requireServer: true);
+            await OpenPageWithCameraAsync(() => new LiveBarcodeScanPage());
         }
 
         private async void OnScanBarcodeClicked(object? sender, EventArgs e)
         {
-            await OpenPageWithCameraAsync(() => new BarcodeScanPage(), requireServer: true);
-        }
-
-        private async void OnOpenScannerClicked(object sender, EventArgs e)
-        {
-            await OpenPageWithCameraAsync(() => new ScanPage(), requireServer: false);
+            await OpenPageWithCameraAsync(() => new BarcodeScanPage());
         }
 
         private void OnServerFound(object? sender, (string Ip, int Port) e)
         {
-            // UDP broadcast прислал IP — дальше то же, что «Подключить по IP»
             RegisterServer(e.Ip);
         }
 
-        /// <summary>
-        /// Общий метод для UDP-поиска и ручного IP. HTTP (порт 5000) — только при отправке штрихкода.
-        /// </summary>
         private void RegisterServer(string ip)
         {
             DiscoveredServerStore.Set(ip, DiscoveredServerStore.DefaultHttpPort);

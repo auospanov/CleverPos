@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
+using CleverApp.Configuration;
 using CleverApp.Services;
+using CleverApp.Services.VisitorJournal;
 using CommunityToolkit.Maui;
 using ZXing.Net.Maui.Controls;
 #if ANDROID
@@ -12,6 +14,8 @@ namespace CleverApp
     {
         public static MauiApp CreateMauiApp()
         {
+            AppConfig.Initialize();
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -24,6 +28,7 @@ namespace CleverApp
                 .UseBarcodeReader();
 
             builder.Services.AddSingleton<BarcodeServerDiscoveryService>();
+            builder.Services.AddSingleton<VisitorJournalService>();
 #if ANDROID
             builder.Services.AddSingleton<IIdDocumentScanner, MlKitIdDocumentScanner>();
 #else

@@ -53,10 +53,6 @@
                 Text="Сканировать штрихкод (фото)"
                 Clicked="OnScanBarcodeClicked"
                 HorizontalOptions="Fill" />
-            <Button
-                Text="Сканировать удостоверение"
-                Clicked="OnOpenScannerClicked"
-                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

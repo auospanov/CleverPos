@@ -43,6 +43,8 @@
 
 		<!-- Disable Fast Deployment to fix XA0129 deployment error (e.g. System.Text.RegularExpressions.dll) -->
 		<EmbedAssembliesIntoApk Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</EmbedAssembliesIntoApk>
+		<!-- Нативный HTTP-стек Android — корректный TLS к apitest.kmlife.kz -->
+		<UseNativeHttpHandler Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseNativeHttpHandler>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
