@@ -13,7 +13,7 @@ public static class AppConfig
     public const string EnvironmentTest = "Test";
     public const string EnvironmentProduction = "Production";
 
-    public const string TestApiBaseUrl = "https://apitest.kmlife.kz";
+    public const string TestApiBaseUrl = "https://api.kmlife.kz";
     public const string ProductionApiBaseUrl = "https://api.kmlife.kz";
 
     public static string ApiEnvironment { get; private set; } = EnvironmentTest;
