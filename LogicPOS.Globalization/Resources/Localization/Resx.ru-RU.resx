@@ -4049,6 +4049,12 @@ Show this message next time?</value>
   <data name="global_national_catalog_link" xml:space="preserve">
     <value>Привязать по GTIN</value>
   </data>
+  <data name="global_national_catalog_delete_request" xml:space="preserve">
+    <value>Удалить заявку НКТ</value>
+  </data>
+  <data name="global_national_catalog_delete_confirm" xml:space="preserve">
+    <value>Удалить заявку НКТ? Для статуса «Новая» — удаление в кабинете НКТ. На модерации — отзыв. Затем очистится локальная привязка (RequestId/статус), можно отправить заново.</value>
+  </data>
   <data name="global_national_catalog_reconcile_all" xml:space="preserve">
     <value>Синхронизировать все с НКТ</value>
   </data>

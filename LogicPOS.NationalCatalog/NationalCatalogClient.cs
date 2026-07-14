@@ -107,6 +107,30 @@ namespace LogicPOS.NationalCatalog
                 cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Удаление заявки. По документации НКТ доступно только для статуса new (Новая).
+        /// </summary>
+        public async Task DeleteRequestAsync(long requestId, CancellationToken cancellationToken = default)
+        {
+            await SendJsonAsync<object>(
+                HttpMethod.Delete,
+                $"/portal/api/v1/products/requests/{requestId}",
+                null,
+                cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Отзыв заявки с модерации (статус onModeration → cancelled).
+        /// </summary>
+        public async Task CancelRequestAsync(long requestId, CancellationToken cancellationToken = default)
+        {
+            await SendJsonAsync<object>(
+                HttpMethod.Put,
+                $"/portal/api/v1/products/requests/{requestId}/cancel",
+                null,
+                cancellationToken).ConfigureAwait(false);
+        }
+
         public async Task<NktRequestDetailsResponse> GetRequestDetailsAsync(long requestId, CancellationToken cancellationToken = default)
         {
             return await SendJsonAsync<NktRequestDetailsResponse>(

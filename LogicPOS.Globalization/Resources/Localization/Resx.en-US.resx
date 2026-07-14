@@ -4035,6 +4035,12 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
   <data name="global_national_catalog_link" xml:space="preserve">
     <value>Link by GTIN</value>
   </data>
+  <data name="global_national_catalog_delete_request" xml:space="preserve">
+    <value>Delete NKT request</value>
+  </data>
+  <data name="global_national_catalog_delete_confirm" xml:space="preserve">
+    <value>Delete NKT request? Status "new" — remote delete. On moderation — cancel. Then local binding (RequestId/status) is cleared so you can resubmit.</value>
+  </data>
   <data name="global_national_catalog_reconcile_all" xml:space="preserve">
     <value>Sync all from NKT</value>
   </data>

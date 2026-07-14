@@ -27,6 +27,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
         private Button _buttonNktStatus;
         private Button _buttonNktPublish;
         private Button _buttonNktLink;
+        private Button _buttonNktDelete;
         private Button _buttonNktReconcile;
         private fin_articlenationalcatalog _nktLink;
         private NationalCatalogService _nktService;
@@ -156,6 +157,10 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 hboxRow2.PackStart(_buttonNktPublish, true, true, 0);
                 hboxRow2.PackStart(_buttonNktLink, true, true, 0);
                 vboxNkt.PackStart(hboxRow2, false, false, 0);
+
+                _buttonNktDelete = new Button(GeneralUtils.GetResourceByName("global_national_catalog_delete_request"));
+                _buttonNktDelete.Clicked += ButtonNktDelete_Clicked;
+                vboxNkt.PackStart(_buttonNktDelete, false, false, 0);
 
                 _buttonNktReconcile = new Button(GeneralUtils.GetResourceByName("global_national_catalog_reconcile_all"));
                 _buttonNktReconcile.Clicked += ButtonNktReconcile_Clicked;
@@ -441,6 +446,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 if (_buttonNktStatus != null) _buttonNktStatus.Sensitive = sensitive;
                 if (_buttonNktPublish != null) _buttonNktPublish.Sensitive = sensitive;
                 if (_buttonNktLink != null) _buttonNktLink.Sensitive = sensitive;
+                if (_buttonNktDelete != null) _buttonNktDelete.Sensitive = sensitive;
                 if (_buttonNktReconcile != null) _buttonNktReconcile.Sensitive = sensitive;
             });
         }
@@ -548,6 +554,34 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             {
                 link.Save();
                 return await service.LinkByGtinAsync(article.Session, article, link, AppendNktLog, _nktOperationCts.Token).ConfigureAwait(false);
+            });
+        }
+
+        private void ButtonNktDelete_Clicked(object sender, EventArgs e)
+        {
+            string confirm = GeneralUtils.GetResourceByName("global_national_catalog_delete_confirm");
+            ResponseType answer = logicpos.Utils.ShowMessageNonTouch(
+                this,
+                DialogFlags.DestroyWithParent,
+                MessageType.Question,
+                ButtonsType.YesNo,
+                confirm,
+                GeneralUtils.GetResourceByName("global_national_catalog_tab"));
+
+            if (answer != ResponseType.Yes)
+            {
+                return;
+            }
+
+            RunNktOperation(async (service, article, link) =>
+            {
+                link.Save();
+                NationalCatalogOperationResult result = await service.DeleteRequestAsync(
+                    link,
+                    AppendNktLog,
+                    _nktOperationCts.Token).ConfigureAwait(false);
+                _nktLink = link;
+                return result;
             });
         }
 

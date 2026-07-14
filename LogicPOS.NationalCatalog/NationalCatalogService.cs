@@ -263,6 +263,119 @@ namespace LogicPOS.NationalCatalog
             }
         }
 
+        /// <summary>
+        /// Удаляет/отзывает заявку в НКТ (если возможно) и очищает локальную привязку RequestId/Status.
+        /// DELETE — только статус new; на модерации — cancel; иначе очищается только локальная запись.
+        /// </summary>
+        public async Task<NationalCatalogOperationResult> DeleteRequestAsync(
+            fin_articlenationalcatalog link,
+            Action<string> log,
+            CancellationToken cancellationToken = default)
+        {
+            if (link == null)
+            {
+                return NationalCatalogOperationResult.Fail(NationalCatalogResultCode.ValidationError, "Нет записи НКТ у товара");
+            }
+
+            LogConnection(log);
+
+            long? requestId = link.RequestId;
+            string remoteNote = null;
+
+            if (requestId.HasValue && requestId.Value > 0)
+            {
+                try
+                {
+                    log?.Invoke(string.Format("Удаление заявки {0} в НКТ (DELETE)...", requestId.Value));
+                    await _client.DeleteRequestAsync(requestId.Value, cancellationToken).ConfigureAwait(false);
+                    remoteNote = "Заявка удалена на стороне НКТ.";
+                    log?.Invoke(remoteNote);
+                }
+                catch (NationalCatalogApiException deleteEx)
+                {
+                    log?.Invoke("DELETE недоступен: " + SummarizeApiError(deleteEx));
+
+                    bool cancelled = false;
+                    try
+                    {
+                        string statusCode = link.Status;
+                        try
+                        {
+                            NktStatusResponse current = await _client.GetStatusAsync(requestId.Value, cancellationToken).ConfigureAwait(false);
+                            statusCode = current?.Code ?? statusCode;
+                            link.Status = statusCode;
+                        }
+                        catch
+                        {
+                            // keep previous status
+                        }
+
+                        if (string.Equals(statusCode, "onModeration", StringComparison.OrdinalIgnoreCase))
+                        {
+                            log?.Invoke(string.Format("Отзыв заявки {0} с модерации (cancel)...", requestId.Value));
+                            await _client.CancelRequestAsync(requestId.Value, cancellationToken).ConfigureAwait(false);
+                            cancelled = true;
+                            remoteNote = "Заявка отозвана с модерации (cancelled).";
+                            log?.Invoke(remoteNote);
+                        }
+                    }
+                    catch (NationalCatalogApiException cancelEx)
+                    {
+                        log?.Invoke("Cancel недоступен: " + SummarizeApiError(cancelEx));
+                    }
+
+                    if (!cancelled)
+                    {
+                        remoteNote =
+                            "Локальная привязка будет очищена. Если заявка осталась в кабинете НКТ — удалите/отзовите её там вручную "
+                            + string.Format("(RequestId={0}).", requestId.Value);
+                        log?.Invoke(remoteNote);
+                    }
+                }
+            }
+            else
+            {
+                log?.Invoke("RequestId не задан — очищаем только локальную запись.");
+            }
+
+            ClearLocalRequestBinding(link);
+            link.Save();
+
+            string message = string.IsNullOrWhiteSpace(remoteNote)
+                ? "Локальная заявка НКТ сброшена. Можно отправить заново."
+                : remoteNote + " Локальная привязка сброшена.";
+
+            return NationalCatalogOperationResult.Ok(message, link.Status, link.RequestId);
+        }
+
+        private static void ClearLocalRequestBinding(fin_articlenationalcatalog link)
+        {
+            link.RequestId = null;
+            link.Status = null;
+            link.LastError = null;
+            link.LastSyncedAt = null;
+            link.PublishedAt = null;
+            // Unique GTIN на связке: сбрасываем, иначе нельзя заново отправить/привязать тот же код.
+            link.Gtin = null;
+        }
+
+        private static string SummarizeApiError(NationalCatalogApiException ex)
+        {
+            if (ex == null)
+            {
+                return "неизвестная ошибка";
+            }
+
+            if (ex.StatusCode.HasValue)
+            {
+                return string.Format("HTTP {0}", ex.StatusCode.Value);
+            }
+
+            string message = ex.Message ?? string.Empty;
+            int newline = message.IndexOf('\n');
+            return newline > 0 ? message.Substring(0, newline).Trim() : message.Trim();
+        }
+
         public async Task<NationalCatalogOperationResult> LinkByGtinAsync(
             Session session,
             fin_article article,
