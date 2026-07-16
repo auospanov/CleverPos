@@ -62,6 +62,7 @@ namespace LogicPOS.NationalCatalog
             Action<string> log,
             CancellationToken cancellationToken = default)
         {
+            log?.Invoke("Отправка в НКТ (GTIN необязателен)...");
             string validationError = ValidateForSubmit(article, link);
             if (validationError != null)
             {
@@ -88,7 +89,9 @@ namespace LogicPOS.NationalCatalog
                 return NationalCatalogOperationResult.Ok("Уже зарегистрирован", link.Status, link.RequestId);
             }
 
-            if (!link.RequestId.HasValue || link.RequestId.Value <= 0)
+            string gtin = NationalCatalogMapper.NormalizeGtin(link.Gtin ?? article.BarCode);
+            if (!string.IsNullOrWhiteSpace(gtin)
+                && (!link.RequestId.HasValue || link.RequestId.Value <= 0))
             {
                 log?.Invoke("Проверка существующих заявок в НКТ по GTIN...");
                 NationalCatalogOperationResult existing = await TryLinkExistingByGtinAsync(session, article, link, log, cancellationToken).ConfigureAwait(false);
@@ -100,6 +103,10 @@ namespace LogicPOS.NationalCatalog
                 {
                     return existing;
                 }
+            }
+            else if (string.IsNullOrWhiteSpace(gtin))
+            {
+                log?.Invoke("GTIN не указан — заявка будет создана без штрихкода (код НКТ можно получить после публикации).");
             }
 
             if (IsReadyToPublish(link.Status))
@@ -474,7 +481,7 @@ namespace LogicPOS.NationalCatalog
             string gtin = NationalCatalogMapper.NormalizeGtin(link.Gtin ?? article.BarCode);
             if (string.IsNullOrWhiteSpace(gtin))
             {
-                return NationalCatalogOperationResult.Fail(NationalCatalogResultCode.ValidationError, "Нет GTIN");
+                return NationalCatalogOperationResult.Fail(NationalCatalogResultCode.NotFound, "Не найдено");
             }
 
             for (int page = 1; page <= 20; page++)
@@ -524,11 +531,6 @@ namespace LogicPOS.NationalCatalog
                 return "Товар не задан";
             }
 
-            if (string.IsNullOrWhiteSpace(NationalCatalogMapper.NormalizeGtin(article.BarCode)))
-            {
-                return "Укажите штрихкод EAN-13 (GTIN) на вкладке «Склад»";
-            }
-
             if (string.IsNullOrWhiteSpace(article.Designation))
             {
                 return "Укажите наименование товара";
@@ -541,7 +543,7 @@ namespace LogicPOS.NationalCatalog
 
             if (string.IsNullOrWhiteSpace(link.Tnved))
             {
-                return "Выберите ТН ВЭД кнопкой «Выбрать ТН ВЭД» (поиск по названию товара, например «топ» или «футболка»).";
+                return "Выберите ТН ВЭД кнопкой «Выбрать ТН ВЭД» (откройте дерево справочника и выберите конечный код).";
             }
 
             return null;

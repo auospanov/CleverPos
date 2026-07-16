@@ -4017,7 +4017,7 @@ Show this message next time?</value>
     <value>НКТ</value>
   </data>
   <data name="global_national_catalog_hint" xml:space="preserve">
-    <value>GTIN = штрихкод на вкладке «Склад». Выберите ОКТРУ и ТН ВЭД из справочников (кнопки «Выбрать»). Количество и производитель заполняются автоматически. После пересоздания БД — «Синхронизировать все».</value>
+    <value>Штрихкод (GTIN) на вкладке «Склад» необязателен — НКТ может выдать код после публикации. Обязательны ОКТРУ и ТН ВЭД (кнопки «Выбрать»). ТН ВЭД выбирайте из дерева справочника. После пересоздания БД — «Синхронизировать все».</value>
   </data>
   <data name="global_national_catalog_oktru" xml:space="preserve">
     <value>ОКТРУ (код категории)</value>
@@ -4107,12 +4107,21 @@ Show this message next time?</value>
     <value>ТН ВЭД — код товара (НКТ)</value>
   </data>
   <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
-    <value>ТН ВЭД — таможенный код, не название в магазине. Напишите «топ», «футболка» или «6109» и нажмите «Найти»: для одежды откроется группа кодов, выберите ближайший.</value>
+    <value>Выберите код ТН ВЭД из дерева справочника: раскройте разделы до конечного кода (обычно 10 цифр). Двойной клик по листу — выбрать. Поиск по коду/названию — дополнительно.</value>
   </data>
   <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
-    <value>Примеры: топ, футболка, майка, блузка или код 6109. Затем «Найти» и выберите строку.</value>
+    <value>Раскройте дерево до нужного кода. Или введите код/название и нажмите «Найти». Кнопка «Дерево» возвращает к структуре.</value>
   </data>
   <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
-    <value>Товар в кассе: «{0}». Введите «топ» / «футболка» / «6109» и нажмите «Найти» — в ТН ВЭД нет магазинных названий как есть.</value>
+    <value>Товар в кассе: «{0}». Выберите подходящий код ТН ВЭД в дереве (раскройте разделы) или найдите по коду группы, например 6109.</value>
+  </data>
+  <data name="global_national_catalog_tnved_show_tree" xml:space="preserve">
+    <value>Дерево</value>
+  </data>
+  <data name="global_national_catalog_tnved_tree_loading" xml:space="preserve">
+    <value>Загрузка дерева ТН ВЭД…</value>
+  </data>
+  <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
+    <value>Дерево ТН ВЭД: корневых разделов {0}. Раскройте нужный раздел и выберите конечный код.</value>
   </data>
 </root>

@@ -4003,7 +4003,7 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
     <value>NKT</value>
   </data>
   <data name="global_national_catalog_hint" xml:space="preserve">
-    <value>GTIN = barcode on Stock tab. Pick OKTRU and TNVED from dictionaries. Quantity and manufacturer are filled automatically. After DB recreate use Sync all.</value>
+    <value>Barcode (GTIN) on Stock tab is optional — NKT may assign a code after publish. OKTRU and TNVED are required (Pick buttons). Pick TNVED from the dictionary tree. After DB recreate use Sync all.</value>
   </data>
   <data name="global_national_catalog_oktru" xml:space="preserve">
     <value>OKTRU (category code)</value>
@@ -4093,12 +4093,21 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
     <value>TNVED — product code (NKT)</value>
   </data>
   <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
-    <value>TNVED is a customs code, not a shop name. Type top, t-shirt or 6109 and click Find — apparel opens the matching code group; pick the closest row.</value>
+    <value>Pick a TNVED code from the dictionary tree: expand sections to a leaf code (usually 10 digits). Double-click a leaf to select. Search by code/name is optional.</value>
   </data>
   <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
-    <value>Examples: top, t-shirt, blouse, or code 6109. Then Find and select a row.</value>
+    <value>Expand the tree to the needed code. Or type a code/name and click Find. Use Tree to return to the hierarchy.</value>
   </data>
   <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
-    <value>POS product: "{0}". Type top / t-shirt / 6109 and click Find — TNVED does not use shop names as-is.</value>
+    <value>POS product: "{0}". Pick a matching TNVED leaf in the tree, or search by group code e.g. 6109.</value>
+  </data>
+  <data name="global_national_catalog_tnved_show_tree" xml:space="preserve">
+    <value>Tree</value>
+  </data>
+  <data name="global_national_catalog_tnved_tree_loading" xml:space="preserve">
+    <value>Loading TNVED tree…</value>
+  </data>
+  <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
+    <value>TNVED tree: {0} root sections. Expand a section and select a leaf code.</value>
   </data>
 </root>

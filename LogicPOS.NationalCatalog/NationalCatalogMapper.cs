@@ -108,6 +108,11 @@ namespace LogicPOS.NationalCatalog
             List<string> missing = new List<string>();
             foreach (NktAttributeDefinition definition in attributeDefinitions.Where(a => a != null && a.IsRequired))
             {
+                if (string.Equals(definition.Code, "gtin", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (!present.Contains(definition.Code))
                 {
                     missing.Add(string.Format("{0} ({1})", definition.NameRu ?? definition.Code, definition.Code));
