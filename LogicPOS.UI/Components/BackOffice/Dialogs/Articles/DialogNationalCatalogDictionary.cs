@@ -10,15 +10,14 @@ using System.Threading.Tasks;
 namespace logicpos.Classes.Gui.Gtk.BackOffice
 {
     /// <summary>
-    /// Hierarchical picker for NKT dictionaries (TNVED): browse tree structure + optional search.
+    /// TNVED picker via flat /items API (no /roots). Browse by HS chapters + search.
     /// </summary>
     internal class DialogNationalCatalogDictionary : Dialog
     {
         private const int ColDisplay = 0;
         private const int ColCode = 1;
-        private const int ColId = 2;
+        private const int ColIsGroup = 2;
         private const int ColChildrenLoaded = 3;
-        private const int ColHasChildren = 4;
 
         private readonly NationalCatalogDictionaryService _dictionaryService;
         private readonly TreeStore _treeStore;
@@ -65,14 +64,14 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             string searchSeed = !string.IsNullOrWhiteSpace(currentCode) ? currentCode.Trim() : string.Empty;
             _entrySearch = new Entry { Text = searchSeed };
             Button buttonSearch = new Button(GeneralUtils.GetResourceByName("global_national_catalog_oktru_search"));
-            Button buttonTree = new Button(GeneralUtils.GetResourceByName("global_national_catalog_tnved_show_tree"));
+            Button buttonChapters = new Button(GeneralUtils.GetResourceByName("global_national_catalog_tnved_show_tree"));
             buttonSearch.Clicked += ButtonSearch_Clicked;
-            buttonTree.Clicked += delegate { LoadRootsAsync(); };
+            buttonChapters.Clicked += delegate { ShowChapters(); };
             _entrySearch.Activated += delegate { ButtonSearch_Clicked(buttonSearch, EventArgs.Empty); };
             hboxSearch.PackStart(new Label(GeneralUtils.GetResourceByName("widget_generictreeviewsearch_search_label")) { Xalign = 0f }, false, false, 0);
             hboxSearch.PackStart(_entrySearch, true, true, 0);
             hboxSearch.PackStart(buttonSearch, false, false, 0);
-            hboxSearch.PackStart(buttonTree, false, false, 0);
+            hboxSearch.PackStart(buttonChapters, false, false, 0);
             vbox.PackStart(hboxSearch, false, false, 0);
 
             string statusSeed = GeneralUtils.GetResourceByName("global_national_catalog_tnved_search_hint");
@@ -100,7 +99,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             statusScroll.AddWithViewport(_labelStatus);
             vbox.PackStart(statusScroll, false, false, 0);
 
-            _treeStore = new TreeStore(typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool));
+            _treeStore = new TreeStore(typeof(string), typeof(string), typeof(bool), typeof(bool));
             _treeView = new TreeView(_treeStore);
             _treeView.HeadersVisible = true;
             _treeView.AppendColumn(CreateColumn(GeneralUtils.GetResourceByName("global_designation"), ColDisplay));
@@ -121,7 +120,15 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             Response += DialogNationalCatalogDictionary_Response;
 
             ShowAll();
-            LoadRootsAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchSeed) && searchSeed.Length >= 2)
+            {
+                SearchAsync(searchSeed);
+            }
+            else
+            {
+                ShowChapters();
+            }
         }
 
         private void DialogNationalCatalogDictionary_Response(object o, ResponseArgs args)
@@ -152,9 +159,9 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 return;
             }
 
-            bool hasChildren = (bool)_treeStore.GetValue(iter, ColHasChildren);
+            bool isGroup = (bool)_treeStore.GetValue(iter, ColIsGroup);
             string code = (_treeStore.GetValue(iter, ColCode) as string)?.Trim();
-            if (hasChildren || string.IsNullOrWhiteSpace(code))
+            if (isGroup || string.IsNullOrWhiteSpace(code))
             {
                 SelectedCode = null;
                 SelectedNameRu = null;
@@ -187,7 +194,18 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 return;
             }
 
+            if (!(bool)_treeStore.GetValue(iter, ColIsGroup))
+            {
+                return;
+            }
+
             if ((bool)_treeStore.GetValue(iter, ColChildrenLoaded))
+            {
+                return;
+            }
+
+            string prefix = (_treeStore.GetValue(iter, ColCode) as string)?.Trim();
+            if (string.IsNullOrWhiteSpace(prefix))
             {
                 return;
             }
@@ -197,7 +215,9 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 _treeStore.Remove(ref child);
             }
 
-            LoadChildrenAsync(iter);
+            _treeStore.SetValue(iter, ColChildrenLoaded, true);
+            TreePath parentPath = _treeStore.GetPath(iter);
+            LoadPrefixChildrenAsync(parentPath, prefix);
         }
 
         private void TreeView_RowActivated(object o, RowActivatedArgs args)
@@ -213,8 +233,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 return;
             }
 
-            bool hasChildren = (bool)_treeStore.GetValue(iter, ColHasChildren);
-            if (hasChildren)
+            if ((bool)_treeStore.GetValue(iter, ColIsGroup))
             {
                 return;
             }
@@ -241,60 +260,36 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             string query = _entrySearch.Text?.Trim();
             if (string.IsNullOrWhiteSpace(query))
             {
-                LoadRootsAsync();
+                ShowChapters();
                 return;
             }
 
             SearchAsync(query);
         }
 
-        private void LoadRootsAsync()
+        private void ShowChapters()
         {
-            StartAsyncOperation(async token =>
+            _loadCts?.Cancel();
+            _treeStore.Clear();
+            IReadOnlyList<NktDictionaryItem> chapters = _dictionaryService.GetBrowseChapters();
+            foreach (NktDictionaryItem chapter in chapters)
             {
-                IReadOnlyList<NktDictionaryItem> roots = await _dictionaryService.GetRootsAsync(token).ConfigureAwait(false);
-                InvokeUi(delegate
-                {
-                    if (!_alive || token.IsCancellationRequested)
-                    {
-                        return;
-                    }
+                string code = chapter.ResolvedCode ?? string.Empty;
+                string display = string.Format("{0} — {1}", code, chapter.GetDisplayName());
+                TreeIter iter = _treeStore.AppendValues(display, code, true, false);
+                _treeStore.AppendValues(iter, "…", string.Empty, false, false);
+            }
 
-                    _treeStore.Clear();
-                    foreach (NktDictionaryItem item in roots)
-                    {
-                        AppendItem(null, item);
-                    }
-
-                    SetStatusText(string.Format(
-                        GeneralUtils.GetResourceByName("global_national_catalog_tnved_tree_loaded"),
-                        roots.Count));
-                    SelectByCode(_entrySearch.Text?.Trim());
-                });
-            }, GeneralUtils.GetResourceByName("global_national_catalog_tnved_tree_loading"));
+            SetStatusText(string.Format(
+                GeneralUtils.GetResourceByName("global_national_catalog_tnved_tree_loaded"),
+                chapters.Count));
         }
 
-        private void LoadChildrenAsync(TreeIter parentIter)
+        private void LoadPrefixChildrenAsync(TreePath parentPath, string prefix)
         {
-            string idText = _treeStore.GetValue(parentIter, ColId) as string;
-            if (!long.TryParse(idText, out long parentId))
-            {
-                return;
-            }
-
-            if ((bool)_treeStore.GetValue(parentIter, ColChildrenLoaded))
-            {
-                return;
-            }
-
-            _treeStore.SetValue(parentIter, ColChildrenLoaded, true);
-            TreePath parentPath = _treeStore.GetPath(parentIter);
-
             StartAsyncOperation(async token =>
             {
-                IReadOnlyList<NktDictionaryItem> children = await _dictionaryService
-                    .GetChildrenAsync(parentId, token)
-                    .ConfigureAwait(false);
+                DictionarySearchResult results = await _dictionaryService.SearchAsync(prefix, token).ConfigureAwait(false);
                 InvokeUi(delegate
                 {
                     if (!_alive || token.IsCancellationRequested)
@@ -302,23 +297,30 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                         return;
                     }
 
-                    TreeIter iter;
-                    if (!_treeStore.GetIter(out iter, parentPath))
+                    TreeIter parent;
+                    if (!_treeStore.GetIter(out parent, parentPath))
                     {
                         return;
                     }
 
-                    foreach (NktDictionaryItem child in children)
+                    foreach (NktDictionaryItem item in results.Items)
                     {
-                        AppendItem(iter, child);
+                        AppendLeaf(parent, item);
                     }
 
-                    if (children.Count == 0)
+                    if (results.Items.Count == 0)
                     {
-                        _treeStore.SetValue(iter, ColHasChildren, false);
+                        SetStatusText(results.StatusMessage);
+                    }
+                    else
+                    {
+                        SetStatusText(string.Format(
+                            "Раздел {0}: найдено {1} кодов. Выберите конечный код.",
+                            prefix,
+                            results.Items.Count));
                     }
                 });
-            });
+            }, string.Format("Загрузка кодов раздела {0}…", prefix));
         }
 
         private void SearchAsync(string query)
@@ -336,17 +338,15 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                     _treeStore.Clear();
                     foreach (NktDictionaryItem item in results.Items)
                     {
-                        // Search results as flat list; leaf selectable.
-                        AppendItem(null, item, forceLeaf: true);
+                        AppendLeaf(null, item);
                     }
 
                     SetStatusText(results.StatusMessage);
-                    SelectByCode(query);
                 });
             }, GeneralUtils.GetResourceByName("global_national_catalog_oktru_searching"));
         }
 
-        private void AppendItem(TreeIter? parent, NktDictionaryItem item, bool forceLeaf = false)
+        private void AppendLeaf(TreeIter? parent, NktDictionaryItem item)
         {
             if (item == null || !_alive)
             {
@@ -358,99 +358,14 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 ? item.GetDisplayName()
                 : string.Format("{0} ({1})", item.GetDisplayName(), code);
 
-            bool hasChildren = !forceLeaf && (item.IsExpandable() || LooksLikeExpandableGroup(item, code));
-            string idText = item.Id.HasValue ? item.Id.Value.ToString() : string.Empty;
-
-            TreeIter iter = parent.HasValue
-                ? _treeStore.AppendValues(parent.Value, display, code, idText, false, hasChildren)
-                : _treeStore.AppendValues(display, code, idText, false, hasChildren);
-
-            if (hasChildren)
+            if (parent.HasValue)
             {
-                _treeStore.AppendValues(iter, "…", string.Empty, string.Empty, false, false);
+                _treeStore.AppendValues(parent.Value, display, code, false, true);
             }
-        }
-
-        private static bool LooksLikeExpandableGroup(NktDictionaryItem item, string code)
-        {
-            if (item.Leaf == true)
+            else
             {
-                return false;
+                _treeStore.AppendValues(display, code, false, true);
             }
-
-            if (item.HasChildren == false && item.HasChild == false)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(code) || !item.Id.HasValue)
-            {
-                return false;
-            }
-
-            // TNVED hierarchy: 2/4/6/8-digit groups, 10-digit leaf.
-            if (code.Length < 10 && code.Length >= 2)
-            {
-                bool allDigits = true;
-                for (int i = 0; i < code.Length; i++)
-                {
-                    if (!char.IsDigit(code[i]))
-                    {
-                        allDigits = false;
-                        break;
-                    }
-                }
-
-                return allDigits;
-            }
-
-            return false;
-        }
-
-        private void SelectByCode(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code) || !_alive)
-            {
-                return;
-            }
-
-            TreeIter iter;
-            if (_treeStore.GetIterFirst(out iter))
-            {
-                TrySelectRecursive(iter, code);
-            }
-        }
-
-        private bool TrySelectRecursive(TreeIter iter, string code)
-        {
-            do
-            {
-                string rowCode = _treeStore.GetValue(iter, ColCode) as string;
-                if (string.Equals(rowCode, code, StringComparison.OrdinalIgnoreCase))
-                {
-                    bool hasChildren = (bool)_treeStore.GetValue(iter, ColHasChildren);
-                    if (!hasChildren)
-                    {
-                        _treeView.Selection.SelectIter(iter);
-                        TreePath path = _treeStore.GetPath(iter);
-                        _treeView.ScrollToCell(path, null, false, 0, 0);
-                        SelectedCode = rowCode;
-                        SelectedNameRu = _treeStore.GetValue(iter, ColDisplay) as string;
-                        return true;
-                    }
-                }
-
-                if (_treeStore.IterChildren(out TreeIter child, iter))
-                {
-                    if (TrySelectRecursive(child, code))
-                    {
-                        return true;
-                    }
-                }
-            }
-            while (_treeStore.IterNext(ref iter));
-
-            return false;
         }
 
         private void StartAsyncOperation(Func<CancellationToken, Task> operation, string statusMessage = null)
@@ -506,7 +421,6 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 }
                 catch
                 {
-                    // Dialog may already be torn down.
                 }
             });
         }

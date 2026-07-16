@@ -4107,21 +4107,21 @@ Show this message next time?</value>
     <value>ТН ВЭД — код товара (НКТ)</value>
   </data>
   <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
-    <value>Выберите код ТН ВЭД из дерева справочника: раскройте разделы до конечного кода (обычно 10 цифр). Двойной клик по листу — выбрать. Поиск по коду/названию — дополнительно.</value>
+    <value>ТН ВЭД — плоский справочник НКТ (без дерева API). Откройте раздел (например 61 — одежда), раскройте его, или найдите по коду 6109 / названию. Выберите конечный код (обычно 10 цифр).</value>
   </data>
   <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
-    <value>Раскройте дерево до нужного кода. Или введите код/название и нажмите «Найти». Кнопка «Дерево» возвращает к структуре.</value>
+    <value>Раскройте раздел или введите код (61, 6109) / название и нажмите «Найти». Кнопка «Разделы» — список групп ТН ВЭД.</value>
   </data>
   <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
-    <value>Товар в кассе: «{0}». Выберите подходящий код ТН ВЭД в дереве (раскройте разделы) или найдите по коду группы, например 6109.</value>
+    <value>Товар в кассе: «{0}». Для одежды откройте раздел 61 или найдите код 6109.</value>
   </data>
   <data name="global_national_catalog_tnved_show_tree" xml:space="preserve">
-    <value>Дерево</value>
+    <value>Разделы</value>
   </data>
   <data name="global_national_catalog_tnved_tree_loading" xml:space="preserve">
-    <value>Загрузка дерева ТН ВЭД…</value>
+    <value>Загрузка разделов ТН ВЭД…</value>
   </data>
   <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
-    <value>Дерево ТН ВЭД: корневых разделов {0}. Раскройте нужный раздел и выберите конечный код.</value>
+    <value>Разделов ТН ВЭД: {0}. Раскройте нужный (например 61) — коды подгрузятся из API /items.</value>
   </data>
 </root>

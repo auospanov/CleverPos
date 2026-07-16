@@ -225,6 +225,18 @@ namespace LogicPOS.NationalCatalog
             }
         }
 
+        private void ApplyAuthHeaders(HttpRequestMessage request)
+        {
+            if (string.IsNullOrWhiteSpace(_apiKey))
+            {
+                return;
+            }
+
+            // Docs: "токен доступа или API-ключ" — передаём оба варианта.
+            request.Headers.TryAddWithoutValidation("X-API-KEY", _apiKey);
+            request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + _apiKey);
+        }
+
         private async Task<string> SendRawAsync(HttpMethod method, string relativePath, object payload, CancellationToken cancellationToken)
         {
             string fullUrl = _baseUrl + relativePath;
@@ -232,7 +244,7 @@ namespace LogicPOS.NationalCatalog
 
             using (HttpRequestMessage request = new HttpRequestMessage(method, fullUrl))
             {
-                request.Headers.TryAddWithoutValidation("X-API-KEY", _apiKey);
+                ApplyAuthHeaders(request);
 
                 if (payload != null)
                 {
@@ -260,7 +272,7 @@ namespace LogicPOS.NationalCatalog
 
             using (HttpRequestMessage request = new HttpRequestMessage(method, fullUrl))
             {
-                request.Headers.TryAddWithoutValidation("X-API-KEY", _apiKey);
+                ApplyAuthHeaders(request);
 
                 if (payload != null)
                 {
@@ -355,6 +367,7 @@ namespace LogicPOS.NationalCatalog
             sb.AppendLine("Запрос:");
             sb.Append(method).Append(' ').AppendLine(url);
             sb.AppendLine("Header: X-API-KEY: <nationalCatalogApiKey из App.config>");
+            sb.AppendLine("Header: Authorization: Bearer <тот же ключ>");
             if (!string.IsNullOrWhiteSpace(requestBody))
             {
                 sb.Append("Body: ").AppendLine(Truncate(requestBody, 400));
@@ -363,7 +376,8 @@ namespace LogicPOS.NationalCatalog
             sb.AppendLine();
             sb.AppendLine("curl:");
             sb.Append("curl -X ").Append(method)
-                .Append(" -H \"X-API-KEY: YOUR_API_KEY\"");
+                .Append(" -H \"X-API-KEY: YOUR_API_KEY\"")
+                .Append(" -H \"Authorization: Bearer YOUR_API_KEY\"");
             if (!string.IsNullOrWhiteSpace(requestBody))
             {
                 sb.Append(" -H \"Content-Type: application/json\" -d '")

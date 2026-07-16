@@ -4093,21 +4093,21 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
     <value>TNVED — product code (NKT)</value>
   </data>
   <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
-    <value>Pick a TNVED code from the dictionary tree: expand sections to a leaf code (usually 10 digits). Double-click a leaf to select. Search by code/name is optional.</value>
+    <value>TNVED is a flat NKT dictionary (no /roots API). Open a chapter (e.g. 61 — apparel), expand it, or search by code 6109 / name. Select a leaf code (usually 10 digits).</value>
   </data>
   <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
-    <value>Expand the tree to the needed code. Or type a code/name and click Find. Use Tree to return to the hierarchy.</value>
+    <value>Expand a chapter or type a code (61, 6109) / name and click Find. Chapters returns the HS group list.</value>
   </data>
   <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
-    <value>POS product: "{0}". Pick a matching TNVED leaf in the tree, or search by group code e.g. 6109.</value>
+    <value>POS product: "{0}". For apparel open chapter 61 or search code 6109.</value>
   </data>
   <data name="global_national_catalog_tnved_show_tree" xml:space="preserve">
-    <value>Tree</value>
+    <value>Chapters</value>
   </data>
   <data name="global_national_catalog_tnved_tree_loading" xml:space="preserve">
-    <value>Loading TNVED tree…</value>
+    <value>Loading TNVED chapters…</value>
   </data>
   <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
-    <value>TNVED tree: {0} root sections. Expand a section and select a leaf code.</value>
+    <value>TNVED chapters: {0}. Expand one (e.g. 61) — codes load from /items API.</value>
   </data>
 </root>
