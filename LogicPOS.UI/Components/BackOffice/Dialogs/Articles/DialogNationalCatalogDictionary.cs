@@ -4,6 +4,7 @@ using LogicPOS.NationalCatalog.Models;
 using LogicPOS.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -61,7 +62,17 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             vbox.PackStart(labelHint, false, false, 0);
 
             HBox hboxSearch = new HBox(false, 6);
-            string searchSeed = !string.IsNullOrWhiteSpace(currentCode) ? currentCode.Trim() : string.Empty;
+            string searchSeed = string.Empty;
+            if (!string.IsNullOrWhiteSpace(currentCode) && currentCode.Trim().All(char.IsDigit) && currentCode.Trim().Length >= 2)
+            {
+                searchSeed = currentCode.Trim();
+            }
+            else if (!string.IsNullOrWhiteSpace(initialSearch)
+                && NationalCatalogDictionaryService.HasLocalMatch(initialSearch))
+            {
+                searchSeed = initialSearch.Trim();
+            }
+
             _entrySearch = new Entry { Text = searchSeed };
             Button buttonSearch = new Button(GeneralUtils.GetResourceByName("global_national_catalog_oktru_search"));
             Button buttonChapters = new Button(GeneralUtils.GetResourceByName("global_national_catalog_tnved_show_tree"));

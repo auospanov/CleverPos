@@ -4107,10 +4107,13 @@ Show this message next time?</value>
     <value>ТН ВЭД — код товара (НКТ)</value>
   </data>
   <data name="global_national_catalog_tnved_dialog_hint" xml:space="preserve">
-    <value>ТН ВЭД — плоский справочник НКТ (без дерева API). Откройте раздел (например 61 — одежда), раскройте его, или найдите по коду 6109 / названию. Выберите конечный код (обычно 10 цифр).</value>
+    <value>ТН ВЭД: для одежды откройте раздел 61 — частые коды без нагрузки на API. Поиск по API ограничен (лимит НКТ 100 запросов/мин), результаты кэшируются.</value>
   </data>
   <data name="global_national_catalog_tnved_search_hint" xml:space="preserve">
-    <value>Раскройте раздел или введите код (61, 6109) / название и нажмите «Найти». Кнопка «Разделы» — список групп ТН ВЭД.</value>
+    <value>Одежда: раздел 61. Поиск: костюм, топ, футболка или код 6103 / 6203. Частые коды — без API.</value>
+  </data>
+  <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
+    <value>Разделов: {0}. Для одежды раскройте 61 — коды покажутся сразу. Прочие разделы подгружают API ограниченно (кэш + пауза).</value>
   </data>
   <data name="global_national_catalog_tnved_product_hint" xml:space="preserve">
     <value>Товар в кассе: «{0}». Для одежды откройте раздел 61 или найдите код 6109.</value>
@@ -4120,8 +4123,5 @@ Show this message next time?</value>
   </data>
   <data name="global_national_catalog_tnved_tree_loading" xml:space="preserve">
     <value>Загрузка разделов ТН ВЭД…</value>
-  </data>
-  <data name="global_national_catalog_tnved_tree_loaded" xml:space="preserve">
-    <value>Разделов ТН ВЭД: {0}. Раскройте нужный (например 61) — коды подгрузятся из API /items.</value>
   </data>
 </root>
