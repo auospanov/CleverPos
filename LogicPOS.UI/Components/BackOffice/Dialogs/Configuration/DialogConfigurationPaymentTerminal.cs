@@ -139,7 +139,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 _checkUseHttps = new CheckButton(GeneralUtils.GetResourceByName("global_payment_terminal_use_https"));
                 if (_dialogMode == DialogMode.Insert)
                 {
-                    _checkUseHttps.Active = true;
+                    _checkUseHttps.Active = false;
                 }
                 vboxTab1.PackStart(_checkUseHttps, false, false, 0);
                 _crudWidgetList.Add(new GenericCRUDWidgetXPO(_checkUseHttps, _dataSourceRow, "UseHttps"));

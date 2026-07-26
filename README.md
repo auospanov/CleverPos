@@ -111,3 +111,5 @@ Runtime settings are in `LogicPOS.UI/App.config`:
 **Roadmap / checklist:** see [TODO.md](TODO.md) (краткий оперативный список).  
 **Full implementation TODO** (barcodes, NKT, fiscal KZ, Kaspi/Halyk/Jusan terminals, Kaspi Shop, warehouse): [docs/KZ-IMPLEMENTATION-TODO.md](docs/KZ-IMPLEMENTATION-TODO.md).  
 **Analysis:** [docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md), [docs/SHOPUCHET-KZ-INTEGRATIONS-ANALYSIS.md](docs/SHOPUCHET-KZ-INTEGRATIONS-ANALYSIS.md)
+
+842694825

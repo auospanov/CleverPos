@@ -1009,7 +1009,7 @@ INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acron
 INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon,RequiresPaymentTerminal,PaymentTerminal,Disabled) VALUES ('a8b7c6d5-e4f3-4a2b-9c8d-7e6f5a4b3c2d',15,15,'KASPI_CARD','Kaspi карта','KC','pos_button_label_payment_type_kaspi_card','Icons/icon_pos_payment_type_credit_card.png',1,'7f8e9d0c-1b2a-4c3d-8e7f-6a5b4c3d2e1f',0);
 INSERT INTO fin_configurationpaymentmethod (Oid,Ord,Code,Token,Designation,Acronym,ResourceString,ButtonIcon,RequiresPaymentTerminal,PaymentTerminal,Disabled) VALUES ('b9c8d7e6-f5a4-4b3c-8d9e-0f1a2b3c4d5e',25,25,'KASPI_QR','Kaspi QR','KQ','pos_button_label_payment_type_kaspi_qr','Icons/icon_pos_payment_type_debit_card.png',1,'7f8e9d0c-1b2a-4c3d-8e7f-6a5b4c3d2e1f',0);
 UPDATE fin_configurationpaymentmethod SET Disabled = 1 WHERE Token IN ('CREDIT_CARD','DEBIT_CARD');
-INSERT INTO sys_configurationpaymentterminal (Oid,Ord,Code,Designation,Brand,Host,Port,PosClientName,UseHttps,Disabled) VALUES ('7f8e9d0c-1b2a-4c3d-8e7f-6a5b4c3d2e1f',10,10,'Kaspi Smart POS','KASPI','192.168.1.100',8080,'CleverPos-1',1,1);
+INSERT INTO sys_configurationpaymentterminal (Oid,Ord,Code,Designation,Brand,Host,Port,PosClientName,UseHttps,Disabled) VALUES ('7f8e9d0c-1b2a-4c3d-8e7f-6a5b4c3d2e1f',10,10,'Kaspi Smart POS','KASPI','192.168.1.249',8080,'CleverPos-1',0,0);
 UPDATE fin_configurationpaymentmethod SET UpdatedBy = '090c5684-52ba-4d7a-8bc3-a00320ef503d', CreatedAt = '2014-02-28 14:02:28', UpdatedAt = '2019-03-11 23:16:18';
 
 INSERT INTO fin_configurationpricetype (Oid,Ord,Code,Designation,EnumValue) VALUES ('cf17a218-b687-4b82-a8f4-0905594ac1f5',10,10,'Обычный',1);

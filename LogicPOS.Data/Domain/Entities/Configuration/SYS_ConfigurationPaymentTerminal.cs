@@ -15,7 +15,7 @@ namespace LogicPOS.Domain.Entities
             Ord = XPOUtility.GetNextTableFieldID(nameof(sys_configurationpaymentterminal), "Ord");
             Code = XPOUtility.GetNextTableFieldID(nameof(sys_configurationpaymentterminal), "Code");
             Port = 8080;
-            UseHttps = true;
+            UseHttps = false;
             Brand = "KASPI";
         }
 

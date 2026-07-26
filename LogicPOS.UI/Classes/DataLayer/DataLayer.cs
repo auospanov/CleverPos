@@ -677,6 +677,107 @@ namespace logicpos
             }
         }
 
+        private const string KaspiTerminalOid = "7f8e9d0c-1b2a-4c3d-8e7f-6a5b4c3d2e1f";
+        private const string KaspiTerminalHost = "192.168.1.249";
+        private const string KaspiCardMethodOid = "a8b7c6d5-e4f3-4a2b-9c8d-7e6f5a4b3c2d";
+        private const string KaspiQrMethodOid = "b9c8d7e6-f5a4-4b3c-8d9e-0f1a2b3c4d5e";
+
+        /// <summary>
+        /// Ensures Kaspi Smart POS terminal exists with shop IP and is enabled,
+        /// and that Kaspi payment methods are linked to it (for existing DBs too).
+        /// </summary>
+        public static void EnsureKaspiPaymentTerminalConfig(Session xpoSession)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(DataLayer));
+
+            try
+            {
+                object terminalCount = xpoSession.ExecuteScalar(
+                    string.Format("SELECT COUNT(*) FROM sys_configurationpaymentterminal WHERE Oid = '{0}';", KaspiTerminalOid));
+                // UseHttps=0 by default: Kaspi HTTP API works unless «Защита интеграции» is enabled on the device.
+                if (terminalCount == null || Convert.ToInt32(terminalCount) == 0)
+                {
+                    xpoSession.ExecuteNonQuery(string.Format(
+                        "INSERT INTO sys_configurationpaymentterminal " +
+                        "(Oid, Ord, Code, Designation, Brand, Host, Port, PosClientName, UseHttps, Disabled) " +
+                        "VALUES ('{0}', 10, 10, 'Kaspi Smart POS', 'KASPI', '{1}', 8080, 'CleverPos-1', 0, 0);",
+                        KaspiTerminalOid, KaspiTerminalHost));
+                    log.Info("EnsureKaspiPaymentTerminalConfig: inserted Kaspi terminal " + KaspiTerminalHost);
+                }
+                else
+                {
+                    xpoSession.ExecuteNonQuery(string.Format(
+                        "UPDATE sys_configurationpaymentterminal SET Host = '{0}', Port = 8080, Brand = 'KASPI', Disabled = 0, " +
+                        "Designation = 'Kaspi Smart POS', PosClientName = COALESCE(NULLIF(PosClientName, ''), 'CleverPos-1') " +
+                        "WHERE Oid = '{1}';",
+                        KaspiTerminalHost, KaspiTerminalOid));
+
+                    // Prefer HTTP until first successful token (HTTPS only if «Защита интеграции» is on).
+                    xpoSession.ExecuteNonQuery(string.Format(
+                        "UPDATE sys_configurationpaymentterminal SET UseHttps = 0 " +
+                        "WHERE Oid = '{0}' AND (AccessToken IS NULL OR AccessToken = '');",
+                        KaspiTerminalOid));
+
+                    log.Info("EnsureKaspiPaymentTerminalConfig: activated Kaspi terminal " + KaspiTerminalHost);
+                }
+
+                EnsureKaspiPaymentMethod(
+                    xpoSession,
+                    KaspiCardMethodOid,
+                    15,
+                    "KASPI_CARD",
+                    "Kaspi карта",
+                    "KC",
+                    "pos_button_label_payment_type_kaspi_card",
+                    "Icons/icon_pos_payment_type_credit_card.png");
+
+                EnsureKaspiPaymentMethod(
+                    xpoSession,
+                    KaspiQrMethodOid,
+                    25,
+                    "KASPI_QR",
+                    "Kaspi QR",
+                    "KQ",
+                    "pos_button_label_payment_type_kaspi_qr",
+                    "Icons/icon_pos_payment_type_debit_card.png");
+
+                xpoSession.ExecuteNonQuery(
+                    "UPDATE fin_configurationpaymentmethod SET Disabled = 1 WHERE Token IN ('CREDIT_CARD','DEBIT_CARD');");
+            }
+            catch (Exception ex)
+            {
+                log.Error("EnsureKaspiPaymentTerminalConfig: " + ex.Message, ex);
+            }
+        }
+
+        private static void EnsureKaspiPaymentMethod(
+            Session xpoSession,
+            string oid,
+            int ordCode,
+            string token,
+            string designation,
+            string acronym,
+            string resourceString,
+            string buttonIcon)
+        {
+            object count = xpoSession.ExecuteScalar(
+                string.Format("SELECT COUNT(*) FROM fin_configurationpaymentmethod WHERE Oid = '{0}' OR Token = '{1}';", oid, token));
+            if (count != null && Convert.ToInt32(count) > 0)
+            {
+                xpoSession.ExecuteNonQuery(string.Format(
+                    "UPDATE fin_configurationpaymentmethod SET RequiresPaymentTerminal = 1, PaymentTerminal = '{0}', Disabled = 0, " +
+                    "Designation = '{1}', Acronym = '{2}' WHERE Oid = '{3}' OR Token = '{4}';",
+                    KaspiTerminalOid, SqlLiteral(designation), SqlLiteral(acronym), oid, token));
+                return;
+            }
+
+            xpoSession.ExecuteNonQuery(string.Format(
+                "INSERT INTO fin_configurationpaymentmethod " +
+                "(Oid, Ord, Code, Token, Designation, Acronym, ResourceString, ButtonIcon, RequiresPaymentTerminal, PaymentTerminal, Disabled) " +
+                "VALUES ('{0}', {1}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', 1, '{7}', 0);",
+                oid, ordCode, token, SqlLiteral(designation), SqlLiteral(acronym), resourceString, buttonIcon, KaspiTerminalOid));
+        }
+
         private static bool GrantPaymentTerminalPermissionsToDeviceProfiles(Session xpoSession, string[][] permissionRows)
         {
             bool grantedAny = false;

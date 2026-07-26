@@ -228,6 +228,7 @@ namespace logicpos
                 XPOSettings.Session = new Session(XpoDefault.DataLayer) { LockingOption = LockingOption.None };
                 DataLayer.ApplyCisCurrencyStartupPatch(XPOSettings.Session, DatabaseSettings.DatabaseType);
                 DataLayer.EnsurePaymentTerminalPermissions(XPOSettings.Session);
+                DataLayer.EnsureKaspiPaymentTerminalConfig(XPOSettings.Session);
             }
             catch (Exception ex)
             {

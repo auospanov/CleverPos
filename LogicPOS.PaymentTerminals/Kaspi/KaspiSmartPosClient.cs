@@ -41,7 +41,8 @@ namespace LogicPOS.PaymentTerminals.Kaspi
 
             _httpClient = new HttpClient(handler)
             {
-                Timeout = TimeSpan.FromSeconds(30)
+                // Register waits for cashier approval on the terminal screen.
+                Timeout = TimeSpan.FromSeconds(120)
             };
         }
 
@@ -55,55 +56,77 @@ namespace LogicPOS.PaymentTerminals.Kaspi
             }
 
             string url = $"{_baseUrl}/v2/register?name={Uri.EscapeDataString(clientName)}";
-            string body = await SendAsync(HttpMethod.Get, url, null, cancellationToken).ConfigureAwait(false);
-            KaspiApiResponse response = KaspiApiResponse.FromJson(body);
-
-            if (!response.IsSuccess)
+            try
             {
-                string message = response.ErrorText;
-                if (response.Data != null)
+                string body = await SendAsync(HttpMethod.Get, url, null, cancellationToken).ConfigureAwait(false);
+                KaspiApiResponse response = KaspiApiResponse.FromJson(body);
+
+                if (!response.IsSuccess)
                 {
-                    message = response.Data.Value<string>("message") ?? message;
+                    string message = response.ErrorText;
+                    if (response.Data != null)
+                    {
+                        message = response.Data.Value<string>("message") ?? message;
+                    }
+
+                    return new KaspiRegisterResult { Success = false, Message = message ?? $"statusCode={response.StatusCode}" };
                 }
 
-                return new KaspiRegisterResult { Success = false, Message = message ?? $"statusCode={response.StatusCode}" };
+                return new KaspiRegisterResult
+                {
+                    Success = true,
+                    AccessToken = response.Data?.Value<string>("accessToken"),
+                    RefreshToken = response.Data?.Value<string>("refreshToken"),
+                    ExpirationDate = ParseKaspiDate(response.Data?.Value<string>("expirationDate")),
+                    Message = "OK"
+                };
             }
-
-            return new KaspiRegisterResult
+            catch (Exception ex)
             {
-                Success = true,
-                AccessToken = response.Data?.Value<string>("accessToken"),
-                RefreshToken = response.Data?.Value<string>("refreshToken"),
-                ExpirationDate = ParseKaspiDate(response.Data?.Value<string>("expirationDate")),
-                Message = "OK"
-            };
+                return new KaspiRegisterResult
+                {
+                    Success = false,
+                    Message = FormatRequestError(url, ex)
+                };
+            }
         }
 
         public async Task<KaspiRegisterResult> RevokeAsync(string clientName, string refreshToken, CancellationToken cancellationToken = default)
         {
             string url = $"{_baseUrl}/v2/revoke?name={Uri.EscapeDataString(clientName)}&refreshToken={Uri.EscapeDataString(refreshToken ?? string.Empty)}";
-            string body = await SendAsync(HttpMethod.Get, url, null, cancellationToken).ConfigureAwait(false);
-            KaspiApiResponse response = KaspiApiResponse.FromJson(body);
-
-            if (!response.IsSuccess)
+            try
             {
-                string message = response.ErrorText;
-                if (response.Data != null)
+                string body = await SendAsync(HttpMethod.Get, url, null, cancellationToken).ConfigureAwait(false);
+                KaspiApiResponse response = KaspiApiResponse.FromJson(body);
+
+                if (!response.IsSuccess)
                 {
-                    message = response.Data.Value<string>("message") ?? message;
+                    string message = response.ErrorText;
+                    if (response.Data != null)
+                    {
+                        message = response.Data.Value<string>("message") ?? message;
+                    }
+
+                    return new KaspiRegisterResult { Success = false, Message = message ?? $"statusCode={response.StatusCode}" };
                 }
 
-                return new KaspiRegisterResult { Success = false, Message = message ?? $"statusCode={response.StatusCode}" };
+                return new KaspiRegisterResult
+                {
+                    Success = true,
+                    AccessToken = response.Data?.Value<string>("accessToken"),
+                    RefreshToken = response.Data?.Value<string>("refreshToken"),
+                    ExpirationDate = ParseKaspiDate(response.Data?.Value<string>("expirationDate")),
+                    Message = "OK"
+                };
             }
-
-            return new KaspiRegisterResult
+            catch (Exception ex)
             {
-                Success = true,
-                AccessToken = response.Data?.Value<string>("accessToken"),
-                RefreshToken = response.Data?.Value<string>("refreshToken"),
-                ExpirationDate = ParseKaspiDate(response.Data?.Value<string>("expirationDate")),
-                Message = "OK"
-            };
+                return new KaspiRegisterResult
+                {
+                    Success = false,
+                    Message = FormatRequestError(url, ex)
+                };
+            }
         }
 
         public async Task<KaspiPaymentStatusResult> StartPaymentAsync(string accessToken, int amountTiyn, bool ownCheque, CancellationToken cancellationToken = default)
@@ -288,6 +311,26 @@ namespace LogicPOS.PaymentTerminals.Kaspi
         public static int ConvertAmountToTiyn(decimal amount)
         {
             return (int)Math.Round(amount * 100m, MidpointRounding.AwayFromZero);
+        }
+
+        private static string FormatRequestError(string url, Exception ex)
+        {
+            string detail = GetInnermostMessage(ex);
+            return string.Format(
+                "Не удалось связаться с терминалом ({0}). {1}. Проверьте: IP/порт, HTTP↔HTTPS (галочка «HTTPS» = «Защита интеграции» на терминале), и подтвердите доступ на экране Kaspi при регистрации.",
+                url,
+                detail);
+        }
+
+        private static string GetInnermostMessage(Exception ex)
+        {
+            Exception current = ex;
+            while (current.InnerException != null)
+            {
+                current = current.InnerException;
+            }
+
+            return current.Message ?? ex.Message;
         }
     }
 }

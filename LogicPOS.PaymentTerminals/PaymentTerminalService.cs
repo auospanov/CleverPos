@@ -45,11 +45,8 @@ namespace LogicPOS.PaymentTerminals
 
             try
             {
-                KaspiSmartPosClient client = new KaspiSmartPosClient(
-                    terminal.Host,
-                    terminal.Port,
-                    terminal.UseHttps,
-                    ignoreSslErrors: true);
+                KaspiSmartPosClient client = CreateClient(terminal);
+                log?.Invoke(string.Format("НКТ терминал: {0}", client.BaseUrl));
 
                 string accessToken = await EnsureAccessTokenAsync(session, terminal, client, log, cancellationToken).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(accessToken))
@@ -57,7 +54,7 @@ namespace LogicPOS.PaymentTerminals
                     return new PaymentTerminalChargeResult
                     {
                         Status = PaymentTerminalChargeStatus.Failed,
-                        Message = "Failed to obtain Kaspi access token"
+                        Message = "Не удалось получить токен Kaspi. На терминале подтвердите доступ кассы (Панель администратора → Защита интеграции / Настроить доступ)."
                     };
                 }
 
@@ -129,15 +126,11 @@ namespace LogicPOS.PaymentTerminals
             Action<string> log = null,
             CancellationToken cancellationToken = default)
         {
-            KaspiSmartPosClient client = new KaspiSmartPosClient(
-                terminal.Host,
-                terminal.Port,
-                terminal.UseHttps,
-                ignoreSslErrors: true);
-
+            KaspiSmartPosClient client = CreateClient(terminal);
             log?.Invoke($"Connect {client.BaseUrl}");
+            log?.Invoke("На экране терминала подтвердите доступ кассы (если появится запрос).");
 
-            KaspiRegisterResult registerResult = await RegisterOrRefreshAsync(session, terminal, client, cancellationToken).ConfigureAwait(false);
+            KaspiRegisterResult registerResult = await RegisterWithHttpsFallbackAsync(session, terminal, client, log, cancellationToken).ConfigureAwait(false);
             if (registerResult.Success)
             {
                 log?.Invoke("Registration OK");
@@ -148,6 +141,15 @@ namespace LogicPOS.PaymentTerminals
             }
 
             return registerResult;
+        }
+
+        private static KaspiSmartPosClient CreateClient(sys_configurationpaymentterminal terminal)
+        {
+            return new KaspiSmartPosClient(
+                terminal.Host,
+                terminal.Port,
+                terminal.UseHttps,
+                ignoreSslErrors: true);
         }
 
         private static async Task<string> EnsureAccessTokenAsync(
@@ -163,8 +165,49 @@ namespace LogicPOS.PaymentTerminals
             }
 
             log?.Invoke("Token expired or missing, registering...");
-            KaspiRegisterResult registerResult = await RegisterOrRefreshAsync(session, terminal, client, cancellationToken).ConfigureAwait(false);
-            return registerResult.Success ? terminal.AccessToken : null;
+            log?.Invoke("Смотрите на экран Kaspi и подтвердите доступ кассы.");
+            KaspiRegisterResult registerResult = await RegisterWithHttpsFallbackAsync(session, terminal, client, log, cancellationToken).ConfigureAwait(false);
+            if (!registerResult.Success)
+            {
+                log?.Invoke(registerResult.Message ?? "Registration failed");
+                return null;
+            }
+
+            return terminal.AccessToken;
+        }
+
+        /// <summary>
+        /// If HTTPS fails and UseHttps=true, retries once over HTTP (common when «Защита интеграции» is off).
+        /// </summary>
+        private static async Task<KaspiRegisterResult> RegisterWithHttpsFallbackAsync(
+            Session session,
+            sys_configurationpaymentterminal terminal,
+            KaspiSmartPosClient client,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            KaspiRegisterResult result = await RegisterOrRefreshAsync(session, terminal, client, cancellationToken).ConfigureAwait(false);
+            if (result.Success || !terminal.UseHttps)
+            {
+                return result;
+            }
+
+            log?.Invoke("HTTPS не ответил — пробуем HTTP (без «Защиты интеграции»)…");
+            KaspiSmartPosClient httpClient = new KaspiSmartPosClient(
+                terminal.Host,
+                terminal.Port,
+                useHttps: false,
+                ignoreSslErrors: true);
+
+            KaspiRegisterResult httpResult = await RegisterOrRefreshAsync(session, terminal, httpClient, cancellationToken).ConfigureAwait(false);
+            if (httpResult.Success)
+            {
+                terminal.UseHttps = false;
+                terminal.Save();
+                log?.Invoke("Успех по HTTP. Галочка HTTPS на терминале в CleverPos снята.");
+            }
+
+            return httpResult;
         }
 
         private static bool TokenIsValid(sys_configurationpaymentterminal terminal)
