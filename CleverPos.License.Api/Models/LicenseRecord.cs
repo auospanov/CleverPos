@@ -21,4 +21,6 @@ public class LicenseRecord
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public ICollection<LicenseActivation> Activations { get; set; } = new List<LicenseActivation>();
+
+    public ICollection<LicensePayment> Payments { get; set; } = new List<LicensePayment>();
 }

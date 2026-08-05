@@ -1,55 +1,38 @@
 # CleverPos License API
 
-.NET 8 Web API. Работает с **существующей** MySQL `cleverpos` на `92.38.49.47`. Новую БД не поднимает — только создаёт таблицы `licenses` и `license_activations` миграциями.
+.NET 8 Web API + админка. База — существующая MySQL `cleverpos` на `92.38.49.47`.
 
-## Запуск локально
+Таблицы: `licenses`, `license_activations`, `license_payments`.
 
-API на вашей машине, база — удалённая:
+## Правила
+
+1. Первый запрос кассы с ключом **сажает** идентификатор компьютера.
+2. Запрос с **другого** компьютера — отказ, пока в админке не нажмёте «Очистить ПК».
+3. Каждый месяц нужна оплата в `license_payments`. Нет оплаты за текущий месяц — касса не запускается.
+
+## Запуск
 
 ```bash
 cd CleverPos.License.Api
 dotnet run --launch-profile http
 ```
 
-Или в Docker (только контейнер API, без MySQL):
+- Админка: http://localhost:5088/admin  
+- Ключ входа (Development): `dev-admin-key` (`AdminApiKey` в appsettings)  
+- Swagger: http://localhost:5088/swagger  
+
+Или Docker (только API):
 
 ```bash
-cd CleverPos.License.Api
-copy .env.example .env
 docker compose up --build
 ```
 
-- API: http://localhost:5088/swagger  
-- Health: http://localhost:5088/health  
+## Админка
 
-При старте применяются EF-миграции в базу `cleverpos`.
+- список лицензий, компьютер, статус оплаты месяца;
+- создать лицензию;
+- очистить идентификатор компьютера (смена ПК);
+- отметить оплату за месяц / любой период;
+- включить / выключить лицензию.
 
-## Создать лицензию (админ)
-
-```bash
-curl -X POST http://localhost:5088/api/admin/licenses ^
-  -H "Content-Type: application/json" ^
-  -H "X-Admin-Key: dev-admin-key" ^
-  -d "{\"companyName\":\"Test Shop\",\"maxActivations\":1}"
-```
-
-Ключ пропишите в `LogicPOS.UI/App.config` (`licenseKey`).
-
-## Проверка с кассы
-
-```http
-POST /api/licenses/validate
-{
-  "licenseKey": "...",
-  "computerId": "...",
-  "machineName": "CASH-01"
-}
-```
-
-- пара уже есть → разрешить;
-- лицензия есть, слот свободен → посадить компьютер и разрешить;
-- иначе → 403.
-
-## Публикация
-
-Повесьте API за nginx/Caddy на домен, `ASPNETCORE_ENVIRONMENT=Production`, смените `AdminApiKey`. Строка подключения та же — база `cleverpos`.
+Ключ лицензии пропишите в `LogicPOS.UI/App.config` → `licenseKey`.

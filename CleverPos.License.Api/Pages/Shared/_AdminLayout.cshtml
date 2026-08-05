@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — CleverPos License</title>
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand">CleverPos</div>
+            <div class="brand-sub">Лицензии</div>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <nav>
+                    <a href="/admin" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Index" ? "active" : null)">Все лицензии</a>
+                    <a href="/admin/create" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Create" ? "active" : null)">Новая лицензия</a>
+                    <a href="/swagger" target="_blank">Swagger API</a>
+                </nav>
+                <form method="post" action="/admin/logout" class="logout-form">
+                    <button type="submit">Выйти</button>
+                </form>
+            }
+        </aside>
+        <main class="content">
+            @if (TempData["Ok"] != null)
+            {
+                <div class="alert ok">@TempData["Ok"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert err">@TempData["Error"]</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+</body>
+</html>

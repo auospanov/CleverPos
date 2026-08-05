@@ -1,0 +1,93 @@
+@page "/admin"
+@model CleverPos.License.Api.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Лицензии";
+}
+<div class="topbar">
+    <div>
+        <h1>Лицензии</h1>
+        <div class="sub">Первый запрос кассы сажает компьютер. Другой ПК — отказ, пока не очистите идентификатор. Без оплаты за месяц касса не запустится.</div>
+    </div>
+    <a class="btn" href="/admin/create">Новая лицензия</a>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Компания / ключ</th>
+                <th>Компьютер</th>
+                <th>Оплата</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.Licenses.Count == 0)
+        {
+            <tr><td colspan="5">Лицензий пока нет.</td></tr>
+        }
+        @foreach (var license in Model.Licenses)
+        {
+            <tr>
+                <td>
+                    <strong>@(string.IsNullOrWhiteSpace(license.CompanyName) ? "—" : license.CompanyName)</strong><br />
+                    <span class="mono">@license.LicenseKey</span>
+                </td>
+                <td>
+                    @if (license.Computers.Count == 0)
+                    {
+                        <span class="badge warn">не привязан</span>
+                    }
+                    else
+                    {
+                        foreach (var pc in license.Computers)
+                        {
+                            <div class="mono">@pc.ComputerId</div>
+                            <div>@(pc.MachineName ?? "—")</div>
+                            <div class="sub" style="margin:0">последний раз: @pc.LastSeenAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</div>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (license.CurrentMonthPaid)
+                    {
+                        <span class="badge ok">месяц оплачен</span>
+                    }
+                    else
+                    {
+                        <span class="badge err">нет оплаты за месяц</span>
+                    }
+                    @if (license.PaidThroughYear.HasValue && license.PaidThroughMonth.HasValue)
+                    {
+                        <div class="sub" style="margin:6px 0 0">последняя оплата: @license.PaidThroughMonth.Value.ToString("00")/@license.PaidThroughYear.Value</div>
+                    }
+                </td>
+                <td>
+                    @if (license.IsActive)
+                    {
+                        <span class="badge ok">активна</span>
+                    }
+                    else
+                    {
+                        <span class="badge err">выключена</span>
+                    }
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <a class="btn ghost" href="/admin/details/@license.Id">Открыть</a>
+                        <form method="post" asp-page-handler="ClearComputer" asp-route-id="@license.Id">
+                            <button class="btn secondary" type="submit" onclick="return confirm('Очистить компьютер? Новый ПК сможет привязаться.');">Очистить ПК</button>
+                        </form>
+                        <form method="post" asp-page-handler="PayCurrentMonth" asp-route-id="@license.Id">
+                            <button class="btn" type="submit">Оплатить месяц</button>
+                        </form>
+                        <form method="post" asp-page-handler="Toggle" asp-route-id="@license.Id" asp-route-isActive="@(!license.IsActive)">
+                            <button class="btn @(license.IsActive ? "danger" : "secondary")" type="submit">@(license.IsActive ? "Выключить" : "Включить")</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

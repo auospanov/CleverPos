@@ -15,6 +15,20 @@ X-Admin-Key: {{adminKey}}
 GET {{baseUrl}}/api/admin/licenses
 X-Admin-Key: {{adminKey}}
 
+### Clear computer
+POST {{baseUrl}}/api/admin/licenses/PASTE_ID/clear-computer
+X-Admin-Key: {{adminKey}}
+
+### Mark current month paid
+POST {{baseUrl}}/api/admin/licenses/PASTE_ID/payments
+Content-Type: application/json
+X-Admin-Key: {{adminKey}}
+
+{
+  "amount": 15000,
+  "comment": "Оплата за месяц"
+}
+
 ### Validate
 POST {{baseUrl}}/api/licenses/validate
 Content-Type: application/json

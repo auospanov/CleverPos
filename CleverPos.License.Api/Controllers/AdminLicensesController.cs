@@ -28,6 +28,18 @@ public class AdminLicensesController : ControllerBase
         return Ok(await _licenses.ListAsync(cancellationToken).ConfigureAwait(false));
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<LicenseListItem>> Get(Guid id, CancellationToken cancellationToken)
+    {
+        if (!IsAdmin())
+        {
+            return Unauthorized();
+        }
+
+        LicenseListItem? item = await _licenses.GetAsync(id, cancellationToken).ConfigureAwait(false);
+        return item == null ? NotFound() : Ok(item);
+    }
+
     [HttpPost]
     public async Task<ActionResult<LicenseListItem>> Create(
         [FromBody] CreateLicenseRequest request,
@@ -49,6 +61,55 @@ public class AdminLicensesController : ControllerBase
         }
     }
 
+    [HttpPost("{id:guid}/clear-computer")]
+    public async Task<IActionResult> ClearComputer(Guid id, CancellationToken cancellationToken)
+    {
+        if (!IsAdmin())
+        {
+            return Unauthorized();
+        }
+
+        bool ok = await _licenses.ClearComputerAsync(id, cancellationToken).ConfigureAwait(false);
+        return ok ? NoContent() : NotFound();
+    }
+
+    [HttpPost("{id:guid}/payments")]
+    public async Task<ActionResult<LicenseListItem>> MarkPaid(
+        Guid id,
+        [FromBody] MarkPaymentRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!IsAdmin())
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            LicenseListItem? updated = await _licenses.MarkPaidAsync(id, request, cancellationToken).ConfigureAwait(false);
+            return updated == null ? NotFound() : Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:guid}/active")]
+    public async Task<ActionResult<LicenseListItem>> SetActive(
+        Guid id,
+        [FromBody] SetActiveRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!IsAdmin())
+        {
+            return Unauthorized();
+        }
+
+        LicenseListItem? updated = await _licenses.SetActiveAsync(id, request.IsActive, cancellationToken).ConfigureAwait(false);
+        return updated == null ? NotFound() : Ok(updated);
+    }
+
     private bool IsAdmin()
     {
         string expected = _configuration["AdminApiKey"] ?? string.Empty;
@@ -64,4 +125,9 @@ public class AdminLicensesController : ControllerBase
 
         return string.Equals(expected, provided.ToString(), StringComparison.Ordinal);
     }
+}
+
+public class SetActiveRequest
+{
+    public bool IsActive { get; set; }
 }

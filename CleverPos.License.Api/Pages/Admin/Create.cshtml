@@ -1,0 +1,37 @@
+@page "/admin/create"
+@model CleverPos.License.Api.Pages.Admin.CreateModel
+@{
+    ViewData["Title"] = "Новая лицензия";
+}
+<h1>Новая лицензия</h1>
+<p class="sub">Один компьютер на ключ. Первый запрос кассы запишет идентификатор. Текущий месяц можно сразу отметить оплаченным.</p>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert err">@Model.ErrorMessage</div>
+}
+<div class="card">
+    <form method="post" class="form-grid">
+        <div class="full">
+            <label for="CompanyName">Компания / магазин</label>
+            <input id="CompanyName" asp-for="CompanyName" />
+        </div>
+        <div class="full">
+            <label for="LicenseKey">Ключ (пусто = сгенерировать)</label>
+            <input id="LicenseKey" asp-for="LicenseKey" />
+        </div>
+        <div>
+            <label for="FirstMonthAmount">Сумма за первый месяц</label>
+            <input id="FirstMonthAmount" asp-for="FirstMonthAmount" type="number" step="0.01" />
+        </div>
+        <div>
+            <label>&nbsp;</label>
+            <label style="font-weight:500">
+                <input asp-for="MarkCurrentMonthPaid" /> Отметить текущий месяц оплаченным
+            </label>
+        </div>
+        <div class="full">
+            <button class="btn" type="submit">Создать</button>
+            <a class="btn ghost" href="/admin">Отмена</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,33 @@
+@page "/admin/login"
+@model CleverPos.License.Api.Pages.Admin.LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Вход";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Вход — CleverPos License</title>
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <div class="login-wrap">
+        <div class="login-card">
+            <h1>Админка лицензий</h1>
+            <p class="sub">Введите AdminApiKey из appsettings / docker-compose.</p>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert err">@Model.ErrorMessage</div>
+            }
+            <form method="post" class="stack">
+                <label for="AdminKey">Ключ администратора</label>
+                <input id="AdminKey" name="AdminKey" type="password" asp-for="AdminKey" autofocus />
+                <div style="height:14px"></div>
+                <button class="btn" type="submit">Войти</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

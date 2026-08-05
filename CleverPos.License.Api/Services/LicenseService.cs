@@ -14,35 +14,50 @@ public class LicenseService
         _db = db;
     }
 
+    public static (int Year, int Month) CurrentPeriodUtc()
+    {
+        DateTime now = DateTime.UtcNow;
+        return (now.Year, now.Month);
+    }
+
     public async Task<ValidateLicenseResponse> ValidateAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
     {
         string licenseKey = (request.LicenseKey ?? string.Empty).Trim();
         string computerId = (request.ComputerId ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(licenseKey) || string.IsNullOrWhiteSpace(computerId))
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "LicenseKey and ComputerId are required." };
+            return new ValidateLicenseResponse { Allowed = false, Message = "Нужны LicenseKey и ComputerId." };
         }
 
         LicenseRecord? license = await _db.Licenses
             .Include(x => x.Activations)
+            .Include(x => x.Payments)
             .FirstOrDefaultAsync(x => x.LicenseKey == licenseKey, cancellationToken)
             .ConfigureAwait(false);
 
         if (license == null || !license.IsActive)
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "License not found or inactive." };
+            return new ValidateLicenseResponse { Allowed = false, Message = "Лицензия не найдена или отключена." };
         }
 
-        if (license.ExpiresAtUtc.HasValue && license.ExpiresAtUtc.Value < DateTime.UtcNow)
+        (int year, int month) = CurrentPeriodUtc();
+        bool currentMonthPaid = license.Payments.Any(p => p.PeriodYear == year && p.PeriodMonth == month);
+        if (!currentMonthPaid)
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "License expired.", ExpiresAtUtc = license.ExpiresAtUtc };
+            return new ValidateLicenseResponse
+            {
+                Allowed = false,
+                Message = "Оплата за текущий месяц не поступила.",
+                CurrentMonthPaid = false
+            };
         }
 
         LicenseActivation? existing = license.Activations
-            .FirstOrDefault(x => string.Equals(x.ComputerId, computerId, StringComparison.OrdinalIgnoreCase) && x.IsActive);
+            .FirstOrDefault(x => string.Equals(x.ComputerId, computerId, StringComparison.OrdinalIgnoreCase));
 
         if (existing != null)
         {
+            existing.IsActive = true;
             existing.LastSeenAtUtc = DateTime.UtcNow;
             if (!string.IsNullOrWhiteSpace(request.MachineName))
             {
@@ -54,18 +69,19 @@ public class LicenseService
             {
                 Allowed = true,
                 Message = "OK",
-                ExpiresAtUtc = license.ExpiresAtUtc
+                CurrentMonthPaid = true
             };
         }
 
         int activeCount = license.Activations.Count(x => x.IsActive);
-        if (activeCount >= Math.Max(1, license.MaxActivations))
+        int maxActivations = Math.Max(1, license.MaxActivations);
+        if (activeCount >= maxActivations)
         {
             return new ValidateLicenseResponse
             {
                 Allowed = false,
-                Message = "This license is already bound to another computer.",
-                ExpiresAtUtc = license.ExpiresAtUtc
+                Message = "Лицензия уже привязана к другому компьютеру.",
+                CurrentMonthPaid = true
             };
         }
 
@@ -83,8 +99,8 @@ public class LicenseService
         return new ValidateLicenseResponse
         {
             Allowed = true,
-            Message = "Activated on this computer.",
-            ExpiresAtUtc = license.ExpiresAtUtc
+            Message = "Компьютер зарегистрирован.",
+            CurrentMonthPaid = true
         };
     }
 
@@ -96,7 +112,7 @@ public class LicenseService
 
         if (await _db.Licenses.AnyAsync(x => x.LicenseKey == key, cancellationToken).ConfigureAwait(false))
         {
-            throw new InvalidOperationException("LicenseKey already exists.");
+            throw new InvalidOperationException("Такой LicenseKey уже существует.");
         }
 
         var license = new LicenseRecord
@@ -121,48 +137,171 @@ public class LicenseService
             });
         }
 
+        if (request.MarkCurrentMonthPaid)
+        {
+            (int year, int month) = CurrentPeriodUtc();
+            _db.Payments.Add(new LicensePayment
+            {
+                LicenseId = license.Id,
+                PeriodYear = year,
+                PeriodMonth = month,
+                Amount = request.FirstMonthAmount,
+                PaidAtUtc = DateTime.UtcNow,
+                Comment = "Первый месяц при создании лицензии"
+            });
+        }
+
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return await GetAsync(license.Id, cancellationToken).ConfigureAwait(false)
-               ?? throw new InvalidOperationException("License was not saved.");
+               ?? throw new InvalidOperationException("Лицензия не сохранилась.");
     }
 
     public async Task<IReadOnlyList<LicenseListItem>> ListAsync(CancellationToken cancellationToken)
     {
-        return await _db.Licenses
+        List<LicenseRecord> licenses = await _db.Licenses
             .AsNoTracking()
+            .Include(x => x.Activations)
+            .Include(x => x.Payments)
             .OrderByDescending(x => x.CreatedAtUtc)
-            .Select(x => new LicenseListItem
-            {
-                Id = x.Id,
-                LicenseKey = x.LicenseKey,
-                CompanyName = x.CompanyName,
-                MaxActivations = x.MaxActivations,
-                IsActive = x.IsActive,
-                ExpiresAtUtc = x.ExpiresAtUtc,
-                ActiveComputers = x.Activations.Count(a => a.IsActive),
-                ComputerIds = x.Activations.Where(a => a.IsActive).Select(a => a.ComputerId).ToList()
-            })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+
+        return licenses.Select(Map).ToList();
     }
 
     public async Task<LicenseListItem?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _db.Licenses
+        LicenseRecord? license = await _db.Licenses
             .AsNoTracking()
-            .Where(x => x.Id == id)
-            .Select(x => new LicenseListItem
-            {
-                Id = x.Id,
-                LicenseKey = x.LicenseKey,
-                CompanyName = x.CompanyName,
-                MaxActivations = x.MaxActivations,
-                IsActive = x.IsActive,
-                ExpiresAtUtc = x.ExpiresAtUtc,
-                ActiveComputers = x.Activations.Count(a => a.IsActive),
-                ComputerIds = x.Activations.Where(a => a.IsActive).Select(a => a.ComputerId).ToList()
-            })
-            .FirstOrDefaultAsync(cancellationToken)
+            .Include(x => x.Activations)
+            .Include(x => x.Payments)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
             .ConfigureAwait(false);
+
+        return license == null ? null : Map(license);
+    }
+
+    public async Task<bool> ClearComputerAsync(Guid licenseId, CancellationToken cancellationToken)
+    {
+        List<LicenseActivation> activations = await _db.Activations
+            .Where(x => x.LicenseId == licenseId)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        if (activations.Count == 0)
+        {
+            return await _db.Licenses.AnyAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false);
+        }
+
+        _db.Activations.RemoveRange(activations);
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
+    }
+
+    public async Task<LicenseListItem?> MarkPaidAsync(Guid licenseId, MarkPaymentRequest request, CancellationToken cancellationToken)
+    {
+        if (!await _db.Licenses.AnyAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false))
+        {
+            return null;
+        }
+
+        (int currentYear, int currentMonth) = CurrentPeriodUtc();
+        int year = request.Year ?? currentYear;
+        int month = request.Month ?? currentMonth;
+        if (month is < 1 or > 12)
+        {
+            throw new InvalidOperationException("Месяц должен быть от 1 до 12.");
+        }
+
+        LicensePayment? existing = await _db.Payments
+            .FirstOrDefaultAsync(x => x.LicenseId == licenseId && x.PeriodYear == year && x.PeriodMonth == month, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (existing == null)
+        {
+            _db.Payments.Add(new LicensePayment
+            {
+                LicenseId = licenseId,
+                PeriodYear = year,
+                PeriodMonth = month,
+                Amount = request.Amount,
+                PaidAtUtc = DateTime.UtcNow,
+                Comment = string.IsNullOrWhiteSpace(request.Comment) ? null : request.Comment.Trim()
+            });
+        }
+        else
+        {
+            existing.Amount = request.Amount ?? existing.Amount;
+            existing.PaidAtUtc = DateTime.UtcNow;
+            if (!string.IsNullOrWhiteSpace(request.Comment))
+            {
+                existing.Comment = request.Comment.Trim();
+            }
+        }
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return await GetAsync(licenseId, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<LicenseListItem?> SetActiveAsync(Guid licenseId, bool isActive, CancellationToken cancellationToken)
+    {
+        LicenseRecord? license = await _db.Licenses.FirstOrDefaultAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false);
+        if (license == null)
+        {
+            return null;
+        }
+
+        license.IsActive = isActive;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return await GetAsync(licenseId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static LicenseListItem Map(LicenseRecord license)
+    {
+        (int year, int month) = CurrentPeriodUtc();
+        LicensePayment? lastPaid = license.Payments
+            .OrderByDescending(p => p.PeriodYear)
+            .ThenByDescending(p => p.PeriodMonth)
+            .FirstOrDefault();
+
+        return new LicenseListItem
+        {
+            Id = license.Id,
+            LicenseKey = license.LicenseKey,
+            CompanyName = license.CompanyName,
+            MaxActivations = license.MaxActivations,
+            IsActive = license.IsActive,
+            ExpiresAtUtc = license.ExpiresAtUtc,
+            ActiveComputers = license.Activations.Count(a => a.IsActive),
+            CurrentMonthPaid = license.Payments.Any(p => p.PeriodYear == year && p.PeriodMonth == month),
+            PaidThroughYear = lastPaid?.PeriodYear,
+            PaidThroughMonth = lastPaid?.PeriodMonth,
+            ComputerIds = license.Activations.Where(a => a.IsActive).Select(a => a.ComputerId).ToList(),
+            Computers = license.Activations
+                .OrderByDescending(a => a.IsActive)
+                .ThenByDescending(a => a.LastSeenAtUtc)
+                .Select(a => new ComputerBindingDto
+                {
+                    ActivationId = a.Id,
+                    ComputerId = a.ComputerId,
+                    MachineName = a.MachineName,
+                    ActivatedAtUtc = a.ActivatedAtUtc,
+                    LastSeenAtUtc = a.LastSeenAtUtc
+                })
+                .ToList(),
+            Payments = license.Payments
+                .OrderByDescending(p => p.PeriodYear)
+                .ThenByDescending(p => p.PeriodMonth)
+                .Select(p => new PaymentDto
+                {
+                    Id = p.Id,
+                    Year = p.PeriodYear,
+                    Month = p.PeriodMonth,
+                    Amount = p.Amount,
+                    PaidAtUtc = p.PaidAtUtc,
+                    Comment = p.Comment
+                })
+                .ToList()
+        };
     }
 }
