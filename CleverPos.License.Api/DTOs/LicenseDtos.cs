@@ -5,6 +5,7 @@ public class ValidateLicenseRequest
     public string LicenseKey { get; set; } = string.Empty;
     public string ComputerId { get; set; } = string.Empty;
     public string? MachineName { get; set; }
+    public string? CompanyName { get; set; }
 }
 
 public class ValidateLicenseResponse

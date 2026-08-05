@@ -29,15 +29,20 @@ public class LicenseService
             return new ValidateLicenseResponse { Allowed = false, Message = "Нужны LicenseKey и ComputerId." };
         }
 
-        LicenseRecord? license = await _db.Licenses
-            .Include(x => x.Activations)
-            .Include(x => x.Payments)
-            .FirstOrDefaultAsync(x => x.LicenseKey == licenseKey, cancellationToken)
-            .ConfigureAwait(false);
+        LicenseRecord? license = await LoadByKeyAsync(licenseKey, cancellationToken).ConfigureAwait(false);
+        if (license == null)
+        {
+            license = await ProvisionFirstNightAsync(request, cancellationToken).ConfigureAwait(false);
+        }
 
         if (license == null || !license.IsActive)
         {
             return new ValidateLicenseResponse { Allowed = false, Message = "Лицензия не найдена или отключена." };
+        }
+
+        if (string.IsNullOrWhiteSpace(license.CompanyName) && !string.IsNullOrWhiteSpace(request.CompanyName))
+        {
+            license.CompanyName = request.CompanyName.Trim();
         }
 
         (int year, int month) = CurrentPeriodUtc();
@@ -154,6 +159,54 @@ public class LicenseService
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return await GetAsync(license.Id, cancellationToken).ConfigureAwait(false)
                ?? throw new InvalidOperationException("Лицензия не сохранилась.");
+    }
+
+    private async Task<LicenseRecord?> LoadByKeyAsync(string licenseKey, CancellationToken cancellationToken)
+    {
+        return await _db.Licenses
+            .Include(x => x.Activations)
+            .Include(x => x.Payments)
+            .FirstOrDefaultAsync(x => x.LicenseKey == licenseKey, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<LicenseRecord?> ProvisionFirstNightAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
+    {
+        string licenseKey = request.LicenseKey.Trim();
+        (int year, int month) = CurrentPeriodUtc();
+
+        var license = new LicenseRecord
+        {
+            LicenseKey = licenseKey,
+            CompanyName = string.IsNullOrWhiteSpace(request.CompanyName) ? null : request.CompanyName.Trim(),
+            MaxActivations = 1,
+            IsActive = true,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        _db.Licenses.Add(license);
+        _db.Payments.Add(new LicensePayment
+        {
+            LicenseId = license.Id,
+            PeriodYear = year,
+            PeriodMonth = month,
+            PaidAtUtc = DateTime.UtcNow,
+            Comment = "Автосоздание при первом запуске кассы"
+        });
+
+        try
+        {
+            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (DbUpdateException)
+        {
+            foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry in _db.ChangeTracker.Entries().ToList())
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+
+        return await LoadByKeyAsync(licenseKey, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<LicenseListItem>> ListAsync(CancellationToken cancellationToken)

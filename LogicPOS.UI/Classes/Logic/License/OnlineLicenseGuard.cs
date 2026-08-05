@@ -61,7 +61,8 @@ namespace logicpos.Classes.Logic.License
                 {
                     licenseKey = licenseKey,
                     computerId = computerId,
-                    machineName = Environment.MachineName
+                    machineName = Environment.MachineName,
+                    companyName = LicenseSettings.LicenseCompany
                 };
 
                 string json = new JavaScriptSerializer().Serialize(payload);
@@ -369,6 +370,7 @@ namespace logicpos.Classes.Logic.License
             public string licenseKey { get; set; }
             public string computerId { get; set; }
             public string machineName { get; set; }
+            public string companyName { get; set; }
         }
 
         private class ValidateResponseDto
