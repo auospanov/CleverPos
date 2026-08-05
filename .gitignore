@@ -399,3 +399,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Local secrets (License API docker-compose / remote MySQL)
+.env
+**/.env

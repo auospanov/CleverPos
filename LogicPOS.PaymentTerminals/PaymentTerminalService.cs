@@ -1,5 +1,7 @@
 using DevExpress.Xpo;
 using LogicPOS.Domain.Entities;
+using LogicPOS.PaymentTerminals.Halyk;
+using LogicPOS.PaymentTerminals.Jusan;
 using LogicPOS.PaymentTerminals.Kaspi;
 using System;
 using System.Threading;
@@ -34,7 +36,18 @@ namespace LogicPOS.PaymentTerminals
                 };
             }
 
-            if (!string.Equals(terminal.Brand, "KASPI", StringComparison.OrdinalIgnoreCase))
+            string brand = (terminal.Brand ?? string.Empty).Trim().ToUpperInvariant();
+            if (brand == "JUSAN" || brand == "JYSAN")
+            {
+                return await ChargeJusanAsync(terminal, amount, log, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (brand == "HALYK")
+            {
+                return await ChargeHalykAsync(terminal, amount, log, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (brand != "KASPI")
             {
                 return new PaymentTerminalChargeResult
                 {
@@ -46,7 +59,7 @@ namespace LogicPOS.PaymentTerminals
             try
             {
                 KaspiSmartPosClient client = CreateClient(terminal);
-                log?.Invoke(string.Format("НКТ терминал: {0}", client.BaseUrl));
+                log?.Invoke(string.Format("Kaspi терминал: {0}", client.BaseUrl));
 
                 string accessToken = await EnsureAccessTokenAsync(session, terminal, client, log, cancellationToken).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(accessToken))
@@ -120,12 +133,32 @@ namespace LogicPOS.PaymentTerminals
             }
         }
 
-        public static async Task<KaspiRegisterResult> TestConnectionAsync(
+        public static async Task<PaymentTerminalTestResult> TestConnectionAsync(
             Session session,
             sys_configurationpaymentterminal terminal,
             Action<string> log = null,
             CancellationToken cancellationToken = default)
         {
+            string brand = (terminal.Brand ?? "KASPI").Trim().ToUpperInvariant();
+            if (brand == "JUSAN" || brand == "JYSAN")
+            {
+                JusanPosClient jusan = new JusanPosClient(terminal.Host, terminal.Port);
+                log?.Invoke("Connect " + jusan.BaseUrl);
+                PaymentTerminalTestResult jusanResult = await jusan.ProbeAsync(cancellationToken).ConfigureAwait(false);
+                log?.Invoke(jusanResult.Message);
+                return jusanResult;
+            }
+
+            if (brand == "HALYK")
+            {
+                HalykPosClient halyk = new HalykPosClient(terminal.Host, terminal.Port);
+                log?.Invoke("Connect " + halyk.BaseUrl);
+                log?.Invoke("На Halyk должен быть включён «Режим кассы».");
+                PaymentTerminalTestResult halykResult = await halyk.ProbeAsync(cancellationToken).ConfigureAwait(false);
+                log?.Invoke(halykResult.Message);
+                return halykResult;
+            }
+
             KaspiSmartPosClient client = CreateClient(terminal);
             log?.Invoke($"Connect {client.BaseUrl}");
             log?.Invoke("На экране терминала подтвердите доступ кассы (если появится запрос).");
@@ -140,7 +173,78 @@ namespace LogicPOS.PaymentTerminals
                 log?.Invoke(registerResult.Message ?? "Registration failed");
             }
 
-            return registerResult;
+            return new PaymentTerminalTestResult
+            {
+                Success = registerResult.Success,
+                Message = registerResult.Message
+            };
+        }
+
+        private static async Task<PaymentTerminalChargeResult> ChargeJusanAsync(
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                JusanPosClient client = new JusanPosClient(terminal.Host, terminal.Port);
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                log?.Invoke("Jusan " + client.BaseUrl);
+                log?.Invoke(string.Format("Payment {0} -> amount={1} ₸", amount, amountTenge));
+                return await client.PurchaseAsync(amountTenge, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Cancelled,
+                    Message = "Cancelled"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+            }
+        }
+
+        private static async Task<PaymentTerminalChargeResult> ChargeHalykAsync(
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                HalykPosClient client = new HalykPosClient(terminal.Host, terminal.Port);
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                log?.Invoke("Halyk " + client.BaseUrl);
+                log?.Invoke(string.Format("Payment {0} -> amount={1} ₸", amount, amountTenge));
+                log?.Invoke("Держите терминал включённым (режим кассы), иначе API засыпает.");
+                return await client.PurchaseAsync(amountTenge, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Cancelled,
+                    Message = "Cancelled"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+            }
         }
 
         private static KaspiSmartPosClient CreateClient(sys_configurationpaymentterminal terminal)

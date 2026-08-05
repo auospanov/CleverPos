@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cleverpos-license-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      AdminApiKey: ${ADMIN_API_KEY:-dev-admin-key}
+      ConnectionStrings__DefaultConnection: ${LICENSE_DB:-Server=92.38.49.47;user id=root;password=Asd+12345678;database=cleverpos;charset=utf8;default command timeout=1200;SslMode=none;AllowPublicKeyRetrieval=True}
+    ports:
+      - "5088:8080"

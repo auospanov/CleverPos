@@ -235,6 +235,7 @@
     <Compile Include="Classes\Logic\Hardware\InputDevices\InputReader.cs" />
     <Compile Include="Classes\Logic\Hardware\OutputDevices\UsbDisplayDevice.cs" />
     <Compile Include="Classes\Logic\License\LicenseRouter.cs" />
+    <Compile Include="Classes\Logic\License\OnlineLicenseGuard.cs" />
     <Compile Include="Classes\Logic\License\LicenseUIResult.cs" />
     <Compile Include="Classes\DataLayer\DataBaseBackup.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Articles\DialogArticleType.cs" />

@@ -743,11 +743,123 @@ namespace logicpos
 
                 xpoSession.ExecuteNonQuery(
                     "UPDATE fin_configurationpaymentmethod SET Disabled = 1 WHERE Token IN ('CREDIT_CARD','DEBIT_CARD');");
+
+                EnsureExtraTerminal(
+                    xpoSession,
+                    "8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d",
+                    20,
+                    "Halyk POS",
+                    "HALYK",
+                    "192.168.1.250");
+
+                EnsureExtraTerminal(
+                    xpoSession,
+                    "9b0c1d2e-3f4a-5b6c-7d8e-9f0a1b2c3d4e",
+                    30,
+                    "Jusan POS",
+                    "JUSAN",
+                    "192.168.1.251");
+
+                EnsurePaymentMethodLinked(
+                    xpoSession,
+                    "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+                    16,
+                    "HALYK_CARD",
+                    "Halyk карта",
+                    "HC",
+                    "pos_button_label_payment_type_halyk_card",
+                    "Icons/icon_pos_payment_type_credit_card.png",
+                    "8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d",
+                    disabled: true);
+
+                EnsurePaymentMethodLinked(
+                    xpoSession,
+                    "d2e3f4a5-b6c7-4d8e-9f0a-1b2c3d4e5f60",
+                    26,
+                    "HALYK_QR",
+                    "Halyk QR",
+                    "HQ",
+                    "pos_button_label_payment_type_halyk_qr",
+                    "Icons/icon_pos_payment_type_debit_card.png",
+                    "8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d",
+                    disabled: true);
+
+                EnsurePaymentMethodLinked(
+                    xpoSession,
+                    "e3f4a5b6-c7d8-4e9f-0a1b-2c3d4e5f6071",
+                    17,
+                    "JUSAN_CARD",
+                    "Jusan карта",
+                    "JC",
+                    "pos_button_label_payment_type_jusan_card",
+                    "Icons/icon_pos_payment_type_credit_card.png",
+                    "9b0c1d2e-3f4a-5b6c-7d8e-9f0a1b2c3d4e",
+                    disabled: true);
+
+                EnsurePaymentMethodLinked(
+                    xpoSession,
+                    "f4a5b6c7-d8e9-4f0a-1b2c-3d4e5f607182",
+                    27,
+                    "JUSAN_QR",
+                    "Jusan QR",
+                    "JQ",
+                    "pos_button_label_payment_type_jusan_qr",
+                    "Icons/icon_pos_payment_type_debit_card.png",
+                    "9b0c1d2e-3f4a-5b6c-7d8e-9f0a1b2c3d4e",
+                    disabled: true);
             }
             catch (Exception ex)
             {
                 log.Error("EnsureKaspiPaymentTerminalConfig: " + ex.Message, ex);
             }
+        }
+
+        private static void EnsureExtraTerminal(
+            Session xpoSession,
+            string oid,
+            int ordCode,
+            string designation,
+            string brand,
+            string host)
+        {
+            object count = xpoSession.ExecuteScalar(
+                string.Format("SELECT COUNT(*) FROM sys_configurationpaymentterminal WHERE Oid = '{0}';", oid));
+            if (count != null && Convert.ToInt32(count) > 0)
+            {
+                return;
+            }
+
+            xpoSession.ExecuteNonQuery(string.Format(
+                "INSERT INTO sys_configurationpaymentterminal " +
+                "(Oid, Ord, Code, Designation, Brand, Host, Port, PosClientName, UseHttps, Disabled) " +
+                "VALUES ('{0}', {1}, {1}, '{2}', '{3}', '{4}', 8080, 'CleverPos-1', 0, 1);",
+                oid, ordCode, SqlLiteral(designation), brand, host));
+        }
+
+        private static void EnsurePaymentMethodLinked(
+            Session xpoSession,
+            string oid,
+            int ordCode,
+            string token,
+            string designation,
+            string acronym,
+            string resourceString,
+            string buttonIcon,
+            string terminalOid,
+            bool disabled)
+        {
+            object count = xpoSession.ExecuteScalar(
+                string.Format("SELECT COUNT(*) FROM fin_configurationpaymentmethod WHERE Oid = '{0}' OR Token = '{1}';", oid, token));
+            if (count != null && Convert.ToInt32(count) > 0)
+            {
+                return;
+            }
+
+            xpoSession.ExecuteNonQuery(string.Format(
+                "INSERT INTO fin_configurationpaymentmethod " +
+                "(Oid, Ord, Code, Token, Designation, Acronym, ResourceString, ButtonIcon, RequiresPaymentTerminal, PaymentTerminal, Disabled) " +
+                "VALUES ('{0}', {1}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', 1, '{7}', {8});",
+                oid, ordCode, token, SqlLiteral(designation), SqlLiteral(acronym), resourceString, buttonIcon, terminalOid, disabled ? 1 : 0));
         }
 
         private static void EnsureKaspiPaymentMethod(

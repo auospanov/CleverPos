@@ -3969,6 +3969,24 @@ Note: You can only open documents issued on A4 printer or Export to PDF</value>
   <data name="pos_button_label_payment_type_kaspi_qr" xml:space="preserve">
     <value>Kaspi QR</value>
   </data>
+  <data name="pos_button_label_payment_type_halyk_card" xml:space="preserve">
+    <value>Halyk card</value>
+  </data>
+  <data name="pos_button_label_payment_type_halyk_qr" xml:space="preserve">
+    <value>Halyk QR</value>
+  </data>
+  <data name="pos_button_label_payment_type_jusan_card" xml:space="preserve">
+    <value>Jusan card</value>
+  </data>
+  <data name="pos_button_label_payment_type_jusan_qr" xml:space="preserve">
+    <value>Jusan QR</value>
+  </data>
+  <data name="dialog_message_license_online_denied" xml:space="preserve">
+    <value>License is invalid or this computer is not registered. The application will close.</value>
+  </data>
+  <data name="dialog_message_license_online_unavailable" xml:space="preserve">
+    <value>License server is unavailable. Check the network and try again.</value>
+  </data>
   <data name="window_title_dialog_payment_terminal_processing" xml:space="preserve">
     <value>Payment processing</value>
   </data>

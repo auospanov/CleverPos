@@ -40,7 +40,10 @@
     <Compile Include="Kaspi\KaspiApiModels.cs" />
     <Compile Include="Kaspi\KaspiSmartPosClient.cs" />
     <Compile Include="Kaspi\KaspiTerminalDiscovery.cs" />
+    <Compile Include="Jusan\JusanPosClient.cs" />
+    <Compile Include="Halyk\HalykPosClient.cs" />
     <Compile Include="PaymentTerminalChargeResult.cs" />
+    <Compile Include="PaymentTerminalTestResult.cs" />
     <Compile Include="PaymentTerminalService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

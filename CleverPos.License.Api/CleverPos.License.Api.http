@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:5088
+@adminKey = dev-admin-key
+
+### Create license
+POST {{baseUrl}}/api/admin/licenses
+Content-Type: application/json
+X-Admin-Key: {{adminKey}}
+
+{
+  "companyName": "Local test",
+  "maxActivations": 1
+}
+
+### List licenses
+GET {{baseUrl}}/api/admin/licenses
+X-Admin-Key: {{adminKey}}
+
+### Validate
+POST {{baseUrl}}/api/licenses/validate
+Content-Type: application/json
+
+{
+  "licenseKey": "PASTE_KEY",
+  "computerId": "DEV-PC-1",
+  "machineName": "DEV-PC"
+}

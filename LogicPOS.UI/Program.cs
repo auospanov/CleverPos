@@ -83,7 +83,10 @@ namespace logicpos
                     return;
                 }
 
-              
+                if (!OnlineLicenseGuard.EnsureAllowed())
+                {
+                    return;
+                }
 
                 StartApp();
             }

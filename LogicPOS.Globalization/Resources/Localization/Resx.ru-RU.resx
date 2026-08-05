@@ -3983,6 +3983,24 @@ Show this message next time?</value>
   <data name="pos_button_label_payment_type_kaspi_qr" xml:space="preserve">
     <value>Kaspi QR</value>
   </data>
+  <data name="pos_button_label_payment_type_halyk_card" xml:space="preserve">
+    <value>Halyk карта</value>
+  </data>
+  <data name="pos_button_label_payment_type_halyk_qr" xml:space="preserve">
+    <value>Halyk QR</value>
+  </data>
+  <data name="pos_button_label_payment_type_jusan_card" xml:space="preserve">
+    <value>Jusan карта</value>
+  </data>
+  <data name="pos_button_label_payment_type_jusan_qr" xml:space="preserve">
+    <value>Jusan QR</value>
+  </data>
+  <data name="dialog_message_license_online_denied" xml:space="preserve">
+    <value>Лицензия недействительна или этот компьютер не зарегистрирован. Приложение будет закрыто.</value>
+  </data>
+  <data name="dialog_message_license_online_unavailable" xml:space="preserve">
+    <value>Сервер лицензий недоступен. Проверьте сеть и повторите запуск.</value>
+  </data>
   <data name="window_title_dialog_payment_terminal_processing" xml:space="preserve">
     <value>Обработка платежа</value>
   </data>
