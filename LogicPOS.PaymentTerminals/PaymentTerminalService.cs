@@ -58,10 +58,10 @@ namespace LogicPOS.PaymentTerminals
                     };
                 }
 
-                int amountTiyn = KaspiSmartPosClient.ConvertAmountToTiyn(amount);
-                log?.Invoke($"Payment {amount} -> amount={amountTiyn}");
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                log?.Invoke($"Payment {amount} -> amount={amountTenge} ₸");
 
-                KaspiPaymentStatusResult started = await client.StartPaymentAsync(accessToken, amountTiyn, ownCheque: true, cancellationToken).ConfigureAwait(false);
+                KaspiPaymentStatusResult started = await client.StartPaymentAsync(accessToken, amountTenge, ownCheque: true, cancellationToken).ConfigureAwait(false);
                 if (!started.Success || string.IsNullOrWhiteSpace(started.ProcessId))
                 {
                     return new PaymentTerminalChargeResult

@@ -129,9 +129,9 @@ namespace LogicPOS.PaymentTerminals.Kaspi
             }
         }
 
-        public async Task<KaspiPaymentStatusResult> StartPaymentAsync(string accessToken, int amountTiyn, bool ownCheque, CancellationToken cancellationToken = default)
+        public async Task<KaspiPaymentStatusResult> StartPaymentAsync(string accessToken, int amountTenge, bool ownCheque, CancellationToken cancellationToken = default)
         {
-            string url = $"{_baseUrl}/v2/payment?amount={amountTiyn}&owncheque={ownCheque.ToString().ToLowerInvariant()}";
+            string url = $"{_baseUrl}/v2/payment?amount={amountTenge}&owncheque={ownCheque.ToString().ToLowerInvariant()}";
             string body = await SendAsync(HttpMethod.Get, url, accessToken, cancellationToken).ConfigureAwait(false);
             return ParseStatusResponse(body);
         }
@@ -308,9 +308,10 @@ namespace LogicPOS.PaymentTerminals.Kaspi
             return null;
         }
 
-        public static int ConvertAmountToTiyn(decimal amount)
+        // Kaspi Smart POS: amount is whole tenge, tiyn is not supported.
+        public static int ConvertAmountToTenge(decimal amount)
         {
-            return (int)Math.Round(amount * 100m, MidpointRounding.AwayFromZero);
+            return (int)Math.Round(amount, MidpointRounding.AwayFromZero);
         }
 
         private static string FormatRequestError(string url, Exception ex)
