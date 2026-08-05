@@ -35,4 +35,12 @@ docker compose up --build
 - отметить оплату за месяц / любой период;
 - включить / выключить лицензию.
 
-Ключ лицензии пропишите в `LogicPOS.UI/App.config` → `licenseKey`.
+В `LogicPOS.UI/App.config`:
+
+- `licenseApiEnvironment` = `local` (сейчас) или `production` (когда сервис будет в интернете)
+- `licenseApiLocalUrl` = `http://localhost:5088`
+- `licenseApiProductionUrl` = публичный URL API
+
+Ключ онлайн-проверки **не** задаётся в `App.config`. Касса читает `licence.lic` и отправляет расшифрованный `HardwareId` как `licenseKey`. В админке создавайте лицензию с тем же ключом (HardwareId из генератора / `licence.lic`) и отметьте оплату текущего месяца.
+
+`POST /api/licenses/validate` всегда отвечает `200` и `{ "allowed": true|false, "message": "..." }`. Отказ лицензии — это `allowed: false`, не HTTP 403.

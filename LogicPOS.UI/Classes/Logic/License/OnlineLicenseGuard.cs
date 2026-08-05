@@ -1,4 +1,5 @@
 using Gtk;
+using logicpos.App;
 using LogicPOS.Globalization;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
@@ -22,15 +23,19 @@ namespace logicpos.Classes.Logic.License
                 return true;
             }
 
-            string baseUrl = (ReadSetting("licenseApiBaseUrl") ?? string.Empty).Trim().TrimEnd('/');
-            string licenseKey = (ReadSetting("licenseKey") ?? string.Empty).Trim();
+            string baseUrl = ResolveLicenseApiBaseUrl();
+            string licenseKey = ResolveLicenseKeyFromLicenceFile();
             if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(licenseKey))
             {
-                _logger.Error("Online license check is enabled but licenseApiBaseUrl or licenseKey is empty.");
+                _logger.Error("Online license check is enabled but license API URL is empty or licence.lic has no key. environment="
+                    + (ReadSetting("licenseApiEnvironment") ?? string.Empty)
+                    + " licenceFile=" + ResolveLicenceFilePath());
                 ShowDenied(GetResource("dialog_message_license_online_denied",
                     "License is invalid or this computer is not registered. The application will close."));
                 return false;
             }
+
+            _logger.Info("Online license check via " + baseUrl + " licenseKey=" + licenseKey);
 
             string computerId = ResolveComputerId();
             if (string.IsNullOrWhiteSpace(computerId))
@@ -85,8 +90,7 @@ namespace logicpos.Classes.Logic.License
                     }
 
                     _logger.Warn("Online license check denied: " + responseBody);
-                    ShowDenied(GetResource("dialog_message_license_online_denied",
-                        "License is invalid or this computer is not registered. The application will close."));
+                    ShowDeniedFromApi(responseBody);
                     return false;
                 }
             }
@@ -108,8 +112,7 @@ namespace logicpos.Classes.Logic.License
                     }
 
                     _logger.Warn("Online license check HTTP " + (int)errorResponse.StatusCode + ": " + responseBody);
-                    ShowDenied(GetResource("dialog_message_license_online_denied",
-                        "License is invalid or this computer is not registered. The application will close."));
+                    ShowDeniedFromApi(responseBody);
                     return false;
                 }
 
@@ -125,6 +128,41 @@ namespace logicpos.Classes.Logic.License
                     "License server is unavailable. Check the network and try again."));
                 return false;
             }
+        }
+
+        private static void ShowDeniedFromApi(string responseBody)
+        {
+            string apiMessage = TryReadApiMessage(responseBody);
+            if (!string.IsNullOrWhiteSpace(apiMessage))
+            {
+                ShowDenied(apiMessage);
+                return;
+            }
+
+            ShowDenied(GetResource("dialog_message_license_online_denied",
+                "License is invalid or this computer is not registered. The application will close."));
+        }
+
+        private static string TryReadApiMessage(string responseBody)
+        {
+            if (string.IsNullOrWhiteSpace(responseBody))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                ValidateResponseDto dto = new JavaScriptSerializer().Deserialize<ValidateResponseDto>(responseBody);
+                if (dto != null && !string.IsNullOrWhiteSpace(dto.message))
+                {
+                    return dto.message.Trim();
+                }
+            }
+            catch
+            {
+            }
+
+            return string.Empty;
         }
 
         private static bool IsAllowed(string responseBody)
@@ -173,12 +211,100 @@ namespace logicpos.Classes.Logic.License
                 _logger.Warn("GetHardwareID failed: " + ex.Message);
             }
 
+            return Environment.MachineName;
+        }
+
+        private static string ResolveLicenseKeyFromLicenceFile()
+        {
+            string licencePath = ResolveLicenceFilePath();
+            if (!File.Exists(licencePath))
+            {
+                _logger.Error("Online license check: licence.lic not found at " + licencePath);
+                return string.Empty;
+            }
+
+            try
+            {
+                logicpos.Utils.AssignLicence(licencePath, false);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Online license check: failed to load licence.lic. " + ex.Message, ex);
+                return string.Empty;
+            }
+
             if (!string.IsNullOrWhiteSpace(LicenseSettings.LicenseHardwareId))
             {
                 return LicenseSettings.LicenseHardwareId.Trim();
             }
 
-            return Environment.MachineName;
+            _logger.Error("Online license check: licence.lic loaded but HardwareId is empty.");
+            return string.Empty;
+        }
+
+        private static string ResolveLicenceFilePath()
+        {
+            string fileName = POSSettings.LicenceFileName;
+            var candidates = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrWhiteSpace(fileName))
+            {
+                candidates.Add(fileName);
+            }
+
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (!string.IsNullOrWhiteSpace(baseDir))
+            {
+                DirectoryInfo dir = new DirectoryInfo(baseDir);
+                for (int i = 0; i < 5 && dir != null; i++)
+                {
+                    candidates.Add(Path.Combine(dir.FullName, fileName));
+                    dir = dir.Parent;
+                }
+            }
+
+            foreach (string candidate in candidates)
+            {
+                try
+                {
+                    if (File.Exists(candidate))
+                    {
+                        return Path.GetFullPath(candidate);
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            return fileName;
+        }
+
+        private static string ResolveLicenseApiBaseUrl()
+        {
+            string environment = (ReadSetting("licenseApiEnvironment") ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(environment))
+            {
+                environment = "local";
+            }
+
+            string configuredUrl;
+            if (string.Equals(environment, "production", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(environment, "global", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(environment, "prod", StringComparison.OrdinalIgnoreCase))
+            {
+                configuredUrl = ReadSetting("licenseApiProductionUrl");
+            }
+            else
+            {
+                configuredUrl = ReadSetting("licenseApiLocalUrl");
+            }
+
+            if (string.IsNullOrWhiteSpace(configuredUrl))
+            {
+                configuredUrl = ReadSetting("licenseApiBaseUrl");
+            }
+
+            return (configuredUrl ?? string.Empty).Trim().TrimEnd('/');
         }
 
         private static string ReadSetting(string key)

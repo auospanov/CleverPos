@@ -100,7 +100,7 @@ Open source Point of Sale Solution
 
 ## Kazakhstan (ru-RU + KZ)
 
-Online license API (uses existing MySQL `cleverpos` on 92.38.49.47): see `CleverPos.License.Api/README.md`. Enable in `App.config` via `licenseApiEnabled`, `licenseApiBaseUrl`, `licenseKey`.
+Online license API (uses existing MySQL `cleverpos` on 92.38.49.47): see `CleverPos.License.Api/README.md`. Enable in `App.config` via `licenseApiEnabled`, `licenseApiEnvironment` (`local` / `production`), `licenseApiLocalUrl`, `licenseApiProductionUrl`. The license key is taken from `licence.lic` (HardwareId), not from App.config.
 
 Runtime settings are in `LogicPOS.UI/App.config`:
 

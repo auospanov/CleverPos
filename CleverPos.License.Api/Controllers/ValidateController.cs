@@ -1,10 +1,12 @@
 using CleverPos.License.Api.DTOs;
 using CleverPos.License.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleverPos.License.Api.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/licenses")]
 public class ValidateController : ControllerBase
 {
@@ -20,12 +22,8 @@ public class ValidateController : ControllerBase
         [FromBody] ValidateLicenseRequest request,
         CancellationToken cancellationToken)
     {
-        ValidateLicenseResponse result = await _licenses.ValidateAsync(request, cancellationToken).ConfigureAwait(false);
-        if (!result.Allowed)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, result);
-        }
-
+        ValidateLicenseResponse result = await _licenses.ValidateAsync(request ?? new ValidateLicenseRequest(), cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 }

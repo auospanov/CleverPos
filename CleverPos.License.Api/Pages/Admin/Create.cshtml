@@ -16,8 +16,8 @@
             <input id="CompanyName" asp-for="CompanyName" />
         </div>
         <div class="full">
-            <label for="LicenseKey">Ключ (пусто = сгенерировать)</label>
-            <input id="LicenseKey" asp-for="LicenseKey" />
+            <label for="LicenseKey">Ключ = HardwareId из licence.lic / генератора (пусто = сгенерировать новый)</label>
+            <input id="LicenseKey" asp-for="LicenseKey" placeholder="Вставьте HardwareId из файла лицензии" />
         </div>
         <div>
             <label for="FirstMonthAmount">Сумма за первый месяц</label>
