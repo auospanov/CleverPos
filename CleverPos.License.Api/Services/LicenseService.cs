@@ -26,7 +26,13 @@ public class LicenseService
         string computerId = (request.ComputerId ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(licenseKey) || string.IsNullOrWhiteSpace(computerId))
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "Нужны LicenseKey и ComputerId." };
+            return await FinishValidateAsync(
+                request,
+                licenseId: null,
+                allowed: false,
+                message: "Нужны LicenseKey и ComputerId.",
+                currentMonthPaid: false,
+                cancellationToken).ConfigureAwait(false);
         }
 
         LicenseRecord? license = await LoadByKeyAsync(licenseKey, cancellationToken).ConfigureAwait(false);
@@ -37,7 +43,13 @@ public class LicenseService
 
         if (license == null || !license.IsActive)
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "Лицензия не найдена или отключена." };
+            return await FinishValidateAsync(
+                request,
+                license?.Id,
+                allowed: false,
+                message: "Лицензия не найдена или отключена.",
+                currentMonthPaid: false,
+                cancellationToken).ConfigureAwait(false);
         }
 
         if (string.IsNullOrWhiteSpace(license.CompanyName) && !string.IsNullOrWhiteSpace(request.CompanyName))
@@ -49,12 +61,13 @@ public class LicenseService
         bool currentMonthPaid = license.Payments.Any(p => p.PeriodYear == year && p.PeriodMonth == month);
         if (!currentMonthPaid)
         {
-            return new ValidateLicenseResponse
-            {
-                Allowed = false,
-                Message = "Оплата за текущий месяц не поступила.",
-                CurrentMonthPaid = false
-            };
+            return await FinishValidateAsync(
+                request,
+                license.Id,
+                allowed: false,
+                message: "Оплата за текущий месяц не поступила.",
+                currentMonthPaid: false,
+                cancellationToken).ConfigureAwait(false);
         }
 
         LicenseActivation? existing = license.Activations
@@ -69,25 +82,31 @@ public class LicenseService
                 existing.MachineName = request.MachineName.Trim();
             }
 
-            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return new ValidateLicenseResponse
-            {
-                Allowed = true,
-                Message = "OK",
-                CurrentMonthPaid = true
-            };
+            return await FinishValidateAsync(
+                request,
+                license.Id,
+                allowed: true,
+                message: "OK",
+                currentMonthPaid: true,
+                cancellationToken).ConfigureAwait(false);
         }
 
         int activeCount = license.Activations.Count(x => x.IsActive);
         int maxActivations = Math.Max(1, license.MaxActivations);
         if (activeCount >= maxActivations)
         {
-            return new ValidateLicenseResponse
-            {
-                Allowed = false,
-                Message = "Лицензия уже привязана к другому компьютеру.",
-                CurrentMonthPaid = true
-            };
+            string bound = license.Activations
+                .Where(x => x.IsActive)
+                .Select(x => string.IsNullOrWhiteSpace(x.MachineName) ? x.ComputerId : x.MachineName + " / " + x.ComputerId)
+                .FirstOrDefault() ?? "другой компьютер";
+
+            return await FinishValidateAsync(
+                request,
+                license.Id,
+                allowed: false,
+                message: "Лицензия уже привязана к другому компьютеру (" + bound + "). В админке нажмите «Разрешить другой ПК».",
+                currentMonthPaid: true,
+                cancellationToken).ConfigureAwait(false);
         }
 
         _db.Activations.Add(new LicenseActivation
@@ -100,12 +119,43 @@ public class LicenseService
             IsActive = true
         });
 
+        return await FinishValidateAsync(
+            request,
+            license.Id,
+            allowed: true,
+            message: "Компьютер зарегистрирован.",
+            currentMonthPaid: true,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<ValidateLicenseResponse> FinishValidateAsync(
+        ValidateLicenseRequest request,
+        Guid? licenseId,
+        bool allowed,
+        string message,
+        bool currentMonthPaid,
+        CancellationToken cancellationToken)
+    {
+        _db.AccessLogs.Add(new LicenseAccessLog
+        {
+            LicenseId = licenseId,
+            LicenseKey = (request.LicenseKey ?? string.Empty).Trim(),
+            ComputerId = (request.ComputerId ?? string.Empty).Trim(),
+            MachineName = string.IsNullOrWhiteSpace(request.MachineName) ? null : request.MachineName.Trim(),
+            CompanyName = string.IsNullOrWhiteSpace(request.CompanyName) ? null : request.CompanyName.Trim(),
+            Allowed = allowed,
+            Message = message,
+            ClientIp = string.IsNullOrWhiteSpace(request.ClientIp) ? null : request.ClientIp.Trim(),
+            Source = "validate",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new ValidateLicenseResponse
         {
-            Allowed = true,
-            Message = "Компьютер зарегистрирован.",
-            CurrentMonthPaid = true
+            Allowed = allowed,
+            Message = message,
+            CurrentMonthPaid = currentMonthPaid
         };
     }
 
@@ -236,19 +286,85 @@ public class LicenseService
 
     public async Task<bool> ClearComputerAsync(Guid licenseId, CancellationToken cancellationToken)
     {
-        List<LicenseActivation> activations = await _db.Activations
-            .Where(x => x.LicenseId == licenseId)
+        LicenseRecord? license = await _db.Licenses
+            .Include(x => x.Activations)
+            .FirstOrDefaultAsync(x => x.Id == licenseId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (license == null)
+        {
+            return false;
+        }
+
+        string previous = string.Join("; ",
+            license.Activations
+                .Where(x => x.IsActive)
+                .Select(x => string.IsNullOrWhiteSpace(x.MachineName)
+                    ? x.ComputerId
+                    : x.MachineName + " / " + x.ComputerId));
+
+        if (license.Activations.Count > 0)
+        {
+            _db.Activations.RemoveRange(license.Activations);
+        }
+
+        _db.AccessLogs.Add(new LicenseAccessLog
+        {
+            LicenseId = license.Id,
+            LicenseKey = license.LicenseKey,
+            ComputerId = previous,
+            MachineName = null,
+            CompanyName = license.CompanyName,
+            Allowed = true,
+            Message = string.IsNullOrWhiteSpace(previous)
+                ? "Админ: привязка ПК очищена (ожидание нового компьютера)."
+                : "Админ: отвязан ПК [" + previous + "]. Следующий запуск кассы сможет привязаться.",
+            Source = "admin-transfer",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
+    }
+
+    public async Task<IReadOnlyList<AccessLogItem>> ListAccessLogsAsync(
+        Guid? licenseId,
+        int take,
+        CancellationToken cancellationToken)
+    {
+        if (take <= 0)
+        {
+            take = 200;
+        }
+
+        take = Math.Min(take, 1000);
+
+        IQueryable<LicenseAccessLog> query = _db.AccessLogs.AsNoTracking();
+        if (licenseId.HasValue)
+        {
+            query = query.Where(x => x.LicenseId == licenseId.Value);
+        }
+
+        List<LicenseAccessLog> rows = await query
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Take(take)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        if (activations.Count == 0)
+        return rows.Select(x => new AccessLogItem
         {
-            return await _db.Licenses.AnyAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false);
-        }
-
-        _db.Activations.RemoveRange(activations);
-        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        return true;
+            Id = x.Id,
+            LicenseId = x.LicenseId,
+            LicenseKey = x.LicenseKey,
+            CompanyName = x.CompanyName,
+            ComputerId = x.ComputerId,
+            MachineName = x.MachineName,
+            Allowed = x.Allowed,
+            Message = x.Message,
+            ClientIp = x.ClientIp,
+            Source = x.Source,
+            CreatedAtUtc = x.CreatedAtUtc
+        }).ToList();
     }
 
     public async Task<LicenseListItem?> MarkPaidAsync(Guid licenseId, MarkPaymentRequest request, CancellationToken cancellationToken)

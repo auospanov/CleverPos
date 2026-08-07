@@ -15,6 +15,7 @@
             {
                 <nav>
                     <a href="/admin" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Index" ? "active" : null)">Все лицензии</a>
+                    <a href="/admin/access-log" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/AccessLog" ? "active" : null)">Журнал входов</a>
                     <a href="/admin/create" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Create" ? "active" : null)">Новая лицензия</a>
                     <a href="/swagger" target="_blank">Swagger API</a>
                 </nav>

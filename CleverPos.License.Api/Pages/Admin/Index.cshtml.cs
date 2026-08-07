@@ -25,7 +25,7 @@ public class IndexModel : PageModel
     {
         bool ok = await _licenses.ClearComputerAsync(id, cancellationToken).ConfigureAwait(false);
         TempData[ok ? "Ok" : "Error"] = ok
-            ? "Идентификатор компьютера очищен. Следующий запрос кассы привяжет новый ПК."
+            ? "Старый ПК отвязан. Запустите кассу на новом компьютере — она привяжется сама."
             : "Лицензия не найдена.";
         return RedirectToPage();
     }

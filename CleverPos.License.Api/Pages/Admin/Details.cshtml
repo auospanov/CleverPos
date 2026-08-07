@@ -11,20 +11,25 @@
     </div>
     <div class="row-actions">
         <form method="post" asp-page-handler="ClearComputer" asp-route-id="@license.Id">
-            <button class="btn secondary" type="submit" onclick="return confirm('Очистить компьютер?');">Очистить ПК</button>
+            <button class="btn" type="submit"
+                    onclick="return confirm('Отвязать текущий ПК? После этого следующий запуск кассы на новом компьютере привяжется к лицензии.');">
+                Разрешить другой ПК
+            </button>
         </form>
         <form method="post" asp-page-handler="Toggle" asp-route-id="@license.Id" asp-route-isActive="@(!license.IsActive)">
             <button class="btn @(license.IsActive ? "danger" : "secondary")" type="submit">@(license.IsActive ? "Выключить" : "Включить")</button>
         </form>
+        <a class="btn ghost" href="/admin/access-log?licenseId=@license.Id">Журнал</a>
         <a class="btn ghost" href="/admin">Назад</a>
     </div>
 </div>
 
 <div class="card" style="margin-bottom:16px">
     <h2 style="margin-top:0">Компьютер</h2>
+    <p class="sub">По звонку клиента: нажмите «Разрешить другой ПК», чтобы отключить старый компьютер. Новый ПК при старте кассы сам привяжется.</p>
     @if (license.Computers.Count == 0)
     {
-        <p>Ещё не привязан. Первый успешный запрос кассы запишет идентификатор.</p>
+        <p><span class="badge warn">не привязан</span> — следующий успешный вход кассы запишет идентификатор.</p>
     }
     else
     {
@@ -45,6 +50,47 @@
             </tbody>
         </table>
     }
+</div>
+
+<div class="card" style="margin-bottom:16px">
+    <h2 style="margin-top:0">Последние входы</h2>
+    <table>
+        <thead>
+            <tr><th>Время UTC</th><th>Результат</th><th>Компьютер</th><th>Сообщение</th><th>IP</th></tr>
+        </thead>
+        <tbody>
+        @if (Model.AccessLogs.Count == 0)
+        {
+            <tr><td colspan="5">Пока нет записей.</td></tr>
+        }
+        @foreach (var row in Model.AccessLogs)
+        {
+            <tr>
+                <td>@row.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>
+                    @if (row.Source == "admin-transfer")
+                    {
+                        <span class="badge warn">перенос</span>
+                    }
+                    else if (row.Allowed)
+                    {
+                        <span class="badge ok">вход</span>
+                    }
+                    else
+                    {
+                        <span class="badge err">отказ</span>
+                    }
+                </td>
+                <td>
+                    <div class="mono">@row.ComputerId</div>
+                    <div>@(row.MachineName ?? "—")</div>
+                </td>
+                <td>@row.Message</td>
+                <td class="mono">@(row.ClientIp ?? "—")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
 </div>
 
 <div class="card" style="margin-bottom:16px">

@@ -6,9 +6,12 @@
 <div class="topbar">
     <div>
         <h1>Лицензии</h1>
-        <div class="sub">Первый запрос кассы сажает компьютер. Другой ПК — отказ, пока не очистите идентификатор. Без оплаты за месяц касса не запустится.</div>
+        <div class="sub">Первый запрос кассы сажает компьютер. Перенос на другой ПК — кнопка «Разрешить другой ПК». Все входы пишутся в журнал.</div>
     </div>
-    <a class="btn" href="/admin/create">Новая лицензия</a>
+    <div class="row-actions">
+        <a class="btn ghost" href="/admin/access-log">Журнал входов</a>
+        <a class="btn" href="/admin/create">Новая лицензия</a>
+    </div>
 </div>
 <div class="card">
     <table>
@@ -76,7 +79,7 @@
                     <div class="row-actions">
                         <a class="btn ghost" href="/admin/details/@license.Id">Открыть</a>
                         <form method="post" asp-page-handler="ClearComputer" asp-route-id="@license.Id">
-                            <button class="btn secondary" type="submit" onclick="return confirm('Очистить компьютер? Новый ПК сможет привязаться.');">Очистить ПК</button>
+                            <button class="btn secondary" type="submit" onclick="return confirm('Отвязать текущий ПК? Новый компьютер сможет привязаться при следующем запуске кассы.');">Разрешить другой ПК</button>
                         </form>
                         <form method="post" asp-page-handler="PayCurrentMonth" asp-route-id="@license.Id">
                             <button class="btn" type="submit">Оплатить месяц</button>

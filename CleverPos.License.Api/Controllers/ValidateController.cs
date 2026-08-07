@@ -22,8 +22,9 @@ public class ValidateController : ControllerBase
         [FromBody] ValidateLicenseRequest request,
         CancellationToken cancellationToken)
     {
-        ValidateLicenseResponse result = await _licenses.ValidateAsync(request ?? new ValidateLicenseRequest(), cancellationToken)
-            .ConfigureAwait(false);
+        ValidateLicenseRequest payload = request ?? new ValidateLicenseRequest();
+        payload.ClientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        ValidateLicenseResponse result = await _licenses.ValidateAsync(payload, cancellationToken).ConfigureAwait(false);
         return Ok(result);
     }
 }
