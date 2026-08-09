@@ -169,6 +169,7 @@ namespace LogicPOS.Shared
                 string jsonfileContents = File.ReadAllText(jsonFileLocation);
                 appSession = JsonConvert.DeserializeObject<POSSession>(jsonfileContents);
                 appSession.JsonFileLocation = jsonFileLocation;
+                appSession.RepairCurrentOrderMainId();
             }
             else
             {
@@ -177,6 +178,44 @@ namespace LogicPOS.Shared
             }
 
             return appSession;
+        }
+
+        /// <summary>
+        /// After load/deserialize: CurrentOrderMainId may point to a removed order → KeyNotFoundException on UI actions.
+        /// </summary>
+        public void RepairCurrentOrderMainId()
+        {
+            if (OrderMains == null)
+            {
+                OrderMains = new Dictionary<Guid, OrderMain>();
+            }
+
+            if (LoggedUsers == null)
+            {
+                LoggedUsers = new Dictionary<Guid, DateTime>();
+            }
+
+            if (CurrentOrderMainId == Guid.Empty || OrderMains.ContainsKey(CurrentOrderMainId))
+            {
+                return;
+            }
+
+            Guid fallback = Guid.Empty;
+            foreach (KeyValuePair<Guid, OrderMain> pair in OrderMains)
+            {
+                if (pair.Value != null && pair.Value.OrderStatus == OrderStatus.Open)
+                {
+                    fallback = pair.Key;
+                    break;
+                }
+
+                if (fallback == Guid.Empty)
+                {
+                    fallback = pair.Key;
+                }
+            }
+
+            CurrentOrderMainId = fallback;
         }
         public static POSSession CurrentSession { get; set; }
         public static bool HasCurrentSession => CurrentSession != null;

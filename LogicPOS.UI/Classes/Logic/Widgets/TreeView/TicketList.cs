@@ -501,7 +501,11 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
         {
             try
             {
-                OrderMain currentOrderMain = POSSession.CurrentSession.OrderMains[POSSession.CurrentSession.CurrentOrderMainId];
+                if (!TryGetCurrentOrderMain(out OrderMain currentOrderMain))
+                {
+                    return;
+                }
+
                 PosOrdersDialog dialog = new PosOrdersDialog(this.SourceWindow, DialogFlags.DestroyWithParent, currentOrderMain.Table.Name);
                 ResponseType response = (ResponseType)dialog.Run();
                 dialog.Destroy();
@@ -522,7 +526,11 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
             {
                 if (response == ResponseType.Ok)
                 {
-                    OrderMain currentOrderMain = POSSession.CurrentSession.OrderMains[POSSession.CurrentSession.CurrentOrderMainId];
+                    if (!TryGetCurrentOrderMain(out OrderMain currentOrderMain))
+                    {
+                        return;
+                    }
+
                     pos_configurationplacetable xOldTable = XPOUtility.GetEntityById<pos_configurationplacetable>(currentOrderMain.Table.Oid);
                     pos_configurationplacetable xNewTable = XPOUtility.GetEntityById<pos_configurationplacetable>(dialog.CurrentTableOid);
                     //Require to Prevent A first chance exception of type 'DevExpress.Xpo.DB.Exceptions.LockingException' occurred in DevExpress.Xpo.v13.2.dll when it is Changed in Diferent Session ex UnitOfWork
@@ -654,6 +662,36 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //Helper Methods
+
+        private bool TryGetCurrentOrderMain(out OrderMain currentOrderMain)
+        {
+            currentOrderMain = null;
+
+            if (!POSSession.HasCurrentSession)
+            {
+                return false;
+            }
+
+            POSSession.CurrentSession.RepairCurrentOrderMainId();
+
+            Guid orderMainId = POSSession.CurrentSession.CurrentOrderMainId;
+            if (orderMainId == Guid.Empty
+                || POSSession.CurrentSession.OrderMains == null
+                || !POSSession.CurrentSession.OrderMains.ContainsKey(orderMainId))
+            {
+                logicpos.Utils.ShowMessageTouch(
+                    SourceWindow,
+                    DialogFlags.Modal,
+                    MessageType.Warning,
+                    ButtonsType.Ok,
+                    GeneralUtils.GetResourceByName("global_warning"),
+                    GeneralUtils.GetResourceByName("status_message_select_order_or_table_appmode_default"));
+                return false;
+            }
+
+            currentOrderMain = POSSession.CurrentSession.OrderMains[orderMainId];
+            return true;
+        }
 
         /// <summary>
         /// Helper method to get VatExemptionReason
