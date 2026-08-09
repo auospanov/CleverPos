@@ -8,5 +8,8 @@
     <RootNamespace>LicenseGenerator</RootNamespace>
   </PropertyGroup>
 
-</Project>
+  <ItemGroup>
+    <ProjectReference Include="..\CleverPos.License.Core\CleverPos.License.Core.csproj" />
+  </ItemGroup>
 
+</Project>

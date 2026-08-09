@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>CleverPos.License.Core</RootNamespace>
+    <AssemblyName>CleverPos.License.Core</AssemblyName>
+    <Description>Shared licence.lic signing, verification and monthly renewal helpers for CleverPos.</Description>
+  </PropertyGroup>
+
+</Project>

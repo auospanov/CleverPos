@@ -1,43 +1,42 @@
 using CleverPos.License.Api.Data;
 using CleverPos.License.Api.DTOs;
 using CleverPos.License.Api.Models;
+using CleverPos.License.Api.Options;
+using CleverPos.License.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CleverPos.License.Api.Services;
 
 public class LicenseService
 {
     private readonly LicenseDbContext _db;
+    private readonly LicenseSigningOptions _signing;
 
-    public LicenseService(LicenseDbContext db)
+    public LicenseService(LicenseDbContext db, IOptions<LicenseSigningOptions> signing)
     {
         _db = db;
+        _signing = signing.Value;
     }
 
-    public static (int Year, int Month) CurrentPeriodUtc()
-    {
-        DateTime now = DateTime.UtcNow;
-        return (now.Year, now.Month);
-    }
+    public static (int Year, int Month) CurrentPeriodUtc() => LicensePeriod.CurrentUtc();
 
-    public async Task<ValidateLicenseResponse> ValidateAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
+    public Task<ValidateLicenseResponse> ValidateAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
+        => RenewAsync(request, cancellationToken);
+
+    public async Task<ValidateLicenseResponse> RenewAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
     {
         string licenseKey = (request.LicenseKey ?? string.Empty).Trim();
         string computerId = (request.ComputerId ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(licenseKey) || string.IsNullOrWhiteSpace(computerId))
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "Нужны LicenseKey и ComputerId." };
+            return Deny("Нужны LicenseKey и ComputerId.");
         }
 
         LicenseRecord? license = await LoadByKeyAsync(licenseKey, cancellationToken).ConfigureAwait(false);
-        if (license == null)
-        {
-            license = await ProvisionFirstNightAsync(request, cancellationToken).ConfigureAwait(false);
-        }
-
         if (license == null || !license.IsActive)
         {
-            return new ValidateLicenseResponse { Allowed = false, Message = "Лицензия не найдена или отключена." };
+            return Deny("Лицензия не найдена или отключена.");
         }
 
         if (string.IsNullOrWhiteSpace(license.CompanyName) && !string.IsNullOrWhiteSpace(request.CompanyName))
@@ -49,18 +48,33 @@ public class LicenseService
         bool currentMonthPaid = license.Payments.Any(p => p.PeriodYear == year && p.PeriodMonth == month);
         if (!currentMonthPaid)
         {
-            return new ValidateLicenseResponse
-            {
-                Allowed = false,
-                Message = "Оплата за текущий месяц не поступила.",
-                CurrentMonthPaid = false
-            };
+            return Deny("Оплата за текущий месяц не поступила.", currentMonthPaid: false);
         }
 
         LicenseActivation? existing = license.Activations
             .FirstOrDefault(x => string.Equals(x.ComputerId, computerId, StringComparison.OrdinalIgnoreCase));
 
-        if (existing != null)
+        if (existing == null)
+        {
+            int activeCount = license.Activations.Count(x => x.IsActive);
+            int maxActivations = Math.Max(1, license.MaxActivations);
+            if (activeCount >= maxActivations)
+            {
+                return Deny("Лицензия уже привязана к другому компьютеру.", currentMonthPaid: true);
+            }
+
+            existing = new LicenseActivation
+            {
+                LicenseId = license.Id,
+                ComputerId = computerId,
+                MachineName = string.IsNullOrWhiteSpace(request.MachineName) ? null : request.MachineName.Trim(),
+                ActivatedAtUtc = DateTime.UtcNow,
+                LastSeenAtUtc = DateTime.UtcNow,
+                IsActive = true
+            };
+            _db.Activations.Add(existing);
+        }
+        else
         {
             existing.IsActive = true;
             existing.LastSeenAtUtc = DateTime.UtcNow;
@@ -68,45 +82,70 @@ public class LicenseService
             {
                 existing.MachineName = request.MachineName.Trim();
             }
-
-            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return new ValidateLicenseResponse
-            {
-                Allowed = true,
-                Message = "OK",
-                CurrentMonthPaid = true
-            };
         }
 
-        int activeCount = license.Activations.Count(x => x.IsActive);
-        int maxActivations = Math.Max(1, license.MaxActivations);
-        if (activeCount >= maxActivations)
+        DateTime validUntil = LicensePeriod.ValidUntilExclusiveUtc(year, month);
+        var payload = new LicensePayload
         {
-            return new ValidateLicenseResponse
-            {
-                Allowed = false,
-                Message = "Лицензия уже привязана к другому компьютеру.",
-                CurrentMonthPaid = true
-            };
-        }
+            LicenseKey = license.LicenseKey,
+            HardwareId = computerId,
+            Company = license.CompanyName ?? request.CompanyName ?? string.Empty,
+            Reseller = "CleverPos",
+            IssuedAtUtc = DateTime.UtcNow,
+            ValidUntilUtc = validUntil
+        };
 
-        _db.Activations.Add(new LicenseActivation
-        {
-            LicenseId = license.Id,
-            ComputerId = computerId,
-            MachineName = string.IsNullOrWhiteSpace(request.MachineName) ? null : request.MachineName.Trim(),
-            ActivatedAtUtc = DateTime.UtcNow,
-            LastSeenAtUtc = DateTime.UtcNow,
-            IsActive = true
-        });
-
+        string licenceFile = LicenseIssueService.IssueSignedLicenceFile(payload, _signing.ResolvePrivateKeyXml());
+        license.ExpiresAtUtc = validUntil;
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         return new ValidateLicenseResponse
         {
             Allowed = true,
-            Message = "Компьютер зарегистрирован.",
-            CurrentMonthPaid = true
+            Message = "OK",
+            CurrentMonthPaid = true,
+            ValidUntilUtc = validUntil,
+            ExpiresAtUtc = validUntil,
+            LicenceFileContent = licenceFile
         };
+    }
+
+    public async Task<string?> IssueFileForLicenseAsync(Guid licenseId, string? computerId, CancellationToken cancellationToken)
+    {
+        LicenseRecord? license = await LoadByIdAsync(licenseId, cancellationToken).ConfigureAwait(false);
+        if (license == null)
+        {
+            return null;
+        }
+
+        (int year, int month) = CurrentPeriodUtc();
+        if (!license.Payments.Any(p => p.PeriodYear == year && p.PeriodMonth == month))
+        {
+            throw new InvalidOperationException("Нет оплаты за текущий месяц — файл не выдаётся.");
+        }
+
+        string hw = computerId ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(hw))
+        {
+            hw = license.Activations.FirstOrDefault(a => a.IsActive)?.ComputerId ?? string.Empty;
+        }
+
+        if (string.IsNullOrWhiteSpace(hw))
+        {
+            throw new InvalidOperationException("Нет привязанного компьютера. Укажите ComputerId или дождитесь первого renew с кассы.");
+        }
+
+        var payload = new LicensePayload
+        {
+            LicenseKey = license.LicenseKey,
+            HardwareId = hw.Trim(),
+            Company = license.CompanyName ?? string.Empty,
+            Reseller = "CleverPos",
+            IssuedAtUtc = DateTime.UtcNow,
+            ValidUntilUtc = LicensePeriod.ValidUntilExclusiveUtc(year, month)
+        };
+
+        return LicenseIssueService.IssueSignedLicenceFile(payload, _signing.ResolvePrivateKeyXml());
     }
 
     public async Task<LicenseListItem> CreateAsync(CreateLicenseRequest request, CancellationToken cancellationToken)
@@ -154,6 +193,7 @@ public class LicenseService
                 PaidAtUtc = DateTime.UtcNow,
                 Comment = "Первый месяц при создании лицензии"
             });
+            license.ExpiresAtUtc = LicensePeriod.ValidUntilExclusiveUtc(year, month);
         }
 
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -170,43 +210,13 @@ public class LicenseService
             .ConfigureAwait(false);
     }
 
-    private async Task<LicenseRecord?> ProvisionFirstNightAsync(ValidateLicenseRequest request, CancellationToken cancellationToken)
+    private async Task<LicenseRecord?> LoadByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        string licenseKey = request.LicenseKey.Trim();
-        (int year, int month) = CurrentPeriodUtc();
-
-        var license = new LicenseRecord
-        {
-            LicenseKey = licenseKey,
-            CompanyName = string.IsNullOrWhiteSpace(request.CompanyName) ? null : request.CompanyName.Trim(),
-            MaxActivations = 1,
-            IsActive = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        _db.Licenses.Add(license);
-        _db.Payments.Add(new LicensePayment
-        {
-            LicenseId = license.Id,
-            PeriodYear = year,
-            PeriodMonth = month,
-            PaidAtUtc = DateTime.UtcNow,
-            Comment = "Автосоздание при первом запуске кассы"
-        });
-
-        try
-        {
-            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (DbUpdateException)
-        {
-            foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry in _db.ChangeTracker.Entries().ToList())
-            {
-                entry.State = EntityState.Detached;
-            }
-        }
-
-        return await LoadByKeyAsync(licenseKey, cancellationToken).ConfigureAwait(false);
+        return await _db.Licenses
+            .Include(x => x.Activations)
+            .Include(x => x.Payments)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<LicenseListItem>> ListAsync(CancellationToken cancellationToken)
@@ -253,7 +263,8 @@ public class LicenseService
 
     public async Task<LicenseListItem?> MarkPaidAsync(Guid licenseId, MarkPaymentRequest request, CancellationToken cancellationToken)
     {
-        if (!await _db.Licenses.AnyAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false))
+        LicenseRecord? license = await _db.Licenses.FirstOrDefaultAsync(x => x.Id == licenseId, cancellationToken).ConfigureAwait(false);
+        if (license == null)
         {
             return null;
         }
@@ -292,6 +303,7 @@ public class LicenseService
             }
         }
 
+        license.ExpiresAtUtc = LicensePeriod.ValidUntilExclusiveUtc(year, month);
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return await GetAsync(licenseId, cancellationToken).ConfigureAwait(false);
     }
@@ -307,6 +319,16 @@ public class LicenseService
         license.IsActive = isActive;
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return await GetAsync(licenseId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static ValidateLicenseResponse Deny(string message, bool currentMonthPaid = false)
+    {
+        return new ValidateLicenseResponse
+        {
+            Allowed = false,
+            Message = message,
+            CurrentMonthPaid = currentMonthPaid
+        };
     }
 
     private static LicenseListItem Map(LicenseRecord license)

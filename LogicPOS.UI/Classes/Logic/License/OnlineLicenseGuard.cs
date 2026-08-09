@@ -1,5 +1,6 @@
 using Gtk;
 using logicpos.App;
+using CleverPos.License.Core;
 using LogicPOS.Globalization;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
@@ -11,6 +12,10 @@ using System.Web.Script.Serialization;
 
 namespace logicpos.Classes.Logic.License
 {
+    /// <summary>
+    /// Offline-first: verify signed licence.lic locally; renew via API only when expired/unsigned.
+    /// Signing format comes from CleverPos.License.Core (same module as LicenseGenerator / License.Api).
+    /// </summary>
     public static class OnlineLicenseGuard
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(OnlineLicenseGuard));
@@ -23,26 +28,78 @@ namespace logicpos.Classes.Logic.License
                 return true;
             }
 
-            string baseUrl = ResolveLicenseApiBaseUrl();
-            string licenseKey = ResolveLicenseKeyFromLicenceFile();
-            if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(licenseKey))
+            string licencePath = ResolveLicenceFilePath();
+            if (!File.Exists(licencePath))
             {
-                _logger.Error("Online license check is enabled but license API URL is empty or licence.lic has no key. environment="
-                    + (ReadSetting("licenseApiEnvironment") ?? string.Empty)
-                    + " licenceFile=" + ResolveLicenceFilePath());
+                _logger.Error("licence.lic not found: " + licencePath);
                 ShowDenied(GetResource("dialog_message_license_online_denied",
-                    "License is invalid or this computer is not registered. The application will close."));
+                    "License file is missing. The application will close."));
                 return false;
             }
 
-            _logger.Info("Online license check via " + baseUrl + " licenseKey=" + licenseKey);
-
-            string computerId = ResolveComputerId();
-            if (string.IsNullOrWhiteSpace(computerId))
+            string fileContent;
+            try
             {
-                _logger.Error("Online license check could not resolve computer id.");
+                fileContent = File.ReadAllText(licencePath, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Cannot read licence.lic: " + ex.Message, ex);
                 ShowDenied(GetResource("dialog_message_license_online_denied",
-                    "License is invalid or this computer is not registered. The application will close."));
+                    "License file is missing. The application will close."));
+                return false;
+            }
+
+            string publicKey = ReadSetting("licensePublicKeyXml");
+            if (string.IsNullOrWhiteSpace(publicKey))
+            {
+                publicKey = LicenseSigningKeys.DefaultPublicKeyXml;
+            }
+
+            LicenseReadResult local = LicenseIssueService.VerifyLocal(fileContent, publicKey);
+            ApplyPayloadToSettings(local.Payload);
+
+            string computerId = ResolveComputerId(local.Payload);
+            if (local.Success && local.SignatureValid && !local.IsExpired)
+            {
+                if (!HardwareMatches(local.Payload, computerId))
+                {
+                    _logger.Error("licence.lic HardwareId does not match this computer.");
+                    ShowDenied(GetResource("dialog_message_license_online_denied",
+                        "License is bound to another computer."));
+                    return false;
+                }
+
+                _logger.Info("Offline license OK until " + local.Payload.ValidUntilUtc.ToString("o"));
+                return true;
+            }
+
+            if (local.HasSignature && !local.SignatureValid)
+            {
+                ShowDenied(local.Message);
+                return false;
+            }
+
+            _logger.Info("License renew required: " + local.Message);
+            return RenewFromServer(licencePath, local.Payload, computerId);
+        }
+
+        private static bool RenewFromServer(string licencePath, LicensePayload payload, string computerId)
+        {
+            string baseUrl = ResolveLicenseApiBaseUrl();
+            string licenseKey = payload != null && !string.IsNullOrWhiteSpace(payload.LicenseKey)
+                ? payload.LicenseKey.Trim()
+                : string.Empty;
+
+            if (string.IsNullOrWhiteSpace(licenseKey) && payload != null)
+            {
+                licenseKey = (payload.HardwareId ?? string.Empty).Trim();
+            }
+
+            if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(licenseKey) || string.IsNullOrWhiteSpace(computerId))
+            {
+                ShowDenied(GetResource("dialog_message_license_online_denied",
+                    "License expired and cannot renew (missing key or API URL)."));
                 return false;
             }
 
@@ -57,18 +114,18 @@ namespace logicpos.Classes.Logic.License
             {
                 ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-                var payload = new ValidateRequestDto
+                var requestDto = new RenewRequestDto
                 {
                     licenseKey = licenseKey,
                     computerId = computerId,
                     machineName = Environment.MachineName,
-                    companyName = LicenseSettings.LicenseCompany
+                    companyName = payload != null ? payload.Company : LicenseSettings.LicenseCompany
                 };
 
-                string json = new JavaScriptSerializer().Serialize(payload);
+                string json = new JavaScriptSerializer().Serialize(requestDto);
                 byte[] body = Encoding.UTF8.GetBytes(json);
 
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUrl + "/api/licenses/validate");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUrl + "/api/licenses/renew");
                 request.Method = "POST";
                 request.ContentType = "application/json; charset=utf-8";
                 request.Timeout = timeoutMs;
@@ -84,15 +141,57 @@ namespace logicpos.Classes.Logic.License
                 using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {
                     string responseBody = reader.ReadToEnd();
-                    if (IsAllowed(responseBody))
+                    RenewResponseDto dto = null;
+                    try
                     {
-                        _logger.Info("Online license check passed for computer " + computerId);
-                        return true;
+                        dto = new JavaScriptSerializer().Deserialize<RenewResponseDto>(responseBody);
+                    }
+                    catch
+                    {
                     }
 
-                    _logger.Warn("Online license check denied: " + responseBody);
-                    ShowDeniedFromApi(responseBody);
-                    return false;
+                    if (dto == null || !dto.allowed || string.IsNullOrWhiteSpace(dto.licenceFileContent))
+                    {
+                        ShowDenied(dto != null && !string.IsNullOrWhiteSpace(dto.message)
+                            ? dto.message
+                            : GetResource("dialog_message_license_online_denied",
+                                "License renew was denied."));
+                        return false;
+                    }
+
+                    string publicKey = ReadSetting("licensePublicKeyXml");
+                    if (string.IsNullOrWhiteSpace(publicKey))
+                    {
+                        publicKey = LicenseSigningKeys.DefaultPublicKeyXml;
+                    }
+
+                    LicenseReadResult verify = LicenseIssueService.VerifyLocal(dto.licenceFileContent, publicKey);
+                    if (!verify.Success || !verify.SignatureValid)
+                    {
+                        _logger.Error("Server returned invalid licence file: " + verify.Message);
+                        ShowDenied("Сервер вернул недействительный файл лицензии.");
+                        return false;
+                    }
+
+                    if (!HardwareMatches(verify.Payload, computerId))
+                    {
+                        ShowDenied("Лицензия привязана к другому компьютеру.");
+                        return false;
+                    }
+
+                    File.WriteAllText(licencePath, dto.licenceFileContent, Encoding.UTF8);
+                    ApplyPayloadToSettings(verify.Payload);
+                    try
+                    {
+                        logicpos.Utils.AssignLicence(licencePath, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn("AssignLicence after renew: " + ex.Message);
+                    }
+
+                    _logger.Info("License renewed until " + verify.Payload.ValidUntilUtc.ToString("o"));
+                    return true;
                 }
             }
             catch (WebException ex)
@@ -112,36 +211,54 @@ namespace logicpos.Classes.Logic.License
                     {
                     }
 
-                    _logger.Warn("Online license check HTTP " + (int)errorResponse.StatusCode + ": " + responseBody);
-                    ShowDeniedFromApi(responseBody);
+                    string apiMessage = TryReadApiMessage(responseBody);
+                    ShowDenied(string.IsNullOrWhiteSpace(apiMessage)
+                        ? GetResource("dialog_message_license_online_denied",
+                            "License renew was denied.")
+                        : apiMessage);
                     return false;
                 }
 
-                _logger.Error("Online license server unavailable: " + ex.Message, ex);
+                _logger.Error("License renew unavailable: " + ex.Message, ex);
                 ShowDenied(GetResource("dialog_message_license_online_unavailable",
                     "License server is unavailable. Check the network and try again."));
                 return false;
             }
             catch (Exception ex)
             {
-                _logger.Error("Online license check failed: " + ex.Message, ex);
+                _logger.Error("License renew failed: " + ex.Message, ex);
                 ShowDenied(GetResource("dialog_message_license_online_unavailable",
                     "License server is unavailable. Check the network and try again."));
                 return false;
             }
         }
 
-        private static void ShowDeniedFromApi(string responseBody)
+        private static void ApplyPayloadToSettings(LicensePayload payload)
         {
-            string apiMessage = TryReadApiMessage(responseBody);
-            if (!string.IsNullOrWhiteSpace(apiMessage))
+            if (payload == null)
             {
-                ShowDenied(apiMessage);
                 return;
             }
 
-            ShowDenied(GetResource("dialog_message_license_online_denied",
-                "License is invalid or this computer is not registered. The application will close."));
+            if (!string.IsNullOrWhiteSpace(payload.HardwareId))
+            {
+                LicenseSettings.LicenseHardwareId = payload.HardwareId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(payload.Company))
+            {
+                LicenseSettings.LicenseCompany = payload.Company;
+            }
+        }
+
+        private static bool HardwareMatches(LicensePayload payload, string computerId)
+        {
+            if (payload == null || string.IsNullOrWhiteSpace(payload.HardwareId) || string.IsNullOrWhiteSpace(computerId))
+            {
+                return false;
+            }
+
+            return string.Equals(payload.HardwareId.Trim(), computerId.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         private static string TryReadApiMessage(string responseBody)
@@ -153,7 +270,7 @@ namespace logicpos.Classes.Logic.License
 
             try
             {
-                ValidateResponseDto dto = new JavaScriptSerializer().Deserialize<ValidateResponseDto>(responseBody);
+                RenewResponseDto dto = new JavaScriptSerializer().Deserialize<RenewResponseDto>(responseBody);
                 if (dto != null && !string.IsNullOrWhiteSpace(dto.message))
                 {
                     return dto.message.Trim();
@@ -166,29 +283,7 @@ namespace logicpos.Classes.Logic.License
             return string.Empty;
         }
 
-        private static bool IsAllowed(string responseBody)
-        {
-            if (string.IsNullOrWhiteSpace(responseBody))
-            {
-                return false;
-            }
-
-            try
-            {
-                ValidateResponseDto dto = new JavaScriptSerializer().Deserialize<ValidateResponseDto>(responseBody);
-                if (dto != null)
-                {
-                    return dto.allowed;
-                }
-            }
-            catch
-            {
-            }
-
-            return responseBody.Replace(" ", string.Empty).IndexOf("\"allowed\":true", StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        private static string ResolveComputerId()
+        private static string ResolveComputerId(LicensePayload payload)
         {
             string fromConfig = ReadSetting("appHardwareId");
             if (!string.IsNullOrWhiteSpace(fromConfig))
@@ -212,26 +307,9 @@ namespace logicpos.Classes.Logic.License
                 _logger.Warn("GetHardwareID failed: " + ex.Message);
             }
 
-            return Environment.MachineName;
-        }
-
-        private static string ResolveLicenseKeyFromLicenceFile()
-        {
-            string licencePath = ResolveLicenceFilePath();
-            if (!File.Exists(licencePath))
+            if (payload != null && !string.IsNullOrWhiteSpace(payload.HardwareId))
             {
-                _logger.Error("Online license check: licence.lic not found at " + licencePath);
-                return string.Empty;
-            }
-
-            try
-            {
-                logicpos.Utils.AssignLicence(licencePath, false);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Online license check: failed to load licence.lic. " + ex.Message, ex);
-                return string.Empty;
+                return payload.HardwareId.Trim();
             }
 
             if (!string.IsNullOrWhiteSpace(LicenseSettings.LicenseHardwareId))
@@ -239,8 +317,7 @@ namespace logicpos.Classes.Logic.License
                 return LicenseSettings.LicenseHardwareId.Trim();
             }
 
-            _logger.Error("Online license check: licence.lic loaded but HardwareId is empty.");
-            return string.Empty;
+            return Environment.MachineName;
         }
 
         private static string ResolveLicenceFilePath()
@@ -365,7 +442,7 @@ namespace logicpos.Classes.Logic.License
             }
         }
 
-        private class ValidateRequestDto
+        private class RenewRequestDto
         {
             public string licenseKey { get; set; }
             public string computerId { get; set; }
@@ -373,10 +450,11 @@ namespace logicpos.Classes.Logic.License
             public string companyName { get; set; }
         }
 
-        private class ValidateResponseDto
+        private class RenewResponseDto
         {
             public bool allowed { get; set; }
             public string message { get; set; }
+            public string licenceFileContent { get; set; }
         }
     }
 }

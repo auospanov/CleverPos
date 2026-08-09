@@ -1,38 +1,39 @@
 using System;
 using System.IO;
-using System.Text;
+using CleverPos.License.Core;
 
 namespace LicenseGenerator
 {
     /// <summary>
-    /// Класс для генерации файла лицензии licence.lic
+    /// Thin wrapper around CleverPos.License.Core for the WinForms tool.
     /// </summary>
     public static class LicenseFileGenerator
     {
-        /// <summary>
-        /// Генерирует файл licence.lic с зашифрованными значениями
-        /// </summary>
         public static void GenerateLicenseFile(string filePath, LicenseData data)
         {
-            var sb = new StringBuilder();
-            
-            sb.AppendLine("[Licence]");
-            sb.AppendLine($"HardwareId={CryptographyUtils.Encrypt(data.HardwareId, true)}");
-            sb.AppendLine($"Company={CryptographyUtils.Encrypt(data.Company, true)}");
-            sb.AppendLine($"Nif={CryptographyUtils.Encrypt(data.Nif, true)}");
-            sb.AppendLine($"Address={CryptographyUtils.Encrypt(data.Address, true)}");
-            sb.AppendLine($"Email={CryptographyUtils.Encrypt(data.Email, true)}");
-            sb.AppendLine($"Telephone={CryptographyUtils.Encrypt(data.Telephone, true)}");
-            sb.AppendLine($"Reseller={CryptographyUtils.Encrypt(data.Reseller, true)}");
+            var payload = new LicensePayload
+            {
+                LicenseKey = string.IsNullOrWhiteSpace(data.LicenseKey) ? data.HardwareId : data.LicenseKey,
+                HardwareId = data.HardwareId ?? string.Empty,
+                Company = data.Company ?? string.Empty,
+                Nif = data.Nif ?? string.Empty,
+                Address = data.Address ?? string.Empty,
+                Email = data.Email ?? string.Empty,
+                Telephone = data.Telephone ?? string.Empty,
+                Reseller = string.IsNullOrWhiteSpace(data.Reseller) ? "CleverPos" : data.Reseller,
+                IssuedAtUtc = DateTime.UtcNow,
+                ValidUntilUtc = data.ValidUntilUtc == default
+                    ? LicensePeriod.ValidUntilExclusiveForCurrentMonthUtc()
+                    : data.ValidUntilUtc.ToUniversalTime()
+            };
 
-            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            string content = LicenseIssueService.IssueSignedLicenceFile(payload);
+            File.WriteAllText(filePath, content);
         }
 
-        /// <summary>
-        /// Класс для хранения данных лицензии
-        /// </summary>
         public class LicenseData
         {
+            public string LicenseKey { get; set; }
             public string HardwareId { get; set; }
             public string Company { get; set; }
             public string Nif { get; set; }
@@ -40,7 +41,7 @@ namespace LicenseGenerator
             public string Email { get; set; }
             public string Telephone { get; set; }
             public string Reseller { get; set; }
+            public DateTime ValidUntilUtc { get; set; }
         }
     }
 }
-

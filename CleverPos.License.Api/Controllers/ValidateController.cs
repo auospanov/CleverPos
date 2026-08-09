@@ -17,13 +17,25 @@ public class ValidateController : ControllerBase
         _licenses = licenses;
     }
 
-    [HttpPost("validate")]
-    public async Task<ActionResult<ValidateLicenseResponse>> Validate(
+    /// <summary>Продление / выдача подписанного licence.lic (используется кассой при истечении срока).</summary>
+    [HttpPost("renew")]
+    public async Task<ActionResult<ValidateLicenseResponse>> Renew(
         [FromBody] ValidateLicenseRequest request,
         CancellationToken cancellationToken)
     {
-        ValidateLicenseResponse result = await _licenses.ValidateAsync(request ?? new ValidateLicenseRequest(), cancellationToken)
+        ValidateLicenseResponse result = await _licenses.RenewAsync(request ?? new ValidateLicenseRequest(), cancellationToken)
             .ConfigureAwait(false);
+        if (!result.Allowed)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, result);
+        }
+
         return Ok(result);
     }
+
+    [HttpPost("validate")]
+    public Task<ActionResult<ValidateLicenseResponse>> Validate(
+        [FromBody] ValidateLicenseRequest request,
+        CancellationToken cancellationToken)
+        => Renew(request, cancellationToken);
 }

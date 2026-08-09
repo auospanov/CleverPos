@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/.env
+**/.git/
+**/*.user
+**/*.http
+**/README.md
+**/.vs/
+**/artifacts/

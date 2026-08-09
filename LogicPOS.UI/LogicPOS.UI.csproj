@@ -6800,6 +6800,9 @@
       <Project>{50C2F757-8478-4FD3-8B35-89BC12E7ACA0}</Project>
       <Name>LogicPOS.Plugin</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CleverPos.License.Core\CleverPos.License.Core.csproj">
+      <Name>CleverPos.License.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LogicPOS.PaymentTerminals\LogicPOS.PaymentTerminals.csproj">
       <Project>{a8c3f1e2-4b5d-6e7f-8901-234567890abc}</Project>
       <Name>LogicPOS.PaymentTerminals</Name>

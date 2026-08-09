@@ -1,4 +1,5 @@
 using CleverPos.License.Api.Data;
+using CleverPos.License.Api.Options;
 using CleverPos.License.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,6 +10,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is not configured.");
 
+builder.Services.Configure<LicenseSigningOptions>(builder.Configuration.GetSection(LicenseSigningOptions.SectionName));
 builder.Services.AddDbContext<LicenseDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 

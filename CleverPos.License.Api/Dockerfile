@@ -1,9 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY CleverPos.License.Api.csproj ./
-RUN dotnet restore
-COPY . ./
-RUN dotnet publish -c Release -o /app /p:UseAppHost=false
+
+COPY CleverPos.License.Core/CleverPos.License.Core.csproj CleverPos.License.Core/
+COPY CleverPos.License.Api/CleverPos.License.Api.csproj CleverPos.License.Api/
+RUN dotnet restore CleverPos.License.Api/CleverPos.License.Api.csproj
+
+COPY CleverPos.License.Core/ CleverPos.License.Core/
+COPY CleverPos.License.Api/ CleverPos.License.Api/
+RUN dotnet publish CleverPos.License.Api/CleverPos.License.Api.csproj -c Release -o /app /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app

@@ -10,6 +10,7 @@
         <div class="sub mono">@license.LicenseKey</div>
     </div>
     <div class="row-actions">
+        <a class="btn" href="/admin/details/@license.Id?handler=Download">Скачать licence.lic</a>
         <form method="post" asp-page-handler="ClearComputer" asp-route-id="@license.Id">
             <button class="btn secondary" type="submit" onclick="return confirm('Очистить компьютер?');">Очистить ПК</button>
         </form>

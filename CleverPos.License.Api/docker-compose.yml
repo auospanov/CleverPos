@@ -1,8 +1,8 @@
 services:
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: CleverPos.License.Api/Dockerfile
     container_name: cleverpos-license-api
     restart: unless-stopped
     environment:

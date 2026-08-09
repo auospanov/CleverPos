@@ -42,6 +42,26 @@ public class DetailsModel : PageModel
         return Page();
     }
 
+    public async Task<IActionResult> OnGetDownloadAsync(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            string? content = await _licenses.IssueFileForLicenseAsync(id, null, cancellationToken).ConfigureAwait(false);
+            if (content == null)
+            {
+                TempData["Error"] = "Лицензия не найдена.";
+                return RedirectToPage(new { id });
+            }
+
+            return File(System.Text.Encoding.UTF8.GetBytes(content), "application/octet-stream", "licence.lic");
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToPage(new { id });
+        }
+    }
+
     public async Task<IActionResult> OnPostClearComputerAsync(Guid id, CancellationToken cancellationToken)
     {
         await _licenses.ClearComputerAsync(id, cancellationToken).ConfigureAwait(false);

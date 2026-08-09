@@ -13,7 +13,9 @@ public class ValidateLicenseResponse
     public bool Allowed { get; set; }
     public string Message { get; set; } = string.Empty;
     public DateTime? ExpiresAtUtc { get; set; }
+    public DateTime? ValidUntilUtc { get; set; }
     public bool CurrentMonthPaid { get; set; }
+    public string? LicenceFileContent { get; set; }
 }
 
 public class CreateLicenseRequest

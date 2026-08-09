@@ -110,6 +110,33 @@ public class AdminLicensesController : ControllerBase
         return updated == null ? NotFound() : Ok(updated);
     }
 
+    [HttpGet("{id:guid}/licence-file")]
+    public async Task<IActionResult> DownloadLicenceFile(
+        Guid id,
+        [FromQuery] string? computerId,
+        CancellationToken cancellationToken)
+    {
+        if (!IsAdmin())
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            string? content = await _licenses.IssueFileForLicenseAsync(id, computerId, cancellationToken).ConfigureAwait(false);
+            if (content == null)
+            {
+                return NotFound();
+            }
+
+            return File(System.Text.Encoding.UTF8.GetBytes(content), "text/plain", "licence.lic");
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     private bool IsAdmin()
     {
         string expected = _configuration["AdminApiKey"] ?? string.Empty;

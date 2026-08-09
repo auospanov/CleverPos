@@ -8,7 +8,8 @@ X-Admin-Key: {{adminKey}}
 
 {
   "companyName": "Local test",
-  "maxActivations": 1
+  "maxActivations": 1,
+  "markCurrentMonthPaid": true
 }
 
 ### List licenses
@@ -29,8 +30,8 @@ X-Admin-Key: {{adminKey}}
   "comment": "Оплата за месяц"
 }
 
-### Validate
-POST {{baseUrl}}/api/licenses/validate
+### Renew (POS)
+POST {{baseUrl}}/api/licenses/renew
 Content-Type: application/json
 
 {
