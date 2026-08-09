@@ -1,0 +1,69 @@
+@page "/admin/access-log"
+@model CleverPos.License.Api.Pages.Admin.AccessLogModel
+@{
+    ViewData["Title"] = "Журнал входов";
+}
+<div class="topbar">
+    <div>
+        <h1>Журнал входов</h1>
+        <div class="sub">Все проверки лицензии с касс: разрешено / отказ, компьютер, IP. По звонку найдите отказ «привязана к другому ПК» и нажмите «Разрешить другой ПК» в карточке лицензии.</div>
+    </div>
+    <a class="btn ghost" href="/admin">К лицензиям</a>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Время UTC</th>
+                <th>Результат</th>
+                <th>Компания / ключ</th>
+                <th>Компьютер</th>
+                <th>Сообщение</th>
+                <th>IP</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.Logs.Count == 0)
+        {
+            <tr><td colspan="7">Пока записей нет — они появятся после запуска кассы.</td></tr>
+        }
+        @foreach (var row in Model.Logs)
+        {
+            <tr>
+                <td>@row.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>
+                    @if (row.Source == "admin-transfer")
+                    {
+                        <span class="badge warn">перенос</span>
+                    }
+                    else if (row.Allowed)
+                    {
+                        <span class="badge ok">вход</span>
+                    }
+                    else
+                    {
+                        <span class="badge err">отказ</span>
+                    }
+                </td>
+                <td>
+                    <strong>@(string.IsNullOrWhiteSpace(row.CompanyName) ? "—" : row.CompanyName)</strong><br />
+                    <span class="mono">@row.LicenseKey</span>
+                </td>
+                <td>
+                    <div class="mono">@row.ComputerId</div>
+                    <div>@(row.MachineName ?? "—")</div>
+                </td>
+                <td>@row.Message</td>
+                <td class="mono">@(row.ClientIp ?? "—")</td>
+                <td>
+                    @if (row.LicenseId.HasValue)
+                    {
+                        <a class="btn ghost" href="/admin/details/@row.LicenseId">Открыть</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

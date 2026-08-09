@@ -12,6 +12,7 @@ public class LicenseDbContext : DbContext
     public DbSet<LicenseRecord> Licenses => Set<LicenseRecord>();
     public DbSet<LicenseActivation> Activations => Set<LicenseActivation>();
     public DbSet<LicensePayment> Payments => Set<LicensePayment>();
+    public DbSet<LicenseAccessLog> AccessLogs => Set<LicenseAccessLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,6 +42,18 @@ public class LicenseDbContext : DbContext
                 .WithMany(x => x.Payments)
                 .HasForeignKey(x => x.LicenseId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<LicenseAccessLog>(entity =>
+        {
+            entity.ToTable("license_access_logs");
+            entity.HasIndex(x => x.CreatedAtUtc);
+            entity.HasIndex(x => x.LicenseKey);
+            entity.HasIndex(x => x.ComputerId);
+            entity.HasOne(x => x.License)
+                .WithMany()
+                .HasForeignKey(x => x.LicenseId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

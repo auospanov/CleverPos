@@ -6,6 +6,22 @@ public class ValidateLicenseRequest
     public string ComputerId { get; set; } = string.Empty;
     public string? MachineName { get; set; }
     public string? CompanyName { get; set; }
+    public string? ClientIp { get; set; }
+}
+
+public class AccessLogItem
+{
+    public Guid Id { get; set; }
+    public Guid? LicenseId { get; set; }
+    public string LicenseKey { get; set; } = string.Empty;
+    public string? CompanyName { get; set; }
+    public string ComputerId { get; set; } = string.Empty;
+    public string? MachineName { get; set; }
+    public bool Allowed { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public string? ClientIp { get; set; }
+    public string Source { get; set; } = string.Empty;
+    public DateTime CreatedAtUtc { get; set; }
 }
 
 public class ValidateLicenseResponse

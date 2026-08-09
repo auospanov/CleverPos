@@ -16,6 +16,8 @@ public class DetailsModel : PageModel
 
     public LicenseListItem? License { get; private set; }
 
+    public IReadOnlyList<AccessLogItem> AccessLogs { get; private set; } = Array.Empty<AccessLogItem>();
+
     [BindProperty]
     public int Year { get; set; }
 
@@ -35,6 +37,8 @@ public class DetailsModel : PageModel
         {
             return RedirectToPage("/Admin/Index");
         }
+
+        AccessLogs = await _licenses.ListAccessLogsAsync(id, 50, cancellationToken).ConfigureAwait(false);
 
         (int year, int month) = LicenseService.CurrentPeriodUtc();
         Year = year;
@@ -65,7 +69,7 @@ public class DetailsModel : PageModel
     public async Task<IActionResult> OnPostClearComputerAsync(Guid id, CancellationToken cancellationToken)
     {
         await _licenses.ClearComputerAsync(id, cancellationToken).ConfigureAwait(false);
-        TempData["Ok"] = "Идентификатор компьютера очищен.";
+        TempData["Ok"] = "Старый ПК отвязан. Запустите кассу на новом компьютере — она привяжется сама.";
         return RedirectToPage(new { id });
     }
 

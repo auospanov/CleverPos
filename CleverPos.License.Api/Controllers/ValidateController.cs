@@ -23,6 +23,7 @@ public class ValidateController : ControllerBase
         [FromBody] ValidateLicenseRequest request,
         CancellationToken cancellationToken)
     {
+<<<<<<< HEAD
         ValidateLicenseResponse result = await _licenses.RenewAsync(request ?? new ValidateLicenseRequest(), cancellationToken)
             .ConfigureAwait(false);
         if (!result.Allowed)
@@ -30,6 +31,11 @@ public class ValidateController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, result);
         }
 
+=======
+        ValidateLicenseRequest payload = request ?? new ValidateLicenseRequest();
+        payload.ClientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        ValidateLicenseResponse result = await _licenses.ValidateAsync(payload, cancellationToken).ConfigureAwait(false);
+>>>>>>> 51c4e42556c3063557d3d40d426316d29c69bacf
         return Ok(result);
     }
 
