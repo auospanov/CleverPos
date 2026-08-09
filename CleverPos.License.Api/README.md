@@ -33,3 +33,24 @@ docker compose up --build
 ```
 
 Приватный ключ: `LicenseSigning:PrivateKeyXml` в appsettings (пусто = ключ по умолчанию из Core).
+
+## Деплой на сервер (SSH, без локального Docker)
+
+Не используйте `deploy.ps1` — он собирает образ локально и падает на Docker Desktop.
+
+Нужны только `CleverPos.License.Api` + `CleverPos.License.Core`. Скрипт заливает их по **scp/rsync**, на сервере делает `docker build` и `compose up`. **Пароль root** спросит `ssh`/`scp` в консоли (несколько раз, если нет ключа).
+
+```bat
+cd CleverPos.License.Api
+deploy.cmd
+```
+
+или Git Bash / WSL:
+
+```bash
+cd CleverPos.License.Api
+bash deploy.sh
+```
+
+По умолчанию: `root@92.38.49.47` → `/var/www/apilicense`, БД `127.0.0.1` (host network).
+Переопределение: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`.
