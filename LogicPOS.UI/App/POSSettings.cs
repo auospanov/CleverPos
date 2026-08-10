@@ -17,7 +17,7 @@ namespace logicpos.App
         //Used to Force/Override Intellilock assigned GlobalFramework.LicenceRegistered in BootStrap
         public static bool LicenceRegistered = true;
         //Valid databaseType Values: SQLite, MySql, MSSqlServer (DBName Must be lowercase)
-        public static string DatabaseName = "logicposdbdevelopment";
+        public static string DatabaseName = "cleverposdbdevelopment";
         //Used to Force create DatabaseSchema and Fixtures with XPO (Non Script Mode): Requirements for Work: Empty or Non Exist Database
         //Notes: OnError "An exception of type 'DevExpress.Xpo.DB.Exceptions.SchemaCorrectionNeededException'", UnCheck [X] Break when this exception is user-unhandled and continue, watch log and wait until sucefull message appear
         public static bool XPOCreateDatabaseAndSchema = false;
@@ -33,7 +33,7 @@ namespace logicpos.App
         public static string AppHardwareId = "92A4-EADD-8AF0-B693-DBD0-2A22";
 #else
         public static bool LicenceRegistered = true;
-        public static string DatabaseName = "logicposdb";
+        public static string DatabaseName = "cleverposdb";
         public static bool ProtectedFilesIgnoreProtection = true;
         public static bool XPOCreateDatabaseAndSchema = false;
         public static bool ProtectedFilesUse = false;
@@ -56,7 +56,7 @@ namespace logicpos.App
 
         //Executables
         public static string ExecutableComposer = "logicpos.composer.exe";
-        public static string ExecutableReports = "logicpos.reports.exe";
+        public static string ExecutableReports = "CleverPos.Reports.exe";
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //Override Settings
@@ -69,7 +69,7 @@ namespace logicpos.App
         //ProtectedFiles
 
         //Protected Files Settings
-        public static string ProtectedFilesFileName = "logicpos.exe.files";
+        public static string ProtectedFilesFileName = "CleverPos.exe.files";
         public static List<string> ProtectedFilesList { get { return GetProtectedFilesList(); } }
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

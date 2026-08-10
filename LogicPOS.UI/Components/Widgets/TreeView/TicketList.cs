@@ -670,6 +670,11 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
 
             try
             {
+                if (!EnsureWorkingOrder())
+                {
+                    return;
+                }
+
                 //Get Article
                 fin_article article = XPOUtility.GetEntityById<fin_article>(pArticleOid);
 
@@ -1456,12 +1461,72 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                 {
                     /* IN008024 */
                     SourceWindow.LabelCurrentTable.Text = CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, string.Format("status_message_select_order_or_table_appmode_{0}", AppOperationModeSettings.CustomAppOperationMode.AppOperationTheme).ToLower());
+                    SourceWindow.LabelTotalTable.Text = string.Empty;
+                    _labelTotal.Text = DataConversionUtils.DecimalToStringCurrency(0.0m, XPOSettings.ConfigurationSystemCurrency.Acronym);
+                    CurrentOrderDetails = null;
                 }
             }
             //If CashDrawer Close
             else
             {
                 SourceWindow.LabelCurrentTable.Text = GeneralUtils.GetResourceByName("status_message_open_cashdrawer");
+                SourceWindow.LabelTotalTable.Text = string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Session may have no CurrentOrderMain (e.g. after cancel). Rebind or ask WorkSession UI to open a table.
+        /// </summary>
+        private bool EnsureWorkingOrder()
+        {
+            try
+            {
+                if (!POSSession.HasCurrentSession)
+                {
+                    return false;
+                }
+
+                POSSession.CurrentSession.RepairCurrentOrderMainId();
+
+                Guid orderMainId = POSSession.CurrentSession.CurrentOrderMainId;
+                if (orderMainId != Guid.Empty
+                    && POSSession.CurrentSession.OrderMains != null
+                    && POSSession.CurrentSession.OrderMains.ContainsKey(orderMainId))
+                {
+                    if (CurrentOrderDetails == null)
+                    {
+                        UpdateModel();
+                    }
+
+                    return CurrentOrderDetails != null;
+                }
+
+                // Recreate default open order (retail / first table) when session has none.
+                GlobalApp.PosMainWindow?.UpdateWorkSessionUI();
+
+                POSSession.CurrentSession.RepairCurrentOrderMainId();
+                orderMainId = POSSession.CurrentSession.CurrentOrderMainId;
+                if (orderMainId != Guid.Empty
+                    && POSSession.CurrentSession.OrderMains.ContainsKey(orderMainId))
+                {
+                    UpdateModel();
+                    UpdateOrderStatusBar();
+                    return CurrentOrderDetails != null;
+                }
+
+                logicpos.Utils.ShowMessageTouch(
+                    SourceWindow,
+                    DialogFlags.Modal,
+                    MessageType.Warning,
+                    ButtonsType.Ok,
+                    GeneralUtils.GetResourceByName("global_warning"),
+                    GeneralUtils.GetResourceByName("status_message_select_order_or_table_appmode_default"));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("EnsureWorkingOrder: " + ex.Message, ex);
+                return false;
             }
         }
 

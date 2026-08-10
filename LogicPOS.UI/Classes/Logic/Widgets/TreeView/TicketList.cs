@@ -118,18 +118,21 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                         //_listStoreModel.Remove(ref _treeIter);
                         //Get Reference to current OrderMain
 
-                        CurrentOrderDetails = orderMain.OrderTickets[orderMain.CurrentTicketId].OrderDetails;
-
-                        //Always Change to OrderMain ListMode before Update Model
+                        CurrentOrderDetails = null;
+                        ListStoreModel.Clear();
+                        _listStoreModelSelectedIndex = -1;
+                        _listStoreModelTotalItems = 0;
                         ListMode = TicketListMode.Ticket;
                         orderMain.CleanSessionOrder();
+                        POSSession.CurrentSession.DeleteEmptyTickets();
+                        POSSession.CurrentSession.CurrentOrderMainId = Guid.Empty;
                         Gdk.Color colorListMode = (ListMode == TicketListMode.Ticket) ? colorListMode = _colorPosTicketListModeTicketBackground.ToGdkColor() : colorListMode = _colorPosTicketListModeOrderMainBackground.ToGdkColor();
                         _treeView.ModifyBase(StateType.Normal, colorListMode);
-                        //UpdateModel();
                         UpdateOrderStatusBar();
                         UpdateTicketListOrderButtons();
-                        //IMPORTANT & REQUIRED: Assign Current Order Details from New CurrentTicketId, ELSE we cant add items to OrderMain
-                        CurrentOrderDetails = orderMain.OrderTickets[orderMain.CurrentTicketId].OrderDetails;
+                        // Open a fresh working order so article pad works again immediately
+                        GlobalApp.PosMainWindow?.UpdateWorkSessionUI();
+                        POSSession.CurrentSession.Save();
 
                     }
                     catch (Exception ex)

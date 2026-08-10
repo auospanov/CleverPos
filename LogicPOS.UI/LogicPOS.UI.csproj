@@ -9,7 +9,7 @@
     <ProjectGuid>{340331CF-94E0-49B0-8EBB-D4DF61A3DCCC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>logicpos</RootNamespace>
-    <AssemblyName>logicpos</AssemblyName>
+    <AssemblyName>CleverPos</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
@@ -1957,7 +1957,7 @@
     <Content Include="Assets\Images\Products\Butchery\talho.psd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="logicpos.exe.files">
+    <None Include="CleverPos.exe.files">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Database\NOTES.md" />
@@ -6770,23 +6770,23 @@
 	-->
     <ProjectReference Include="..\LogicPOS.Data\LogicPOS.Data.csproj">
       <Project>{42af3be2-44b4-477d-8e45-55c64992b805}</Project>
-      <Name>LogicPOS.Data</Name>
+      <Name>CleverPos.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.DTOs\LogicPOS.DTOs.csproj">
       <Project>{e23bdf58-f0a9-40ac-acce-57235fb7a7f1}</Project>
-      <Name>LogicPOS.DTOs</Name>
+      <Name>CleverPos.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Finance\LogicPOS.Finance.csproj">
       <Project>{6F50BD8B-A054-424C-9247-3892EFCC25B6}</Project>
-      <Name>LogicPOS.Finance</Name>
+      <Name>CleverPos.Finance</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Globalization\LogicPOS.Globalization.csproj">
       <Project>{b9e8d813-d694-4a7f-955e-ccc4b10f3774}</Project>
-      <Name>LogicPOS.Globalization</Name>
+      <Name>CleverPos.Globalization</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Modules\LogicPOS.Modules.csproj">
       <Project>{96E6AD22-DC88-4F9B-89B7-0F78E59F9070}</Project>
-      <Name>LogicPOS.Modules</Name>
+      <Name>CleverPos.Modules</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.PDFViewer\LogicPOS.PDFViewer.Winforms\LogicPOS.PDFViewer.Winforms.csproj">
       <Project>{e39a7986-4c2f-4ebe-a31b-59c766150eac}</Project>
@@ -6794,42 +6794,42 @@
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Persistence\LogicPOS.Persistence.csproj">
       <Project>{4b305a39-47c9-4f59-ac06-ef868b4903ad}</Project>
-      <Name>LogicPOS.Persistence</Name>
+      <Name>CleverPos.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj">
       <Project>{50C2F757-8478-4FD3-8B35-89BC12E7ACA0}</Project>
-      <Name>LogicPOS.Plugin</Name>
+      <Name>CleverPos.Plugin</Name>
     </ProjectReference>
     <ProjectReference Include="..\CleverPos.License.Core\CleverPos.License.Core.csproj">
       <Name>CleverPos.License.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.PaymentTerminals\LogicPOS.PaymentTerminals.csproj">
       <Project>{a8c3f1e2-4b5d-6e7f-8901-234567890abc}</Project>
-      <Name>LogicPOS.PaymentTerminals</Name>
+      <Name>CleverPos.PaymentTerminals</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.NationalCatalog\LogicPOS.NationalCatalog.csproj">
       <Project>{b7d4e2f1-3c5a-4e6f-9012-3456789abcde}</Project>
-      <Name>LogicPOS.NationalCatalog</Name>
+      <Name>CleverPos.NationalCatalog</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Printing\LogicPOS.Printing.csproj">
       <Project>{ee93c7f8-f973-4a6e-8c59-e4bac4ff7bf7}</Project>
-      <Name>LogicPOS.Printing</Name>
+      <Name>CleverPos.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Reporting\LogicPOS.Reporting.csproj">
       <Project>{e8105c12-d5fa-4afb-906b-f762bd2f9a27}</Project>
-      <Name>LogicPOS.Reporting</Name>
+      <Name>CleverPos.Reporting</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Settings\LogicPOS.Settings.csproj">
       <Project>{a4e7f0ea-8360-41f2-a625-517f6e943a29}</Project>
-      <Name>LogicPOS.Settings</Name>
+      <Name>CleverPos.Settings</Name>
     </ProjectReference>
     <ProjectReference Include="..\logicpos.shared\LogicPOS.Shared.csproj">
       <Project>{fb74327c-1794-47ec-8f52-fd3f464f3258}</Project>
-      <Name>LogicPOS.Shared</Name>
+      <Name>CleverPos.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Utility\LogicPOS.Utility.csproj">
       <Project>{18488ce5-c06f-40f5-9339-0467a47d7985}</Project>
-      <Name>LogicPOS.Utility</Name>
+      <Name>CleverPos.Utility</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

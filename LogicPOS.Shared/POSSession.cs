@@ -106,7 +106,6 @@ namespace LogicPOS.Shared
                 foreach (var item in removeItems)
                 {
                     OrderMains.Remove(item);
-                    break;
                 }
             }
             if (!CurrentSession.OrderMains.ContainsKey(CurrentSession.CurrentOrderMainId))
@@ -197,6 +196,27 @@ namespace LogicPOS.Shared
 
             if (CurrentOrderMainId == Guid.Empty || OrderMains.ContainsKey(CurrentOrderMainId))
             {
+                // Empty id but session still has orders → bind to an open one (or any).
+                if (CurrentOrderMainId == Guid.Empty && OrderMains.Count > 0)
+                {
+                    Guid fallbackWhenEmpty = Guid.Empty;
+                    foreach (KeyValuePair<Guid, OrderMain> pair in OrderMains)
+                    {
+                        if (pair.Value != null && pair.Value.OrderStatus == OrderStatus.Open)
+                        {
+                            CurrentOrderMainId = pair.Key;
+                            return;
+                        }
+
+                        if (fallbackWhenEmpty == Guid.Empty)
+                        {
+                            fallbackWhenEmpty = pair.Key;
+                        }
+                    }
+
+                    CurrentOrderMainId = fallbackWhenEmpty;
+                }
+
                 return;
             }
 

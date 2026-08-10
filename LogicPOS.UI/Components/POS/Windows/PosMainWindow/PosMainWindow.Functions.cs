@@ -472,8 +472,16 @@ namespace logicpos
                             TicketList.UpdateOrderStatusBar();
 
                             //ALWAYS Update current PersistentOid and Status from database
-                            currentOrderMain.PersistentOid = currentOrderMain.GetOpenTableFieldValueGuid(pTableOid, "Oid");
-                            currentOrderMain.OrderStatus = (OrderStatus)currentOrderMain.GetOpenTableFieldValue(pTableOid, "OrderStatus");
+                            currentOrderMain.PersistentOid = currentOrderMain.GetOpenTableFieldValueGuid(currentTableOid, "Oid");
+                            object orderStatusValue = currentOrderMain.GetOpenTableFieldValue(currentTableOid, "OrderStatus");
+                            if (orderStatusValue != null)
+                            {
+                                currentOrderMain.OrderStatus = (OrderStatus)orderStatusValue;
+                            }
+                            if (currentOrderMain.OrderStatus == OrderStatus.Null || currentOrderMain.OrderStatus == OrderStatus.Close)
+                            {
+                                currentOrderMain.OrderStatus = OrderStatus.Open;
+                            }
 
                             //Shared Code
                             POSSession.CurrentSession.CurrentOrderMainId = currentOrderMain.Table.OrderMainOid;

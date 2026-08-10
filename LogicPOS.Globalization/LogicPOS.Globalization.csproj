@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LogicPOS.Globalization</RootNamespace>
-    <AssemblyName>LogicPOS.Globalization</AssemblyName>
+    <AssemblyName>CleverPos.Globalization</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

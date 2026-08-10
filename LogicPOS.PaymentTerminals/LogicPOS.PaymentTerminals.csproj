@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LogicPOS.PaymentTerminals</RootNamespace>
-    <AssemblyName>LogicPOS.PaymentTerminals</AssemblyName>
+    <AssemblyName>CleverPos.PaymentTerminals</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

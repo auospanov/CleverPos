@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LogicPOS.Shared</RootNamespace>
-    <AssemblyName>LogicPOS.Shared</AssemblyName>
+    <AssemblyName>CleverPos.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

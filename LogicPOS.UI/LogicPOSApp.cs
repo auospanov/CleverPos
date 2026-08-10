@@ -539,7 +539,7 @@ namespace logicpos
             //Activate stock module for debug
 #if DEBUG
             LicenseSettings.LicenseModuleStocks = true;
-            PluginSettings.AppCompanyName = LicenseSettings.LicenseCompany = LicenseSettings.LicenseReseller = "Logicpulse";
+            PluginSettings.AppCompanyName = LicenseSettings.LicenseCompany = LicenseSettings.LicenseReseller = "CleverPos";
 #endif
 
             //Clean Documents Folder on New Database, else we have Document files that dont correspond to Database
