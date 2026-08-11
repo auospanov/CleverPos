@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 namespace LogicPOS.PaymentTerminals.Halyk
 {
     /// <summary>
-    /// Halyk PAX / Smart POS (cashier mode). HTTP on 8080 (PAX A800/A930) or 8090 (Aisino).
-    /// Amount is integer tenge. Tries common ECR JSON bodies used by KZ 1C drivers.
+    /// Halyk PAX / Aisino «Режим кассы».
+    /// Live device (192.168.1.180:8080) accepts ECR JSON:
+    ///   POST /  {"task":"purchase","data":{"amount":N}}  — starts payment (waits for card)
+    ///   POST /  {"task":"cancel"} / abort — may return -240 / 200, but still returns terminalId
+    /// GET is rejected («Ошибка метода запроса»).
+    /// ShopUchet has no Halyk client; payment shape matches Jusan ECR.
     /// </summary>
     public class HalykPosClient
     {
@@ -23,7 +27,7 @@ namespace LogicPOS.PaymentTerminals.Halyk
                 port = 8080;
             }
 
-            _baseUrl = "http://" + host.Trim().TrimEnd('/') + ":" + port;
+            _baseUrl = "http://" + host.Trim().TrimEnd('/') + ":" + port + "/";
             _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(180) };
         }
 
@@ -31,112 +35,164 @@ namespace LogicPOS.PaymentTerminals.Halyk
 
         public async Task<PaymentTerminalChargeResult> PurchaseAsync(int amountTenge, CancellationToken cancellationToken = default)
         {
-            string[] payloads =
-            {
-                "{\"amount\":" + amountTenge + "}",
-                "{\"operation\":\"sale\",\"amount\":" + amountTenge + "}",
-                "{\"method\":\"purchase\",\"params\":{\"amount\":" + amountTenge + "}}"
-            };
+            string body = "{\"task\":\"purchase\",\"data\":{\"amount\":" + amountTenge + "}}";
+            return await SendTaskAsync(body, cancellationToken).ConfigureAwait(false);
+        }
 
-            string[] paths = { "/", "/purchase", "/sale", "/pos/sale" };
+        public async Task<PaymentTerminalChargeResult> RefundAsync(int amountTenge, string tagRrn, CancellationToken cancellationToken = default)
+        {
+            string body = "{\"task\":\"refund\",\"data\":{\"amount\":" + amountTenge + ",\"tagRRN\":\"" + Escape(tagRrn) + "\"}}";
+            return await SendTaskAsync(body, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Connectivity only: any JSON reply with terminalId means ECR is up.
+        /// Do not use purchase here (it blocks on card UI).
+        /// </summary>
+        public async Task<PaymentTerminalTestResult> ProbeAsync(CancellationToken cancellationToken = default)
+        {
+            // Fast no-charge probes — device returns terminalId even for unknown/unsupported tasks.
+            string[] probes =
+            {
+                "{\"task\":\"abort\"}",
+                "{\"task\":\"cancel\"}",
+                "{\"task\":\"status\"}"
+            };
 
             Exception lastError = null;
             string lastBody = null;
 
-            foreach (string path in paths)
+            foreach (string body in probes)
             {
-                foreach (string payload in payloads)
+                cancellationToken.ThrowIfCancellationRequested();
+                try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    try
+                    using (CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
                     {
-                        string url = _baseUrl + path;
-                        using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url))
+                        linked.CancelAfter(TimeSpan.FromSeconds(8));
+                        using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _baseUrl))
                         {
-                            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
-                            using (HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                            request.Content = new StringContent(body, Encoding.UTF8, "application/json");
+                            using (HttpResponseMessage response = await _httpClient.SendAsync(request, linked.Token).ConfigureAwait(false))
                             {
                                 string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                                 lastBody = content;
 
-                                if ((int)response.StatusCode == 404 || (int)response.StatusCode == 405)
+                                string terminalId;
+                                string msg;
+                                string resultCode;
+                                if (TryParseEcr(content, out terminalId, out msg, out resultCode))
                                 {
-                                    continue;
+                                    return new PaymentTerminalTestResult
+                                    {
+                                        Success = true,
+                                        Message = string.Format(
+                                            "Halyk на связи, terminalId={0} (HTTP {1}). Оплата: task=purchase.",
+                                            string.IsNullOrEmpty(terminalId) ? "?" : terminalId,
+                                            (int)response.StatusCode)
+                                    };
                                 }
 
-                                PaymentTerminalChargeResult parsed = ParseResponse(content, response.IsSuccessStatusCode);
-                                if (parsed.Status == PaymentTerminalChargeStatus.Success
-                                    || !LooksLikeUnsupported(content, (int)response.StatusCode))
+                                if (response.IsSuccessStatusCode)
                                 {
-                                    parsed.Message = (parsed.Message ?? string.Empty) + " [" + path + "]";
-                                    return parsed;
+                                    return new PaymentTerminalTestResult
+                                    {
+                                        Success = true,
+                                        Message = string.Format("Halyk HTTP {0}: {1}", (int)response.StatusCode, Truncate(content, 200))
+                                    };
                                 }
                             }
                         }
                     }
-                    catch (OperationCanceledException)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex)
-                    {
-                        lastError = ex;
-                    }
                 }
-            }
-
-            return new PaymentTerminalChargeResult
-            {
-                Status = PaymentTerminalChargeStatus.Failed,
-                Message = lastError != null
-                    ? "Halyk: " + GetInnermostMessage(lastError)
-                    : "Halyk не принял запрос оплаты. Ответ: " + Truncate(lastBody, 240),
-                Exception = lastError
-            };
-        }
-
-        public async Task<PaymentTerminalTestResult> ProbeAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _baseUrl + "/"))
-                using (HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                 {
-                    string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    return new PaymentTerminalTestResult
-                    {
-                        Success = true,
-                        Message = string.Format("Halyk ответил HTTP {0}: {1}", (int)response.StatusCode, Truncate(content, 200))
-                    };
+                    // probe timeout — try next body
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
                 }
             }
-            catch (Exception ex)
+
+            if (!string.IsNullOrEmpty(lastBody))
             {
                 return new PaymentTerminalTestResult
                 {
                     Success = false,
-                    Message = "Нет связи с Halyk: " + GetInnermostMessage(ex) + ". Включите «Режим кассы» на терминале (пароль часто 000000)."
+                    Message = "Halyk ответил, но без terminalId: " + Truncate(lastBody, 200)
+                };
+            }
+
+            return new PaymentTerminalTestResult
+            {
+                Success = false,
+                Message = lastError != null
+                    ? "Нет связи с Halyk: " + GetInnermostMessage(lastError) + ". Включите «Режим кассы» (пароль часто 000000)."
+                    : "Нет ответа от Halyk."
+            };
+        }
+
+        private async Task<PaymentTerminalChargeResult> SendTaskAsync(string jsonBody, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _baseUrl))
+                {
+                    request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+                    using (HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                    {
+                        string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        return ParseChargeResponse(content, response.IsSuccessStatusCode);
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = "Ошибка Halyk: " + GetInnermostMessage(ex),
+                    Exception = ex
                 };
             }
         }
 
-        private static bool LooksLikeUnsupported(string content, int statusCode)
+        private static bool TryParseEcr(string content, out string terminalId, out string msg, out string resultCode)
         {
-            if (statusCode == 404 || statusCode == 405)
-            {
-                return true;
-            }
-
+            terminalId = null;
+            msg = null;
+            resultCode = null;
             if (string.IsNullOrWhiteSpace(content))
             {
                 return false;
             }
 
-            return content.IndexOf("not found", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("unknown method", StringComparison.OrdinalIgnoreCase) >= 0;
+            try
+            {
+                JObject root = JObject.Parse(content);
+                JToken data = root["data"] ?? root;
+                terminalId = data.Value<string>("terminalId") ?? root.Value<string>("terminalId");
+                msg = data.Value<string>("msg") ?? data.Value<string>("message");
+                JToken resultToken = data["result"] ?? root["result"];
+                resultCode = resultToken != null ? resultToken.ToString() : null;
+                return !string.IsNullOrWhiteSpace(terminalId);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private static PaymentTerminalChargeResult ParseResponse(string content, bool httpOk)
+        private static PaymentTerminalChargeResult ParseChargeResponse(string content, bool httpOk)
         {
             if (string.IsNullOrWhiteSpace(content))
             {
@@ -147,65 +203,64 @@ namespace LogicPOS.PaymentTerminals.Halyk
                 };
             }
 
+            string terminalId;
+            string msg;
+            string resultCode;
+            if (!TryParseEcr(content, out terminalId, out msg, out resultCode))
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = httpOk ? PaymentTerminalChargeStatus.Success : PaymentTerminalChargeStatus.Failed,
+                    Message = Truncate(content, 240)
+                };
+            }
+
+            int codeNum;
+            bool hasCode = int.TryParse(resultCode, out codeNum);
+            // 0 = success; 1008 = busy; -240 / 200 = unsupported / bad request for non-pay tasks
+            bool failed = (hasCode && codeNum != 0)
+                || string.Equals(msg, "fail", StringComparison.OrdinalIgnoreCase);
+
+            if (failed)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = string.Format("Halyk [{0}]: {1}", resultCode, msg ?? Truncate(content, 160))
+                };
+            }
+
             try
             {
                 JObject root = JObject.Parse(content);
-                JToken data = root["data"] ?? root["result"] ?? root["params"] ?? root;
-
-                int? code = data.Value<int?>("result")
-                    ?? data.Value<int?>("resultCode")
-                    ?? data.Value<int?>("code")
-                    ?? root.Value<int?>("result");
-
-                string status = data.Value<string>("status") ?? root.Value<string>("status");
-                string message = data.Value<string>("msg")
-                    ?? data.Value<string>("message")
-                    ?? root.Value<string>("message");
-
-                bool failed = (code.HasValue && code.Value != 0)
-                    || string.Equals(status, "fail", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(status, "error", StringComparison.OrdinalIgnoreCase)
-                    || (!httpOk && !code.HasValue && string.IsNullOrEmpty(status));
-
-                if (failed)
-                {
-                    return new PaymentTerminalChargeResult
-                    {
-                        Status = PaymentTerminalChargeStatus.Failed,
-                        Message = message ?? ("Halyk error: " + Truncate(content, 200))
-                    };
-                }
-
+                JToken data = root["data"] ?? root;
                 return new PaymentTerminalChargeResult
                 {
                     Status = PaymentTerminalChargeStatus.Success,
-                    Message = message ?? "Halyk OK",
+                    Message = msg ?? "Halyk OK",
                     TransactionId = data.Value<string>("transactionId")
                         ?? data.Value<string>("rrn")
                         ?? data.Value<string>("tagRRN"),
                     Rrn = data.Value<string>("rrn") ?? data.Value<string>("tagRRN") ?? data.Value<string>("RRN"),
                     AuthorizationCode = data.Value<string>("authorizationCode")
                         ?? data.Value<string>("authCode")
-                        ?? data.Value<string>("approvalCode")
+                        ?? data.Value<string>("approvalCode"),
+                    PaymentMethodChannel = content.IndexOf("cardNo", StringComparison.OrdinalIgnoreCase) >= 0 ? "Card" : "Qr"
                 };
             }
             catch
             {
-                if (!httpOk)
-                {
-                    return new PaymentTerminalChargeResult
-                    {
-                        Status = PaymentTerminalChargeStatus.Failed,
-                        Message = Truncate(content, 240)
-                    };
-                }
-
                 return new PaymentTerminalChargeResult
                 {
                     Status = PaymentTerminalChargeStatus.Success,
-                    Message = Truncate(content, 240)
+                    Message = msg ?? "Halyk OK"
                 };
             }
+        }
+
+        private static string Escape(string value)
+        {
+            return (value ?? string.Empty).Replace("\\", "\\\\").Replace("\"", "\\\"");
         }
 
         private static string Truncate(string value, int max)

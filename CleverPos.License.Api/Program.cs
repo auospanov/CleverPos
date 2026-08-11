@@ -11,6 +11,7 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is not configured.");
 
 builder.Services.Configure<LicenseSigningOptions>(builder.Configuration.GetSection(LicenseSigningOptions.SectionName));
+builder.Services.Configure<AppUpdateOptions>(builder.Configuration.GetSection(AppUpdateOptions.SectionName));
 builder.Services.AddDbContext<LicenseDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 

@@ -71,6 +71,7 @@ namespace logicpos.Classes.Logic.License
                 }
 
                 _logger.Info("Offline license OK until " + local.Payload.ValidUntilUtc.ToString("o"));
+                TryRefreshAppUpdateInfo();
                 return true;
             }
 
@@ -81,7 +82,81 @@ namespace logicpos.Classes.Logic.License
             }
 
             _logger.Info("License renew required: " + local.Message);
-            return RenewFromServer(licencePath, local.Payload, computerId);
+            bool renewed = RenewFromServer(licencePath, local.Payload, computerId);
+            if (renewed)
+            {
+                TryRefreshAppUpdateInfo();
+            }
+
+            return renewed;
+        }
+
+        /// <summary>
+        /// Fetches latest CleverPos version from License API and sets GeneralSettings.ServerVersion
+        /// so BackOffice can show the update button.
+        /// </summary>
+        public static void TryRefreshAppUpdateInfo()
+        {
+            try
+            {
+                string baseUrl = ResolveLicenseApiBaseUrl();
+                if (string.IsNullOrWhiteSpace(baseUrl))
+                {
+                    return;
+                }
+
+                int timeoutMs = 8000;
+                int timeoutSeconds;
+                if (int.TryParse(ReadSetting("licenseApiTimeoutSeconds"), out timeoutSeconds) && timeoutSeconds > 0)
+                {
+                    timeoutMs = Math.Min(timeoutSeconds * 1000, 15000);
+                }
+
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUrl + "/api/updates/latest");
+                request.Method = "GET";
+                request.Timeout = timeoutMs;
+                request.ReadWriteTimeout = timeoutMs;
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    string body = reader.ReadToEnd();
+                    AppUpdateDto dto = null;
+                    try
+                    {
+                        dto = new JavaScriptSerializer().Deserialize<AppUpdateDto>(body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn("App update JSON parse failed: " + ex.Message);
+                    }
+
+                    if (dto == null || string.IsNullOrWhiteSpace(dto.version))
+                    {
+                        return;
+                    }
+
+                    GeneralSettings.ServerVersion = dto.version.Trim().TrimStart('v', 'V');
+                    GeneralSettings.UpdateDownloadUrl = string.IsNullOrWhiteSpace(dto.downloadUrl)
+                        ? null
+                        : dto.downloadUrl.Trim();
+                    GeneralSettings.UpdateSha256 = string.IsNullOrWhiteSpace(dto.sha256)
+                        ? null
+                        : dto.sha256.Trim();
+
+                    _logger.Info(string.Format(
+                        "App update info: server={0}, local={1}, url={2}",
+                        GeneralSettings.ServerVersion,
+                        GeneralSettings.ProductVersion,
+                        GeneralSettings.UpdateDownloadUrl ?? "(none)"));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("App update check skipped: " + ex.Message);
+            }
         }
 
         private static bool RenewFromServer(string licencePath, LicensePayload payload, string computerId)
@@ -455,6 +530,15 @@ namespace logicpos.Classes.Logic.License
             public bool allowed { get; set; }
             public string message { get; set; }
             public string licenceFileContent { get; set; }
+        }
+
+        private class AppUpdateDto
+        {
+            public string version { get; set; }
+            public string downloadUrl { get; set; }
+            public string sha256 { get; set; }
+            public string releaseNotes { get; set; }
+            public bool mandatory { get; set; }
         }
     }
 }

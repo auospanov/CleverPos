@@ -7,6 +7,7 @@ using logicpos.Classes.Enums.Finance;
 using logicpos.Classes.Gui.Gtk.Pos.Dialogs;
 using logicpos.Classes.Gui.Gtk.Widgets;
 using logicpos.Classes.Gui.Gtk.Widgets.Buttons;
+using logicpos.Classes.Logic.License;
 using LogicPOS.Data.Services;
 using LogicPOS.Data.XPO.Settings;
 using LogicPOS.Domain.Entities;
@@ -106,30 +107,92 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             //TK016248 BackOffice - Check New Version
             _NewVersion.Clicked += delegate
             {
-                DateTime actualDate = DateTime.Now;
-                //if (actualDate <= GlobalFramework.LicenceUpdateDate)
-                //{
-                string fileName = "\\LPUpdater\\LPUpdater.exe";
-                string lPathToUpdater = string.Format(@"{0}\{1}", Environment.CurrentDirectory, fileName);
-                //string lPathToUpdater = "" + Utils.GetCurrentDirectory() + "\\LPUpdater\\LPUpdater.exe";
-
-                if (File.Exists(lPathToUpdater))
+                string fileName = "CleverPos.Updater.exe";
+                string lPathToUpdater = System.IO.Path.Combine(Environment.CurrentDirectory, fileName);
+                if (!File.Exists(lPathToUpdater))
                 {
-                    ResponseType responseType = logicpos.Utils.ShowMessageBox(this, DialogFlags.Modal, new System.Drawing.Size(600, 400), MessageType.Question, ButtonsType.YesNo, string.Format(GeneralUtils.GetResourceByName("window_title_dialog_update_POS"), GeneralSettings.ServerVersion), GeneralUtils.GetResourceByName("global_pos_update"));
-
-                    if (responseType == ResponseType.Yes)
+                    // Legacy LogicPulse updater folder
+                    string legacy = System.IO.Path.Combine(Environment.CurrentDirectory, "LPUpdater", "LPUpdater.exe");
+                    if (File.Exists(legacy))
                     {
-                        System.Diagnostics.Process.Start(lPathToUpdater);
-                        //Process.Start(lPathToUpdater);
-                        LogicPOSApp.QuitWithoutConfirmation();
+                        lPathToUpdater = legacy;
                     }
                 }
-                //}
-                //else
-                //{
-                //   Utils.ShowMessageTouch(this, DialogFlags.Modal, new System.Drawing.Size(600, 400), MessageType.Error, ButtonsType.Ok, string.Format(CultureResources.GetCustomResources(LogicPOS.Settings.CultureSettings.CurrentCultureName, "global_error"), GlobalFramework.ServerVersion), CultureResources.GetCustomResources(LogicPOS.Settings.CultureSettings.CurrentCultureName, "dialog_message_license_blocked"));
-                //}
 
+                if (!File.Exists(lPathToUpdater))
+                {
+                    logicpos.Utils.ShowMessageBox(
+                        this,
+                        DialogFlags.Modal,
+                        new System.Drawing.Size(600, 320),
+                        MessageType.Warning,
+                        ButtonsType.Ok,
+                        "CleverPos.Updater.exe не найден рядом с программой.",
+                        GeneralUtils.GetResourceByName("global_pos_update"));
+                    return;
+                }
+
+                ResponseType responseType = logicpos.Utils.ShowMessageBox(
+                    this,
+                    DialogFlags.Modal,
+                    new System.Drawing.Size(600, 400),
+                    MessageType.Question,
+                    ButtonsType.YesNo,
+                    string.Format(GeneralUtils.GetResourceByName("window_title_dialog_update_POS"), GeneralSettings.ServerVersion),
+                    GeneralUtils.GetResourceByName("global_pos_update"));
+
+                if (responseType != ResponseType.Yes)
+                {
+                    return;
+                }
+
+                try
+                {
+                    string downloadUrl = GeneralSettings.UpdateDownloadUrl;
+                    if (string.IsNullOrWhiteSpace(downloadUrl))
+                    {
+                        OnlineLicenseGuard.TryRefreshAppUpdateInfo();
+                        downloadUrl = GeneralSettings.UpdateDownloadUrl;
+                    }
+
+                    var startInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = lPathToUpdater,
+                        WorkingDirectory = Environment.CurrentDirectory,
+                        UseShellExecute = true
+                    };
+
+                    if (System.IO.Path.GetFileName(lPathToUpdater).StartsWith("CleverPos.Updater", StringComparison.OrdinalIgnoreCase)
+                        && !string.IsNullOrWhiteSpace(downloadUrl))
+                    {
+                        int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
+                        string args = string.Format(
+                            "--pid {0} --url \"{1}\" --target \"{2}\" --restart CleverPos.exe",
+                            pid,
+                            downloadUrl,
+                            Environment.CurrentDirectory);
+                        if (!string.IsNullOrWhiteSpace(GeneralSettings.UpdateSha256))
+                        {
+                            args += " --sha256 \"" + GeneralSettings.UpdateSha256 + "\"";
+                        }
+
+                        startInfo.Arguments = args;
+                    }
+
+                    System.Diagnostics.Process.Start(startInfo);
+                    LogicPOSApp.QuitWithoutConfirmation();
+                }
+                catch (Exception ex)
+                {
+                    logicpos.Utils.ShowMessageBox(
+                        this,
+                        DialogFlags.Modal,
+                        new System.Drawing.Size(600, 320),
+                        MessageType.Error,
+                        ButtonsType.Ok,
+                        ex.Message,
+                        GeneralUtils.GetResourceByName("global_error"));
+                }
             };
 
             //Imagem do dashboard carregada novamente. evento chamado

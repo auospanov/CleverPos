@@ -419,6 +419,7 @@
     <Compile Include="Components\POS\Windows\StartupWindowEvents.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.PaymentTerminal.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalProcessingDialog.cs" />
+    <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalRefundHelper.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.Functions.cs" />
     <Compile Include="Components\POS\Windows\PosMainWindow\PosMainWindow.Functions.cs" />
     <Compile Include="Classes\Logic\Widgets\Pads\TicketPad.cs" />

@@ -136,6 +136,41 @@ namespace LogicPOS.PaymentTerminals.Kaspi
             return ParseStatusResponse(body);
         }
 
+        /// <summary>
+        /// ShopUchet: GET /refund?method=Card|Qr&amp;amount=N&amp;transactionId=...
+        /// CleverPos uses /v2/ like payment/status.
+        /// </summary>
+        public async Task<KaspiPaymentStatusResult> StartRefundAsync(
+            string accessToken,
+            int amountTenge,
+            string transactionId,
+            string method,
+            CancellationToken cancellationToken = default)
+        {
+            string normalizedMethod = NormalizeRefundMethod(method);
+            string url = string.Format(
+                "{0}/v2/refund?method={1}&amount={2}&transactionId={3}",
+                _baseUrl,
+                Uri.EscapeDataString(normalizedMethod),
+                amountTenge,
+                Uri.EscapeDataString(transactionId ?? string.Empty));
+            string body = await SendAsync(HttpMethod.Get, url, accessToken, cancellationToken).ConfigureAwait(false);
+            return ParseStatusResponse(body);
+        }
+
+        public static string NormalizeRefundMethod(string method)
+        {
+            string value = (method ?? string.Empty).Trim();
+            if (value.Equals("qr", StringComparison.OrdinalIgnoreCase)
+                || value.Equals("qrcode", StringComparison.OrdinalIgnoreCase)
+                || value.IndexOf("qr", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return "Qr";
+            }
+
+            return "Card";
+        }
+
         public async Task<KaspiPaymentStatusResult> GetStatusAsync(string accessToken, string processId, CancellationToken cancellationToken = default)
         {
             string url = $"{_baseUrl}/v2/status?processId={Uri.EscapeDataString(processId ?? string.Empty)}";
@@ -272,6 +307,7 @@ namespace LogicPOS.PaymentTerminals.Kaspi
                 TransactionId = data?.Value<string>("transactionId"),
                 Rrn = chequeInfo?.Value<string>("rrn"),
                 AuthorizationCode = chequeInfo?.Value<string>("authorizationCode"),
+                Method = chequeInfo?.Value<string>("method") ?? data?.Value<string>("method"),
                 Message = data?.Value<string>("message")
             };
         }

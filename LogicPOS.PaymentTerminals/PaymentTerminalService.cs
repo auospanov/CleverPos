@@ -103,7 +103,8 @@ namespace LogicPOS.PaymentTerminals
                         ProcessId = finalStatus.ProcessId,
                         TransactionId = finalStatus.TransactionId,
                         Rrn = finalStatus.Rrn,
-                        AuthorizationCode = finalStatus.AuthorizationCode
+                        AuthorizationCode = finalStatus.AuthorizationCode,
+                        PaymentMethodChannel = finalStatus.Method
                     };
                 }
 
@@ -144,6 +145,7 @@ namespace LogicPOS.PaymentTerminals
             {
                 JusanPosClient jusan = new JusanPosClient(terminal.Host, terminal.Port);
                 log?.Invoke("Connect " + jusan.BaseUrl);
+                log?.Invoke("Jusan/Jysan: режим интеграции кассы (порт обычно 8080).");
                 PaymentTerminalTestResult jusanResult = await jusan.ProbeAsync(cancellationToken).ConfigureAwait(false);
                 log?.Invoke(jusanResult.Message);
                 return jusanResult;
@@ -178,6 +180,225 @@ namespace LogicPOS.PaymentTerminals
                 Success = registerResult.Success,
                 Message = registerResult.Message
             };
+        }
+
+        /// <summary>
+        /// Refund on payment terminal. Kaspi needs transactionId + method (Card/Qr);
+        /// Halyk/Jusan need tagRRN (use RRN / transaction id from original payment).
+        /// </summary>
+        public static async Task<PaymentTerminalChargeResult> RefundAsync(
+            Session session,
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            string transactionId,
+            string paymentMethodChannel = null,
+            Action<string> log = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (terminal == null || terminal.Disabled)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = "Payment terminal is not configured"
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(terminal.Host))
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = "Terminal host (IP) is empty"
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(transactionId))
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = "Не задан ID операции (transactionId / tagRRN) для возврата"
+                };
+            }
+
+            string brand = (terminal.Brand ?? string.Empty).Trim().ToUpperInvariant();
+            if (brand == "JUSAN" || brand == "JYSAN")
+            {
+                return await RefundJusanAsync(terminal, amount, transactionId, log, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (brand == "HALYK")
+            {
+                return await RefundHalykAsync(terminal, amount, transactionId, log, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (brand != "KASPI")
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = $"Terminal brand '{terminal.Brand}' is not supported for refund"
+                };
+            }
+
+            return await RefundKaspiAsync(session, terminal, amount, transactionId, paymentMethodChannel, log, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static async Task<PaymentTerminalChargeResult> RefundKaspiAsync(
+            Session session,
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            string transactionId,
+            string paymentMethodChannel,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                KaspiSmartPosClient client = CreateClient(terminal);
+                log?.Invoke(string.Format("Kaspi возврат: {0}", client.BaseUrl));
+
+                string accessToken = await EnsureAccessTokenAsync(session, terminal, client, log, cancellationToken).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(accessToken))
+                {
+                    return new PaymentTerminalChargeResult
+                    {
+                        Status = PaymentTerminalChargeStatus.Failed,
+                        Message = "Не удалось получить токен Kaspi для возврата."
+                    };
+                }
+
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                string method = KaspiSmartPosClient.NormalizeRefundMethod(paymentMethodChannel);
+                log?.Invoke(string.Format("Refund {0} ₸, method={1}, transactionId={2}", amountTenge, method, transactionId));
+
+                KaspiPaymentStatusResult started = await client.StartRefundAsync(accessToken, amountTenge, transactionId, method, cancellationToken).ConfigureAwait(false);
+                if (!started.Success || string.IsNullOrWhiteSpace(started.ProcessId))
+                {
+                    return new PaymentTerminalChargeResult
+                    {
+                        Status = PaymentTerminalChargeStatus.Failed,
+                        Message = started.Message ?? "Refund start failed"
+                    };
+                }
+
+                log?.Invoke(string.Format("processId={0}, status={1}", started.ProcessId, started.Status));
+
+                KaspiPaymentStatusResult finalStatus = await client.WaitForPaymentAsync(
+                    accessToken,
+                    started.ProcessId,
+                    pollIntervalMs: 1000,
+                    timeoutSeconds: 120,
+                    log,
+                    cancellationToken).ConfigureAwait(false);
+
+                if (finalStatus.Success && string.Equals(finalStatus.Status, "success", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new PaymentTerminalChargeResult
+                    {
+                        Status = PaymentTerminalChargeStatus.Success,
+                        Message = "Refund successful",
+                        ProcessId = finalStatus.ProcessId,
+                        TransactionId = finalStatus.TransactionId ?? transactionId,
+                        Rrn = finalStatus.Rrn,
+                        AuthorizationCode = finalStatus.AuthorizationCode,
+                        PaymentMethodChannel = method
+                    };
+                }
+
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = finalStatus.Message ?? ("Refund " + finalStatus.Status),
+                    ProcessId = finalStatus.ProcessId
+                };
+            }
+            catch (OperationCanceledException)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Cancelled,
+                    Message = "Cancelled"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+            }
+        }
+
+        private static async Task<PaymentTerminalChargeResult> RefundJusanAsync(
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            string tagRrn,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                JusanPosClient client = new JusanPosClient(terminal.Host, terminal.Port);
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                log?.Invoke("Jusan refund " + client.BaseUrl);
+                log?.Invoke(string.Format("Refund {0} ₸, tagRRN={1}", amountTenge, tagRrn));
+                return await client.RefundAsync(amountTenge, tagRrn, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Cancelled,
+                    Message = "Cancelled"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+            }
+        }
+
+        private static async Task<PaymentTerminalChargeResult> RefundHalykAsync(
+            sys_configurationpaymentterminal terminal,
+            decimal amount,
+            string tagRrn,
+            Action<string> log,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                HalykPosClient client = new HalykPosClient(terminal.Host, terminal.Port);
+                int amountTenge = KaspiSmartPosClient.ConvertAmountToTenge(amount);
+                log?.Invoke("Halyk refund " + client.BaseUrl);
+                log?.Invoke(string.Format("Refund {0} ₸, tagRRN={1}", amountTenge, tagRrn));
+                return await client.RefundAsync(amountTenge, tagRrn, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Cancelled,
+                    Message = "Cancelled"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTerminalChargeResult
+                {
+                    Status = PaymentTerminalChargeStatus.Failed,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+            }
         }
 
         private static async Task<PaymentTerminalChargeResult> ChargeJusanAsync(

@@ -8,8 +8,13 @@ using System.Threading.Tasks;
 namespace LogicPOS.PaymentTerminals.Jusan
 {
     /// <summary>
-    /// Jusan / Jysan Smart POS — same protocol as ShopUchet frmPosTerminalProcess.SendJusan.
-    /// POST http://{host}:8080/  {"task":"purchase","data":{"amount": &lt;tenge&gt;}}
+    /// Jusan / Jysan Smart POS — protocol from ShopUchet frmPosTerminalProcess.SendJusan / ProcessPaymentJusan.
+    /// POST http://{host}:8080/
+    ///   {"task":"purchase","data":{"amount":N}}
+    ///   {"task":"refund","data":{"amount":N,"tagRRN":"..."}}
+    ///   {"task":"cancel"} — abort in-progress op (ShopUchet expects result 1010)
+    /// Probe must be POST (GET often rejected like Halyk).
+    /// Success: data.result == 0; card → tagRRN, QR → paymentId.
     /// </summary>
     public class JusanPosClient
     {
@@ -37,33 +42,94 @@ namespace LogicPOS.PaymentTerminals.Jusan
 
         public async Task<PaymentTerminalChargeResult> RefundAsync(int amountTenge, string tagRrn, CancellationToken cancellationToken = default)
         {
+            // ShopUchet omits quotes around tagRRN (bug); we send valid JSON string.
             string body = "{\"task\":\"refund\",\"data\":{\"amount\":" + amountTenge + ",\"tagRRN\":\"" + Escape(tagRrn) + "\"}}";
             return await SendTaskAsync(body, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<PaymentTerminalTestResult> ProbeAsync(CancellationToken cancellationToken = default)
         {
-            try
+            string[] probes =
             {
-                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _baseUrl))
-                using (HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                "{\"task\":\"abort\"}",
+                "{\"task\":\"cancel\"}",
+                "{\"task\":\"status\"}"
+            };
+
+            Exception lastError = null;
+            string lastBody = null;
+
+            foreach (string body in probes)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                try
                 {
-                    string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    return new PaymentTerminalTestResult
+                    using (CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
                     {
-                        Success = true,
-                        Message = string.Format("Jusan ответил HTTP {0}: {1}", (int)response.StatusCode, Truncate(content, 200))
-                    };
+                        linked.CancelAfter(TimeSpan.FromSeconds(8));
+                        using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _baseUrl))
+                        {
+                            request.Content = new StringContent(body, Encoding.UTF8, "application/json");
+                            using (HttpResponseMessage response = await _httpClient.SendAsync(request, linked.Token).ConfigureAwait(false))
+                            {
+                                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                lastBody = content;
+
+                                string terminalId;
+                                if (TryGetTerminalId(content, out terminalId))
+                                {
+                                    return new PaymentTerminalTestResult
+                                    {
+                                        Success = true,
+                                        Message = string.Format(
+                                            "Jusan на связи, terminalId={0} (HTTP {1}). Оплата: task=purchase.",
+                                            terminalId,
+                                            (int)response.StatusCode)
+                                    };
+                                }
+
+                                // Any HTTP reply from ECR proves connectivity (same lesson as Halyk).
+                                if ((int)response.StatusCode == 400
+                                    && !string.IsNullOrEmpty(content)
+                                    && content.IndexOf("метода запроса", StringComparison.OrdinalIgnoreCase) >= 0)
+                                {
+                                    continue;
+                                }
+
+                                if (response.IsSuccessStatusCode || !string.IsNullOrWhiteSpace(content))
+                                {
+                                    return new PaymentTerminalTestResult
+                                    {
+                                        Success = true,
+                                        Message = string.Format("Jusan HTTP {0}: {1}", (int)response.StatusCode, Truncate(content, 200))
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+                {
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
                 }
             }
-            catch (Exception ex)
+
+            return new PaymentTerminalTestResult
             {
-                return new PaymentTerminalTestResult
-                {
-                    Success = false,
-                    Message = "Нет связи с Jusan: " + GetInnermostMessage(ex)
-                };
-            }
+                Success = false,
+                Message = lastError != null
+                    ? "Нет связи с Jusan: " + GetInnermostMessage(lastError)
+                    : (string.IsNullOrEmpty(lastBody)
+                        ? "Нет ответа от Jusan."
+                        : "Jusan ответил: " + Truncate(lastBody, 200))
+            };
         }
 
         private async Task<PaymentTerminalChargeResult> SendTaskAsync(string jsonBody, CancellationToken cancellationToken)
@@ -121,7 +187,21 @@ namespace LogicPOS.PaymentTerminals.Jusan
             }
 
             JToken data = root["data"] ?? root;
-            int resultCode = data.Value<int?>("result") ?? -1;
+            // ShopUchet reads data.result as string then TryStrToInt
+            int resultCode = -1;
+            JToken resultToken = data["result"];
+            if (resultToken != null)
+            {
+                if (resultToken.Type == JTokenType.Integer)
+                {
+                    resultCode = resultToken.Value<int>();
+                }
+                else
+                {
+                    int.TryParse(resultToken.ToString(), out resultCode);
+                }
+            }
+
             if (resultCode != 0)
             {
                 return new PaymentTerminalChargeResult
@@ -141,8 +221,30 @@ namespace LogicPOS.PaymentTerminals.Jusan
                 Message = isCard ? "Jusan CARD OK" : "Jusan QR OK",
                 TransactionId = isCard ? rrn : paymentId,
                 Rrn = rrn,
-                AuthorizationCode = data.Value<string>("authCode") ?? data.Value<string>("authorizationCode")
+                AuthorizationCode = data.Value<string>("authCode") ?? data.Value<string>("authorizationCode"),
+                PaymentMethodChannel = isCard ? "Card" : "Qr"
             };
+        }
+
+        private static bool TryGetTerminalId(string content, out string terminalId)
+        {
+            terminalId = null;
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return false;
+            }
+
+            try
+            {
+                JObject root = JObject.Parse(content);
+                JToken data = root["data"] ?? root;
+                terminalId = data.Value<string>("terminalId") ?? root.Value<string>("terminalId");
+                return !string.IsNullOrWhiteSpace(terminalId);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static string Escape(string value)

@@ -25,6 +25,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
         private TextView _textViewLog;
         private Button _buttonTest;
         private Button _buttonDiscover;
+        private Button _buttonRefundTest;
         private CancellationTokenSource _operationCts;
 
         public DialogConfigurationPaymentTerminal(Window pSourceWindow, GenericTreeViewXPO pTreeView, DialogFlags pFlags, DialogMode pDialogMode, Entity pXPGuidObject)
@@ -53,10 +54,13 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             HBox hboxButtons = new HBox(true, _boxSpacing);
             _buttonTest = new Button(GeneralUtils.GetResourceByName("global_payment_terminal_test_connection"));
             _buttonDiscover = new Button(GeneralUtils.GetResourceByName("global_payment_terminal_discover"));
+            _buttonRefundTest = new Button("Тест возврата");
             _buttonTest.Clicked += ButtonTest_Clicked;
             _buttonDiscover.Clicked += ButtonDiscover_Clicked;
+            _buttonRefundTest.Clicked += ButtonRefundTest_Clicked;
             hboxButtons.PackStart(_buttonTest, true, true, 0);
             hboxButtons.PackStart(_buttonDiscover, true, true, 0);
+            hboxButtons.PackStart(_buttonRefundTest, true, true, 0);
             vboxTab2.PackStart(hboxButtons, false, false, 0);
 
             _textViewLog = new TextView
@@ -177,6 +181,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             {
                 if (_buttonTest != null) _buttonTest.Sensitive = sensitive;
                 if (_buttonDiscover != null) _buttonDiscover.Sensitive = sensitive;
+                if (_buttonRefundTest != null) _buttonRefundTest.Sensitive = sensitive;
             });
         }
 
@@ -270,6 +275,100 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                         _operationCts.Token).ConfigureAwait(false);
 
                     AppendLog(GeneralUtils.GetResourceByName("global_payment_terminal_test_finished"));
+                }
+                catch (Exception ex)
+                {
+                    AppendLog(ex.Message);
+                }
+                finally
+                {
+                    SetOperationButtonsSensitive(true);
+                }
+            });
+        }
+
+        private void ButtonRefundTest_Clicked(object sender, EventArgs e)
+        {
+            sys_configurationpaymentterminal terminal = GetTerminalFromForm();
+            if (terminal == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(terminal.Host))
+            {
+                SwitchToLogTab();
+                ClearLog();
+                AppendLog(GeneralUtils.GetResourceByName("global_payment_terminal_host_required"));
+                return;
+            }
+
+            logicpos.Utils.ResponseText amountInput = logicpos.Utils.GetInputText(
+                this,
+                DialogFlags.Modal,
+                "Тест возврата",
+                string.Empty,
+                "Сумма (тенге):",
+                "100",
+                RegexUtils.RegexIntegerGreaterThanZero,
+                true);
+            if (amountInput.ResponseType != ResponseType.Ok || !decimal.TryParse(amountInput.Text, out decimal amount) || amount <= 0)
+            {
+                return;
+            }
+
+            logicpos.Utils.ResponseText txnInput = logicpos.Utils.GetInputText(
+                this,
+                DialogFlags.Modal,
+                "Тест возврата",
+                string.Empty,
+                "transactionId / tagRRN:",
+                string.Empty,
+                RegexUtils.RegexAlfaNumericExtended,
+                true);
+            if (txnInput.ResponseType != ResponseType.Ok || string.IsNullOrWhiteSpace(txnInput.Text))
+            {
+                return;
+            }
+
+            string method = null;
+            string brand = (terminal.Brand ?? string.Empty).Trim().ToUpperInvariant();
+            if (brand == "KASPI" || brand == string.Empty)
+            {
+                ResponseType isCard = logicpos.Utils.ShowMessageNonTouch(
+                    this,
+                    DialogFlags.Modal,
+                    MessageType.Question,
+                    ButtonsType.YesNo,
+                    "Оплата была картой? (Да = Card, Нет = Qr)",
+                    "Метод Kaspi");
+                method = isCard == ResponseType.Yes ? "Card" : "Qr";
+            }
+
+            CancelOperation();
+            SwitchToLogTab();
+            ClearLog();
+            _operationCts = new CancellationTokenSource();
+            SetOperationButtonsSensitive(false);
+            AppendLog("Refund test started...");
+
+            string txn = txnInput.Text.Trim();
+            Task.Run(async () =>
+            {
+                try
+                {
+                    PaymentTerminalChargeResult result = await PaymentTerminalService.RefundAsync(
+                        terminal.Session,
+                        terminal,
+                        amount,
+                        txn,
+                        method,
+                        AppendLog,
+                        _operationCts.Token).ConfigureAwait(false);
+
+                    AppendLog(result != null
+                        ? string.Format("{0}: {1}", result.Status, result.Message)
+                        : "No result");
                 }
                 catch (Exception ex)
                 {

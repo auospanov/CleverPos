@@ -14,13 +14,22 @@ namespace LogicPOS.Settings
 
         public static Dictionary<string, string> PreferenceParameters { get; set; }
         public static string ServerVersion { get; set; }
+        /// <summary>Download URL for latest CleverPos package (from License API /api/updates/latest).</summary>
+        public static string UpdateDownloadUrl { get; set; }
+        public static string UpdateSha256 { get; set; }
         public static string ProductVersion
         {
             get
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
                 FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-                return string.Format("v{0}", fileVersionInfo.ProductVersion);
+                string version = fileVersionInfo.ProductVersion ?? fileVersionInfo.FileVersion ?? "0.0.0";
+                if (!version.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+                {
+                    version = "v" + version;
+                }
+
+                return version;
             }
         }
         public static Assembly ProductAssembly

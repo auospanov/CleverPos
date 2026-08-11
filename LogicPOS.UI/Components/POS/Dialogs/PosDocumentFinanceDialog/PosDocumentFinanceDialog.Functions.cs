@@ -48,6 +48,13 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                         }
                         else
                         {
+                            // Credit note + terminal payment method → refund on device first
+                            if (!PaymentTerminalRefundHelper.TryRefundForCreditNote(_sourceWindow, processFinanceDocumentParameter))
+                            {
+                                this.Run();
+                                return;
+                            }
+
                             //Proccess Document
                             fin_documentfinancemaster resultDocument = FrameworkCalls.PersistFinanceDocument(_sourceWindow, processFinanceDocumentParameter);
                             //If Errors Occurs, return null Document, Keep Running until user cancel or a Valid Document is Returned

@@ -47,6 +47,8 @@ namespace LogicPOS.PaymentTerminals.Kaspi
         public string TransactionId { get; set; }
         public string Rrn { get; set; }
         public string AuthorizationCode { get; set; }
+        /// <summary>Payment channel from chequeInfo.method (Card / Qr).</summary>
+        public string Method { get; set; }
         public string Message { get; set; }
     }
 }

@@ -42,14 +42,8 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 return true;
             }
 
-            sys_configurationpaymentterminal terminal = PaymentMethod.PaymentTerminal;
-            if (terminal == null || terminal.Disabled)
-            {
-                terminal = XPOSettings.Session.FindObject<sys_configurationpaymentterminal>(
-                    CriteriaOperator.Parse("Disabled = 0 OR Disabled IS NULL"));
-            }
-
-            if (terminal == null || terminal.Disabled)
+            sys_configurationpaymentterminal terminal = PaymentTerminalRefundHelper.ResolveTerminal(PaymentMethod);
+            if (terminal == null)
             {
                 ResponseType response = logicpos.Utils.ShowMessageTouch(
                     this,
@@ -75,6 +69,16 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             if (result == null)
             {
                 return false;
+            }
+
+            if (result.ShouldContinueSale && result.Status == PaymentTerminalChargeStatus.Success)
+            {
+                if (ProcessFinanceDocumentParameter != null)
+                {
+                    ProcessFinanceDocumentParameter.Notes = PaymentTerminalTransactionNotes.Append(
+                        ProcessFinanceDocumentParameter.Notes,
+                        result);
+                }
             }
 
             return result.ShouldContinueSale;
