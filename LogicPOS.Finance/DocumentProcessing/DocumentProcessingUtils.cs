@@ -734,6 +734,15 @@ namespace LogicPOS.Finance.DocumentProcessing
                             _logger.Error("Error processing stocks :: " + ex.Message, ex);
                         }
 
+                        try
+                        {
+                            LogicPOS.Data.XPO.Utility.CloudSyncOutbox.EnqueueSaleCommitted(documentFinanceMaster);
+                        }
+                        catch (Exception syncEx)
+                        {
+                            _logger.Warn("CloudSyncOutbox sale: " + syncEx.Message);
+                        }
+
                         //Assign Document to Result
                         result = documentFinanceMaster;
 

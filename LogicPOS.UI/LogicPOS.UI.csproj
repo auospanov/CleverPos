@@ -236,6 +236,7 @@
     <Compile Include="Classes\Logic\Hardware\OutputDevices\UsbDisplayDevice.cs" />
     <Compile Include="Classes\Logic\License\LicenseRouter.cs" />
     <Compile Include="Classes\Logic\License\OnlineLicenseGuard.cs" />
+    <Compile Include="Classes\Logic\License\CloudSyncFlusher.cs" />
     <Compile Include="Classes\Logic\License\LicenseUIResult.cs" />
     <Compile Include="Classes\DataLayer\DataBaseBackup.cs" />
     <Compile Include="Components\BackOffice\Dialogs\Articles\DialogArticleType.cs" />
@@ -419,6 +420,7 @@
     <Compile Include="Components\POS\Windows\StartupWindowEvents.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.PaymentTerminal.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalProcessingDialog.cs" />
+    <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalPickerDialog.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentTerminalRefundHelper.cs" />
     <Compile Include="Components\POS\Dialogs\PaymentDialog\PaymentDialog.Functions.cs" />
     <Compile Include="Components\POS\Windows\PosMainWindow\PosMainWindow.Functions.cs" />

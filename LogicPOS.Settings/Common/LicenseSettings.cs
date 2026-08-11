@@ -17,6 +17,8 @@ namespace LogicPOS.Settings
         public static string LicenseEmail { get; set; }
         public static string LicenseTelephone { get; set; }
         public static string LicenseHardwareId { get; set; }
+        /// <summary>Online license key from signed licence.lic (cloud sync / renew).</summary>
+        public static string LicenseKey { get; set; }
         public static string LicenseReseller { get; set; }
         public static bool LicenseModuleStocks { get; set; }
         public static DateTime LicenceUpdateDate { get; set; }

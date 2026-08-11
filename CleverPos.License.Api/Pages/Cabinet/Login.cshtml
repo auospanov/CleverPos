@@ -1,0 +1,151 @@
+@page "/cabinet/login"
+@model CleverPos.License.Api.Pages.Cabinet.LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Вход в кабинет";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Кабинет владельца — CleverPos</title>
+    <link rel="stylesheet" href="~/css/cabinet.css" />
+    @if (!string.IsNullOrWhiteSpace(Model.GoogleClientId))
+    {
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.AppleClientId))
+    {
+        <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async></script>
+    }
+</head>
+<body>
+    <div class="cabinet-login">
+        <div class="cabinet-card">
+            <p class="brand">CleverPos</p>
+            <h1>Кабинет владельца</h1>
+            <p class="sub">cabinet.dominium.kz — вход через соцсеть</p>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert err">@Model.ErrorMessage</div>
+            }
+            <div id="auth-error" class="alert err" style="display:none"></div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.GoogleClientId))
+            {
+                <div id="g_id_onload"
+                     data-client_id="@Model.GoogleClientId"
+                     data-callback="onGoogleCredential"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+            }
+            else
+            {
+                <p class="hint">Google: задайте OwnerAuth:GoogleClientId</p>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.AppleClientId))
+            {
+                <div class="divider">или</div>
+                <button type="button" class="btn apple" id="apple-signin-btn">Войти через Apple</button>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.TelegramBotUsername))
+            {
+                <div class="divider">или</div>
+                <script async src="https://telegram.org/js/telegram-widget.js?22"
+                        data-telegram-login="@Model.TelegramBotUsername"
+                        data-size="large"
+                        data-onauth="onTelegramAuth(user)"
+                        data-request-access="write"></script>
+            }
+        </div>
+    </div>
+    <script>
+        function showErr(msg) {
+            var el = document.getElementById('auth-error');
+            el.style.display = 'block';
+            el.textContent = msg || 'Ошибка входа';
+        }
+
+        async function postAuth(url, body) {
+            var res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(body)
+            });
+            var data = await res.json().catch(function () { return {}; });
+            if (!res.ok) {
+                showErr(data.message || ('HTTP ' + res.status));
+                return;
+            }
+            window.location.href = '/cabinet';
+        }
+
+        function onGoogleCredential(response) {
+            postAuth('/api/owner/auth/google', { idToken: response.credential });
+        }
+
+        function onTelegramAuth(user) {
+            postAuth('/api/owner/auth/telegram', {
+                id: user.id,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                username: user.username,
+                photoUrl: user.photo_url,
+                authDate: user.auth_date,
+                hash: user.hash
+            });
+        }
+
+        (function initApple() {
+            var clientId = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AppleClientId ?? ""));
+            var redirectUri = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AppleRedirectUri ?? ""));
+            if (!clientId) return;
+
+            function ready(fn) {
+                if (window.AppleID && window.AppleID.auth) { fn(); return; }
+                setTimeout(function () { ready(fn); }, 80);
+            }
+
+            ready(function () {
+                AppleID.auth.init({
+                    clientId: clientId,
+                    scope: 'name email',
+                    redirectURI: redirectUri,
+                    usePopup: true
+                });
+                var btn = document.getElementById('apple-signin-btn');
+                if (!btn) return;
+                btn.addEventListener('click', async function () {
+                    try {
+                        var response = await AppleID.auth.signIn();
+                        var idToken = response && response.authorization && response.authorization.id_token;
+                        if (!idToken) {
+                            showErr('Apple не вернул id_token');
+                            return;
+                        }
+                        var email = response.user && response.user.email ? response.user.email : null;
+                        var firstName = response.user && response.user.name ? response.user.name.firstName : null;
+                        var lastName = response.user && response.user.name ? response.user.name.lastName : null;
+                        if (email) localStorage.setItem('apple_email', email);
+                        if (firstName || lastName) localStorage.setItem('apple_name', [firstName, lastName].filter(Boolean).join(' '));
+                        postAuth('/api/owner/auth/apple', {
+                            idToken: idToken,
+                            email: email || localStorage.getItem('apple_email'),
+                            firstName: firstName,
+                            lastName: lastName,
+                            name: localStorage.getItem('apple_name')
+                        });
+                    } catch (e) {
+                        showErr((e && e.error) || (e && e.message) || 'Apple Sign In отменён');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

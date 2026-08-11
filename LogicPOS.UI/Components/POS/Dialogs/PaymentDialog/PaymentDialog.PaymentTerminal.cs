@@ -1,22 +1,15 @@
-using DevExpress.Data.Filtering;
-using DevExpress.Xpo;
 using Gtk;
-using LogicPOS.Data.XPO;
-using LogicPOS.Data.XPO.Settings;
 using LogicPOS.Domain.Entities;
 using LogicPOS.Globalization;
 using LogicPOS.PaymentTerminals;
 using LogicPOS.Settings;
-using logicpos.Classes.Gui.Gtk.Pos.Dialogs;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
 {
     internal partial class PaymentDialog
     {
-        private static fin_configurationpaymentmethod ResolvePaymentMethodButton(SQLSelectResultData data, params string[] tokens)
+        private static fin_configurationpaymentmethod ResolvePaymentMethodButton(LogicPOS.Data.XPO.SQLSelectResultData data, params string[] tokens)
         {
             if (tokens == null || tokens.Length == 0)
             {
@@ -42,7 +35,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 return true;
             }
 
-            sys_configurationpaymentterminal terminal = PaymentTerminalRefundHelper.ResolveTerminal(PaymentMethod);
+            sys_configurationpaymentterminal terminal = PaymentTerminalRefundHelper.ResolveTerminal(PaymentMethod, this);
             if (terminal == null)
             {
                 ResponseType response = logicpos.Utils.ShowMessageTouch(

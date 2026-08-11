@@ -22,6 +22,8 @@ using LogicPOS.DTOs.Printing;
 using LogicPOS.Finance.DocumentProcessing;
 using LogicPOS.Globalization;
 using LogicPOS.Modules;
+using LogicPOS.Modules.StockManagement;
+using LogicPOS.Domain.Enums;
 using LogicPOS.Persistence.Services;
 using LogicPOS.Settings;
 using LogicPOS.Utility;
@@ -2406,24 +2408,19 @@ namespace logicpos
                     DialogArticleStock dialog = new DialogArticleStock(pSourceWindow);
                     ResponseType response = (ResponseType)dialog.Run();
                     dialog.Destroy();
+                    return;
                 }
-                else if (CheckStockMessage() && !LicenseSettings.LicenseModuleStocks)
-                {
-                    var messageDialog = ShowMessageTouch(pSourceWindow, DialogFlags.DestroyWithParent, MessageType.Warning, ButtonsType.OkCancel, GeneralUtils.GetResourceByName("global_warning"), GeneralUtils.GetResourceByName("global_warning_acquire_module_stocks"));
-                    if (messageDialog == ResponseType.Ok)
-                    {
-                        Process.Start("https://logic-pos.com/");
-                    }
 
-                    string query = string.Format("UPDATE cfg_configurationpreferenceparameter SET Value = 'False' WHERE Token = 'CHECK_STOCKS_MESSAGE';");
-                    XPOSettings.Session.ExecuteScalar(query);
-                    query = string.Format("UPDATE cfg_configurationpreferenceparameter SET Disabled = '1' WHERE Token = 'CHECK_STOCKS_MESSAGE';");
-                    XPOSettings.Session.ExecuteScalar(query);
-                    StartDocumentsMenuFromBackOffice(pSourceWindow, 6);
-                }
-                else
+                // MVP receive: open merchandise entry directly (no plugin / no upsell block).
+                ProcessArticleStockParameter responseParam = PosArticleStockDialog.GetProcessArticleStockParameter(pSourceWindow);
+                if (responseParam != null && responseParam.ArticleCollectionSimple != null && responseParam.ArticleCollectionSimple.Count > 0)
                 {
-                    StartDocumentsMenuFromBackOffice(pSourceWindow, 6);
+                    foreach (var item in responseParam.ArticleCollectionSimple)
+                    {
+                        responseParam.Quantity = item.Value;
+                        responseParam.Article = item.Key;
+                        ProcessArticleStock.Add(ProcessArticleStockMode.In, responseParam);
+                    }
                 }
             }
             catch (Exception ex)

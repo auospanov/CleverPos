@@ -1,0 +1,56 @@
+@page "/admin/cloud"
+@model CleverPos.License.Api.Pages.Admin.CloudModel
+@{
+    ViewData["Title"] = "Облако";
+}
+<div class="topbar">
+    <div>
+        <h1>Облако — магазины и кассы</h1>
+        <div class="sub">Агрегаты остатков и продаж по всем лицензиям (модель B).</div>
+    </div>
+    <div class="row-actions">
+        <a class="btn ghost" href="/admin">Лицензии</a>
+    </div>
+</div>
+
+@foreach (var block in Model.Blocks)
+{
+    <div class="card" style="margin-bottom:16px">
+        <h2 style="margin-top:0">@(block.CompanyName ?? "—") <span class="mono">@block.LicenseKey</span></h2>
+        @if (block.Dashboard.Stores.Count == 0)
+        {
+            <p class="sub">Нет синхронизированных данных.</p>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Store</th>
+                        <th>SKU</th>
+                        <th>Qty</th>
+                        <th>Sales today</th>
+                        <th>Tills</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var store in block.Dashboard.Stores)
+                {
+                    <tr>
+                        <td class="mono">@store.StoreId</td>
+                        <td>@store.SkuCount</td>
+                        <td>@store.StockQty.ToString("0.####")</td>
+                        <td>@store.SalesTodayCount / @store.SalesTodayTotal.ToString("0.00")</td>
+                        <td>
+                            @foreach (var till in store.Tills)
+                            {
+                                <div>@(till.MachineName ?? till.ComputerId) — @till.LastSeenAtUtc.ToString("yyyy-MM-dd HH:mm")</div>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+}

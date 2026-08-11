@@ -4,6 +4,7 @@ using CleverPos.License.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleverPos.License.Api.Migrations
 {
     [DbContext(typeof(LicenseDbContext))]
-    partial class LicenseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260811165847_AddOwnerAccountsAndBin")]
+    partial class AddOwnerAccountsAndBin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,146 +24,6 @@ namespace CleverPos.License.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudSaleEvent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("AtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
-
-                    b.Property<string>("DocumentNumber")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("DocumentOid")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<string>("IdempotencyKey")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<Guid>("LicenseId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("PaymentToken")
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<DateTime>("ReceivedAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("StoreId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<decimal>("Total")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdempotencyKey")
-                        .IsUnique();
-
-                    b.HasIndex("LicenseId", "StoreId", "Day");
-
-                    b.ToTable("cloud_sale_events", (string)null);
-                });
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudStockBalance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<decimal>("Accounting")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<string>("ArticleOid")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<string>("Barcode")
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<string>("Code")
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<string>("Designation")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<Guid>("LicenseId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("StoreId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LicenseId", "StoreId", "ArticleOid")
-                        .IsUnique();
-
-                    b.ToTable("cloud_stock_balances", (string)null);
-                });
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudTillPresence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ComputerId")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<DateTime>("LastSeenAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("LicenseId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("MachineName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<int>("PendingAckCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StoreId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LicenseId", "StoreId", "ComputerId")
-                        .IsUnique();
-
-                    b.ToTable("cloud_till_presences", (string)null);
-                });
 
             modelBuilder.Entity("CleverPos.License.Api.Models.LicenseAccessLog", b =>
                 {
@@ -405,39 +268,6 @@ namespace CleverPos.License.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("owner_license_links", (string)null);
-                });
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudSaleEvent", b =>
-                {
-                    b.HasOne("CleverPos.License.Api.Models.LicenseRecord", "License")
-                        .WithMany()
-                        .HasForeignKey("LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("License");
-                });
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudStockBalance", b =>
-                {
-                    b.HasOne("CleverPos.License.Api.Models.LicenseRecord", "License")
-                        .WithMany()
-                        .HasForeignKey("LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("License");
-                });
-
-            modelBuilder.Entity("CleverPos.License.Api.Models.CloudTillPresence", b =>
-                {
-                    b.HasOne("CleverPos.License.Api.Models.LicenseRecord", "License")
-                        .WithMany()
-                        .HasForeignKey("LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("License");
                 });
 
             modelBuilder.Entity("CleverPos.License.Api.Models.LicenseAccessLog", b =>

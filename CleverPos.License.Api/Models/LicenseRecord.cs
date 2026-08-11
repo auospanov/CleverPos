@@ -12,6 +12,10 @@ public class LicenseRecord
     [MaxLength(256)]
     public string? CompanyName { get; set; }
 
+    /// <summary>БИН/ИИН компании (реквизит, не ключ API).</summary>
+    [MaxLength(12)]
+    public string? Bin { get; set; }
+
     public int MaxActivations { get; set; } = 1;
 
     public DateTime? ExpiresAtUtc { get; set; }
@@ -23,4 +27,6 @@ public class LicenseRecord
     public ICollection<LicenseActivation> Activations { get; set; } = new List<LicenseActivation>();
 
     public ICollection<LicensePayment> Payments { get; set; } = new List<LicensePayment>();
+
+    public ICollection<OwnerLicenseLink> OwnerLinks { get; set; } = new List<OwnerLicenseLink>();
 }

@@ -828,6 +828,38 @@ CREATE TABLE fin_articlenationalcatalog (
   KEY iDeletedWhere_fin_articlenationalcatalog (DeletedWhere)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table sys_cloudsyncoutbox (cloud sync model B local outbox)
+--
+DROP TABLE IF EXISTS sys_cloudsyncoutbox;
+CREATE TABLE sys_cloudsyncoutbox (
+  Oid char(38) NOT NULL,
+  Disabled bit(1) DEFAULT NULL,
+  Notes longtext,
+  CreatedAt datetime DEFAULT NULL,
+  CreatedBy char(38) DEFAULT NULL,
+  CreatedWhere char(38) DEFAULT NULL,
+  UpdatedAt datetime DEFAULT NULL,
+  UpdatedBy char(38) DEFAULT NULL,
+  UpdatedWhere char(38) DEFAULT NULL,
+  DeletedAt datetime DEFAULT NULL,
+  DeletedBy char(38) DEFAULT NULL,
+  DeletedWhere char(38) DEFAULT NULL,
+  EventType varchar(64) DEFAULT NULL,
+  StoreId varchar(64) DEFAULT NULL,
+  PayloadJson longtext,
+  IdempotencyKey varchar(128) DEFAULT NULL,
+  Status varchar(32) DEFAULT NULL,
+  SentAt datetime DEFAULT NULL,
+  LastError longtext,
+  OptimisticLockField int(11) DEFAULT NULL,
+  PRIMARY KEY (Oid),
+  KEY iEventType_sys_cloudsyncoutbox (EventType),
+  KEY iStoreId_sys_cloudsyncoutbox (StoreId),
+  UNIQUE KEY iIdempotencyKey_sys_cloudsyncoutbox (IdempotencyKey),
+  KEY iStatus_sys_cloudsyncoutbox (Status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 --

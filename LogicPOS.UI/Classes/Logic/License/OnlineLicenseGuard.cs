@@ -320,10 +320,67 @@ namespace logicpos.Classes.Logic.License
                 LicenseSettings.LicenseHardwareId = payload.HardwareId;
             }
 
+            if (!string.IsNullOrWhiteSpace(payload.LicenseKey))
+            {
+                LicenseSettings.LicenseKey = payload.LicenseKey.Trim();
+            }
+
             if (!string.IsNullOrWhiteSpace(payload.Company))
             {
                 LicenseSettings.LicenseCompany = payload.Company;
             }
+        }
+
+        /// <summary>Public for CloudSyncFlusher / shared clients.</summary>
+        public static string GetLicenseApiBaseUrl() => ResolveLicenseApiBaseUrl();
+
+        public static string ReadAppSetting(string key) => ReadSetting(key);
+
+        public static string GetCachedLicenseKey()
+        {
+            if (!string.IsNullOrWhiteSpace(LicenseSettings.LicenseKey))
+            {
+                return LicenseSettings.LicenseKey.Trim();
+            }
+
+            try
+            {
+                string licencePath = ResolveLicenceFilePath();
+                if (!File.Exists(licencePath))
+                {
+                    return string.Empty;
+                }
+
+                string fileContent = File.ReadAllText(licencePath, Encoding.UTF8);
+                string publicKey = ReadSetting("licensePublicKeyXml");
+                if (string.IsNullOrWhiteSpace(publicKey))
+                {
+                    publicKey = LicenseSigningKeys.DefaultPublicKeyXml;
+                }
+
+                LicenseReadResult local = LicenseIssueService.VerifyLocal(fileContent, publicKey);
+                if (local.Payload != null && !string.IsNullOrWhiteSpace(local.Payload.LicenseKey))
+                {
+                    LicenseSettings.LicenseKey = local.Payload.LicenseKey.Trim();
+                    return LicenseSettings.LicenseKey;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("GetCachedLicenseKey: " + ex.Message);
+            }
+
+            return string.Empty;
+        }
+
+        public static string GetCachedComputerId()
+        {
+            if (!string.IsNullOrWhiteSpace(LicenseSettings.LicenseHardwareId))
+            {
+                return LicenseSettings.LicenseHardwareId.Trim();
+            }
+
+            return ResolveComputerId(null);
         }
 
         private static bool HardwareMatches(LicensePayload payload, string computerId)

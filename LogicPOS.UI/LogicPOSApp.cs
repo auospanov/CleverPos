@@ -6,6 +6,7 @@ using logicpos.Classes.DataLayer;
 using logicpos.Classes.Enums.App;
 using logicpos.Classes.Gui.Gtk.BackOffice;
 using logicpos.Classes.Logic.Hardware;
+using logicpos.Classes.Logic.License;
 using logicpos.Classes.Logic.Others;
 using LogicPOS.Data.Services;
 using LogicPOS.Data.XPO;
@@ -600,6 +601,15 @@ namespace logicpos
                     /* IN009164 - TimeoutHandler() for UpdateBackupTimer() will not be created if Auto-Backup Flow is enabled */
                     StartBackupTimer();
                 }
+            }
+
+            try
+            {
+                CloudSyncFlusher.Start();
+            }
+            catch (Exception cloudEx)
+            {
+                _logger.Warn("CloudSyncFlusher.Start failed: " + cloudEx.Message);
             }
         }
 

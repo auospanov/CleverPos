@@ -1,0 +1,133 @@
+@page "/cabinet"
+@model CleverPos.License.Api.Pages.Cabinet.IndexModel
+@{
+    Layout = "_CabinetLayout";
+    ViewData["Title"] = "Кабинет";
+}
+<div class="cabinet-home">
+    <header class="cabinet-top">
+        <div>
+            <p class="brand">CleverPos</p>
+            <h1>Здравствуйте@(string.IsNullOrWhiteSpace(Model.DisplayName) ? "" : ", " + Model.DisplayName)</h1>
+            <p class="sub">@Model.Email</p>
+        </div>
+        <form method="post" asp-page-handler="Logout">
+            <button class="btn ghost" type="submit">Выйти</button>
+        </form>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert ok">@Model.StatusMessage</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert err">@Model.ErrorMessage</div>
+    }
+
+    <section class="block">
+        <h2>Привязать лицензию</h2>
+        <p class="sub">Введите LicenseKey из договора / письма активации.</p>
+        <form method="post" asp-page-handler="Link" class="row">
+            <input name="LicenseKey" asp-for="LicenseKey" placeholder="XXXX-XXXX-XXXX" autocomplete="off" />
+            <button class="btn" type="submit">Привязать</button>
+        </form>
+    </section>
+
+    <section class="block">
+        <h2>Мои компании</h2>
+        @if (Model.Licenses.Count == 0)
+        {
+            <p class="sub">Пока нет привязанных лицензий.</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Компания</th>
+                        <th>БИН</th>
+                        <th>Ключ</th>
+                        <th>Роль</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Licenses)
+                {
+                    <tr>
+                        <td>@(item.CompanyName ?? "—")</td>
+                        <td>@(item.Bin ?? "—")</td>
+                        <td><code>@item.LicenseKey</code></td>
+                        <td>@item.Role</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </section>
+
+    @foreach (var block in Model.Dashboards)
+    {
+        <section class="block" data-license="@block.LicenseId">
+            <h2>@block.CompanyName — магазины и кассы</h2>
+            @if (block.Dashboard.Stores.Count == 0)
+            {
+                <p class="sub">Пока нет данных из POS. После продаж/приёма остатков касса отправит события в облако.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Магазин (storeId)</th>
+                            <th>SKU</th>
+                            <th>Остаток</th>
+                            <th>Продажи сегодня</th>
+                            <th>Кассы</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var store in block.Dashboard.Stores)
+                    {
+                        <tr>
+                            <td><code>@store.StoreId</code></td>
+                            <td>@store.SkuCount</td>
+                            <td>@store.StockQty.ToString("0.####")</td>
+                            <td>@store.SalesTodayCount / @store.SalesTodayTotal.ToString("0.00")</td>
+                            <td>
+                                @if (store.Tills.Count == 0)
+                                {
+                                    <span class="sub">—</span>
+                                }
+                                else
+                                {
+                                    foreach (var till in store.Tills)
+                                    {
+                                        <div>@(till.MachineName ?? till.ComputerId)</div>
+                                        <div class="sub">@till.LastSeenAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        </section>
+    }
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script>
+(async function () {
+    try {
+        var ids = [@string.Join(",", Model.Dashboards.Select(d => $"'{d.LicenseId}'"))];
+        if (!ids.length || !window.signalR) return;
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/cloud").withAutomaticReconnect().build();
+        connection.on("storeUpdated", function () { location.reload(); });
+        await connection.start();
+        for (var i = 0; i < ids.length; i++) {
+            await connection.invoke("SubscribeLicense", ids[i]);
+        }
+    } catch (e) { /* optional live refresh */ }
+})();
+</script>

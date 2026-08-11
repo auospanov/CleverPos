@@ -133,6 +133,7 @@
     <Compile Include="Domain\Entities\System\SYS_SystemAuditType.cs" />
     <Compile Include="Domain\Entities\System\SYS_SystemBackup.cs" />
     <Compile Include="Domain\Entities\System\SYS_SystemNotification.cs" />
+    <Compile Include="Domain\Entities\System\SYS_CloudSyncOutbox.cs" />
     <Compile Include="Domain\Entities\System\SYS_SystemNotificationType.cs" />
     <Compile Include="Domain\Entities\System\SYS_SystemPrint.cs" />
     <Compile Include="XPO\TemplateEntity.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="XPO\SQLSelectResultData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XPO\Utility\XPOUtility.cs" />
+    <Compile Include="XPO\Utility\CloudSyncOutbox.cs" />
     <Compile Include="XPO\Settings\XPOSettings.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -164,6 +164,11 @@ CREATE INDEX [iUpdatedBy_fin_articlenationalcatalog] on [fin_articlenationalcata
 CREATE INDEX [iUpdatedWhere_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([UpdatedWhere]);
 CREATE INDEX [iDeletedBy_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([DeletedBy]);
 CREATE INDEX [iDeletedWhere_fin_articlenationalcatalog] on [fin_articlenationalcatalog]([DeletedWhere]);
+CREATE TABLE [sys_cloudsyncoutbox] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [EventType] nvarchar(64) NULL, [StoreId] nvarchar(64) NULL, [PayloadJson] text NULL, [IdempotencyKey] nvarchar(128) NULL, [Status] nvarchar(32) NULL, [SentAt] datetime NULL, [LastError] text NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
+CREATE INDEX [iEventType_sys_cloudsyncoutbox] on [sys_cloudsyncoutbox]([EventType]);
+CREATE INDEX [iStoreId_sys_cloudsyncoutbox] on [sys_cloudsyncoutbox]([StoreId]);
+CREATE UNIQUE INDEX [iIdempotencyKey_sys_cloudsyncoutbox] on [sys_cloudsyncoutbox]([IdempotencyKey]);
+CREATE INDEX [iStatus_sys_cloudsyncoutbox] on [sys_cloudsyncoutbox]([Status]);
 CREATE TABLE [fin_articleserialnumber] ([Oid] char (36) NOT NULL, [Disabled] bit, [Notes] text, [CreatedAt] datetime, [CreatedBy] char (36), [CreatedWhere] char (36), [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char (36), [Article] char (36), [SerialNumber] char (36) NOT NULL UNIQUE, [OptimisticLockField] int, [ArticleWarehouse] char (36), [StockMovimentIn] char (36), [StockMovimentOut] char (36), [IsSold] boolean Default null, [Status] int Default NULL, PRIMARY KEY ([Oid]));
 CREATE INDEX [iArticle_fin_articleserialnumber] ON [fin_articleserialnumber] ([Article]);
 CREATE INDEX [iSerialNumber_fin_articleserialnumber] ON [fin_articleserialnumber] ([SerialNumber]);

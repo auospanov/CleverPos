@@ -76,9 +76,11 @@ namespace LogicPOS.Modules.StockManagement
 
                 //Only saves if not Working on a Unit Of Work Transaction
                 //Gestão de Stocks : Janela de Gestão de Stocks [IN:016534]
+                // Always update Accounting so sales (UoW) and receive (Session) stay in sync.
+                article.Accounting += quantity;
+
                 if (pSession.GetType() != typeof(UnitOfWork))
                 {
-                    article.Accounting += quantity;
                     article.Save();
                     articleStock.Save();
                 }
@@ -95,6 +97,20 @@ namespace LogicPOS.Modules.StockManagement
                 }
 
                 result = true;
+
+                // Cloud prep: receive (non-UoW) writes outbox immediately.
+                // Document UoW path emits after CommitChanges.
+                if (!(pSession is UnitOfWork))
+                {
+                    try
+                    {
+                        CloudSyncOutbox.EnqueueStockBalance(pSession, article, quantity, pMode.ToString());
+                    }
+                    catch (Exception syncEx)
+                    {
+                        log.Warn("CloudSyncOutbox stock: " + syncEx.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -185,6 +201,29 @@ namespace LogicPOS.Modules.StockManagement
                                 }
                             }
                             uowSession.CommitChanges();
+
+                            try
+                            {
+                                foreach (fin_documentfinancedetail item in documentFinanceMaster.DocumentDetail)
+                                {
+                                    if (item.Article != null && item.Article.Class != null && item.Article.Class.WorkInStock)
+                                    {
+                                        fin_article fresh = XPOSettings.Session.GetObjectByKey<fin_article>(item.Article.Oid);
+                                        if (fresh != null)
+                                        {
+                                            CloudSyncOutbox.EnqueueStockBalance(
+                                                XPOSettings.Session,
+                                                fresh,
+                                                mode == ProcessArticleStockMode.Out ? -item.Quantity : item.Quantity,
+                                                mode.ToString());
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception syncEx)
+                            {
+                                log.Warn("CloudSyncOutbox stock after document: " + syncEx.Message);
+                            }
                         }
                         catch (Exception ex)
                         {
