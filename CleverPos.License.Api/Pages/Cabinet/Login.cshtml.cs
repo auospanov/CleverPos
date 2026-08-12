@@ -21,7 +21,7 @@ public class LoginModel : PageModel
     public string AppleClientId => _options.AppleClientId;
     public string TelegramBotUsername => _options.TelegramBotUsername;
     public string AppleRedirectUri =>
-        (_options.CabinetPublicOrigin ?? "https://cabinet.dominium.kz").TrimEnd('/') + "/cabinet/login";
+        (_options.CabinetPublicOrigin ?? "https://dominium.kz").TrimEnd('/') + "/cabinet/login";
 
     public async Task<IActionResult> OnGetAsync()
     {

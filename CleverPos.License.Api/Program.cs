@@ -100,7 +100,13 @@ app.MapControllers();
 app.MapRazorPages();
 app.MapHub<CloudSyncHub>("/hubs/cloud");
 app.MapHealthChecks("/health");
-app.MapGet("/", () => Results.Redirect("/admin"));
+app.MapGet("/", (HttpContext http) =>
+{
+    string host = http.Request.Host.Host ?? string.Empty;
+    bool isCabinetHost = host.Equals("dominium.kz", StringComparison.OrdinalIgnoreCase)
+        || host.Equals("www.dominium.kz", StringComparison.OrdinalIgnoreCase);
+    return Results.Redirect(isCabinetHost ? "/cabinet" : "/admin");
+});
 app.MapPost("/admin/logout", async (HttpContext http) =>
 {
     await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
