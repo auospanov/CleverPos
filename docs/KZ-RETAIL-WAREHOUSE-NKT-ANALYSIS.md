@@ -120,7 +120,7 @@ fin_article.Designation = name_ru в НКТ
 
 Уже есть (~14 экранов): `DialogArticleStock`, `DialogAddArticleStock`, `DialogArticleWarehouse`, `TreeViewWarehouse`, и др. Не хватает **логики плагина**, который связывает формы с `fin_articlewarehouse`.
 
-**Рекомендация для магазина вещей с одним штрихкодом на SKU:** склад **отложить**; при необходимости позже — MVP модуля со складом `IsDefault`, без серийников.
+**Рекомендация для магазина вещей с одним штрихкодом на SKU:** склад **без плагина** — см. [`STOCK-MVP-WITHOUT-PLUGIN.md`](STOCK-MVP-WITHOUT-PLUGIN.md) (`ProcessArticleStock` + `fin_articlewarehouse`, без серийников).
 
 ### 2.7. Регистрация плагина (на будущее)
 

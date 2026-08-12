@@ -2403,7 +2403,9 @@ namespace logicpos
         {
             try
             {
-                if (LicenseSettings.LicenseModuleStocks && ModulesSettings.StockManagementModule != null)
+                // Full stock window without requiring IStockManagementModule plugin.
+                // Plugin path kept for serial-number installs; MVP uses ProcessArticleStock.
+                if (LicenseSettings.LicenseModuleStocks)
                 {
                     DialogArticleStock dialog = new DialogArticleStock(pSourceWindow);
                     ResponseType response = (ResponseType)dialog.Run();
@@ -2411,7 +2413,7 @@ namespace logicpos
                     return;
                 }
 
-                // MVP receive: open merchandise entry directly (no plugin / no upsell block).
+                // Fallback: simple merchandise entry (no license stocks flag).
                 ProcessArticleStockParameter responseParam = PosArticleStockDialog.GetProcessArticleStockParameter(pSourceWindow);
                 if (responseParam != null && responseParam.ArticleCollectionSimple != null && responseParam.ArticleCollectionSimple.Count > 0)
                 {

@@ -41,8 +41,8 @@ INSERT INTO sys_configurationprinterstype (Oid, Designation, Disabled) VALUES ('
 INSERT INTO sys_configurationweighingmachine (Oid,Designation,Disabled,PortName,Parity,BaudRate,StopBits,DataBits) VALUES ('00000000-0000-0000-0000-000000000001', '-- Выберите --', 1, 'COM1','None','9600','One',0);
 INSERT INTO sys_configurationinputreader (Oid, Designation, Disabled) VALUES ('00000000-0000-0000-0000-000000000001', '-- Выберите --', 1);
 INSERT INTO sys_configurationpoledisplay (Oid, Designation, Disabled) VALUES ('00000000-0000-0000-0000-000000000001', '-- Выберите --', 1);
-INSERT INTO fin_warehouse (Oid, Ord, Code, Designation, IsDefault, Disabled) VALUES ('4f5f33a7-7717-49cd-8687-5dc302a0c3cb',10,10, 'Склад 1', 1, 0);
-INSERT INTO fin_warehouselocation (Oid, Ord, Code, Designation, Warehouse, Disabled) VALUES ('a12a472b-5f32-4c7a-a648-03072560ffc8',10,10, 'Ячейка 1','4f5f33a7-7717-49cd-8687-5dc302a0c3cb', 0);
+INSERT INTO fin_warehouse (Oid, Ord, Code, Designation, IsDefault, Disabled) VALUES ('4f5f33a7-7717-49cd-8687-5dc302a0c3cb',10,10, 'Основной склад', 1, 0);
+INSERT INTO fin_warehouselocation (Oid, Ord, Code, Designation, Warehouse, Disabled) VALUES ('a12a472b-5f32-4c7a-a648-03072560ffc8',10,10, 'Общая','4f5f33a7-7717-49cd-8687-5dc302a0c3cb', 0);
 
 -- Data;
 INSERT INTO sys_userprofile (Oid,Ord,Code,Designation) VALUES ('5f0f47a5-5e2a-4d79-ba9f-56966c9f615e',10,10,'Помощник прилавка');

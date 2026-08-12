@@ -6,6 +6,7 @@
 **Ветка:** проверьте `git status` и `git branch` после клонирования  
 **Документация НКТ:** https://nationalcatalog.kz/gwp/docs  
 **Подробный анализ** (розница, склады, НКТ): [`docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md`](docs/KZ-RETAIL-WAREHOUSE-NKT-ANALYSIS.md)  
+**Склад MVP без плагина:** [`docs/STOCK-MVP-WITHOUT-PLUGIN.md`](docs/STOCK-MVP-WITHOUT-PLUGIN.md)  
 **Полный TODO внедрения** (НКТ, ОФД, Kaspi/Halyk/Jusan, Kaspi Shop, склад): [`docs/KZ-IMPLEMENTATION-TODO.md`](docs/KZ-IMPLEMENTATION-TODO.md)
 
 ---
@@ -52,7 +53,7 @@
 
 ### Не делать в первую очередь
 
-- Склад `IStockManagementModule` (фаза H)
+- ~~Склад `IStockManagementModule` (фаза H)~~ → вместо плагина: [`docs/STOCK-MVP-WITHOUT-PLUGIN.md`](docs/STOCK-MVP-WITHOUT-PLUGIN.md)
 - ЭСФ / KKM / КГД (фаза F)
 - Импорт товаров **из** НКТ в CleverPos
 - Уникальный штрихкод на каждую физическую вещь (серийники)

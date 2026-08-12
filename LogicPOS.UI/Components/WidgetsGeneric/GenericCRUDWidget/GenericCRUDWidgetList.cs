@@ -454,6 +454,8 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsGeneric
                 {
                     ProcessArticleStockParameter res = DialogAddArticleStock.GetProcessArticleStockParameter(pDialog as DialogAddArticleStock);
                     List<fin_articleserialnumber> barCodeLabelList = new List<fin_articleserialnumber>();
+                    bool usePlugin = ModulesSettings.HasStockManagementModule
+                        && ModulesSettings.StockManagementModule != null;
 
                     if (res != null)
                     {
@@ -466,8 +468,8 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsGeneric
                                 res.PurchasePrice = item.Value.Item3;
                                 res.Article = item.Key;
                                 res.WarehouseLocation = item.Value.Item4;
-                                //If has serial Numbers
-                                if (item.Value.Item2.Count > 0)
+                                // Serial numbers only when stock plugin is present; MVP ignores SN fields.
+                                if (usePlugin && item.Value.Item2.Count > 0)
                                 {
                                     foreach (var itemS in item.Value.Item2)
                                     {
@@ -484,9 +486,14 @@ namespace logicpos.Classes.Gui.Gtk.WidgetsGeneric
                                         }
                                     }
                                 }
-                                else
+                                else if (usePlugin)
                                 {
                                     ModulesSettings.StockManagementModule.Add(ProcessArticleStockMode.In, res);
+                                }
+                                else
+                                {
+                                    // No plugin: write journal + Accounting + default warehouse.
+                                    ProcessArticleStock.Add(ProcessArticleStockMode.In, res);
                                 }
                                 if (barCodeLabelList.Count > 0)
                                 {

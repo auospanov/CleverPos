@@ -42,6 +42,10 @@ INSERT INTO sys_configurationweighingmachine (Oid,Designation,Disabled,PortName,
 INSERT INTO sys_configurationinputreader (Oid, Designation, Disabled) VALUES ('00000000-0000-0000-0000-000000000001', '-- Выберите --', 1);
 INSERT INTO sys_configurationpoledisplay (Oid, Designation, Disabled) VALUES ('00000000-0000-0000-0000-000000000001', '-- Выберите --', 1);
 
+-- Склад MVP (без плагина): один склад по умолчанию + общая локация;
+INSERT INTO fin_warehouse (Oid, Ord, Code, Designation, IsDefault, Disabled) VALUES ('4f5f33a7-7717-49cd-8687-5dc302a0c3cb',10,10, 'Основной склад', 1, 0);
+INSERT INTO fin_warehouselocation (Oid, Ord, Code, Designation, Warehouse, Disabled) VALUES ('a12a472b-5f32-4c7a-a648-03072560ffc8',10,10, 'Общая','4f5f33a7-7717-49cd-8687-5dc302a0c3cb', 0);
+
 -- Data;
 INSERT INTO sys_userprofile (Oid,Ord,Code,Designation) VALUES ('91ad42be-91fb-4131-bc15-84d68531d487',10,10,'Менеджер');
 INSERT INTO sys_userprofile (Oid,Ord,Code,Designation) VALUES ('1626e21f-75e6-429e-b0ac-edb755e733c2',20,20,'Владелец');

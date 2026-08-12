@@ -308,23 +308,27 @@
 
 ---
 
-## Фаза H — Склад (опционально)
+## Фаза H — Склад (без плагина)
 
-Не блокирует кассу «скан → оплата». Нужен для остатков, Kaspi Shop (наличие), оптовых операций.
+См. [`docs/STOCK-MVP-WITHOUT-PLUGIN.md`](STOCK-MVP-WITHOUT-PLUGIN.md).  
+Плагин `IStockManagementModule` **не делаем** — логика в `ProcessArticleStock`.
 
-### H.1 — MVP `IStockManagementModule`
+### H.1 — MVP без плагина
 
-- [ ] **H-1.1.** Класс `StockManagementModule` → `plugins/*Plugin.dll`
-- [ ] **H-1.2.** Регистрация в `Program.cs` / `PluginLoader`
-- [ ] **H-1.3.** `Add`: `fin_articlestock` + `fin_articlewarehouse` + `article.Accounting`
-- [ ] **H-1.4.** Склад по умолчанию `fin_warehouse.IsDefault`
-- [ ] **H-1.5.** Списание при продаже / возврат при отмене (`StockMode`)
+- [x] **H-1.1.** Документ STOCK-MVP-WITHOUT-PLUGIN.md
+- [x] **H-1.2.** Сид `fin_warehouse` / `fin_warehouselocation` (ru) + `EnsureDefaultWarehouseLocation`
+- [x] **H-1.3.** `ProcessArticleStock`: journal + Accounting + `fin_articlewarehouse` (без серийников)
+- [x] **H-1.4.** Разблокировать `DialogArticleStock` / приход без плагина
+- [ ] **H-1.5.** Кредитка/NC → возврат на склад (`StockMode`)
+- [ ] **H-1.6.** Политика нулевого остатка на кассе
+- [ ] **H-1.7.** Простая инвентаризация
 
-### H.2 — Позже
+### H.2 — Позже (под вопросом)
 
-- [ ] **H-2.1.** Серийные номера, составные товары
-- [ ] **H-2.2.** Колонка «склад» в отчётах остатков
-- [ ] **H-2.3.** Синхронизация остатков → Kaspi Shop (если фаза J активна)
+- [ ] Серийные номера, составные товары
+- [ ] Несколько складов / перемещения
+- [ ] Колонка «склад» в отчётах
+- [ ] Синхронизация остатков → Kaspi Shop
 
 ---
 

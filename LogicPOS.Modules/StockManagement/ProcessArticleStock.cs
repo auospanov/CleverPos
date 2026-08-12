@@ -1,33 +1,79 @@
-﻿using DevExpress.Xpo;
+﻿using DevExpress.Data.Filtering;
+using DevExpress.Xpo;
 using LogicPOS.Data.XPO.Settings;
 using LogicPOS.Data.XPO.Utility;
 using LogicPOS.Domain.Entities;
 using LogicPOS.Domain.Enums;
 using LogicPOS.Globalization;
+using LogicPOS.Settings;
 using System;
 
 namespace LogicPOS.Modules.StockManagement
 {
+    /// <summary>
+    /// Stock movements without IStockManagementModule.
+    /// Updates fin_articlestock + Accounting + fin_articlewarehouse (default warehouse).
+    /// Serial numbers are intentionally not handled in MVP — see docs/STOCK-MVP-WITHOUT-PLUGIN.md.
+    /// </summary>
     public class ProcessArticleStock
     {
+        private static readonly Guid DefaultWarehouseOid = Guid.Parse("4f5f33a7-7717-49cd-8687-5dc302a0c3cb");
+        private static readonly Guid DefaultLocationOid = Guid.Parse("a12a472b-5f32-4c7a-a648-03072560ffc8");
+
         public static bool Add(ProcessArticleStockMode pMode, ProcessArticleStockParameter pParameter)
         {
-            return Add(pMode, pParameter.Customer, 10, pParameter.DocumentDate, pParameter.DocumentNumber, pParameter.Article, pParameter.Quantity, pParameter.Notes);
+            return Add(
+                XPOSettings.Session,
+                pMode,
+                null,
+                pParameter.Customer,
+                10,
+                pParameter.DocumentDate,
+                pParameter.DocumentNumber,
+                pParameter.Article,
+                pParameter.Quantity,
+                pParameter.Notes,
+                pParameter.WarehouseLocation);
         }
 
         public static bool Add(ProcessArticleStockMode pMode, erp_customer pCustomer, int pOrd, DateTime pDocumentDate, string pDocumentNumber, fin_article pArticle, decimal pQuantity, string pNotes)
         {
-            return Add(XPOSettings.Session, pMode, pCustomer, 10, pDocumentDate, pDocumentNumber, pArticle, pQuantity, pNotes);
+            return Add(XPOSettings.Session, pMode, null, pCustomer, pOrd, pDocumentDate, pDocumentNumber, pArticle, pQuantity, pNotes, null);
         }
 
         public static bool Add(Session pSession, ProcessArticleStockMode pMode, erp_customer pCustomer, int pOrd, DateTime pDocumentDate, string pDocumentNumber, fin_article pArticle, decimal pQuantity, string pNotes)
         {
-            return Add(XPOSettings.Session, pMode, null, pCustomer, 10, pDocumentDate, pDocumentNumber, pArticle, pQuantity, pNotes);
+            return Add(pSession, pMode, null, pCustomer, pOrd, pDocumentDate, pDocumentNumber, pArticle, pQuantity, pNotes, null);
         }
 
-        public static bool Add(Session pSession, ProcessArticleStockMode pMode, fin_documentfinancedetail pDocumentDetail, erp_customer pCustomer, int pOrd, DateTime pDocumentDate, string pDocumentNumber, fin_article pArticle, decimal pQuantity, string pNotes)
+        public static bool Add(
+            Session pSession,
+            ProcessArticleStockMode pMode,
+            fin_documentfinancedetail pDocumentDetail,
+            erp_customer pCustomer,
+            int pOrd,
+            DateTime pDocumentDate,
+            string pDocumentNumber,
+            fin_article pArticle,
+            decimal pQuantity,
+            string pNotes)
         {
-            //Log4Net
+            return Add(pSession, pMode, pDocumentDetail, pCustomer, pOrd, pDocumentDate, pDocumentNumber, pArticle, pQuantity, pNotes, null);
+        }
+
+        public static bool Add(
+            Session pSession,
+            ProcessArticleStockMode pMode,
+            fin_documentfinancedetail pDocumentDetail,
+            erp_customer pCustomer,
+            int pOrd,
+            DateTime pDocumentDate,
+            string pDocumentNumber,
+            fin_article pArticle,
+            decimal pQuantity,
+            string pNotes,
+            fin_warehouselocation pWarehouseLocation)
+        {
             log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
             bool result = false;
@@ -43,10 +89,10 @@ namespace LogicPOS.Modules.StockManagement
                     case ProcessArticleStockMode.In:
                         quantity = pQuantity;
                         break;
+                    default:
+                        return false;
                 }
 
-                //Get Objects in same Session
-                //Gestão de Stocks - Ajuste de Stock diretamente no Artigo (BackOffice) [IN:016530]
                 erp_customer customer = (erp_customer)pSession.GetObjectByKey(typeof(erp_customer), XPOSettings.XpoOidUserRecord);
                 if (pCustomer != null)
                 {
@@ -66,7 +112,10 @@ namespace LogicPOS.Modules.StockManagement
                     CreatedWhere = terminal,
                     CreatedBy = userDetail
                 };
-                if (pDocumentNumber != string.Empty) articleStock.DocumentNumber = pDocumentNumber;
+                if (!string.IsNullOrEmpty(pDocumentNumber))
+                {
+                    articleStock.DocumentNumber = pDocumentNumber;
+                }
                 if (pDocumentDetail != null)
                 {
                     articleStock.DocumentNumber = pDocumentDetail.DocumentMaster.DocumentNumber;
@@ -74,18 +123,15 @@ namespace LogicPOS.Modules.StockManagement
                     articleStock.DocumentDetail = pDocumentDetail;
                 }
 
-                //Only saves if not Working on a Unit Of Work Transaction
-                //Gestão de Stocks : Janela de Gestão de Stocks [IN:016534]
-                // Always update Accounting so sales (UoW) and receive (Session) stay in sync.
                 article.Accounting += quantity;
+                ApplyWarehouseDelta(pSession, article, quantity, pWarehouseLocation);
 
-                if (pSession.GetType() != typeof(UnitOfWork))
+                if (!(pSession is UnitOfWork))
                 {
                     article.Save();
                     articleStock.Save();
                 }
 
-                //Audit
                 switch (pMode)
                 {
                     case ProcessArticleStockMode.Out:
@@ -98,8 +144,6 @@ namespace LogicPOS.Modules.StockManagement
 
                 result = true;
 
-                // Cloud prep: receive (non-UoW) writes outbox immediately.
-                // Document UoW path emits after CommitChanges.
                 if (!(pSession is UnitOfWork))
                 {
                     try
@@ -121,32 +165,25 @@ namespace LogicPOS.Modules.StockManagement
         }
 
         /// <summary>
-        /// If ProcessArticleStockMode.None
+        /// Process finance document stock (sale / cancel reverse).
         /// </summary>
         public static bool Add(
             fin_documentfinancemaster pDocumentFinanceMaster,
-            // Used to force ReverseStockMode, used in cancel Documents to restore Stocks
-            bool pReverseStockMode = false
-            )
+            bool pReverseStockMode = false)
         {
-            //Log4Net
             log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
             bool result = false;
             int ord = 0;
 
-            // Check if Works with Stock
             ProcessArticleStockMode mode = (pDocumentFinanceMaster.DocumentType.StockMode > 0)
                 ? (ProcessArticleStockMode)pDocumentFinanceMaster.DocumentType.StockMode
-                : ProcessArticleStockMode.None
-            ;
+                : ProcessArticleStockMode.None;
 
             try
             {
-                //Only Process if has a Valid Mode and a valid article Class
                 if (mode != ProcessArticleStockMode.None)
                 {
-                    // ReverseStockMode : Used for ex when we cancal Finance Documents to Restore/Revert Stock
                     if (pReverseStockMode && mode.Equals(ProcessArticleStockMode.Out))
                     {
                         mode = ProcessArticleStockMode.In;
@@ -160,42 +197,36 @@ namespace LogicPOS.Modules.StockManagement
                     {
                         try
                         {
-                            //Get Objects in same Session
                             fin_documentfinancemaster documentFinanceMaster = (fin_documentfinancemaster)uowSession.GetObjectByKey(typeof(fin_documentfinancemaster), pDocumentFinanceMaster.Oid);
                             erp_customer customer = (erp_customer)uowSession.GetObjectByKey(typeof(erp_customer), pDocumentFinanceMaster.EntityOid);
 
                             foreach (fin_documentfinancedetail item in documentFinanceMaster.DocumentDetail)
                             {
-                                //Check if article works in Stock
                                 if (item.Article.Class.WorkInStock)
                                 {
-                                    //Increment Order
                                     ord += 10;
                                     Add(
                                         uowSession,
                                         mode, item,
                                         customer, ord, documentFinanceMaster.Date, documentFinanceMaster.DocumentNumber,
                                         item.Article,
-                                        // ReverseStock
                                         item.Quantity,
-                                        item.Notes
-                                    );
+                                        item.Notes,
+                                        null);
 
-                                    //Artigos Compostos [IN:016522]
                                     if (item.Article.IsComposed)
                                     {
                                         foreach (fin_articlecomposition compositeArticle in item.Article.ArticleComposition)
                                         {
                                             fin_article articleChild = compositeArticle.ArticleChild;
                                             Add(
-                                            uowSession,
-                                            mode, item,
-                                            customer, ord, documentFinanceMaster.Date, documentFinanceMaster.DocumentNumber,
-                                            articleChild,
-                                            // ReverseStock
-                                            compositeArticle.Quantity * item.Quantity,
-                                            item.Notes
-                                        );
+                                                uowSession,
+                                                mode, item,
+                                                customer, ord, documentFinanceMaster.Date, documentFinanceMaster.DocumentNumber,
+                                                articleChild,
+                                                compositeArticle.Quantity * item.Quantity,
+                                                item.Notes,
+                                                null);
                                         }
                                     }
                                 }
@@ -240,6 +271,136 @@ namespace LogicPOS.Modules.StockManagement
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Upsert qty on default (or preferred) warehouse location. No serial numbers.
+        /// </summary>
+        public static void ApplyWarehouseDelta(
+            Session session,
+            fin_article article,
+            decimal qtyDelta,
+            fin_warehouselocation preferredLocation = null)
+        {
+            if (session == null || article == null || qtyDelta == 0m)
+            {
+                return;
+            }
+
+            fin_warehouselocation location = null;
+            if (preferredLocation != null)
+            {
+                location = session.GetObjectByKey<fin_warehouselocation>(preferredLocation.Oid)
+                    ?? preferredLocation;
+            }
+            if (location == null)
+            {
+                location = EnsureDefaultWarehouseLocation(session);
+            }
+            if (location == null || location.Warehouse == null)
+            {
+                return;
+            }
+
+            fin_warehouse warehouse = location.Warehouse;
+            fin_articlewarehouse row = session.FindObject<fin_articlewarehouse>(
+                CriteriaOperator.Parse(
+                    "Article = ? AND Warehouse = ? AND Location = ? AND ArticleSerialNumber IS NULL",
+                    article,
+                    warehouse,
+                    location));
+
+            if (row == null)
+            {
+                row = new fin_articlewarehouse(session)
+                {
+                    Article = article,
+                    Warehouse = warehouse,
+                    Location = location,
+                    Quantity = 0m
+                };
+            }
+
+            row.Quantity += qtyDelta;
+
+            if (!(session is UnitOfWork))
+            {
+                row.Save();
+            }
+        }
+
+        /// <summary>
+        /// Find or create default warehouse + single location (for existing DBs without seed).
+        /// </summary>
+        public static fin_warehouselocation EnsureDefaultWarehouseLocation(Session session)
+        {
+            if (session == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                fin_warehouse warehouse = session.FindObject<fin_warehouse>(
+                    CriteriaOperator.Parse("IsDefault = true AND (Disabled IS NULL OR Disabled = false)"));
+                if (warehouse == null)
+                {
+                    warehouse = session.GetObjectByKey<fin_warehouse>(DefaultWarehouseOid);
+                }
+                if (warehouse == null)
+                {
+                    warehouse = new fin_warehouse(session)
+                    {
+                        Ord = "10",
+                        Code = "10",
+                        Designation = "Основной склад",
+                        IsDefault = true,
+                        Disabled = false
+                    };
+                    if (!(session is UnitOfWork))
+                    {
+                        warehouse.Save();
+                    }
+                }
+                else if (!warehouse.IsDefault)
+                {
+                    warehouse.IsDefault = true;
+                    if (!(session is UnitOfWork))
+                    {
+                        warehouse.Save();
+                    }
+                }
+
+                fin_warehouselocation location = session.FindObject<fin_warehouselocation>(
+                    CriteriaOperator.Parse("Warehouse = ? AND (Disabled IS NULL OR Disabled = false)", warehouse));
+                if (location == null)
+                {
+                    location = session.GetObjectByKey<fin_warehouselocation>(DefaultLocationOid);
+                }
+                if (location == null)
+                {
+                    location = new fin_warehouselocation(session)
+                    {
+                        Ord = "10",
+                        Code = "10",
+                        Designation = "Общая",
+                        Warehouse = warehouse,
+                        Disabled = false
+                    };
+                    if (!(session is UnitOfWork))
+                    {
+                        location.Save();
+                    }
+                }
+
+                return location;
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+                log.Warn("EnsureDefaultWarehouseLocation: " + ex.Message);
+                return null;
+            }
         }
     }
 }
