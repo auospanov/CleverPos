@@ -403,11 +403,16 @@ namespace logicpos
             showMessage = false;
             Size size = new Size(500, 350);
             fin_article article = (fin_article)XPOSettings.Session.GetObjectByKey(typeof(fin_article), pArticleOid);
+            if (article == null || article.Class == null || !article.Class.WorkInStock)
+            {
+                return false;
+            }
+
             decimal articleStock = GetArticleStockSum(article.Oid);
 
             string childStockMessage = Environment.NewLine + Environment.NewLine + "Stock de artigos associados: " + Environment.NewLine;
-            //Composite article Messages
             int childStockAlertCount = 0;
+            bool childWouldGoNegative = false;
             if (article.IsComposed)
             {
                 foreach (fin_articlecomposition item in article.ArticleComposition)
@@ -415,7 +420,12 @@ namespace logicpos
                     fin_article child = item.ArticleChild;
                     decimal childStock = GetArticleStockSum(item.ArticleChild.Oid);
                     var childStockAfterChanged = childStock - (pNewQuantity * item.Quantity);
-                    if (childStockAfterChanged <= child.MinimumStock)
+                    if (childStockAfterChanged < 0m)
+                    {
+                        childWouldGoNegative = true;
+                        childStockMessage += Environment.NewLine + GeneralUtils.GetResourceByName("global_article") + ": " + child.Designation + Environment.NewLine + GeneralUtils.GetResourceByName("global_total_stock") + ": " + DataConversionUtils.DecimalToString(Convert.ToDecimal(childStock), "0.00") + Environment.NewLine;
+                    }
+                    else if (childStockAfterChanged <= child.MinimumStock)
                     {
                         childStockMessage += Environment.NewLine + GeneralUtils.GetResourceByName("global_article") + ": " + child.Designation + Environment.NewLine + GeneralUtils.GetResourceByName("global_total_stock") + ": " + DataConversionUtils.DecimalToString(Convert.ToDecimal(childStock), "0.00") + Environment.NewLine + GeneralUtils.GetResourceByName("global_minimum_stock") + ": " + DataConversionUtils.DecimalToString(Convert.ToDecimal(child.MinimumStock), "0.00") + Environment.NewLine;
                         childStockAlertCount++;
@@ -423,8 +433,47 @@ namespace logicpos
                 }
             }
             var stockQuantityAfterChanged = articleStock - pNewQuantity;
-            //Mensagem de stock apenas para artigos da classe Produtos
-            if ((stockQuantityAfterChanged <= article.MinimumStock || childStockAlertCount > 0) && article.Class.Oid == Guid.Parse("6924945d-f99e-476b-9c4d-78fb9e2b30a3"))
+
+            // Opt-in: without CHECK_STOCKS preference, POS behaves as before (no blocks).
+            if (!CheckStocks())
+            {
+                showMessage = false;
+                return false;
+            }
+
+            // Hard block: insufficient stock (unless stockAllowNegative=true).
+            bool allowNegative = false;
+            try
+            {
+                string raw = GeneralSettings.Settings["stockAllowNegative"];
+                allowNegative = string.Equals(raw, "true", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+            }
+
+            if (!allowNegative && (stockQuantityAfterChanged < 0m || childWouldGoNegative))
+            {
+                string message =
+                    "Недостаточно остатка на складе." + Environment.NewLine + Environment.NewLine +
+                    GeneralUtils.GetResourceByName("global_article") + ": " + article.Designation + Environment.NewLine +
+                    GeneralUtils.GetResourceByName("global_total_stock") + ": " + DataConversionUtils.DecimalToString(articleStock, "0.00") + Environment.NewLine +
+                    "Запрошено: " + DataConversionUtils.DecimalToString(pNewQuantity, "0.00") +
+                    (childWouldGoNegative ? childStockMessage : string.Empty);
+                ShowMessageBox(
+                    pSourceWindow,
+                    DialogFlags.DestroyWithParent,
+                    size,
+                    MessageType.Error,
+                    ButtonsType.Ok,
+                    GeneralUtils.GetResourceByName("global_stock_movements"),
+                    message);
+                showMessage = true;
+                return false;
+            }
+
+            // Soft warn: at/under MinimumStock.
+            if (stockQuantityAfterChanged <= article.MinimumStock || childStockAlertCount > 0)
             {
                 if (article.IsComposed)
                 {

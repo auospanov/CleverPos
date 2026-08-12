@@ -60,10 +60,17 @@
 | 2 | Сид «Основной» склад + локация «Общая» (ru) + runtime ensure | done |
 | 3 | `ProcessArticleStock` → upsert `fin_articlewarehouse` (без серийников) | done |
 | 4 | Разблокировать UI: `DialogArticleStock` + приход без плагина | done |
-| 5 | Кредитка/NC → StockMode In (возврат на склад) | next |
-| 6 | Политика нулевого остатка на кассе | next |
-| 7 | Простая инвентаризация | next |
+| 5 | Кредитка/NC → StockMode In (возврат на склад) | done |
+| 6 | Политика нулевого остатка на кассе | done (только при CHECK_STOCKS=True) |
+| 7 | Простая инвентаризация | done (кнопка в окне склада) |
 | 8 | Смоук + кабинет `dominium.kz` | next |
+
+## Безопасность «без склада»
+
+- Блокировка продаж по остатку — **только** если preference `CHECK_STOCKS=True`. Иначе касса как раньше.
+- `fin_articlewarehouse` обновляется **только если** склад уже есть; иначе движение пишется в журнал + Accounting, warehouse пропускается.
+- Склад по умолчанию **создаётся** только при инвентаризации / явном сиде, не на каждой продаже.
+- Инвентаризация — только из BackOffice → Движения склада → «Инвентаризация».
 
 **Плагин `IStockManagementModule` не делаем** — логика в `ProcessArticleStock`.
 
@@ -73,8 +80,10 @@
 
 | Файл | Изменение |
 |------|-----------|
-| `LogicPOS.Modules/StockManagement/ProcessArticleStock.cs` | upsert warehouse |
-| `LogicPOS.UI/Classes/Utils/Utils.cs` → `OpenArticleStockDialog` | всегда полное окно (или fallback) |
+| `LogicPOS.Modules/StockManagement/ProcessArticleStock.cs` | upsert warehouse (optional), inventory adjust |
+| `LogicPOS.UI/.../PosInventoryAdjustDialog.cs` | UI инвентаризации |
+| `LogicPOS.UI/.../DialogArticleStock.cs` | кнопка «Инвентаризация» |
+| `LogicPOS.UI/Classes/Utils/Utils.cs` | `OpenArticleStockDialog`, `CHECK_STOCKS` |
 | `LogicPOS.UI/.../GenericCRUDWidgetList.cs` | `ProcessArticleStock` вместо плагина |
 | `LogicPOS.UI/Resources/Database/Data/**/ru/databasedata.sql` | INSERT склада |
 | `LogicPOS.Finance/.../DocumentProcessingUtils.cs` | уже fallback на `ProcessArticleStock` |
@@ -85,10 +94,12 @@
 
 1. BackOffice → **Движения склада** — полное окно  
 2. Вкладка движений → Insert → приход (товар + qty; склад по умолчанию)  
-3. Продажа FS списывает Accounting + warehouse  
-4. `cloudStoreId` в App.config → кабинет видит остаток  
+3. Вкладка товаров → **Инвентаризация** (факт vs учёт → In/Out)  
+4. Продажа FS списывает Accounting + warehouse (если склад есть)  
+5. `cloudStoreId` в App.config → кабинет видит остаток  
 
-Один магазин = один `cloudStoreId` = один дефолтный склад на этой кассе.
+Один магазин = один `cloudStoreId` = один дефолтный склад на этой кассе.  
+Магазин **без склада**: не включайте `CHECK_STOCKS`, не открывайте инвентаризацию — продажи идут как раньше.
 
 ---
 
@@ -97,9 +108,12 @@
 1. [ ] В БД есть склад `IsDefault=1` и локация  
 2. [ ] Приход 10 шт → `Accounting=10`, строка в `fin_articlewarehouse`  
 3. [ ] Продажа 3 → оба остатка = 7  
-4. [ ] Ручное списание / приход из карточки товара  
-5. [ ] Outbox → `/api/cloud/sync` → кабинет  
-6. [ ] Без `plugins/*Stock*` DLL всё открывается  
+4. [ ] Кредитка/NC возвращает остаток  
+5. [ ] Продажа при qty=0 блокируется **только** если `CHECK_STOCKS=True` и `stockAllowNegative=false`  
+6. [ ] Без `CHECK_STOCKS` продажа при qty=0 **не** блокируется  
+7. [ ] Инвентаризация: факт ≠ учёт → движение INV  
+8. [ ] Outbox → `/api/cloud/sync` → кабинет  
+9. [ ] Без `plugins/*Stock*` DLL всё открывается  
 
 ---
 
@@ -107,7 +121,5 @@
 
 - Серийники / этикетки по SN  
 - Несколько складов и перемещения  
-- Запрет продажи при qty ≤ 0  
-- Инвентаризация одним экраном  
 - Поля Warehouse в журнале `fin_articlestock`  
 - Полный `IStockManagementModule` DLL  

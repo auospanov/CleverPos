@@ -319,9 +319,9 @@
 - [x] **H-1.2.** Сид `fin_warehouse` / `fin_warehouselocation` (ru) + `EnsureDefaultWarehouseLocation`
 - [x] **H-1.3.** `ProcessArticleStock`: journal + Accounting + `fin_articlewarehouse` (без серийников)
 - [x] **H-1.4.** Разблокировать `DialogArticleStock` / приход без плагина
-- [ ] **H-1.5.** Кредитка/NC → возврат на склад (`StockMode`)
-- [ ] **H-1.6.** Политика нулевого остатка на кассе
-- [ ] **H-1.7.** Простая инвентаризация
+- [x] **H-1.5.** Кредитка/NC → возврат на склад (`StockMode=In`) + патч существующих БД
+- [x] **H-1.6.** Политика нулевого остатка (`stockAllowNegative`, только при `CHECK_STOCKS`)
+- [x] **H-1.7.** Простая инвентаризация (кнопка в `DialogArticleStock`)
 
 ### H.2 — Позже (под вопросом)
 

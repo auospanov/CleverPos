@@ -111,6 +111,27 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                 _treeViewXPO_ArticleDetails.AllowRecordUpdate = true;
                 vboxTab1.Add(_treeViewXPO_ArticleDetails);
 
+                var inventoryButton = GetNewButton("touchButtonInventory_DialogActionArea", "Инвентаризация", @"Icons/Dialogs/icon_pos_nav_refresh.png");
+                inventoryButton.Clicked += (s, e) =>
+                {
+                    try
+                    {
+                        fin_article selected = _treeViewXPO_ArticleDetails.DataSourceRow as fin_article;
+                        if (logicpos.Classes.Gui.Gtk.Pos.Dialogs.PosInventoryAdjustDialog.RunAdjust(this, selected))
+                        {
+                            _treeViewXPO_ArticleDetails.Refresh();
+                            if (_treeViewXPO_StockMov != null)
+                            {
+                                _treeViewXPO_StockMov.Refresh();
+                            }
+                        }
+                    }
+                    catch (Exception invEx)
+                    {
+                        _logger.Error(invEx.Message, invEx);
+                    }
+                };
+                _treeViewXPO_ArticleDetails.Navigator.PackEnd(inventoryButton, false, false, 0);
 
                 //Append Tab
                 _notebook.AppendPage(vboxTab1, new Label(GeneralUtils.GetResourceByName("window_title_dialog_document_finance_page3")));

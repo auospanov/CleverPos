@@ -124,7 +124,15 @@ namespace LogicPOS.Modules.StockManagement
                 }
 
                 article.Accounting += quantity;
-                ApplyWarehouseDelta(pSession, article, quantity, pWarehouseLocation);
+                // Warehouse row is optional: never fail the movement if warehouse is unused/missing.
+                try
+                {
+                    ApplyWarehouseDelta(pSession, article, quantity, pWarehouseLocation);
+                }
+                catch (Exception whEx)
+                {
+                    log.Warn("ApplyWarehouseDelta skipped: " + whEx.Message);
+                }
 
                 if (!(pSession is UnitOfWork))
                 {
@@ -274,7 +282,8 @@ namespace LogicPOS.Modules.StockManagement
         }
 
         /// <summary>
-        /// Upsert qty on default (or preferred) warehouse location. No serial numbers.
+        /// Upsert qty on existing default (or preferred) warehouse. Does NOT create warehouse —
+        /// if no warehouse is configured, silently skips (POS without warehouse stays intact).
         /// </summary>
         public static void ApplyWarehouseDelta(
             Session session,
@@ -287,50 +296,150 @@ namespace LogicPOS.Modules.StockManagement
                 return;
             }
 
-            fin_warehouselocation location = null;
-            if (preferredLocation != null)
+            try
             {
-                location = session.GetObjectByKey<fin_warehouselocation>(preferredLocation.Oid)
-                    ?? preferredLocation;
-            }
-            if (location == null)
-            {
-                location = EnsureDefaultWarehouseLocation(session);
-            }
-            if (location == null || location.Warehouse == null)
-            {
-                return;
-            }
-
-            fin_warehouse warehouse = location.Warehouse;
-            fin_articlewarehouse row = session.FindObject<fin_articlewarehouse>(
-                CriteriaOperator.Parse(
-                    "Article = ? AND Warehouse = ? AND Location = ? AND ArticleSerialNumber IS NULL",
-                    article,
-                    warehouse,
-                    location));
-
-            if (row == null)
-            {
-                row = new fin_articlewarehouse(session)
+                fin_warehouselocation location = null;
+                if (preferredLocation != null)
                 {
-                    Article = article,
-                    Warehouse = warehouse,
-                    Location = location,
-                    Quantity = 0m
-                };
+                    location = session.GetObjectByKey<fin_warehouselocation>(preferredLocation.Oid)
+                        ?? preferredLocation;
+                }
+                if (location == null)
+                {
+                    location = TryGetDefaultWarehouseLocation(session);
+                }
+                if (location == null || location.Warehouse == null)
+                {
+                    return;
+                }
+
+                fin_warehouse warehouse = location.Warehouse;
+                fin_articlewarehouse row = session.FindObject<fin_articlewarehouse>(
+                    CriteriaOperator.Parse(
+                        "Article = ? AND Warehouse = ? AND Location = ? AND ArticleSerialNumber IS NULL",
+                        article,
+                        warehouse,
+                        location));
+
+                if (row == null)
+                {
+                    row = new fin_articlewarehouse(session)
+                    {
+                        Article = article,
+                        Warehouse = warehouse,
+                        Location = location,
+                        Quantity = 0m
+                    };
+                }
+
+                row.Quantity += qtyDelta;
+
+                if (!(session is UnitOfWork))
+                {
+                    row.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+                log.Warn("ApplyWarehouseDelta: " + ex.Message);
+            }
+        }
+
+        /// <summary>Find default warehouse location only — never creates.</summary>
+        public static fin_warehouselocation TryGetDefaultWarehouseLocation(Session session)
+        {
+            if (session == null)
+            {
+                return null;
             }
 
-            row.Quantity += qtyDelta;
-
-            if (!(session is UnitOfWork))
+            try
             {
-                row.Save();
+                fin_warehouse warehouse = session.FindObject<fin_warehouse>(
+                    CriteriaOperator.Parse("IsDefault = true AND (Disabled IS NULL OR Disabled = false)"));
+                if (warehouse == null)
+                {
+                    warehouse = session.GetObjectByKey<fin_warehouse>(DefaultWarehouseOid);
+                }
+                if (warehouse == null)
+                {
+                    return null;
+                }
+
+                fin_warehouselocation location = session.FindObject<fin_warehouselocation>(
+                    CriteriaOperator.Parse("Warehouse = ? AND (Disabled IS NULL OR Disabled = false)", warehouse));
+                if (location == null)
+                {
+                    location = session.GetObjectByKey<fin_warehouselocation>(DefaultLocationOid);
+                }
+
+                return location;
+            }
+            catch
+            {
+                return null;
             }
         }
 
         /// <summary>
-        /// Find or create default warehouse + single location (for existing DBs without seed).
+        /// Inventory adjust: set counted qty. Creates default warehouse only when inventoring.
+        /// Returns false if delta is zero.
+        /// </summary>
+        public static bool AdjustToCountedQuantity(fin_article article, decimal countedQty, string notes)
+        {
+            if (article == null)
+            {
+                return false;
+            }
+
+            Session session = XPOSettings.Session;
+            decimal bookQty = article.Accounting;
+            try
+            {
+                // Prefer movement sum when available
+                object sum = session.ExecuteScalar(string.Format(
+                    "SELECT SUM(Quantity) FROM fin_articlestock WHERE Article = '{0}' AND (Disabled = 0 OR Disabled IS NULL)",
+                    article.Oid));
+                if (sum != null && sum != DBNull.Value)
+                {
+                    bookQty = Convert.ToDecimal(sum);
+                }
+            }
+            catch
+            {
+            }
+
+            decimal delta = countedQty - bookQty;
+            if (delta == 0m)
+            {
+                return false;
+            }
+
+            // Explicit inventory: ensure warehouse exists so balance lands on it.
+            EnsureDefaultWarehouseLocation(session);
+
+            string note = string.IsNullOrWhiteSpace(notes)
+                ? string.Format("Инвентаризация: учёт={0}, факт={1}", bookQty, countedQty)
+                : notes.Trim();
+
+            ProcessArticleStockMode mode = delta > 0m ? ProcessArticleStockMode.In : ProcessArticleStockMode.Out;
+            return Add(
+                session,
+                mode,
+                null,
+                null,
+                10,
+                DateTime.Now,
+                "INV",
+                article,
+                Math.Abs(delta),
+                note,
+                null);
+        }
+
+        /// <summary>
+        /// Find or create default warehouse + location. Call only from inventory / explicit stock setup.
         /// </summary>
         public static fin_warehouselocation EnsureDefaultWarehouseLocation(Session session)
         {
@@ -341,6 +450,12 @@ namespace LogicPOS.Modules.StockManagement
 
             try
             {
+                fin_warehouselocation existing = TryGetDefaultWarehouseLocation(session);
+                if (existing != null)
+                {
+                    return existing;
+                }
+
                 fin_warehouse warehouse = session.FindObject<fin_warehouse>(
                     CriteriaOperator.Parse("IsDefault = true AND (Disabled IS NULL OR Disabled = false)"));
                 if (warehouse == null)

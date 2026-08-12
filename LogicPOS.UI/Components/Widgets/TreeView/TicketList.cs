@@ -782,14 +782,15 @@ namespace logicpos.Classes.Gui.Gtk.Widgets
                 else
                 {
                     bool showMessage;
+                    decimal quantityForStockCheck = defaultQuantity;
+                    if (_listStoreModelSelectedIndex != -1)
+                    {
+                        quantityForStockCheck = CurrentOrderDetails.Lines[_listStoreModelSelectedIndex].Properties.Quantity + defaultQuantity;
+                    }
+
+                    // Opt-in only: CHECK_STOCKS preference. Without it, POS behaves as before (no stock block).
                     if (logicpos.Utils.CheckStocks())
                     {
-                        decimal quantityForStockCheck = defaultQuantity;
-                        if (_listStoreModelSelectedIndex != -1)
-                        {
-                            quantityForStockCheck = CurrentOrderDetails.Lines[_listStoreModelSelectedIndex].Properties.Quantity + defaultQuantity;
-                        }
-
                         if (!logicpos.Utils.ShowMessageMinimumStock(SourceWindow, pArticleOid, quantityForStockCheck, out showMessage))
                         {
                             if (showMessage) return;

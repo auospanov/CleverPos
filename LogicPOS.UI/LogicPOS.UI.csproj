@@ -211,6 +211,7 @@
     <Compile Include="Components\BackOffice\TreeView\WorkSession\TreeViewWorkSessionPeriod.cs" />
     <Compile Include="Components\POS\Dialogs\DocumentFinanceDialog\DocumentFinanceDialogPreview.cs" />
     <Compile Include="Components\POS\Dialogs\PosArticleStockDialog.cs" />
+    <Compile Include="Components\POS\Dialogs\PosInventoryAdjustDialog.cs" />
     <Compile Include="Components\POS\Dialogs\PosDocumentFinancePrintDialog.cs" />
     <Compile Include="Components\POS\Dialogs\PosEditCompanyDetails.cs" />
     <Compile Include="Components\POS\Dialogs\PosInputTextDialog.cs" />

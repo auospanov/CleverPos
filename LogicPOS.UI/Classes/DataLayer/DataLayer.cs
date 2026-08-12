@@ -262,6 +262,7 @@ namespace logicpos
 
                         ApplyRussianCountryNamesIfNeeded(xpoSession, databaseType, replace);
                         ApplyRussianCurrencyNamesIfNeeded(xpoSession, databaseType, replace);
+                        ApplyStockDocumentModesIfNeeded(xpoSession);
                     }
                     else
                     {
@@ -331,6 +332,7 @@ namespace logicpos
 
                         ApplyRussianCountryNamesIfNeeded(xpoSession, databaseType, replace);
                         ApplyRussianCurrencyNamesIfNeeded(xpoSession, databaseType, replace);
+                        ApplyStockDocumentModesIfNeeded(xpoSession);
 
                         log.Debug(string.Format("{0} Database: [{1}] Already Exist! Skip Creating Database", databaseType, databaseName));
                         result = false;
@@ -1057,6 +1059,31 @@ namespace logicpos
             catch (Exception ex)
             {
                 log.Error("ApplyRussianCurrencyNamesIfNeeded: " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Ensure credit note (NC) and return slip (GD) put stock back (StockMode = In).
+        /// Safe to run on every startup for existing databases.
+        /// </summary>
+        private static void ApplyStockDocumentModesIfNeeded(Session xpoSession)
+        {
+            log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            try
+            {
+                // ProcessArticleStockMode: None=0, Out=1, In=2
+                const string ncOid = "fa924162-beed-4f2f-938d-919deafb7d47";
+                const string gdOid = "f03d2788-bed6-41ab-8d44-100039103e83";
+                string sql = string.Format(
+                    "UPDATE fin_documentfinancetype SET StockMode = 2 WHERE Oid IN ('{0}','{1}') AND (StockMode IS NULL OR StockMode = 0)",
+                    ncOid,
+                    gdOid);
+                object affected = xpoSession.ExecuteNonQuery(sql);
+                log.Info("ApplyStockDocumentModesIfNeeded: NC/GD StockMode=In, result=" + affected);
+            }
+            catch (Exception ex)
+            {
+                log.Warn("ApplyStockDocumentModesIfNeeded: " + ex.Message);
             }
         }
 
