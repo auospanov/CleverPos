@@ -10,12 +10,10 @@ public class OwnerAuthOptions
     public int JwtExpireHours { get; set; } = 72;
 
     public string GoogleClientId { get; set; } = string.Empty;
-    /// <summary>Required for OAuth code exchange (same flow as Famous Town).</summary>
     public string GoogleClientSecret { get; set; } = string.Empty;
     public string AppleClientId { get; set; } = string.Empty;
     public string TelegramBotToken { get; set; } = string.Empty;
     public string TelegramBotUsername { get; set; } = string.Empty;
 
-    /// <summary>Public cabinet origin for OAuth / GIS (dominium.kz).</summary>
-    public string CabinetPublicOrigin { get; set; } = "https://dominium.kz";
+    public string CabinetPublicOrigin { get; set; } = "https://api.dominium.kz";
 }

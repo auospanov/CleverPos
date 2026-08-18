@@ -16,4 +16,4 @@ services:
       OwnerAuth__TelegramBotToken: ${OWNER_TELEGRAM_BOT_TOKEN:-}
       OwnerAuth__TelegramBotUsername: ${OWNER_TELEGRAM_BOT_USERNAME:-}
       OwnerAuth__JwtSigningKey: ${OWNER_JWT_SIGNING_KEY:-CHANGE-ME-OWNER-JWT-KEY-32CHARS-MIN}
-      OwnerAuth__CabinetPublicOrigin: ${OWNER_CABINET_ORIGIN:-https://dominium.kz}
+      OwnerAuth__CabinetPublicOrigin: ${OWNER_CABINET_ORIGIN:-https://api.dominium.kz}
