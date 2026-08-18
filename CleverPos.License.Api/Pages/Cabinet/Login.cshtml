@@ -11,10 +11,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Кабинет владельца — CleverPos</title>
     <link rel="stylesheet" href="~/css/cabinet.css" />
-    @if (!string.IsNullOrWhiteSpace(Model.GoogleClientId))
-    {
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
-    }
     @if (!string.IsNullOrWhiteSpace(Model.AppleClientId))
     {
         <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async></script>
@@ -25,7 +21,7 @@
         <div class="cabinet-card">
             <p class="brand">CleverPos</p>
             <h1>Кабинет владельца</h1>
-            <p class="sub">dominium.kz — вход через соцсеть</p>
+            <p class="sub">Вход через Google, Apple или Telegram</p>
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
             {
                 <div class="alert err">@Model.ErrorMessage</div>
@@ -34,16 +30,11 @@
 
             @if (!string.IsNullOrWhiteSpace(Model.GoogleClientId))
             {
-                <div id="g_id_onload"
-                     data-client_id="@Model.GoogleClientId"
-                     data-callback="onGoogleCredential"
-                     data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+                <button type="button" class="btn google" id="google-signin-btn">Войти через Google</button>
             }
             else
             {
-                <p class="hint">Google: задайте OwnerAuth:GoogleClientId</p>
+                <p class="hint">Google: задайте OwnerAuth:GoogleClientId и GoogleClientSecret</p>
             }
 
             @if (!string.IsNullOrWhiteSpace(Model.AppleClientId))
@@ -85,18 +76,33 @@
             window.location.href = '/cabinet';
         }
 
-        function onGoogleCredential(response) {
-            postAuth('/api/owner/auth/google', { idToken: response.credential });
-        }
+        (function initGoogle() {
+            var clientId = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GoogleClientId ?? ""));
+            var redirectUri = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GoogleRedirectUri ?? ""));
+            var btn = document.getElementById('google-signin-btn');
+            if (!clientId || !btn) return;
+            btn.addEventListener('click', function () {
+                var params = new URLSearchParams({
+                    client_id: clientId,
+                    redirect_uri: redirectUri,
+                    response_type: 'code',
+                    scope: 'openid email profile',
+                    access_type: 'offline',
+                    prompt: 'select_account',
+                    state: 'google_signin'
+                });
+                window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+            });
+        })();
 
         function onTelegramAuth(user) {
             postAuth('/api/owner/auth/telegram', {
                 id: user.id,
-                firstName: user.first_name,
-                lastName: user.last_name,
+                first_name: user.first_name,
+                last_name: user.last_name,
                 username: user.username,
-                photoUrl: user.photo_url,
-                authDate: user.auth_date,
+                photo_url: user.photo_url,
+                auth_date: user.auth_date,
                 hash: user.hash
             });
         }

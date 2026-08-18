@@ -10,6 +10,8 @@ public class OwnerAuthOptions
     public int JwtExpireHours { get; set; } = 72;
 
     public string GoogleClientId { get; set; } = string.Empty;
+    /// <summary>Required for OAuth code exchange (same flow as Famous Town).</summary>
+    public string GoogleClientSecret { get; set; } = string.Empty;
     public string AppleClientId { get; set; } = string.Empty;
     public string TelegramBotToken { get; set; } = string.Empty;
     public string TelegramBotUsername { get; set; } = string.Empty;

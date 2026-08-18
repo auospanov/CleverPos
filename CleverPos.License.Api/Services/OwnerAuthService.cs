@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using CleverPos.License.Api.Data;
 using CleverPos.License.Api.Models;
@@ -22,15 +23,18 @@ public class OwnerAuthService
 
     private readonly LicenseDbContext _db;
     private readonly OwnerAuthOptions _options;
+    private readonly IHttpClientFactory _http;
     private readonly ILogger<OwnerAuthService> _logger;
 
     public OwnerAuthService(
         LicenseDbContext db,
         IOptions<OwnerAuthOptions> options,
+        IHttpClientFactory http,
         ILogger<OwnerAuthService> logger)
     {
         _db = db;
         _options = options.Value;
+        _http = http;
         _logger = logger;
     }
 
@@ -63,6 +67,84 @@ public class OwnerAuthService
             payload.Picture,
             ct).ConfigureAwait(false);
 
+        return (owner, IssueJwt(owner));
+    }
+
+    /// <summary>
+    /// Famous Town flow: Google OAuth authorization code → token → userinfo → JWT.
+    /// </summary>
+    public async Task<(OwnerAccount Owner, string Jwt)?> SignInWithGoogleCodeAsync(
+        string code,
+        string? redirectUri,
+        CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(_options.GoogleClientId)
+            || string.IsNullOrWhiteSpace(_options.GoogleClientSecret))
+        {
+            throw new InvalidOperationException("OwnerAuth:GoogleClientId / GoogleClientSecret не настроены.");
+        }
+
+        string redirect = string.IsNullOrWhiteSpace(redirectUri)
+            ? (_options.CabinetPublicOrigin ?? "https://dominium.kz").TrimEnd('/')
+            : redirectUri.Trim();
+
+        HttpClient client = _http.CreateClient("google-oauth");
+        using HttpResponseMessage tokenResponse = await client.PostAsync(
+            "https://oauth2.googleapis.com/token",
+            new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["code"] = code,
+                ["client_id"] = _options.GoogleClientId,
+                ["client_secret"] = _options.GoogleClientSecret,
+                ["redirect_uri"] = redirect,
+                ["grant_type"] = "authorization_code"
+            }),
+            ct).ConfigureAwait(false);
+
+        string tokenJson = await tokenResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (!tokenResponse.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("Google code exchange failed: {Status} {Body}", tokenResponse.StatusCode, tokenJson);
+            return null;
+        }
+
+        using JsonDocument tokenDoc = JsonDocument.Parse(tokenJson);
+        string? idToken = tokenDoc.RootElement.TryGetProperty("id_token", out JsonElement idEl)
+            ? idEl.GetString()
+            : null;
+        string? accessToken = tokenDoc.RootElement.TryGetProperty("access_token", out JsonElement accEl)
+            ? accEl.GetString()
+            : null;
+
+        if (!string.IsNullOrWhiteSpace(idToken))
+        {
+            return await SignInWithGoogleAsync(idToken, ct).ConfigureAwait(false);
+        }
+
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return null;
+        }
+
+        using HttpRequestMessage userReq = new(HttpMethod.Get, "https://www.googleapis.com/oauth2/v2/userinfo");
+        userReq.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        using HttpResponseMessage userResponse = await client.SendAsync(userReq, ct).ConfigureAwait(false);
+        if (!userResponse.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        using JsonDocument userDoc = JsonDocument.Parse(await userResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false));
+        string sub = userDoc.RootElement.TryGetProperty("id", out JsonElement subEl) ? subEl.GetString() ?? "" : "";
+        string email = userDoc.RootElement.TryGetProperty("email", out JsonElement emailEl) ? emailEl.GetString() ?? "" : "";
+        string name = userDoc.RootElement.TryGetProperty("name", out JsonElement nameEl) ? nameEl.GetString() ?? "" : "";
+        string picture = userDoc.RootElement.TryGetProperty("picture", out JsonElement picEl) ? picEl.GetString() ?? "" : "";
+        if (string.IsNullOrWhiteSpace(sub))
+        {
+            return null;
+        }
+
+        OwnerAccount owner = await UpsertOwnerAsync("google", sub, email, name, picture, ct).ConfigureAwait(false);
         return (owner, IssueJwt(owner));
     }
 
@@ -368,20 +450,48 @@ public class TelegramAuthPayload
     [JsonPropertyName("id")]
     public long Id { get; set; }
 
-    [JsonPropertyName("firstName")]
+    [JsonPropertyName("first_name")]
     public string? FirstName { get; set; }
 
-    [JsonPropertyName("lastName")]
+    [JsonPropertyName("firstName")]
+    public string? FirstNameCamel
+    {
+        get => FirstName;
+        set { if (!string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(FirstName)) FirstName = value; }
+    }
+
+    [JsonPropertyName("last_name")]
     public string? LastName { get; set; }
+
+    [JsonPropertyName("lastName")]
+    public string? LastNameCamel
+    {
+        get => LastName;
+        set { if (!string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(LastName)) LastName = value; }
+    }
 
     [JsonPropertyName("username")]
     public string? Username { get; set; }
 
-    [JsonPropertyName("photoUrl")]
+    [JsonPropertyName("photo_url")]
     public string? PhotoUrl { get; set; }
 
-    [JsonPropertyName("authDate")]
+    [JsonPropertyName("photoUrl")]
+    public string? PhotoUrlCamel
+    {
+        get => PhotoUrl;
+        set { if (!string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(PhotoUrl)) PhotoUrl = value; }
+    }
+
+    [JsonPropertyName("auth_date")]
     public long AuthDate { get; set; }
+
+    [JsonPropertyName("authDate")]
+    public long AuthDateCamel
+    {
+        get => AuthDate;
+        set { if (value > 0 && AuthDate == 0) AuthDate = value; }
+    }
 
     [JsonPropertyName("hash")]
     public string Hash { get; set; } = string.Empty;

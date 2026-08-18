@@ -24,6 +24,17 @@ builder.Services.AddScoped<LicenseService>();
 builder.Services.AddScoped<OwnerAuthService>();
 builder.Services.AddScoped<CloudSyncService>();
 builder.Services.AddSignalR();
+builder.Services.AddHttpClient("google-oauth");
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Cabinet", policy =>
+        policy.WithOrigins(
+                "https://dominium.kz",
+                "https://www.dominium.kz",
+                "http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>
 {
@@ -92,6 +103,7 @@ using (IServiceScope scope = app.Services.CreateScope())
 }
 
 app.UseStaticFiles();
+app.UseCors("Cabinet");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthentication();

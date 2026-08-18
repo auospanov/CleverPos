@@ -22,17 +22,19 @@ public class OwnerAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Google([FromBody] GoogleAuthRequest request, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(request.IdToken))
+        if (string.IsNullOrWhiteSpace(request.IdToken) && string.IsNullOrWhiteSpace(request.Code))
         {
-            return BadRequest(new { message = "idToken required" });
+            return BadRequest(new { success = false, message = "idToken or code required" });
         }
 
         try
         {
-            var result = await _auth.SignInWithGoogleAsync(request.IdToken, ct).ConfigureAwait(false);
+            var result = !string.IsNullOrWhiteSpace(request.Code)
+                ? await _auth.SignInWithGoogleCodeAsync(request.Code, request.RedirectUri, ct).ConfigureAwait(false)
+                : await _auth.SignInWithGoogleAsync(request.IdToken!, ct).ConfigureAwait(false);
             if (result == null)
             {
-                return Unauthorized(new { message = "Google token invalid" });
+                return Unauthorized(new { success = false, message = "Google token invalid" });
             }
 
             await SignInOwnerCookieAsync(result.Value.Owner).ConfigureAwait(false);
@@ -40,7 +42,7 @@ public class OwnerAuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(new { success = false, message = ex.Message });
         }
     }
 
@@ -186,7 +188,19 @@ public class OwnerAuthController : ControllerBase
 
     private static object ToAuthResponse(Models.OwnerAccount owner, string jwt) => new
     {
+        success = true,
         token = jwt,
+        user = new
+        {
+            id = owner.Id,
+            email = owner.Email,
+            name = owner.DisplayName,
+            photoUrl = owner.AvatarUrl,
+            userName = owner.Email,
+            firstName = owner.DisplayName,
+            lastName = (string?)null,
+            roles = new[] { "Owner" }
+        },
         owner = new
         {
             owner.Id,
@@ -201,7 +215,13 @@ public class OwnerAuthController : ControllerBase
 public class GoogleAuthRequest
 {
     [JsonPropertyName("idToken")]
-    public string IdToken { get; set; } = string.Empty;
+    public string? IdToken { get; set; }
+
+    [JsonPropertyName("code")]
+    public string? Code { get; set; }
+
+    [JsonPropertyName("redirect_uri")]
+    public string? RedirectUri { get; set; }
 }
 
 public class AppleAuthRequest

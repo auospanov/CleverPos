@@ -19,6 +19,13 @@
   margin-top: 4px;
 }
 
+.btn.google {
+  width: 100%;
+  background: #fff;
+  color: #1f1f1f;
+  border: 1px solid #dadce0;
+}
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
