@@ -406,6 +406,10 @@ namespace logicpos
 
             try
             {
+                // SQLite seed historically created iLocation_fin_articlewarehouse on Warehouse;
+                // XPO expects it on Location. Drop the mismatched name so SchemaOnly can recreate it.
+                EnsureSqliteArticleWarehouseLocationIndex(pConnectionString, log);
+
                 IDataLayer dl = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
                 using (Session session = new Session(dl))
                 {
@@ -419,6 +423,8 @@ namespace logicpos
 
                 try
                 {
+                    EnsureSqliteArticleWarehouseLocationIndex(pConnectionString, log);
+
                     IDataLayer dlUpdate = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.SchemaOnly);
                     using (Session session = new Session(dlUpdate))
                     {
@@ -444,6 +450,50 @@ namespace logicpos
             {
                 log.Error(string.Format("IsSchemaValid(): [{0}]", ex.Message), ex);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Fixes legacy SQLite index name clash that blocks XPO UpdateSchema when adding new tables.
+        /// </summary>
+        private static void EnsureSqliteArticleWarehouseLocationIndex(string pConnectionString, log4net.ILog log)
+        {
+            if (string.IsNullOrEmpty(pConnectionString) ||
+                pConnectionString.IndexOf("SQLite", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                return;
+            }
+
+            try
+            {
+                IDataLayer dl = XpoDefault.GetDataLayer(pConnectionString, AutoCreateOption.None);
+                using (Session session = new Session(dl))
+                {
+                    object sql = session.ExecuteScalar(
+                        "SELECT sql FROM sqlite_master WHERE type='index' AND name='iLocation_fin_articlewarehouse'");
+                    string indexSql = sql as string;
+                    if (string.IsNullOrEmpty(indexSql))
+                    {
+                        return;
+                    }
+
+                    // Wrong seed: ... on [fin_articlewarehouse]([Warehouse])
+                    // Correct XPO: ... on [fin_articlewarehouse]([Location])
+                    if (indexSql.IndexOf("([Location])", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        indexSql.IndexOf("(Location)", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return;
+                    }
+
+                    log.Warn(string.Format(
+                        "EnsureSqliteArticleWarehouseLocationIndex(): dropping mismatched index definition: [{0}]",
+                        indexSql));
+                    session.ExecuteNonQuery("DROP INDEX IF EXISTS [iLocation_fin_articlewarehouse]");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Warn(string.Format("EnsureSqliteArticleWarehouseLocationIndex(): skipped: [{0}]", ex.Message), ex);
             }
         }
 

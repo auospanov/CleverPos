@@ -146,7 +146,7 @@ CREATE INDEX [iDeletedWhere_fin_warehouselocation] on [fin_warehouselocation]([D
 CREATE TABLE [fin_articlewarehouse] ([Oid] char(36) NOT NULL, [Disabled] bit, [Notes] text NULL, [CreatedAt] datetime NULL, [CreatedBy] char(36) NULL, [CreatedWhere] char(36) NULL, [UpdatedAt] datetime NULL, [UpdatedBy] char(36) NULL, [UpdatedWhere] char(36) NULL, [DeletedAt] datetime NULL, [DeletedBy] char(36) NULL, [DeletedWhere] char(36) NULL, [Warehouse] char(36) NULL, [Location] char(36) NULL, [Article] char(36) NULL, [ArticleSerialNumber] char(36) NULL, [Quantity] money NULL, [OptimisticLockField] int NULL, primary key ([Oid]));
 CREATE INDEX [iArticle_fin_articlewarehouse] on [fin_articlewarehouse]([Article]);
 CREATE INDEX [iWarehouse_fin_articlewarehouse] on [fin_articlewarehouse]([Warehouse]);
-CREATE INDEX [iLocation_fin_articlewarehouse] on [fin_articlewarehouse]([Warehouse]);
+CREATE INDEX [iLocation_fin_articlewarehouse] on [fin_articlewarehouse]([Location]);
 CREATE INDEX [iSerialNumber_fin_articlewarehouse] on [fin_articlewarehouse]([ArticleSerialNumber]);
 CREATE INDEX [iQuantity_fin_articlewarehouse] on [fin_articlewarehouse]([Quantity]);
 CREATE INDEX [iCreatedBy_fin_articlewarehouse] on [fin_articlewarehouse]([CreatedBy]);
