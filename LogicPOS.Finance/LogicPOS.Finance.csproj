@@ -23,6 +23,14 @@
     <Reference Include="FastReport.Mono">
       <HintPath>..\libs\fastreport\FastReport.Mono.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Data.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpo.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>

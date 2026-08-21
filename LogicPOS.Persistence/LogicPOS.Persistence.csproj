@@ -6,8 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.Data" Version="23.2.6" />
-    <PackageReference Include="DevExpress.Xpo" Version="23.2.6" />
+    <Reference Include="DevExpress.Data.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpo.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

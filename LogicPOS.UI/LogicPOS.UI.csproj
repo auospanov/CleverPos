@@ -83,6 +83,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Data.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpo.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Patagames.Pdf, Version=4.3.4.40, Culture=neutral, PublicKeyToken=60fd6cf9b15941cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\Patagames.Pdf.dll</HintPath>
@@ -6871,9 +6879,6 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML">
       <Version>0.102.2</Version>
-    </PackageReference>
-    <PackageReference Include="DevExpress.Xpo">
-      <Version>23.2.6</Version>
     </PackageReference>
     <PackageReference Include="DocumentFormat.OpenXml">
       <Version>2.20.0</Version>

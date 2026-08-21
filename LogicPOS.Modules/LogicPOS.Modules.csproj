@@ -6,6 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="DevExpress.Data.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="DevExpress.Xpo.v23.2">
+      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\libs\log4net_2_0_17\log4net.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LogicPOS.Data\LogicPOS.Data.csproj" />
     <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj" />
   </ItemGroup>
