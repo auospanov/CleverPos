@@ -1,80 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{96E6AD22-DC88-4F9B-89B7-0F78E59F9070}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LogicPOS.Modules</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>CleverPos.Modules</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Debug|Any CPU' Or '$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release|Any CPU' Or '$(Configuration)|$(Platform)' == 'Release|x86'">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="DevExpress.Data.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+    <Reference Include="DevExpress.Data.v23.2">
       <HintPath>$(MSBuildThisFileDirectory)..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
-      <Private>True</Private>
+      <Private>true</Private>
+      <SpecificVersion>false</SpecificVersion>
     </Reference>
-    <Reference Include="DevExpress.Xpo.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+    <Reference Include="DevExpress.Xpo.v23.2">
       <HintPath>$(MSBuildThisFileDirectory)..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
-      <Private>True</Private>
+      <Private>true</Private>
+      <SpecificVersion>false</SpecificVersion>
     </Reference>
     <Reference Include="log4net">
       <HintPath>$(MSBuildThisFileDirectory)..\libs\log4net_2_0_17\log4net.dll</HintPath>
-      <Private>True</Private>
+      <Private>true</Private>
+      <SpecificVersion>false</SpecificVersion>
     </Reference>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ModulesSettings.cs" />
-    <Compile Include="StockManagement\IStockManagementModule.cs" />
-    <Compile Include="StockManagement\ProcessArticleStock.cs" />
-    <Compile Include="StockManagement\ProcessArticleStockParameter.cs" />
+    <ProjectReference Include="..\LogicPOS.Data\LogicPOS.Data.csproj" />
+    <ProjectReference Include="..\LogicPOS.Globalization\LogicPOS.Globalization.csproj" />
+    <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj" />
+    <ProjectReference Include="..\LogicPOS.Settings\LogicPOS.Settings.csproj" />
+    <ProjectReference Include="..\LogicPOS.Utility\LogicPOS.Utility.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LogicPOS.Data\LogicPOS.Data.csproj">
-      <Project>{42af3be2-44b4-477d-8e45-55c64992b805}</Project>
-      <Name>LogicPOS.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LogicPOS.Globalization\LogicPOS.Globalization.csproj">
-      <Project>{b9e8d813-d694-4a7f-955e-ccc4b10f3774}</Project>
-      <Name>LogicPOS.Globalization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LogicPOS.Plugin\LogicPOS.Plugin.csproj">
-      <Project>{50c2f757-8478-4fd3-8b35-89bc12e7aca0}</Project>
-      <Name>LogicPOS.Plugin</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LogicPOS.Settings\LogicPOS.Settings.csproj">
-      <Project>{a4e7f0ea-8360-41f2-a625-517f6e943a29}</Project>
-      <Name>LogicPOS.Settings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LogicPOS.Utility\LogicPOS.Utility.csproj">
-      <Project>{18488ce5-c06f-40f5-9339-0467a47d7985}</Project>
-      <Name>LogicPOS.Utility</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

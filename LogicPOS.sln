@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.PDFViewer.Controls
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.PDFViewer.Winforms", "LogicPOS.PDFViewer\LogicPOS.PDFViewer.Winforms\LogicPOS.PDFViewer.Winforms.csproj", "{E39A7986-4C2F-4EBE-A31B-59C766150EAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.Modules", "LogicPOS.Modules\LogicPOS.Modules.csproj", "{96E6AD22-DC88-4F9B-89B7-0F78E59F9070}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicPOS.Modules", "LogicPOS.Modules\LogicPOS.Modules.csproj", "{96E6AD22-DC88-4F9B-89B7-0F78E59F9070}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicPOS.Finance", "LogicPOS.Finance\LogicPOS.Finance.csproj", "{6F50BD8B-A054-424C-9247-3892EFCC25B6}"
 EndProject
@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.PaymentTerminals",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.NationalCatalog", "LogicPOS.NationalCatalog\LogicPOS.NationalCatalog.csproj", "{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicPOS.Persistence", "LogicPOS.Persistence\LogicPOS.Persistence.csproj", "{4B305A39-47C9-4F59-AC06-EF868B4903AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicPOS.Persistence", "LogicPOS.Persistence\LogicPOS.Persistence.csproj", "{4B305A39-47C9-4F59-AC06-EF868B4903AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleverPos.License.Api", "CleverPos.License.Api\CleverPos.License.Api.csproj", "{7F2A1C90-4B6E-4D8A-9C11-E8F0A1B2C3D4}"
 EndProject
@@ -111,10 +111,10 @@ Global
 		{A8C3F1E2-4B5D-6E7F-8901-234567890ABC}.Debug|Any CPU.Build.0 = Debug|AnyCPU
 		{A8C3F1E2-4B5D-6E7F-8901-234567890ABC}.Release|Any CPU.ActiveCfg = Release|AnyCPU
 		{A8C3F1E2-4B5D-6E7F-8901-234567890ABC}.Release|Any CPU.Build.0 = Release|AnyCPU
-		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Debug|Any CPU.Build.0 = Debug|x86
-		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Release|Any CPU.ActiveCfg = Release|x86
-		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Release|Any CPU.Build.0 = Release|x86
+		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
+		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Debug|Any CPU.Build.0 = Debug|AnyCPU
+		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Release|Any CPU.ActiveCfg = Release|AnyCPU
+		{B7D4E2F1-3C5A-4E6F-9012-3456789ABCDE}.Release|Any CPU.Build.0 = Release|AnyCPU
 		{4B305A39-47C9-4F59-AC06-EF868B4903AD}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
 		{4B305A39-47C9-4F59-AC06-EF868B4903AD}.Debug|Any CPU.Build.0 = Debug|AnyCPU
 		{4B305A39-47C9-4F59-AC06-EF868B4903AD}.Release|Any CPU.ActiveCfg = Release|AnyCPU
