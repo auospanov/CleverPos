@@ -6,6 +6,7 @@ using LogicPOS.Domain.Entities;
 using LogicPOS.Domain.Enums;
 using LogicPOS.Globalization;
 using LogicPOS.Settings;
+using LogicPOS.Utility;
 using System;
 
 namespace LogicPOS.Modules.StockManagement
