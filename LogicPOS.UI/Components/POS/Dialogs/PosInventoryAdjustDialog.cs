@@ -62,7 +62,6 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                 "Designation",
                 "Oid",
                 preselected,
-                KeyboardMode.None,
                 RegexUtils.RegexGuid,
                 true);
             _entryArticle.EntryValidation.IsEditable = false;
