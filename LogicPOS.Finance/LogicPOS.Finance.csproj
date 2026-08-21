@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>CleverPos.Finance</AssemblyName>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <NoWarn>$(NoWarn);NU1701;NU1902;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="23.2.6" />
     <PackageReference Include="FastReport.Mono.Demo" Version="2024.2.9" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
@@ -25,16 +26,6 @@
   <ItemGroup>
     <Reference Include="FastReport.Mono">
       <HintPath>$(MSBuildThisFileDirectory)..\libs\fastreport\FastReport.Mono.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Data.v23.2">
-      <HintPath>$(MSBuildThisFileDirectory)..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
-      <Private>true</Private>
-      <SpecificVersion>false</SpecificVersion>
-    </Reference>
-    <Reference Include="DevExpress.Xpo.v23.2">
-      <HintPath>$(MSBuildThisFileDirectory)..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
-      <Private>true</Private>
-      <SpecificVersion>false</SpecificVersion>
     </Reference>
   </ItemGroup>
 
