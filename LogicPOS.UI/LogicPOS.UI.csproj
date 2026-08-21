@@ -6822,6 +6822,7 @@
     <ProjectReference Include="..\LogicPOS.NationalCatalog\LogicPOS.NationalCatalog.csproj">
       <Project>{b7d4e2f1-3c5a-4e6f-9012-3456789abcde}</Project>
       <Name>CleverPos.NationalCatalog</Name>
+      <SetPlatform>Platform=AnyCPU</SetPlatform>
     </ProjectReference>
     <ProjectReference Include="..\LogicPOS.Printing\LogicPOS.Printing.csproj">
       <Project>{ee93c7f8-f973-4a6e-8c59-e4bac4ff7bf7}</Project>
