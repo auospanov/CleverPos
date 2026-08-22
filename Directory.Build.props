@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project>
-  <!-- VS solution platform is "Any CPU" (with space); many old csprojs only define AnyCPU. -->
-  <PropertyGroup>
-    <Platform Condition="'$(Platform)' == 'Any CPU'">AnyCPU</Platform>
-  </PropertyGroup>
-</Project>

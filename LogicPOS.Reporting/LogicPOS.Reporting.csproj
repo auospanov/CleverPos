@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Debug|Any CPU' Or '$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -167,19 +169,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo">
+      <Version>23.2.6</Version>
+    </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.17</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="DevExpress.Data.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DevExpress.Xpo.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

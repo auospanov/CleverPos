@@ -3,13 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>CleverPos.Finance</AssemblyName>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <NoWarn>$(NoWarn);NU1701;NU1902;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.Xpo" Version="23.2.6" />
     <PackageReference Include="FastReport.Mono.Demo" Version="2024.2.9" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
@@ -25,7 +21,7 @@
 
   <ItemGroup>
     <Reference Include="FastReport.Mono">
-      <HintPath>$(MSBuildThisFileDirectory)..\libs\fastreport\FastReport.Mono.dll</HintPath>
+      <HintPath>..\libs\fastreport\FastReport.Mono.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props" Condition="Exists('..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props')" />
   <PropertyGroup>
@@ -13,6 +13,8 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -37,33 +39,25 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
-  <!-- VS/GTK: UI must build as x86. Keep AnyCPU aliases so solution "Any CPU" still works. -->
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86' Or '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Debug|Any CPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\artifacts\Debug\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(MSBuildProjectDirectory)\..\..\artifacts\Debug\CleverPos.exe</StartProgram>
-    <StartWorkingDirectory>$(MSBuildProjectDirectory)\..\..\artifacts\Debug\</StartWorkingDirectory>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86' Or '$(Configuration)|$(Platform)' == 'Release|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release|Any CPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\artifacts\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(MSBuildProjectDirectory)\..\..\artifacts\Release\CleverPos.exe</StartProgram>
-    <StartWorkingDirectory>$(MSBuildProjectDirectory)\..\..\artifacts\Release\</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
@@ -82,14 +76,6 @@
     <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Data.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\libs\xpo_23_2_6\DevExpress.Data.v23.2.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DevExpress.Xpo.v23.2, Version=23.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\libs\xpo_23_2_6\DevExpress.Xpo.v23.2.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Patagames.Pdf, Version=4.3.4.40, Culture=neutral, PublicKeyToken=60fd6cf9b15941cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -3204,7 +3190,7 @@
     <Content Include="Assets\Images\Products\ClothingStore\camisola_gola_alta.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Images\Products\ClothingStore\camisola_la.jpg">
+    <Content Include="Assets\Images\Products\ClothingStore\camisola_lã.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\Products\ClothingStore\camisola_lã.jpg">
@@ -6878,6 +6864,9 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML">
       <Version>0.102.2</Version>
+    </PackageReference>
+    <PackageReference Include="DevExpress.Xpo">
+      <Version>23.2.6</Version>
     </PackageReference>
     <PackageReference Include="DocumentFormat.OpenXml">
       <Version>2.20.0</Version>
