@@ -195,7 +195,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                         //Use demo data to fill values
                         if (useDataDemo)
                         {
-                            if (item.Token == "COMPANY_NAME") { entryBoxValidation.EntryValidation.Text = "LogicPulse"; }
+                            if (item.Token == "COMPANY_NAME") { entryBoxValidation.EntryValidation.Text = "ARO Technologies, LTD (ТОО \"ARO Technologies\")"; }
                             if (item.Token == "COMPANY_BUSINESS_NAME") { entryBoxValidation.EntryValidation.Text = "Technologies, Ltda"; }
                             if (item.Token == "COMPANY_ADDRESS") { entryBoxValidation.EntryValidation.Text = "Rua Capitão Salgueiro Maia, 7"; }
                             if (item.Token == "COMPANY_CITY") { entryBoxValidation.EntryValidation.Text = "Figueira da Foz"; }
@@ -203,8 +203,8 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                             if (item.Token == "COMPANY_COUNTRY") { entryBoxValidation.EntryValidation.Text = "Portugal"; }
                             if (item.Token == "COMPANY_FISCALNUMBER") { entryBoxValidation.EntryValidation.Text = "999999990"; }
                             if (item.Token == "COMPANY_STOCK_CAPITAL") { entryBoxValidation.EntryValidation.Text = "1000"; }
-                            if (item.Token == "COMPANY_EMAIL") { entryBoxValidation.EntryValidation.Text = "comercial@logicpulse.com"; }
-                            if (item.Token == "COMPANY_WEBSITE") { entryBoxValidation.EntryValidation.Text = "www.logicpulse.com"; }
+                            if (item.Token == "COMPANY_EMAIL") { entryBoxValidation.EntryValidation.Text = "helpdesk@arotech.kz"; }
+                            if (item.Token == "COMPANY_WEBSITE") { entryBoxValidation.EntryValidation.Text = "arotech.kz"; }
                         }
 
                         //Only Assign Value if Debugger Attached: Now the value for normal user is cleaned in Init Database, we keep this code here, may be usefull

@@ -31,10 +31,10 @@ namespace LogicPOS.Settings
             LicenseVersion = "POS_CORPORATE";
             LicenseName = "DEBUG";
             LicenseHardwareId = "####-####-####-####-####-####";
-            LicenseCompany = "Empresa Demonstração";
+            LicenseCompany = "ARO Technologies, LTD (ТОО \"ARO Technologies\")";
             LicenseNif = "NIF Demonstração";
             LicenseAddress = "Morada Demonstração";
-            LicenseEmail = "mail@demonstracao.tld";
+            LicenseEmail = "helpdesk@arotech.kz";
             LicenseTelephone = "DEBUG";
             LicenseModuleStocks = true;
 
@@ -44,7 +44,7 @@ namespace LogicPOS.Settings
 
             LicenseKeys.Rows.Clear();
 
-            LicenseReseller = "LogicPulse";
+            LicenseReseller = "ARO Technologies";
             GeneralSettings.ServerVersion = "1.0";
             LicenceUpdateDate = DateTime.Now.AddDays(-1);
         }
