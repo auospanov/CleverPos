@@ -412,13 +412,13 @@ namespace LogicPOS.Data.XPO
             if (xpcConfigurationPreferenceParameter.Count == 0)
             {
                 var configurationPreferenceParameter1 = new cfg_configurationpreferenceparameter(_session) { Ord = 10, Code = 10, Token = "COMPANY_NAME", ResourceString = "prefparam_company_name", Value = "ARO Technologies, LTD (ТОО \"ARO Technologies\")" }; configurationPreferenceParameter1.Save();
-                var configurationPreferenceParameter2 = new cfg_configurationpreferenceparameter(_session) { Ord = 20, Code = 20, Token = "COMPANY_ADDRESS", ResourceString = "prefparam_company_address", Value = "Rua da República, nº39 1º Esq" }; configurationPreferenceParameter2.Save();
-                var configurationPreferenceParameter4 = new cfg_configurationpreferenceparameter(_session) { Ord = 30, Code = 30, Token = "COMPANY_ZIPCODE", ResourceString = "prefparam_company_zipcode", Value = "3080-035" }; configurationPreferenceParameter4.Save();
-                var configurationPreferenceParameter5 = new cfg_configurationpreferenceparameter(_session) { Ord = 40, Code = 40, Token = "COMPANY_CITY", ResourceString = "prefparam_company_city", Value = "Figueira da Foz" }; configurationPreferenceParameter5.Save();
-                var configurationPreferenceParameter6 = new cfg_configurationpreferenceparameter(_session) { Ord = 50, Code = 50, Token = "COMPANY_TELEPHONE", ResourceString = "prefparam_company_telephone", Value = "+351 233 042 347" }; configurationPreferenceParameter6.Save();
+                var configurationPreferenceParameter2 = new cfg_configurationpreferenceparameter(_session) { Ord = 20, Code = 20, Token = "COMPANY_ADDRESS", ResourceString = "prefparam_company_address", Value = "" }; configurationPreferenceParameter2.Save();
+                var configurationPreferenceParameter4 = new cfg_configurationpreferenceparameter(_session) { Ord = 30, Code = 30, Token = "COMPANY_ZIPCODE", ResourceString = "prefparam_company_zipcode", Value = "010000" }; configurationPreferenceParameter4.Save();
+                var configurationPreferenceParameter5 = new cfg_configurationpreferenceparameter(_session) { Ord = 40, Code = 40, Token = "COMPANY_CITY", ResourceString = "prefparam_company_city", Value = "Астана" }; configurationPreferenceParameter5.Save();
+                var configurationPreferenceParameter6 = new cfg_configurationpreferenceparameter(_session) { Ord = 50, Code = 50, Token = "COMPANY_TELEPHONE", ResourceString = "prefparam_company_telephone", Value = "" }; configurationPreferenceParameter6.Save();
                 var configurationPreferenceParameter7 = new cfg_configurationpreferenceparameter(_session) { Ord = 60, Code = 60, Token = "COMPANY_FAX", ResourceString = "prefparam_company_fax", Value = "" }; configurationPreferenceParameter7.Save();
                 var configurationPreferenceParameter8 = new cfg_configurationpreferenceparameter(_session) { Ord = 70, Code = 70, Token = "COMPANY_EMAIL", ResourceString = "prefparam_company_email", Value = "helpdesk@arotech.kz" }; configurationPreferenceParameter8.Save();
-                var configurationPreferenceParameter9 = new cfg_configurationpreferenceparameter(_session) { Ord = 80, Code = 80, Token = "COMPANY_FISCALNUMBER", ResourceString = "prefparam_company_fiscalnumber", Value = "508 278 155" }; configurationPreferenceParameter9.Save();
+                var configurationPreferenceParameter9 = new cfg_configurationpreferenceparameter(_session) { Ord = 80, Code = 80, Token = "COMPANY_FISCALNUMBER", ResourceString = "prefparam_company_fiscalnumber", Value = "" }; configurationPreferenceParameter9.Save();
             }
 
             //ConfigurationPreferenceParameter

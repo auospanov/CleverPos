@@ -132,7 +132,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             string mockName = (useMockData) ? "Carlos Fernandes" : string.Empty;
             string mockCompany = (useMockData) ? "ARO Technologies, LTD (ТОО \"ARO Technologies\")" : string.Empty;
             string mockFiscalNumber = (useMockData) ? "503218820" : string.Empty;
-            string mockAddress = (useMockData) ? "Rua Capitão Salgueiro Maia, nº7, 3080-245 Figueira da Foz" : string.Empty;
+            string mockAddress = string.Empty;
             string mockPhone = (useMockData) ? "+351 233 042 347" : string.Empty;
             string mockEmail = (useMockData) ? "helpdesk@arotech.kz" : string.Empty;
             string mockSoftwareKey = (useMockData) ? "string.Empty" : string.Empty;

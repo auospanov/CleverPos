@@ -28,7 +28,9 @@ namespace LogicPOS.Settings
         public static string SaftCurrencyCodeAO { get; set; }
 
         public static Guid PortugalCountryId { get; set; } = new Guid("e7e8c325-a0d4-4908-b148-508ed750676a");
+        public static Guid KazakhstanCountryId { get; set; } = new Guid("be4d3781-dfa0-40fb-ab06-1debf5bf0edd");
         public static Guid EuroCurrencyId { get; set; } = new Guid("28dd2a3a-0083-11e4-96ce-00ff2353398c");
+        public static Guid TengeCurrencyId { get; set; } = new Guid("3f8e1a2b-4c5d-6e7f-8a9b-0c1d2e3f4a5b");
         public static Guid MozambiqueCountryId { get; set; } = new Guid("16fcd7f2-e885-48d8-9f8e-9d224cc36f32");
         public static Guid USDCurrencyId { get; set; } = new Guid("28d692ad-0083-11e4-96ce-00ff2353398c");
         public static Guid AngolaCountryId { get; set; } = new Guid("9655510a-ff58-461e-9719-c037058f10ed");
@@ -49,6 +51,11 @@ namespace LogicPOS.Settings
         public static bool CountryIdIsPortugal(Guid countryId)
         {
             return countryId == PortugalCountryId;
+        }
+
+        public static bool CountryIdIsKazakhstan(Guid countryId)
+        {
+            return countryId == KazakhstanCountryId;
         }
 
         public static bool CountryIdIsMozambique(Guid countryId)

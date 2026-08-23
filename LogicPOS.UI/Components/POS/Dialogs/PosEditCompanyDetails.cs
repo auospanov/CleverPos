@@ -83,7 +83,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             }
             else
             {
-                systemCountry = CultureSettings.PortugalCountryId;
+                systemCountry = CultureSettings.KazakhstanCountryId;
             }
 
             if (GeneralSettings.Settings["xpoOidConfigurationCurrencySystemCurrency"] != string.Empty)
@@ -92,7 +92,7 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
             }
             else
             {
-                systemCurrency = CultureSettings.EuroCurrencyId;
+                systemCurrency = CultureSettings.TengeCurrencyId;
             }
 
             //Init Inital Values (config OID may be missing in DB until seed/migration is applied)
@@ -196,11 +196,11 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                         if (useDataDemo)
                         {
                             if (item.Token == "COMPANY_NAME") { entryBoxValidation.EntryValidation.Text = "ARO Technologies, LTD (ТОО \"ARO Technologies\")"; }
-                            if (item.Token == "COMPANY_BUSINESS_NAME") { entryBoxValidation.EntryValidation.Text = "Technologies, Ltda"; }
-                            if (item.Token == "COMPANY_ADDRESS") { entryBoxValidation.EntryValidation.Text = "Rua Capitão Salgueiro Maia, 7"; }
-                            if (item.Token == "COMPANY_CITY") { entryBoxValidation.EntryValidation.Text = "Figueira da Foz"; }
-                            if (item.Token == "COMPANY_POSTALCODE") { entryBoxValidation.EntryValidation.Text = "3080-000"; }
-                            if (item.Token == "COMPANY_COUNTRY") { entryBoxValidation.EntryValidation.Text = "Portugal"; }
+                            if (item.Token == "COMPANY_BUSINESS_NAME") { entryBoxValidation.EntryValidation.Text = string.Empty; }
+                            if (item.Token == "COMPANY_ADDRESS") { entryBoxValidation.EntryValidation.Text = string.Empty; }
+                            if (item.Token == "COMPANY_CITY") { entryBoxValidation.EntryValidation.Text = "Астана"; }
+                            if (item.Token == "COMPANY_POSTALCODE") { entryBoxValidation.EntryValidation.Text = "010000"; }
+                            if (item.Token == "COMPANY_COUNTRY") { entryBoxValidation.EntryValidation.Text = "Казахстан"; }
                             if (item.Token == "COMPANY_FISCALNUMBER") { entryBoxValidation.EntryValidation.Text = "999999990"; }
                             if (item.Token == "COMPANY_STOCK_CAPITAL") { entryBoxValidation.EntryValidation.Text = "1000"; }
                             if (item.Token == "COMPANY_EMAIL") { entryBoxValidation.EntryValidation.Text = "helpdesk@arotech.kz"; }
@@ -401,6 +401,10 @@ namespace logicpos.Classes.Gui.Gtk.Pos.Dialogs
                         return entity;
                 }
             }
+
+            entity = XPOUtility.GetEntityById<cfg_configurationcountry>(CultureSettings.KazakhstanCountryId);
+            if (entity != null)
+                return entity;
 
             entity = XPOUtility.GetEntityById<cfg_configurationcountry>(CultureSettings.PortugalCountryId);
             if (entity != null)
