@@ -42,11 +42,27 @@ namespace LogicPOS.Settings
 
         public static void InitializePreferencesPaths()
         {
-            Paths.Add("backups", GeneralSettings.PreferenceParameters["PATH_BACKUPS"] + '/');
-            Paths.Add("saftpt", GeneralSettings.PreferenceParameters["PATH_SAFTPT"] + '/');
+            // Defaults match databasedata seed; missing keys happen on incomplete/corrupt DB after failed migrations
+            string backups = GetPreferencePathOrDefault("PATH_BACKUPS", "Backups");
+            string saftpt = GetPreferencePathOrDefault("PATH_SAFTPT", "Temp");
+
+            Paths.Add("backups", backups.TrimEnd('/', '\\') + "/");
+            Paths.Add("saftpt", saftpt.TrimEnd('/', '\\') + "/");
 
             Directory.CreateDirectory(Convert.ToString(BackupsFolderLocation));
             Directory.CreateDirectory(Convert.ToString(Paths["saftpt"]));
+        }
+
+        private static string GetPreferencePathOrDefault(string key, string defaultValue)
+        {
+            if (GeneralSettings.PreferenceParameters != null
+                && GeneralSettings.PreferenceParameters.TryGetValue(key, out string value)
+                && !string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+
+            return defaultValue;
         }
     }
 }

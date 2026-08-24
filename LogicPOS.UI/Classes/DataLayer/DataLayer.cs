@@ -1159,8 +1159,8 @@ namespace logicpos
 
                 if (File.Exists(pFilename))
                 {
-                    //Get Script Content (UTF-8 for Russian seed/migration scripts)
-                    string script = File.ReadAllText(pFilename, System.Text.Encoding.UTF8) + "\r\n";
+                    // Detect UTF-16 (with/without BOM) vs UTF-8 — misreading UTF-16 as UTF-8 yields "I N S E R T..." and SQLite near "I" errors
+                    string script = ReadSqlScriptText(pFilename) + "\r\n";
 
                     //Replace Content before Process
                     if (pReplaceables.Count > 0)
@@ -1255,6 +1255,58 @@ namespace logicpos
                 log.Error(Ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Read SQL script with encoding detection (UTF-8 / UTF-16 LE/BE, with or without BOM).
+        /// </summary>
+        private static string ReadSqlScriptText(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            if (bytes.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            System.Text.Encoding encoding = DetectSqlScriptEncoding(bytes);
+            // Skip BOM when present so splitter/comments stay clean
+            int index = 0;
+            if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+            {
+                index = 3;
+            }
+            else if (bytes.Length >= 2 && ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF)))
+            {
+                index = 2;
+            }
+
+            return encoding.GetString(bytes, index, bytes.Length - index);
+        }
+
+        private static System.Text.Encoding DetectSqlScriptEncoding(byte[] bytes)
+        {
+            if (bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE)
+            {
+                return System.Text.Encoding.Unicode;
+            }
+
+            if (bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF)
+            {
+                return System.Text.Encoding.BigEndianUnicode;
+            }
+
+            if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+            {
+                return new System.Text.UTF8Encoding(false);
+            }
+
+            // UTF-16 LE without BOM: 'X' 0x00 'Y' 0x00...
+            if (bytes.Length >= 4 && bytes[1] == 0 && bytes[3] == 0 && bytes[0] != 0 && bytes[2] != 0)
+            {
+                return System.Text.Encoding.Unicode;
+            }
+
+            return new System.Text.UTF8Encoding(false);
         }
 
         /// <summary>
