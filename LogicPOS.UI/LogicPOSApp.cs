@@ -68,16 +68,30 @@ namespace logicpos
             catch (Exception ex)
             {
                 _logger.Error(ex.Message, ex);
-                Utils.ShowMessageBox(
-                    GlobalApp.StartupWindow,
-                    DialogFlags.Modal,
-                    new Size(500, 240),
-                    MessageType.Error,
-                    ButtonsType.Ok,
-                    CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName,
-                    "global_error"),
-                    CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName,
-                    "app_error_contact_support"));
+                try
+                {
+                    // Init() may throw before WakeupMain — without this the error dialog never appears
+                    GlobalApp.DialogThreadNotify?.WakeupMain();
+
+                    string title = CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, "global_error");
+                    string supportHint = CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, "app_error_contact_support");
+                    string message = string.IsNullOrWhiteSpace(ex.Message)
+                        ? supportHint
+                        : string.Format("{0}\n\n{1}", ex.Message, supportHint);
+
+                    Utils.ShowMessageBox(
+                        GlobalApp.StartupWindow,
+                        DialogFlags.Modal,
+                        new Size(640, 320),
+                        MessageType.Error,
+                        ButtonsType.Ok,
+                        title,
+                        message);
+                }
+                catch (Exception uiEx)
+                {
+                    _logger.Error("Failed to show startup error dialog: " + uiEx.Message, uiEx);
+                }
             }
             finally
             {

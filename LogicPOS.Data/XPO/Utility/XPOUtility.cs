@@ -755,9 +755,21 @@ namespace LogicPOS.Data.XPO.Utility
                 pos_configurationplaceterminal xpoTerminal = (pos_configurationplaceterminal)GetXPGuidObject(typeof(pos_configurationplaceterminal), pLoggedTerminal.Oid);
                 //get AuditType Object
                 sys_systemaudittype xpoAuditType = (sys_systemaudittype)GetXPGuidObject(typeof(sys_systemaudittype), guidAuditType);
-                string description = pDescription != string.Empty ? pDescription
-                  : xpoAuditType.ResourceString != null && CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, xpoAuditType.ResourceString) != null
-                  ? CultureResources.GetResourceByLanguage(CultureSettings.CurrentCultureName, xpoAuditType.ResourceString) : xpoAuditType.Designation;
+                // Prefer caller description; else localized ResourceString if present in resx; else Designation from DB
+                string description = pDescription;
+                if (string.IsNullOrEmpty(description))
+                {
+                    if (!string.IsNullOrEmpty(xpoAuditType.ResourceString)
+                        && CultureResources.TryGetResourceByLanguage(CultureSettings.CurrentCultureName, xpoAuditType.ResourceString, out string localized)
+                        && !string.IsNullOrEmpty(localized))
+                    {
+                        description = localized;
+                    }
+                    else
+                    {
+                        description = xpoAuditType.Designation;
+                    }
+                }
 
                 sys_systemaudit systemAudit = new sys_systemaudit(pSession)
                 {
