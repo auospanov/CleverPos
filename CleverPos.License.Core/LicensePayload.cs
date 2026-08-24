@@ -4,6 +4,11 @@ namespace CleverPos.License.Core
 {
     public sealed class LicensePayload
     {
+        /// <summary>
+        /// HardwareId for admin-issued files before the first POS renew binds a real computer.
+        /// </summary>
+        public const string UnboundHardwareId = "*";
+
         public string LicenseKey { get; set; } = string.Empty;
         public string HardwareId { get; set; } = string.Empty;
         public string Company { get; set; } = string.Empty;
@@ -14,6 +19,18 @@ namespace CleverPos.License.Core
         public string Reseller { get; set; } = "CleverPos";
         public DateTime ValidUntilUtc { get; set; }
         public DateTime IssuedAtUtc { get; set; } = DateTime.UtcNow;
+
+        public static bool IsUnboundHardwareId(string hardwareId)
+        {
+            if (string.IsNullOrWhiteSpace(hardwareId))
+            {
+                return true;
+            }
+
+            string value = hardwareId.Trim();
+            return value == UnboundHardwareId
+                   || string.Equals(value, "UNBOUND", StringComparison.OrdinalIgnoreCase);
+        }
 
         public string BuildCanonicalString()
         {

@@ -46,11 +46,11 @@ public class DetailsModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetDownloadAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGetDownloadAsync(Guid id, string? computerId, CancellationToken cancellationToken)
     {
         try
         {
-            string? content = await _licenses.IssueFileForLicenseAsync(id, null, cancellationToken).ConfigureAwait(false);
+            string? content = await _licenses.IssueFileForLicenseAsync(id, computerId, cancellationToken).ConfigureAwait(false);
             if (content == null)
             {
                 TempData["Error"] = "Лицензия не найдена.";

@@ -62,6 +62,24 @@ namespace logicpos.Classes.Logic.License
             string computerId = ResolveComputerId(local.Payload);
             if (local.Success && local.SignatureValid && !local.IsExpired)
             {
+                bool unbound = LicensePayload.IsUnboundHardwareId(local.Payload != null ? local.Payload.HardwareId : null);
+                if (unbound)
+                {
+                    _logger.Info("Unbound licence.lic — binding this computer via renew.");
+                    bool bound = RenewFromServer(licencePath, local.Payload, computerId);
+                    if (bound)
+                    {
+                        TryRefreshAppUpdateInfo();
+                        return true;
+                    }
+
+                    // Offline bootstrap: allow start until renew can bind HardwareId.
+                    _logger.Warn("Unbound license accepted offline; renew when online to lock PC.");
+                    ApplyPayloadToSettings(local.Payload);
+                    TryRefreshAppUpdateInfo();
+                    return true;
+                }
+
                 if (!HardwareMatches(local.Payload, computerId))
                 {
                     _logger.Error("licence.lic HardwareId does not match this computer.");
@@ -385,9 +403,14 @@ namespace logicpos.Classes.Logic.License
 
         private static bool HardwareMatches(LicensePayload payload, string computerId)
         {
-            if (payload == null || string.IsNullOrWhiteSpace(payload.HardwareId) || string.IsNullOrWhiteSpace(computerId))
+            if (payload == null || string.IsNullOrWhiteSpace(computerId))
             {
                 return false;
+            }
+
+            if (LicensePayload.IsUnboundHardwareId(payload.HardwareId))
+            {
+                return true;
             }
 
             return string.Equals(payload.HardwareId.Trim(), computerId.Trim(), StringComparison.OrdinalIgnoreCase);

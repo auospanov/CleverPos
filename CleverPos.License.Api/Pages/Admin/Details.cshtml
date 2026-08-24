@@ -27,10 +27,19 @@
 
 <div class="card" style="margin-bottom:16px">
     <h2 style="margin-top:0">Компьютер</h2>
-    <p class="sub">По звонку клиента: нажмите «Разрешить другой ПК», чтобы отключить старый компьютер. Новый ПК при старте кассы сам привяжется.</p>
+    <p class="sub">Скачать можно сразу после оплаты — без ComputerId. Файл будет «непривязанный»; при первом запуске касса сама привяжет ПК (нужен интернет к API). Либо укажите ComputerId ниже, если он уже известен.</p>
     @if (license.Computers.Count == 0)
     {
-        <p><span class="badge warn">не привязан</span> — следующий успешный вход кассы запишет идентификатор.</p>
+        <p><span class="badge warn">не привязан</span> — скачайте файл и установите на кассу, либо введите ComputerId вручную.</p>
+        <form method="get" asp-page-handler="Download" asp-route-id="@license.Id" class="form-grid" style="margin-top:12px">
+            <div class="full">
+                <label for="computerId">ComputerId (необязательно)</label>
+                <input id="computerId" name="computerId" placeholder="Оставьте пустым для непривязанного файла" />
+            </div>
+            <div class="full">
+                <button class="btn secondary" type="submit">Скачать с указанным ComputerId</button>
+            </div>
+        </form>
     }
     else
     {

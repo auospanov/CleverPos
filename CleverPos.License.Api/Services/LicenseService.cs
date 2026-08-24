@@ -154,9 +154,11 @@ public class LicenseService
             hw = license.Activations.FirstOrDefault(a => a.IsActive)?.ComputerId ?? string.Empty;
         }
 
+        // Allow bootstrap download before first POS renew: unbound file is accepted on any PC,
+        // then renew binds the real ComputerId.
         if (string.IsNullOrWhiteSpace(hw))
         {
-            throw new InvalidOperationException("Нет привязанного компьютера. Укажите ComputerId или дождитесь первого renew с кассы.");
+            hw = LicensePayload.UnboundHardwareId;
         }
 
         var payload = new LicensePayload
