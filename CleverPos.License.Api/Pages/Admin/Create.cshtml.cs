@@ -18,7 +18,7 @@ public class CreateModel : PageModel
     public string? CompanyName { get; set; }
 
     [BindProperty]
-    public string? LicenseKey { get; set; }
+    public string? Bin { get; set; }
 
     [BindProperty]
     public decimal? FirstMonthAmount { get; set; }
@@ -39,13 +39,13 @@ public class CreateModel : PageModel
             LicenseListItem created = await _licenses.CreateAsync(new CreateLicenseRequest
             {
                 CompanyName = CompanyName,
-                LicenseKey = LicenseKey,
+                Bin = Bin,
                 MaxActivations = 1,
                 FirstMonthAmount = FirstMonthAmount,
                 MarkCurrentMonthPaid = MarkCurrentMonthPaid
             }, cancellationToken).ConfigureAwait(false);
 
-            TempData["Ok"] = "Лицензия создана. Ключ: " + created.LicenseKey;
+            TempData["Ok"] = "Лицензия создана. Ключ: " + created.LicenseKey + " (скачайте licence.lic в карточке).";
             return RedirectToPage("/Admin/Details", new { id = created.Id });
         }
         catch (InvalidOperationException ex)

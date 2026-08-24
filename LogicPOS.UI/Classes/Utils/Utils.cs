@@ -2210,9 +2210,71 @@ namespace logicpos
                 StreamReader sr = null;
                 try
                 {
+                    if (File.Exists(pFileName))
+                    {
+                        string content = File.ReadAllText(pFileName);
+                        CleverPos.License.Core.LicenseReadResult verified =
+                            CleverPos.License.Core.LicenseIssueService.VerifyLocal(content);
+                        if (verified != null && verified.Payload != null
+                            && (!string.IsNullOrWhiteSpace(verified.Payload.LicenseKey)
+                                || !string.IsNullOrWhiteSpace(verified.Payload.HardwareId)))
+                        {
+                            CleverPos.License.Core.LicensePayload payload = verified.Payload;
+                            if (!string.IsNullOrWhiteSpace(payload.HardwareId))
+                            {
+                                LicenseSettings.LicenseHardwareId = payload.HardwareId.Trim();
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.LicenseKey))
+                            {
+                                LicenseSettings.LicenseKey = payload.LicenseKey.Trim();
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Company))
+                            {
+                                LicenseSettings.LicenseCompany = payload.Company;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Nif))
+                            {
+                                LicenseSettings.LicenseNif = payload.Nif;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Address))
+                            {
+                                LicenseSettings.LicenseAddress = payload.Address;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Email))
+                            {
+                                LicenseSettings.LicenseEmail = payload.Email;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Telephone))
+                            {
+                                LicenseSettings.LicenseTelephone = payload.Telephone;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(payload.Reseller))
+                            {
+                                LicenseSettings.LicenseReseller = payload.Reseller;
+                            }
+
+                            if (pDebug)
+                            {
+                                _logger.Debug(string.Format("{0}:{1}", "LicenseKey", LicenseSettings.LicenseKey));
+                                _logger.Debug(string.Format("{0}:{1}", "HardwareId", LicenseSettings.LicenseHardwareId));
+                                _logger.Debug(string.Format("{0}:{1}", "Company", LicenseSettings.LicenseCompany));
+                                _logger.Debug(string.Format("{0}:{1}", "Nif", LicenseSettings.LicenseNif));
+                            }
+
+                            return true;
+                        }
+                    }
+
                     IniFileParser iNIFile = new IniFileParser(pFileName);
 
-                    //Load
+                    // Legacy encrypted-only files (no Signature)
                     LicenseSettings.LicenseHardwareId = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "HardwareId", "Empresa Demonstração"), true);
                     LicenseSettings.LicenseCompany = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "Company", "NIF Demonstração"), true);
                     LicenseSettings.LicenseNif = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "Nif", "Morada Demonstração"), true);
@@ -2220,7 +2282,13 @@ namespace logicpos
                     LicenseSettings.LicenseEmail = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "Email", string.Empty), true);
                     LicenseSettings.LicenseTelephone = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "Telephone", "Telefone Demonstração"), true);
                     LicenseSettings.LicenseReseller = CryptographyUtils.Decrypt(iNIFile.GetValue("Licence", "Reseller", "LogicPulse"), true);
-                    //Test
+                    if (string.IsNullOrWhiteSpace(LicenseSettings.LicenseKey)
+                        && !string.IsNullOrWhiteSpace(LicenseSettings.LicenseHardwareId)
+                        && !CleverPos.License.Core.LicensePayload.IsUnboundHardwareId(LicenseSettings.LicenseHardwareId))
+                    {
+                        LicenseSettings.LicenseKey = LicenseSettings.LicenseHardwareId.Trim();
+                    }
+
                     if (pDebug)
                     {
                         _logger.Debug(string.Format("{0}:{1}", "HardwareId", LicenseSettings.LicenseHardwareId));

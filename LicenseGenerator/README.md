@@ -1,5 +1,18 @@
-# LogicPOS License Generator
+# CleverPos License Generator
 
-WinForms-утилита. Логика подписи — в **CleverPos.License.Core** (общий с CleverPos.License.Api и кассой).
+WinForms-утилита. Подпись — в **CleverPos.License.Core** (общий с License.Api и кассой).
 
-Генерирует подписанный `licence.lic` с `ValidUntilUtc` (по умолчанию — до конца текущего UTC-месяца).
+## Ввод
+
+Обязательно только:
+
+- **Компания**
+- **БИН** (12 цифр)
+
+Остальное заполняется автоматически:
+
+- `LicenseKey` — новый GUID
+- `HardwareId` — `*` (ещё не привязан; касса привяжет ПК при первом запуске/renew)
+- `ValidUntilUtc` — до конца текущего UTC-месяца
+
+В админке создавайте запись с тем же ключом (или создавайте лицензию в админке и скачивайте `licence.lic` оттуда).

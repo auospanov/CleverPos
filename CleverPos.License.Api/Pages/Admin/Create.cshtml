@@ -4,7 +4,7 @@
     ViewData["Title"] = "Новая лицензия";
 }
 <h1>Новая лицензия</h1>
-<p class="sub">Один компьютер на ключ. Первый запрос кассы запишет идентификатор. Текущий месяц можно сразу отметить оплаченным.</p>
+<p class="sub">Достаточно компании и БИН. Ключ генерируется сам. ПК привяжется при первом запуске кассы с файлом licence.lic.</p>
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert err">@Model.ErrorMessage</div>
@@ -12,12 +12,12 @@
 <div class="card">
     <form method="post" class="form-grid">
         <div class="full">
-            <label for="CompanyName">Компания / магазин</label>
-            <input id="CompanyName" asp-for="CompanyName" />
+            <label for="CompanyName">Компания / магазин *</label>
+            <input id="CompanyName" asp-for="CompanyName" required />
         </div>
         <div class="full">
-            <label for="LicenseKey">Ключ = HardwareId из licence.lic / генератора (пусто = сгенерировать новый)</label>
-            <input id="LicenseKey" asp-for="LicenseKey" placeholder="Вставьте HardwareId из файла лицензии" />
+            <label for="Bin">БИН * (12 цифр)</label>
+            <input id="Bin" asp-for="Bin" maxlength="12" pattern="\d{12}" required placeholder="000000000000" />
         </div>
         <div>
             <label for="FirstMonthAmount">Сумма за первый месяц</label>

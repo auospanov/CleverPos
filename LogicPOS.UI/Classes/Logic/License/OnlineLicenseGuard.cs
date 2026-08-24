@@ -347,6 +347,11 @@ namespace logicpos.Classes.Logic.License
             {
                 LicenseSettings.LicenseCompany = payload.Company;
             }
+
+            if (!string.IsNullOrWhiteSpace(payload.Nif))
+            {
+                LicenseSettings.LicenseNif = payload.Nif;
+            }
         }
 
         /// <summary>Public for CloudSyncFlusher / shared clients.</summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace LogicPOS.Settings
@@ -39,7 +40,50 @@ namespace LogicPOS.Settings
                 return Assembly.GetExecutingAssembly();
             }
         }
-        public static string POSSessionJsonFileName => $"appsession_{LicenseSettings.LicenseHardwareId}.json";
+
+        /// <summary>
+        /// Session file name. Unbound HardwareId ("*") is not a valid Windows filename char —
+        /// use LicenseKey (or "unbound") instead.
+        /// </summary>
+        public static string POSSessionJsonFileName
+        {
+            get
+            {
+                string id = SanitizeFileToken(LicenseSettings.LicenseHardwareId);
+                if (string.IsNullOrWhiteSpace(id)
+                    || id == "*"
+                    || string.Equals(id, "UNBOUND", StringComparison.OrdinalIgnoreCase)
+                    || id.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    id = SanitizeFileToken(LicenseSettings.LicenseKey);
+                }
+
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    id = "unbound";
+                }
+
+                return "appsession_" + id + ".json";
+            }
+        }
+
+        private static string SanitizeFileToken(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            string id = value.Trim();
+            char[] invalid = Path.GetInvalidFileNameChars();
+            foreach (char c in invalid)
+            {
+                id = id.Replace(c, '_');
+            }
+
+            return id;
+        }
+
         public static System.Drawing.Size ScreenSize { get; set; }
         public static int GetRequiredCustomerDetailsAboveValue(Guid countryId)
         {

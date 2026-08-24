@@ -1,22 +1,17 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using CleverPos.License.Core;
 
 namespace LicenseGenerator
 {
     public partial class MainForm : Form
     {
-        private TextBox txtHardwareId;
         private TextBox txtCompany;
-        private TextBox txtNif;
-        private TextBox txtAddress;
-        private TextBox txtEmail;
-        private TextBox txtTelephone;
-        private TextBox txtReseller;
-        private Button btnGenerate;
-        private Button btnBrowse;
+        private TextBox txtBin;
         private TextBox txtOutputPath;
         private Label lblStatus;
+        private Label lblGeneratedKey;
 
         public MainForm()
         {
@@ -25,50 +20,30 @@ namespace LicenseGenerator
 
         private void InitializeComponent()
         {
-            this.Text = "LogicPOS License Generator";
-            this.Size = new System.Drawing.Size(600, 500);
+            this.Text = "CleverPos — генератор лицензии";
+            this.Size = new System.Drawing.Size(620, 320);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
 
             int yPos = 20;
-            int labelWidth = 120;
+            int labelWidth = 140;
             int textBoxWidth = 420;
-            int spacing = 35;
+            int spacing = 40;
 
-            // HardwareId
-            Label lblHardwareId = new Label
+            Label lblHint = new Label
             {
-                Text = "HardwareId:",
+                Text = "Нужны только компания и БИН. Ключ и привязка ПК появятся автоматически.",
                 Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(labelWidth, 23),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+                Size = new System.Drawing.Size(560, 36),
+                ForeColor = System.Drawing.Color.DimGray
             };
-            this.Controls.Add(lblHardwareId);
+            this.Controls.Add(lblHint);
+            yPos += 44;
 
-            txtHardwareId = new TextBox
-            {
-                Location = new System.Drawing.Point(150, yPos),
-                Size = new System.Drawing.Size(360, 23)
-            };
-            this.Controls.Add(txtHardwareId);
-
-            Button btnGenerateHardwareId = new Button
-            {
-                Text = "Generate",
-                Location = new System.Drawing.Point(520, yPos),
-                Size = new System.Drawing.Size(50, 23),
-                Font = new System.Drawing.Font("Microsoft Sans Serif", 8F)
-            };
-            btnGenerateHardwareId.Click += BtnGenerateHardwareId_Click;
-            this.Controls.Add(btnGenerateHardwareId);
-
-            yPos += spacing;
-
-            // Company
             Label lblCompany = new Label
             {
-                Text = "Company:",
+                Text = "Компания *:",
                 Location = new System.Drawing.Point(20, yPos),
                 Size = new System.Drawing.Size(labelWidth, 23),
                 TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -77,113 +52,33 @@ namespace LicenseGenerator
 
             txtCompany = new TextBox
             {
-                Location = new System.Drawing.Point(150, yPos),
+                Location = new System.Drawing.Point(170, yPos),
                 Size = new System.Drawing.Size(textBoxWidth, 23)
             };
             this.Controls.Add(txtCompany);
-
             yPos += spacing;
 
-            // NIF
-            Label lblNif = new Label
+            Label lblBin = new Label
             {
-                Text = "NIF:",
+                Text = "БИН *:",
                 Location = new System.Drawing.Point(20, yPos),
                 Size = new System.Drawing.Size(labelWidth, 23),
                 TextAlign = System.Drawing.ContentAlignment.MiddleLeft
             };
-            this.Controls.Add(lblNif);
+            this.Controls.Add(lblBin);
 
-            txtNif = new TextBox
+            txtBin = new TextBox
             {
-                Location = new System.Drawing.Point(150, yPos),
-                Size = new System.Drawing.Size(textBoxWidth, 23)
-            };
-            this.Controls.Add(txtNif);
-
-            yPos += spacing;
-
-            // Address
-            Label lblAddress = new Label
-            {
-                Text = "Address:",
-                Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(labelWidth, 23),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-            this.Controls.Add(lblAddress);
-
-            txtAddress = new TextBox
-            {
-                Location = new System.Drawing.Point(150, yPos),
-                Size = new System.Drawing.Size(textBoxWidth, 23)
-            };
-            this.Controls.Add(txtAddress);
-
-            yPos += spacing;
-
-            // Email
-            Label lblEmail = new Label
-            {
-                Text = "Email:",
-                Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(labelWidth, 23),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-            this.Controls.Add(lblEmail);
-
-            txtEmail = new TextBox
-            {
-                Location = new System.Drawing.Point(150, yPos),
-                Size = new System.Drawing.Size(textBoxWidth, 23)
-            };
-            this.Controls.Add(txtEmail);
-
-            yPos += spacing;
-
-            // Telephone
-            Label lblTelephone = new Label
-            {
-                Text = "Telephone:",
-                Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(labelWidth, 23),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-            this.Controls.Add(lblTelephone);
-
-            txtTelephone = new TextBox
-            {
-                Location = new System.Drawing.Point(150, yPos),
-                Size = new System.Drawing.Size(textBoxWidth, 23)
-            };
-            this.Controls.Add(txtTelephone);
-
-            yPos += spacing;
-
-            // Reseller
-            Label lblReseller = new Label
-            {
-                Text = "Reseller:",
-                Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(labelWidth, 23),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-            this.Controls.Add(lblReseller);
-
-            txtReseller = new TextBox
-            {
-                Location = new System.Drawing.Point(150, yPos),
+                Location = new System.Drawing.Point(170, yPos),
                 Size = new System.Drawing.Size(textBoxWidth, 23),
-                Text = "LogicPulse"
+                MaxLength = 12
             };
-            this.Controls.Add(txtReseller);
-
+            this.Controls.Add(txtBin);
             yPos += spacing;
 
-            // Output Path
             Label lblOutputPath = new Label
             {
-                Text = "Output Path:",
+                Text = "Файл:",
                 Location = new System.Drawing.Point(20, yPos),
                 Size = new System.Drawing.Size(labelWidth, 23),
                 TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -192,51 +87,50 @@ namespace LicenseGenerator
 
             txtOutputPath = new TextBox
             {
-                Location = new System.Drawing.Point(150, yPos),
+                Location = new System.Drawing.Point(170, yPos),
                 Size = new System.Drawing.Size(350, 23),
                 Text = Path.Combine(Environment.CurrentDirectory, "licence.lic")
             };
             this.Controls.Add(txtOutputPath);
 
-            btnBrowse = new Button
+            Button btnBrowse = new Button
             {
-                Text = "Browse...",
-                Location = new System.Drawing.Point(510, yPos),
+                Text = "Обзор…",
+                Location = new System.Drawing.Point(530, yPos),
                 Size = new System.Drawing.Size(60, 23)
             };
             btnBrowse.Click += BtnBrowse_Click;
             this.Controls.Add(btnBrowse);
+            yPos += spacing;
 
-            yPos += spacing + 10;
+            lblGeneratedKey = new Label
+            {
+                Text = "",
+                Location = new System.Drawing.Point(20, yPos),
+                Size = new System.Drawing.Size(560, 23),
+                Font = new System.Drawing.Font("Consolas", 9F)
+            };
+            this.Controls.Add(lblGeneratedKey);
+            yPos += 28;
 
-            // Status Label
             lblStatus = new Label
             {
                 Text = "",
                 Location = new System.Drawing.Point(20, yPos),
-                Size = new System.Drawing.Size(550, 23),
-                ForeColor = System.Drawing.Color.Green
+                Size = new System.Drawing.Size(560, 23)
             };
             this.Controls.Add(lblStatus);
+            yPos += 36;
 
-            yPos += 30;
-
-            // Generate Button
-            btnGenerate = new Button
+            Button btnGenerate = new Button
             {
-                Text = "Generate License File",
+                Text = "Создать licence.lic",
                 Location = new System.Drawing.Point(200, yPos),
-                Size = new System.Drawing.Size(200, 35),
+                Size = new System.Drawing.Size(200, 36),
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold)
             };
             btnGenerate.Click += BtnGenerate_Click;
             this.Controls.Add(btnGenerate);
-        }
-
-        private void BtnGenerateHardwareId_Click(object sender, EventArgs e)
-        {
-            // Генерация GUID как HardwareId
-            txtHardwareId.Text = Guid.NewGuid().ToString();
         }
 
         private void BtnBrowse_Click(object sender, EventArgs e)
@@ -246,7 +140,6 @@ namespace LicenseGenerator
                 saveDialog.Filter = "License Files (*.lic)|*.lic|All Files (*.*)|*.*";
                 saveDialog.FileName = "licence.lic";
                 saveDialog.DefaultExt = "lic";
-
                 if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
                     txtOutputPath.Text = saveDialog.FileName;
@@ -258,36 +151,37 @@ namespace LicenseGenerator
         {
             try
             {
-                // Валидация обязательных полей
-                if (string.IsNullOrWhiteSpace(txtHardwareId.Text))
+                string company = (txtCompany.Text ?? string.Empty).Trim();
+                string bin = (txtBin.Text ?? string.Empty).Trim();
+
+                if (string.IsNullOrWhiteSpace(company))
                 {
-                    MessageBox.Show("Поле 'HardwareId' обязательно для заполнения!", "Ошибка", 
+                    MessageBox.Show("Укажите название компании.", "Ошибка",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(txtCompany.Text))
+                if (!IsValidKazakhstanBin(bin))
                 {
-                    MessageBox.Show("Поле 'Company' обязательно для заполнения!", "Ошибка", 
+                    MessageBox.Show("БИН должен состоять из 12 цифр.", "Ошибка",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // Подготовка данных
+                string licenseKey = Guid.NewGuid().ToString("N").ToUpperInvariant();
                 var licenseData = new LicenseFileGenerator.LicenseData
                 {
-                    HardwareId = txtHardwareId.Text.Trim(),
-                    Company = txtCompany.Text.Trim(),
-                    Nif = txtNif.Text.Trim(),
-                    Address = txtAddress.Text.Trim(),
-                    Email = txtEmail.Text.Trim(),
-                    Telephone = txtTelephone.Text.Trim(),
-                    Reseller = string.IsNullOrWhiteSpace(txtReseller.Text) ? "LogicPulse" : txtReseller.Text.Trim()
+                    LicenseKey = licenseKey,
+                    HardwareId = LicensePayload.UnboundHardwareId,
+                    Company = company,
+                    Nif = bin,
+                    Address = string.Empty,
+                    Email = string.Empty,
+                    Telephone = string.Empty,
+                    Reseller = "CleverPos"
                 };
 
-                // Генерация файла
-                string outputPath = txtOutputPath.Text.Trim();
-                
+                string outputPath = (txtOutputPath.Text ?? string.Empty).Trim();
                 if (string.IsNullOrWhiteSpace(outputPath))
                 {
                     outputPath = Path.Combine(Environment.CurrentDirectory, "licence.lic");
@@ -296,28 +190,44 @@ namespace LicenseGenerator
 
                 LicenseFileGenerator.GenerateLicenseFile(outputPath, licenseData);
 
-                // Успех
-                lblStatus.Text = $"✓ Файл успешно создан: {outputPath}";
+                lblGeneratedKey.Text = "LicenseKey: " + licenseKey;
+                lblStatus.Text = "Файл создан: " + outputPath;
                 lblStatus.ForeColor = System.Drawing.Color.Green;
 
                 MessageBox.Show(
-                    $"Файл лицензии успешно создан!\n\nПуть: {outputPath}",
-                    "Успех",
+                    "licence.lic создан.\n\nКомпания: " + company +
+                    "\nБИН: " + bin +
+                    "\nКлюч (в админку / облако): " + licenseKey +
+                    "\n\nHardwareId пока не привязан — касса привяжет ПК при первом запуске.\n\nПуть:\n" + outputPath,
+                    "Готово",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                lblStatus.Text = $"✗ Ошибка: {ex.Message}";
+                lblStatus.Text = "Ошибка: " + ex.Message;
                 lblStatus.ForeColor = System.Drawing.Color.Red;
-
-                MessageBox.Show(
-                    $"Ошибка при создании файла лицензии:\n\n{ex.Message}",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка:\n\n" + ex.Message, "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private static bool IsValidKazakhstanBin(string bin)
+        {
+            if (string.IsNullOrWhiteSpace(bin) || bin.Length != 12)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < bin.Length; i++)
+            {
+                if (!char.IsDigit(bin[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
-

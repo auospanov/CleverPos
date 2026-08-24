@@ -106,6 +106,7 @@ public class LicenseService
             LicenseKey = license.LicenseKey,
             HardwareId = computerId,
             Company = license.CompanyName ?? request.CompanyName ?? string.Empty,
+            Nif = license.Bin ?? string.Empty,
             Reseller = "CleverPos",
             IssuedAtUtc = DateTime.UtcNow,
             ValidUntilUtc = validUntil
@@ -166,6 +167,7 @@ public class LicenseService
             LicenseKey = license.LicenseKey,
             HardwareId = hw.Trim(),
             Company = license.CompanyName ?? string.Empty,
+            Nif = license.Bin ?? string.Empty,
             Reseller = "CleverPos",
             IssuedAtUtc = DateTime.UtcNow,
             ValidUntilUtc = LicensePeriod.ValidUntilExclusiveUtc(year, month)
@@ -176,6 +178,18 @@ public class LicenseService
 
     public async Task<LicenseListItem> CreateAsync(CreateLicenseRequest request, CancellationToken cancellationToken)
     {
+        string company = (request.CompanyName ?? string.Empty).Trim();
+        string bin = (request.Bin ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(company))
+        {
+            throw new InvalidOperationException("Укажите название компании.");
+        }
+
+        if (!IsValidKazakhstanBin(bin))
+        {
+            throw new InvalidOperationException("БИН должен состоять из 12 цифр.");
+        }
+
         string key = string.IsNullOrWhiteSpace(request.LicenseKey)
             ? Guid.NewGuid().ToString("N").ToUpperInvariant()
             : request.LicenseKey.Trim();
@@ -188,7 +202,8 @@ public class LicenseService
         var license = new LicenseRecord
         {
             LicenseKey = key,
-            CompanyName = string.IsNullOrWhiteSpace(request.CompanyName) ? null : request.CompanyName.Trim(),
+            CompanyName = company,
+            Bin = bin,
             MaxActivations = request.MaxActivations <= 0 ? 1 : request.MaxActivations,
             ExpiresAtUtc = request.ExpiresAtUtc,
             IsActive = true,
@@ -465,6 +480,7 @@ public class LicenseService
             Id = license.Id,
             LicenseKey = license.LicenseKey,
             CompanyName = license.CompanyName,
+            Bin = license.Bin,
             MaxActivations = license.MaxActivations,
             IsActive = license.IsActive,
             ExpiresAtUtc = license.ExpiresAtUtc,
@@ -499,5 +515,23 @@ public class LicenseService
                 })
                 .ToList()
         };
+    }
+
+    private static bool IsValidKazakhstanBin(string bin)
+    {
+        if (string.IsNullOrWhiteSpace(bin) || bin.Length != 12)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < bin.Length; i++)
+        {
+            if (!char.IsDigit(bin[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

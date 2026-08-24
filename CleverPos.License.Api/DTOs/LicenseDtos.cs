@@ -38,6 +38,8 @@ public class CreateLicenseRequest
 {
     public string? LicenseKey { get; set; }
     public string? CompanyName { get; set; }
+    /// <summary>БИН компании (12 цифр).</summary>
+    public string? Bin { get; set; }
     public int MaxActivations { get; set; } = 1;
     public DateTime? ExpiresAtUtc { get; set; }
     public string? BindComputerId { get; set; }
@@ -78,6 +80,7 @@ public class LicenseListItem
     public Guid Id { get; set; }
     public string LicenseKey { get; set; } = string.Empty;
     public string? CompanyName { get; set; }
+    public string? Bin { get; set; }
     public int MaxActivations { get; set; }
     public int ActiveComputers { get; set; }
     public bool IsActive { get; set; }
