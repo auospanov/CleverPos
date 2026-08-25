@@ -232,7 +232,7 @@ namespace logicpos
                         LicenseSettings.LicenseReseller.ToString().ToLower() != "")
                     {
                         //appVersion = string.Format("Brough by {1}\n{0}",appVersion, GlobalFramework.LicenceReseller);
-                        appVersion = string.Format("Powered by {0}© Vers. {1}", LicenseSettings.LicenseReseller, GeneralSettings.ProductVersion);
+                        appVersion = string.Format("Powered by {0}ï¿½ Vers. {1}", LicenseSettings.LicenseReseller, GeneralSettings.ProductVersion);
                     }
                     else
                     {
@@ -263,28 +263,7 @@ namespace logicpos
                         buttonDeveloper.Clicked += ButtonDeveloper_Clicked;
                     }
 
-                    //LOGO
-                    if (PluginSettings.LicenceManager != null)
-                    {
-                        string fileImageBackOfficeLogo = string.Format(PathsSettings.Paths["themes"] + @"Default\Images\logicPOS_loggericpulse_loggerin.png");
-
-                        if (!string.IsNullOrEmpty(LicenseSettings.LicenseReseller) && LicenseSettings.LicenseReseller == "NewTech")
-                        {
-                            fileImageBackOfficeLogo = string.Format(PathsSettings.Paths["themes"] + @"Default\Images\Branding\{0}\logicPOS_loggericpulse_loggerin.png", "NT");
-                        }
-
-                        // var bitmapImage = GlobalFramework.PluginLicenceManager.DecodeImage(fileImageBackOfficeLogo, (GlobalApp.ScreenSize.Width - 550), (GlobalApp.ScreenSize.Height - 550));
-                        // Gdk.Pixbuf pixbufImageLogo = Utils.ImageToPixbuf(bitmapImage);
-                        //Image imageLogo = new Image(pixbufImageLogo);
-
-                        //fix.Put(imageLogo, GlobalApp.ScreenSize.Width - 430, 80);
-                    }
-                    else
-                    {
-                        Image imageLogo = new Image(Utils.GetThemeFileLocation(GeneralSettings.Settings["fileImageBackOfficeLogo"]));
-                        fix.Put(imageLogo, GlobalApp.ScreenSize.Width - 430, 80);
-                    }
-                    //string fileImageBackOfficeLogo = Utils.GetThemeFileLocation(LogicPOS.Settings.GeneralSettings.Settings["fileImageBackOfficeLogo"]);
+                    // Startup logo overlay removed ? branding is only the window icon / background
                     ScreenArea.Add(fix);
 
                     //Force EntryPin to be the Entry with Focus

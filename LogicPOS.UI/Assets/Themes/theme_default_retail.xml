@@ -53,7 +53,7 @@
 					<!-- LabelStatus -->
 					<LabelStatus>
 						<Font>bold 12</Font>
-						<FontColor>200,200,200</FontColor>
+						<FontColor>255,255,255</FontColor>
 					</LabelStatus>
 				</NumberPadPin>
 				<!-- LabelVersion -->
