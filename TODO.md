@@ -11,6 +11,28 @@
 
 ---
 
+## Зафиксировано: что осталось (2026-08-27)
+
+Не трогаем новые крупные темы, пока не закроем этот список. Склад MVP, НКТ, эквайринг POS и облако уже в коде. Автообновление — каркас есть, дыры ниже в п. 4.
+
+| # | Что | Это не | Фаза |
+|---|-----|--------|------|
+| 1 | **Excel:** колонка **BarCode** (7-я) в импорте и экспорте товаров | Печать этикетки с карточки — уже есть | C-1 |
+| 2 | **Фискализация РК:** ОФД / программная ККМ → фискальный чек. Провайдеры: **Webkassa / LightKassa / ReKassa**. Плюс **ЭСФ** | Термочек кассы и POS-терминал банка — это не фискал | F |
+| 3 | **Kaspi Магазин** (маркетплейс): каталог, остатки, заказы Partner API | **Не** Kaspi Smart POS на кассе (фаза I уже сделана) | J |
+| 4 | **Автообновление довести до продакшена** (каркас есть: API + кнопка BackOffice + `CleverPos.Updater`) | Тихий апдейт без клика — пока не цель | U |
+
+### 4. Автообновление — дыры
+
+- [ ] **U-1.** Класть zip `CleverPos-latest.zip` в `CleverPos.License.Api/wwwroot/updates/` на сервере (сейчас только README) и поднимать `AppUpdate:LatestVersion` (сейчас `1.4.0` = текущая касса, кнопка не появится).
+- [ ] **U-2.** При сборке копировать `CleverPos.Updater.exe` рядом с `CleverPos.exe` (PostBuild в `LogicPOS.UI.csproj` / пакет установки). Сейчас updater в solution, в output кассы не попадает.
+- [ ] **U-3.** Касса должна читать флаг `mandatory` из `GET /api/updates/latest` (сейчас поле есть в API и в DTO, UI его игнорирует).
+- [ ] **U-4.** Release + плагин лицензии: `LicenseSettings.ApplyDataFromPlugin` перезаписывает `GeneralSettings.ServerVersion` **после** `TryRefreshAppUpdateInfo` — кнопка «Новая версия» может не появиться. Не затирать версию с API.
+
+Детали: [`docs/KZ-IMPLEMENTATION-TODO.md`](docs/KZ-IMPLEMENTATION-TODO.md) фазы C-1, F, J, U.
+
+---
+
 ## Уже сделано (не трогать без необходимости)
 
 - [x] **Фаза A — ru-RU + KZ в БД:** SQL в `LogicPOS.UI/Resources/Database/Other/Country/KZ/`, демо-данные `Data/**/ru/`, цены ×400 KZT
