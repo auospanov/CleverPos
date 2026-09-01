@@ -1,4 +1,6 @@
-  dotnet publish -f net9.0-android -c Release /p:AndroidPackageFormat=apk /p:AndroidKeyStore=false
+  # Debug / Release — оба подписываются signing/cleverapp.jks (см. signing/README.md)
+  dotnet build -f net9.0-android -c Debug
+  dotnet publish -f net9.0-android -c Release /p:AndroidPackageFormat=apk
 
 Конфиг: Resources/Raw/appsettings.json
 
@@ -11,4 +13,11 @@
 
   EnableShopMode:
     true  — режим магазина (LogicPOS: поиск сервера, штрихкоды по LAN)
-    false — журнал посетителей (логин → сканирование удостоверения → API)
+37:77:42:C9:8B:28:66:F3:2D:62:2E:E4:B3:7A:CA:E9:AE:2E:C5:14:F3:D5:95:BE:BB:CA:9B:44:68:35:83:A9
+
+Файл
+CleverApp/signing/cleverapp.jks
+Alias
+cleverapp
+Пароль (store + key)
+IPofdQpeFiS94LT7kRUsrEu1

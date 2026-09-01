@@ -1,0 +1,10 @@
+<Project>
+	<!-- Copy to signing.props and fill in passwords. Debug and Release use the same key. -->
+	<PropertyGroup Condition="$(TargetFramework.Contains('-android'))">
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>$(MSBuildThisFileDirectory)cleverapp.jks</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>cleverapp</AndroidSigningKeyAlias>
+		<AndroidSigningStorePass>YOUR_STORE_PASSWORD</AndroidSigningStorePass>
+		<AndroidSigningKeyPass>YOUR_KEY_PASSWORD</AndroidSigningKeyPass>
+	</PropertyGroup>
+</Project>

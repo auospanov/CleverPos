@@ -47,6 +47,9 @@
 		<UseNativeHttpHandler Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseNativeHttpHandler>
 	</PropertyGroup>
 
+	<!-- Android Debug+Release signing (same JKS). Create signing\signing.props from example. -->
+	<Import Project="signing\signing.props" Condition="Exists('$(MSBuildThisFileDirectory)signing\signing.props')" />
+
 	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
 		<CodesignKey>Apple Development: Created via API (9AA7YL9584)</CodesignKey>
 		<CodesignProvision>VS: com.companyname.cleverapp Development</CodesignProvision>
