@@ -21,7 +21,7 @@ namespace CleverPos.License.Core
             WriteEncrypted(sb, "Address", payload.Address);
             WriteEncrypted(sb, "Email", payload.Email);
             WriteEncrypted(sb, "Telephone", payload.Telephone);
-            WriteEncrypted(sb, "Reseller", string.IsNullOrWhiteSpace(payload.Reseller) ? "CleverPos" : payload.Reseller);
+            WriteEncrypted(sb, "Reseller", string.IsNullOrWhiteSpace(payload.Reseller) ? "MarketPos" : payload.Reseller);
             WriteEncrypted(sb, "ValidUntilUtc", payload.ValidUntilUtc.ToUniversalTime().ToString("o"));
             WriteEncrypted(sb, "IssuedAtUtc", payload.IssuedAtUtc.ToUniversalTime().ToString("o"));
             sb.AppendLine("Signature=" + signature);

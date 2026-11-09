@@ -237,7 +237,7 @@ namespace LogicPOS.PaymentTerminals.Kaspi
         {
             try
             {
-                string url = $"{_baseUrl}/v2/register?name={Uri.EscapeDataString("CleverPos-Probe")}";
+                string url = $"{_baseUrl}/v2/register?name={Uri.EscapeDataString("MarketPos-Probe")}";
                 await SendAsync(HttpMethod.Get, url, null, cancellationToken, TimeSpan.FromSeconds(3)).ConfigureAwait(false);
                 return true;
             }

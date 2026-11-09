@@ -557,7 +557,7 @@ namespace LogicPOS.PaymentTerminals
             CancellationToken cancellationToken)
         {
             string clientName = string.IsNullOrWhiteSpace(terminal.PosClientName)
-                ? "CleverPos-1"
+                ? "MarketPos-1"
                 : terminal.PosClientName.Trim();
 
             KaspiRegisterResult result;

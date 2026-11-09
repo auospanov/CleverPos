@@ -752,7 +752,7 @@ namespace logicpos
                     xpoSession.ExecuteNonQuery(string.Format(
                         "INSERT INTO sys_configurationpaymentterminal " +
                         "(Oid, Ord, Code, Designation, Brand, Host, Port, PosClientName, UseHttps, Disabled) " +
-                        "VALUES ('{0}', 10, 10, 'Kaspi Smart POS', 'KASPI', '{1}', 8080, 'CleverPos-1', 0, 0);",
+                        "VALUES ('{0}', 10, 10, 'Kaspi Smart POS', 'KASPI', '{1}', 8080, 'MarketPos-1', 0, 0);",
                         KaspiTerminalOid, KaspiTerminalHost));
                     log.Info("EnsureKaspiPaymentTerminalConfig: inserted Kaspi terminal " + KaspiTerminalHost);
                 }
@@ -760,7 +760,7 @@ namespace logicpos
                 {
                     xpoSession.ExecuteNonQuery(string.Format(
                         "UPDATE sys_configurationpaymentterminal SET Host = '{0}', Port = 8080, Brand = 'KASPI', Disabled = 0, " +
-                        "Designation = 'Kaspi Smart POS', PosClientName = COALESCE(NULLIF(PosClientName, ''), 'CleverPos-1') " +
+                        "Designation = 'Kaspi Smart POS', PosClientName = COALESCE(NULLIF(PosClientName, ''), 'MarketPos-1') " +
                         "WHERE Oid = '{1}';",
                         KaspiTerminalHost, KaspiTerminalOid));
 
@@ -884,7 +884,7 @@ namespace logicpos
             xpoSession.ExecuteNonQuery(string.Format(
                 "INSERT INTO sys_configurationpaymentterminal " +
                 "(Oid, Ord, Code, Designation, Brand, Host, Port, PosClientName, UseHttps, Disabled) " +
-                "VALUES ('{0}', {1}, {1}, '{2}', '{3}', '{4}', 8080, 'CleverPos-1', 0, 1);",
+                "VALUES ('{0}', {1}, {1}, '{2}', '{3}', '{4}', 8080, 'MarketPos-1', 0, 1);",
                 oid, ordCode, SqlLiteral(designation), brand, host));
         }
 

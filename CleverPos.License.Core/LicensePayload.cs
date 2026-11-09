@@ -16,7 +16,7 @@ namespace CleverPos.License.Core
         public string Address { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Telephone { get; set; } = string.Empty;
-        public string Reseller { get; set; } = "CleverPos";
+        public string Reseller { get; set; } = "MarketPos";
         public DateTime ValidUntilUtc { get; set; }
         public DateTime IssuedAtUtc { get; set; } = DateTime.UtcNow;
 

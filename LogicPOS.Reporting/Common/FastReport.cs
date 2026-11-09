@@ -29,7 +29,8 @@ namespace LogicPOS.Reporting.Common
 {
     public class FastReport : Report
     {
-        protected const string CLEVERPOS_EXECUTABLE = "CleverPos.exe";
+        protected const string MARKETPOS_EXECUTABLE = "MarketPos.exe";
+        protected const string CLEVERPOS_EXECUTABLE_LEGACY = "CleverPos.exe";
         public const string FILENAME_TEMPLATE_BASE = "TemplateBase.frx";
         public const string FILENAME_TEMPLATE_BASE_SIMPLE = "TemplateBaseSimple.frx";
         private static bool _secondCopy;
@@ -115,10 +116,13 @@ namespace LogicPOS.Reporting.Common
         {
             string[] referencedAssemblies = ReferencedAssemblies;
 
-            if (File.Exists(CLEVERPOS_EXECUTABLE))
+            string appExe = File.Exists(MARKETPOS_EXECUTABLE)
+                ? MARKETPOS_EXECUTABLE
+                : (File.Exists(CLEVERPOS_EXECUTABLE_LEGACY) ? CLEVERPOS_EXECUTABLE_LEGACY : null);
+            if (appExe != null)
             {
                 Array.Resize(ref referencedAssemblies, ReferencedAssemblies.Length + 1);
-                referencedAssemblies[referencedAssemblies.Length - 1] = CLEVERPOS_EXECUTABLE;
+                referencedAssemblies[referencedAssemblies.Length - 1] = appExe;
             }
             ReferencedAssemblies = referencedAssemblies;
         }

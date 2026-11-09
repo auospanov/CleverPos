@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- CleverPos: Russian ЙЦУКЕН layout (default) -->
+<!-- MarketPos: Russian ЙЦУКЕН layout (default) -->
 <keyboard>
   <info>
     <kbdid>ru</kbdid>
-    <description>Russian JCUKEN for CleverPos</description>
+    <description>Russian JCUKEN for MarketPos</description>
   </info>
   <keys>
     <key row="0" col="1" level="1" glyph="/" charactername="Slash" unicodeid="002F" />

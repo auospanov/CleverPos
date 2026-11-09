@@ -8,10 +8,10 @@ public class AppUpdateOptions
     public string LatestVersion { get; set; } = "1.4.0";
 
     /// <summary>
-    /// Absolute URL or site-relative path to zip (e.g. /updates/CleverPos-1.4.1.zip).
+    /// Absolute URL or site-relative path to zip (e.g. /updates/MarketPos-1.4.1.zip).
     /// Empty = version check only, no download.
     /// </summary>
-    public string DownloadUrl { get; set; } = "/updates/CleverPos-latest.zip";
+    public string DownloadUrl { get; set; } = "/updates/MarketPos-latest.zip";
 
     public string? Sha256 { get; set; }
 

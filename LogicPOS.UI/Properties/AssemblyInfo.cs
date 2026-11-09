@@ -3,12 +3,12 @@ using System.Reflection;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("CleverPos")]
-[assembly: AssemblyDescription("CleverPos Point of Sale")]
+[assembly: AssemblyTitle("MarketPos")]
+[assembly: AssemblyDescription("MarketPos Point of Sale")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CleverPos")]
-[assembly: AssemblyProduct("CleverPos")]
-[assembly: AssemblyCopyright("Copyright © CleverPos")]
+[assembly: AssemblyCompany("MarketPos")]
+[assembly: AssemblyProduct("MarketPos")]
+[assembly: AssemblyCopyright("Copyright © MarketPos")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

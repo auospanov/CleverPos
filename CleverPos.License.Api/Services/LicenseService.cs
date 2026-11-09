@@ -107,7 +107,7 @@ public class LicenseService
             HardwareId = computerId,
             Company = license.CompanyName ?? request.CompanyName ?? string.Empty,
             Nif = license.Bin ?? string.Empty,
-            Reseller = "CleverPos",
+            Reseller = "MarketPos",
             IssuedAtUtc = DateTime.UtcNow,
             ValidUntilUtc = validUntil
         };
@@ -168,7 +168,7 @@ public class LicenseService
             HardwareId = hw.Trim(),
             Company = license.CompanyName ?? string.Empty,
             Nif = license.Bin ?? string.Empty,
-            Reseller = "CleverPos",
+            Reseller = "MarketPos",
             IssuedAtUtc = DateTime.UtcNow,
             ValidUntilUtc = LicensePeriod.ValidUntilExclusiveUtc(year, month)
         };

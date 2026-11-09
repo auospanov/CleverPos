@@ -1885,7 +1885,7 @@ To continue press Yes to close all terminals, or press No and close all terminal
     <value>Test print failed: {0}</value>
   </data>
   <data name="dialog_message_thermal_test_print_select_printer" xml:space="preserve">
-    <value>Select the Windows printer from the Designation list (e.g. your XPrinter). The CleverPos record title is not the Windows printer name.</value>
+    <value>Select the Windows printer from the Designation list (e.g. your XPrinter). The MarketPos record title is not the Windows printer name.</value>
   </data>
   <data name="dialog_message_thermal_test_print_select_network" xml:space="preserve">
     <value>Enter the printer network address as IP:PORT (e.g. 192.168.1.30:9100).</value>

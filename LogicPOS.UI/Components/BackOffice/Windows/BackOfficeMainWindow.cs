@@ -107,19 +107,24 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
             //TK016248 BackOffice - Check New Version
             _NewVersion.Clicked += delegate
             {
-                string fileName = "CleverPos.Updater.exe";
-                string lPathToUpdater = System.IO.Path.Combine(Environment.CurrentDirectory, fileName);
-                if (!File.Exists(lPathToUpdater))
+                string[] updaterCandidates =
                 {
-                    // Legacy LogicPulse updater folder
-                    string legacy = System.IO.Path.Combine(Environment.CurrentDirectory, "LPUpdater", "LPUpdater.exe");
-                    if (File.Exists(legacy))
+                    "MarketPos.Updater.exe",
+                    "CleverPos.Updater.exe",
+                    System.IO.Path.Combine("LPUpdater", "LPUpdater.exe")
+                };
+                string lPathToUpdater = null;
+                foreach (string candidate in updaterCandidates)
+                {
+                    string path = System.IO.Path.Combine(Environment.CurrentDirectory, candidate);
+                    if (File.Exists(path))
                     {
-                        lPathToUpdater = legacy;
+                        lPathToUpdater = path;
+                        break;
                     }
                 }
 
-                if (!File.Exists(lPathToUpdater))
+                if (string.IsNullOrEmpty(lPathToUpdater))
                 {
                     logicpos.Utils.ShowMessageBox(
                         this,
@@ -127,7 +132,7 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                         new System.Drawing.Size(600, 320),
                         MessageType.Warning,
                         ButtonsType.Ok,
-                        "CleverPos.Updater.exe не найден рядом с программой.",
+                        "MarketPos.Updater.exe не найден рядом с программой.",
                         GeneralUtils.GetResourceByName("global_pos_update"));
                     return;
                 }
@@ -162,12 +167,15 @@ namespace logicpos.Classes.Gui.Gtk.BackOffice
                         UseShellExecute = true
                     };
 
-                    if (System.IO.Path.GetFileName(lPathToUpdater).StartsWith("CleverPos.Updater", StringComparison.OrdinalIgnoreCase)
-                        && !string.IsNullOrWhiteSpace(downloadUrl))
+                    string updaterFileName = System.IO.Path.GetFileName(lPathToUpdater);
+                    bool isNativeUpdater =
+                        updaterFileName.StartsWith("MarketPos.Updater", StringComparison.OrdinalIgnoreCase)
+                        || updaterFileName.StartsWith("CleverPos.Updater", StringComparison.OrdinalIgnoreCase);
+                    if (isNativeUpdater && !string.IsNullOrWhiteSpace(downloadUrl))
                     {
                         int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
                         string args = string.Format(
-                            "--pid {0} --url \"{1}\" --target \"{2}\" --restart CleverPos.exe",
+                            "--pid {0} --url \"{1}\" --target \"{2}\" --restart MarketPos.exe",
                             pid,
                             downloadUrl,
                             Environment.CurrentDirectory);

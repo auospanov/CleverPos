@@ -178,7 +178,7 @@ namespace LicenseGenerator
                     Address = string.Empty,
                     Email = string.Empty,
                     Telephone = string.Empty,
-                    Reseller = "CleverPos"
+                    Reseller = "MarketPos"
                 };
 
                 string outputPath = (txtOutputPath.Text ?? string.Empty).Trim();

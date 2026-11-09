@@ -7,7 +7,7 @@
     <ProjectGuid>{E1F2A3B4-C5D6-4789-9ABC-DEF012345678}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>CleverPos.Updater</RootNamespace>
-    <AssemblyName>CleverPos.Updater</AssemblyName>
+    <AssemblyName>MarketPos.Updater</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -193,6 +193,7 @@ namespace logicpos
             //Override default Database name with parameter from config
             string configDatabaseName = GeneralSettings.Settings["databaseName"];
             DatabaseSettings.DatabaseName = (string.IsNullOrEmpty(configDatabaseName)) ? POSSettings.DatabaseName : configDatabaseName;
+            TryMigrateLegacySqliteDatabaseFile();
             //Xpo Connection String
             string xpoConnectionString = string.Format(GeneralSettings.Settings["xpoConnectionString"], DatabaseSettings.DatabaseName.ToLower());
             DatabaseSettings.AssignConnectionStringToSettings(xpoConnectionString);
@@ -554,7 +555,7 @@ namespace logicpos
             //Activate stock module for debug
 #if DEBUG
             LicenseSettings.LicenseModuleStocks = true;
-            PluginSettings.AppCompanyName = LicenseSettings.LicenseCompany = LicenseSettings.LicenseReseller = "CleverPos";
+            PluginSettings.AppCompanyName = LicenseSettings.LicenseCompany = LicenseSettings.LicenseReseller = "MarketPos";
 #endif
 
             //Clean Documents Folder on New Database, else we have Document files that dont correspond to Database
@@ -1264,6 +1265,75 @@ namespace logicpos
             catch (Exception ex)
             {
                 _logger.Error($"Ошибка при выводе информации о лицензии: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Visible rebrand: marketposdb.db. If missing, migrate/rename legacy cleverposdb*.db
+        /// (or keep using the legacy file name if rename fails).
+        /// </summary>
+        private static void TryMigrateLegacySqliteDatabaseFile()
+        {
+            log4net.ILog logger = log4net.LogManager.GetLogger(typeof(LogicPOSApp));
+
+            if (DatabaseSettings.DatabaseType != DatabaseType.SQLite)
+            {
+                return;
+            }
+
+            string configured = (DatabaseSettings.DatabaseName ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(configured))
+            {
+                return;
+            }
+
+            string workingDir = Directory.GetCurrentDirectory();
+            string targetFile = configured.ToLowerInvariant() + ".db";
+            string targetPath = Path.Combine(workingDir, targetFile);
+            if (File.Exists(targetPath))
+            {
+                return;
+            }
+
+            string[] legacyNames =
+            {
+                "cleverposdb",
+                "cleverposdbdevelopment",
+                "logicposdb"
+            };
+
+            foreach (string legacy in legacyNames)
+            {
+                if (string.Equals(legacy, configured, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string legacyPath = Path.Combine(workingDir, legacy + ".db");
+                if (!File.Exists(legacyPath))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    File.Move(legacyPath, targetPath);
+                    logger.Info(string.Format(
+                        "SQLite DB migrated: {0}.db -> {1}",
+                        legacy,
+                        targetFile));
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    logger.Warn(string.Format(
+                        "SQLite DB rename failed ({0}.db -> {1}): {2}. Using legacy name.",
+                        legacy,
+                        targetFile,
+                        ex.Message));
+                    DatabaseSettings.DatabaseName = legacy;
+                    return;
+                }
             }
         }
     }

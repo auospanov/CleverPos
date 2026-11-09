@@ -10,7 +10,7 @@ namespace CleverPos.Updater
     /// <summary>
     /// Downloads a CleverPos zip, waits for POS to exit, extracts over the install folder, restarts CleverPos.
     /// Usage:
-    ///   CleverPos.Updater.exe --pid 1234 --url https://api.../updates/CleverPos-latest.zip --target "C:\Pos" --restart CleverPos.exe
+    ///   MarketPos.Updater.exe --pid 1234 --url https://api.../updates/MarketPos-latest.zip --target "C:\Pos" --restart MarketPos.exe
     /// </summary>
     internal static class Program
     {
@@ -24,7 +24,7 @@ namespace CleverPos.Updater
                 string url = GetArg(args, "--url");
                 string package = GetArg(args, "--package");
                 string target = GetArg(args, "--target") ?? AppDomain.CurrentDomain.BaseDirectory;
-                string restart = GetArg(args, "--restart") ?? "CleverPos.exe";
+                string restart = GetArg(args, "--restart") ?? "MarketPos.exe";
                 string sha256 = GetArg(args, "--sha256");
 
                 target = Path.GetFullPath(target.TrimEnd('\\', '/'));
@@ -48,7 +48,7 @@ namespace CleverPos.Updater
                         return 2;
                     }
 
-                    zipPath = Path.Combine(Path.GetTempPath(), "CleverPos-update-" + Guid.NewGuid().ToString("N") + ".zip");
+                    zipPath = Path.Combine(Path.GetTempPath(), "MarketPos-update-" + Guid.NewGuid().ToString("N") + ".zip");
                     Console.WriteLine("Downloading " + url);
                     using (WebClient client = new WebClient())
                     {
@@ -68,7 +68,7 @@ namespace CleverPos.Updater
                     return 4;
                 }
 
-                string staging = Path.Combine(Path.GetTempPath(), "CleverPos-staging-" + Guid.NewGuid().ToString("N"));
+                string staging = Path.Combine(Path.GetTempPath(), "MarketPos-staging-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(staging);
                 Console.WriteLine("Extracting...");
                 ZipFile.ExtractToDirectory(zipPath, staging);
@@ -105,7 +105,7 @@ namespace CleverPos.Updater
                 try
                 {
                     File.WriteAllText(
-                        Path.Combine(Path.GetTempPath(), "CleverPos.Updater.error.txt"),
+                        Path.Combine(Path.GetTempPath(), "MarketPos.Updater.error.txt"),
                         DateTime.Now.ToString("o") + Environment.NewLine + ex);
                 }
                 catch
@@ -118,8 +118,12 @@ namespace CleverPos.Updater
 
         private static string ResolveContentRoot(string staging)
         {
-            // Zip may contain a single top-level folder with CleverPos.exe inside.
-            string[] exes = Directory.GetFiles(staging, "CleverPos.exe", SearchOption.AllDirectories);
+            // Zip may contain a single top-level folder with MarketPos.exe (or legacy CleverPos.exe).
+            string[] exes = Directory.GetFiles(staging, "MarketPos.exe", SearchOption.AllDirectories);
+            if (exes.Length == 0)
+            {
+                exes = Directory.GetFiles(staging, "CleverPos.exe", SearchOption.AllDirectories);
+            }
             if (exes.Length == 1)
             {
                 return Path.GetDirectoryName(exes[0]) ?? staging;
@@ -149,7 +153,8 @@ namespace CleverPos.Updater
 
                 // Don't overwrite the running updater binary mid-copy if it lives in target.
                 string fileName = Path.GetFileName(file);
-                if (string.Equals(fileName, "CleverPos.Updater.exe", StringComparison.OrdinalIgnoreCase)
+                if ((string.Equals(fileName, "MarketPos.Updater.exe", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(fileName, "CleverPos.Updater.exe", StringComparison.OrdinalIgnoreCase))
                     && IsSamePath(dest, Process.GetCurrentProcess().MainModule?.FileName))
                 {
                     continue;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- CleverPos: US QWERTY Latin layout (no Portuguese diacritics) -->
+<!-- MarketPos: US QWERTY Latin layout (no Portuguese diacritics) -->
 <keyboard>
   <info>
     <kbdid>en</kbdid>
-    <description>Latin QWERTY for CleverPos</description>
+    <description>Latin QWERTY for MarketPos</description>
   </info>
   <keys>
     <key row="0" col="1" level="1" glyph="|" charactername="Vertical Line" unicodeid="007C" />

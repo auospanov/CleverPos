@@ -1895,7 +1895,7 @@ Show this message next time?</value>
     <value>Не удалось выполнить тестовую печать: {0}</value>
   </data>
   <data name="dialog_message_thermal_test_print_select_printer" xml:space="preserve">
-    <value>Выберите принтер Windows в списке «Наименование» (например XPrinter). Название записи CleverPos («Термопринтер Windows…») — не имя устройства в Windows.</value>
+    <value>Выберите принтер Windows в списке «Наименование» (например XPrinter). Название записи MarketPos («Термопринтер Windows…») — не имя устройства в Windows.</value>
   </data>
   <data name="dialog_message_thermal_test_print_select_network" xml:space="preserve">
     <value>Укажите сетевой адрес принтера в формате IP:PORT (например 192.168.1.30:9100).</value>
